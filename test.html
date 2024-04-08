@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Transition Example</title>
+  <style>
+    .text {
+      position: relative;
+      top: 0;
+      opacity: 1;
+      transition: top 1s ease, opacity 1s ease;
+    }
+
+    .fade-out {
+      top: 100px; /* Di chuyển xuống dưới 100px */
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="text1" class="text">This is the initial text.</div>
+    <div id="text2" class="text" style="display: none;">This is the new text.</div>
+    <button id="changeTextBtn">Change Text</button>
+  </div>
+
+  <script>
+    document.getElementById("changeTextBtn").addEventListener("click", function() {
+      var text1 = document.getElementById("text1");
+      var text2 = document.getElementById("text2");
+
+      // Xóa dần đoạn text hiện tại và di chuyển nó xuống dưới
+      text1.classList.add("fade-out");
+
+      // Sau khi hoàn thành việc xóa dần, hiển thị đoạn text mới
+      setTimeout(function() {
+        text1.style.display = "none";
+        text2.style.display = "block";
+      }, 1000); // Đợi 1s (thời gian transition trong CSS)
+    });
+  </script>
+</body>
+</html>
