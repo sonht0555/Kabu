@@ -594,7 +594,7 @@ document.addEventListener("DOMContentLoaded", function() {
            // const fileName = 'Pokemon - Emerald Version (U).ss0'
           //  dpDownloadFile(fileName);
     }, 3000);
-    handleDropboxCallback();
+   // handleDropboxCallback();
 })
 /*----------------FrontEnd----------------*/
 //Buton Upload File
@@ -785,7 +785,7 @@ async function getAccessToken(authorizationCode) {
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("uId", uId);
-            window.location.href = redirectUri;           
+           // window.location.href = redirectUri;           
         } else {
             console.log("Do not receive access token & refresh token")
         }
@@ -814,7 +814,7 @@ async function dpRefreshToken() {
 		const data = await response.json();
 		if (!data.error) {
 			localStorage.setItem("accessToken", data.access_token);
-      console.log("New Access Token",data.access_token);
+            console.log("New Access Token",data.access_token);
 			return true;
 		} else {
 			alert(data.error_description || "Failed to refresh Dropbox token.");
