@@ -386,8 +386,8 @@ label {
   position: relative;
 }
 .d-pad {
-  width: 136%;
-  height: 136%;
+  width: 142%;
+  height: 142%;
   position: absolute;
   transform: rotate(45deg);
 }
