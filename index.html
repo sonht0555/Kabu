@@ -26,74 +26,7 @@
       </script>
   </head>
 <body>
-    <div class="between column localStorage disable" id="storage">
-        <div class="storage between">
-            <div class="cloud-restore bc" id="dropboxRestore"></div>
-            <div class="cloud-dropbox bc" id="dropboxCloud"></div>
-            <label class="upload-file bc" for="upLoadFile"></label>
-            <input type="file" id="upLoadFile" hidden />
-            <div class="home bc" id="backToHome"></div>
-        </div>
-        <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
-            <div class="flex-1 rom-item">ROM file.</div>
-            <div id="romsFile" class="column"></div>
-            <div class="flex-1 rom-item">STATE file.</div>
-            <div id="statesFile" class="column"></div>
-            <div class="flex-1 rom-item">SAVE file.</div>
-            <div id="savesFile" class="column"></div>
-            <div class="flex-1 rom-item">CHEAT file.</div>
-            <div id="cheatsFile" class="column"></div>
-        </div>
-        <div class="flex-1"></div>
-    </div>
-    <div class="firstLoading cw ch">
-        <svg width="74" height="12" viewBox="0 0 74 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g opacity="0.4">
-            <path d="M2 8H8V10H0V0H2V8Z" fill="#FFFFF5"/>
-            <path d="M18 4V10H10V4H18ZM12 8H16V6H12V8Z" fill="#FFFFF5"/>
-            <path d="M22 4H28V10H20V6H22V8H26V6H22V4Z" fill="#FFFFF5"/>
-            <path d="M38 10H30V4H36V2H38V10ZM32 6V8H36V6H32Z" fill="#FFFFF5"/>
-            <path d="M42 2V4H40V2H42ZM42 6V10H40V6H42Z" fill="#FFFFF5"/>
-            <path d="M44 4H52V10H50V6H46V10H44V4Z" fill="#FFFFF5"/>
-            <path d="M54 4H62V10H60V12H58V10H54V4ZM60 8V6H56V8H60Z" fill="#FFFFF5"/>
-            </g>
-        <path id="path-1" opacity="0.4" d="M64 10V8H66V10H64Z" fill="#FFFFF5"/>
-        <path id="path-2" opacity="0.4" d="M68 10V8H70V10H68Z" fill="#FFFFF5"/>
-        <path id="path-3" opacity="0.4" d="M72 10V8H74V10H72Z" fill="#FFFFF5"/>
-        </svg>
-    </div>
-    <div class="between column intro" id="intro">
-        <div class="target-boxes" id="target-boxes"></div>
-        <div class="flex-1 ch column gap-8">
-            <label class="logo" id="openLocalStorage"></label>
-            <div class="gap-8 file-section">
-                <div class="flex-1 bc">
-                    <svg id="setAdjustment" width="46" height="100" viewBox="0 0 46 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="46" height="100" fill="" />
-                        <rect id="rect1" x="16" y="16" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <rect id="rect2" x="16" y="24" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <rect id="rect3" x="16" y="32" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <path d="M22 68H14V58H22V68ZM16 60V66H20V60H16Z" fill="#FFFFF5" />
-                        <path id="G0" opacity="0" d="M32 68H24V58H32V68ZM26 60V66H30V60H26Z" fill="#FFFFF5" />
-                        <path id="G1" opacity="0" d="M26 68V60H24V58H28V68H26Z" fill="#FFFFF5" />
-                        <path id="G2" opacity="0" d="M24 58H32V64H26V66H32V68H24V62H30V60H24V58Z" fill="#FFFFF5" />
-                        <path id="G3" opacity="1" d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#FFFFF5" />
-                        <g opacity="0.4">
-                            <path d="M14 76H22V84H16V86H14V76ZM20 82V78H16V82H20Z" fill="#FFFFF5" />
-                            <path d="M28 86H24V78H26V80H28V82H26V84H28V86Z" fill="#FFFFF5" />
-                            <path d="M30 86V84H32V86H30Z" fill="#FFFFF5" />
-                        </g>
-                    </svg>
-                </div>
-                <label for="fileInput" class="flex-1 bc select-file" id="fileInputLable"></label>
-                <input type="file" id="fileInput" hidden />
-            </div>
-        </div>
-        <div class="column rom-list flex-disable" id="rom-list"></div>
-    </div>
-
-
-    <!-- Layer Ingame -->
+      <!-- Layer Ingame -->
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
@@ -137,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column message-container column disable" id="stateList">
+                    <div class="column message-container column visible" id="stateList">
                         <div class="flex-1">
                             <div class="flex-1 column" id="state00Div">
                                 <div class="flex-1 slot-auto" id="state00"></div>
@@ -262,6 +195,74 @@
 
         </div>
     </div>
+    <div class="between column localStorage disable" id="storage">
+        <div class="storage between">
+            <div class="cloud-restore bc" id="dropboxRestore"></div>
+            <div class="cloud-dropbox bc" id="dropboxCloud"></div>
+            <label class="upload-file bc" for="upLoadFile"></label>
+            <input type="file" id="upLoadFile" hidden />
+            <div class="home bc" id="backToHome"></div>
+        </div>
+        <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
+            <div class="flex-1 rom-item">ROM file.</div>
+            <div id="romsFile" class="column"></div>
+            <div class="flex-1 rom-item">STATE file.</div>
+            <div id="statesFile" class="column"></div>
+            <div class="flex-1 rom-item">SAVE file.</div>
+            <div id="savesFile" class="column"></div>
+            <div class="flex-1 rom-item">CHEAT file.</div>
+            <div id="cheatsFile" class="column"></div>
+        </div>
+        <div class="flex-1"></div>
+    </div>
+
+    <div class="between column intro" id="intro">
+        <div class="target-boxes" id="target-boxes"></div>
+        <div class="flex-1 ch column gap-8">
+            <label class="logo" id="openLocalStorage"></label>
+            <div class="gap-8 file-section">
+                <div class="flex-1 bc">
+                    <svg id="setAdjustment" width="46" height="100" viewBox="0 0 46 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="46" height="100" fill="" />
+                        <rect id="rect1" x="16" y="16" width="14" height="4" rx="0.6" fill="#FFFFF5" />
+                        <rect id="rect2" x="16" y="24" width="14" height="4" rx="0.6" fill="#FFFFF5" />
+                        <rect id="rect3" x="16" y="32" width="14" height="4" rx="0.6" fill="#FFFFF5" />
+                        <path d="M22 68H14V58H22V68ZM16 60V66H20V60H16Z" fill="#FFFFF5" />
+                        <path id="G0" opacity="0" d="M32 68H24V58H32V68ZM26 60V66H30V60H26Z" fill="#FFFFF5" />
+                        <path id="G1" opacity="0" d="M26 68V60H24V58H28V68H26Z" fill="#FFFFF5" />
+                        <path id="G2" opacity="0" d="M24 58H32V64H26V66H32V68H24V62H30V60H24V58Z" fill="#FFFFF5" />
+                        <path id="G3" opacity="1" d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#FFFFF5" />
+                        <g opacity="0.4">
+                            <path d="M14 76H22V84H16V86H14V76ZM20 82V78H16V82H20Z" fill="#FFFFF5" />
+                            <path d="M28 86H24V78H26V80H28V82H26V84H28V86Z" fill="#FFFFF5" />
+                            <path d="M30 86V84H32V86H30Z" fill="#FFFFF5" />
+                        </g>
+                    </svg>
+                </div>
+                <label for="fileInput" class="flex-1 bc select-file" id="fileInputLable"></label>
+                <input type="file" id="fileInput" hidden />
+            </div>
+        </div>
+        <div class="column rom-list flex-disable" id="rom-list"></div>
+    </div>
+    <div class="firstLoading cw ch">
+        <svg width="74" height="12" viewBox="0 0 74 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g opacity="0.4">
+            <path d="M2 8H8V10H0V0H2V8Z" fill="#FFFFF5"/>
+            <path d="M18 4V10H10V4H18ZM12 8H16V6H12V8Z" fill="#FFFFF5"/>
+            <path d="M22 4H28V10H20V6H22V8H26V6H22V4Z" fill="#FFFFF5"/>
+            <path d="M38 10H30V4H36V2H38V10ZM32 6V8H36V6H32Z" fill="#FFFFF5"/>
+            <path d="M42 2V4H40V2H42ZM42 6V10H40V6H42Z" fill="#FFFFF5"/>
+            <path d="M44 4H52V10H50V6H46V10H44V4Z" fill="#FFFFF5"/>
+            <path d="M54 4H62V10H60V12H58V10H54V4ZM60 8V6H56V8H60Z" fill="#FFFFF5"/>
+            </g>
+        <path id="path-1" opacity="0.4" d="M64 10V8H66V10H64Z" fill="#FFFFF5"/>
+        <path id="path-2" opacity="0.4" d="M68 10V8H70V10H68Z" fill="#FFFFF5"/>
+        <path id="path-3" opacity="0.4" d="M72 10V8H74V10H72Z" fill="#FFFFF5"/>
+        </svg>
+    </div>
+
+  
     <script type="module" src="./js/kabu.js"></script> 
     <script src="./js/global.js"></script>
 </body>

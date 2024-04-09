@@ -435,7 +435,7 @@ function LoadstateInPage(saveSlot, divs, dateState) {
     const imageStateDiv = document.getElementById(divs);
     imageStateDiv.onclick = () => {
         const stateList = document.getElementById("stateList");
-        stateList.classList.toggle("disable");
+        stateList.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
         notiMessage("Loaded State...0" + saveSlot, 2000);
@@ -680,7 +680,7 @@ statePageButton.addEventListener("click", function() {
     LoadstateInPage(2, "state02", "dateState02")
     LoadstateInPage(3, "state03", "dateState03")
     const stateList = document.getElementById("stateList");
-    stateList.classList.toggle("disable");
+    stateList.classList.toggle("visible");
     statePageButton.classList.toggle("active");
 })
 //Auto Save States In Page
@@ -729,17 +729,16 @@ SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
         button.addEventListener("touchstart", function() {
-            Module.SDL2();
             const stateList = document.getElementById("stateList");
             if (listPad.classList.contains("active")) {
                 listPad.classList.remove("active");
                 listPad.classList.add("inactive");
                 menuPad.classList.remove("active");
             }
-            if (stateList.classList.contains("disable")){
+            if (stateList.classList.contains("visible")){
             } else {
                 statePageButton.classList.remove("active");
-                stateList.classList.add("disable");
+                stateList.classList.add("visible");
             }
         });
     }

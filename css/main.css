@@ -63,12 +63,11 @@ label {
   display: flex;
 }
 .intro,.localStorage,.divTest,.firstLoading {
+  position:absolute;
   background-color: black;
   width: calc(100vw - 32px);
   height: calc(100vh - 32px);
-  opacity: 0;
-  animation: fadeIn 0.25s ease-in-out forwards;
-  animation-delay: 0.15s;
+  transition: opacity 0.5s ease-in-out;
 }
 .gbc{
   margin: 8px 0px;
@@ -958,21 +957,15 @@ rect {
 }
 #path-1,#path-2,#path-3 {
   opacity: 0;
-  animation: fadeInPath 1s ease-in-out forwards;
+  animation: fadeInPath 0.5s ease-in-out forwards;
 }
-#path-1 { animation-delay: 0s; }
+#path-1 { animation-delay: 0.5s; }
 #path-2 { animation-delay: 1s; }
-#path-3 { animation-delay: 2s; }
+#path-3 { animation-delay: 1.5s; }
 .firstLoading{
-  position:absolute;
   opacity: 1;
   animation: firstLoading 1s ease-in-out forwards;
-  animation-delay: 3s;
-}
-.intro{
-  opacity: 0;
-  animation: intro 1s ease-in-out forwards;
-  animation-delay: 3s;
+  animation-delay: 2s;
 }
 
 @keyframes fadeInPath {
@@ -986,11 +979,11 @@ rect {
     pointer-events: none;
   }
 }
-@keyframes intro {
-  from { 
-    opacity: 0; 
-  }
-  to {
-    opacity: 1; 
-  }
+
+.visible {
+  opacity: 0;
+  pointer-events: none;
+}
+#stateList{
+  transition: opacity 0.5s ease-in-out;
 }
