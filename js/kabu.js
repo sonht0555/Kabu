@@ -68,21 +68,18 @@ function delay(ms) {
 async function led(slotStateNumbers) {
     try {
         if (slotStateNumbers===1) {
-            document.getElementById("led01").style.fill = "#00FF00";
+            document.getElementById("led01").style.fill = "#78C850";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
         } else if(slotStateNumbers===2) {
-            document.getElementById("led02").style.fill = "#00FF00";
+            document.getElementById("led02").style.fill = "#78C850";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
         } else if(slotStateNumbers===3) {
-            document.getElementById("led03").style.fill = "#00FF00";
+            document.getElementById("led03").style.fill = "#78C850";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-        }else if(slotStateNumbers===null) {
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
+        }else if(slotStateNumbers===0) {
         }
     } catch (error) {
         console.error("Error Led:", error);
@@ -182,7 +179,7 @@ async function saveStatePeriodically() {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
-        document.getElementById(ledId).style.fill = "#00FF00";
+        document.getElementById(ledId).style.fill = "#78C850";
         await saveState(0);
         console.log(`Auto save ${++countAutoSave} time(s)`);
     } catch (error) {
@@ -200,11 +197,12 @@ async function saveStateInCloud() {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
-        document.getElementById(ledId).style.fill = "#FFFF00";
+        document.getElementById(ledId).style.fill = "#E0C068";
         if (navigator.onLine) {
             if (uId) {
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
+                notiMessage(`Upload in Cloud [${++countUpload}] time`, 1500)
                 console.log(`Auto upload in Cloud ${++countUpload} time(s)`);
             } else {
                 console.log("Unable to upload to Cloud!");
@@ -441,7 +439,7 @@ function LoadstateInPage(saveSlot, divs, dateState) {
         stateList.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
-        notiMessage("Loaded State...0" + saveSlot, 2000);
+        notiMessage(`Loaded State in slot [${saveSlot}]`, 2000);
         setTimeout(() => {
             loadState(saveSlot);
             localStorage.setItem("slotStateSaved", saveSlot)
@@ -631,7 +629,7 @@ loadStateButton.addEventListener("click", function() {
     if (clickState === 2) {
         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
         loadState(slotStateNumbers);
-        notiMessage("Load...o" + slotStateNumbers, 1500);
+        notiMessage(`Loaded State in slot [${slotStateNumbers}]`, 1500);
     }
     setTimeout(() => {
         clickState = 0
@@ -644,13 +642,13 @@ saveStateButton.addEventListener("click", function() {
         if (parseInt(localStorage.getItem("autoStateCheck") || 1) === 1) {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 3) + 1) || 1;
             saveState(slotStateNumbers);
-            notiMessage("Saved...o" + slotStateNumbers, 1500);
+            notiMessage(`Saved State in slot [${slotStateNumbers}]`, 1500);
             console.log("slotStateNumbers",slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
-            notiMessage("Saved...o" + slotStateNumbers, 1500);
+            notiMessage(`Saved State in slot [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         }
     }
