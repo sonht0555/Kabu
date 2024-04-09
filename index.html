@@ -26,9 +26,10 @@
       </script>
   </head>
 <body>
-    <button id="tests">Clear Caches</button>
     <div class="between column localStorage disable" id="storage">
-        <div class="storage">
+        <div class="storage between">
+            <div class="cloud-restore bc" id="dropboxRestore"></div>
+            <div class="cloud-dropbox bc" id="dropboxCloud"></div>
             <label class="upload-file bc" for="upLoadFile"></label>
             <input type="file" id="upLoadFile" hidden />
             <div class="home bc" id="backToHome"></div>
@@ -44,6 +45,22 @@
             <div id="cheatsFile" class="column"></div>
         </div>
         <div class="flex-1"></div>
+    </div>
+    <div class="firstLoading cw ch">
+        <svg width="74" height="12" viewBox="0 0 74 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g opacity="0.4">
+            <path d="M2 8H8V10H0V0H2V8Z" fill="#FFFFF5"/>
+            <path d="M18 4V10H10V4H18ZM12 8H16V6H12V8Z" fill="#FFFFF5"/>
+            <path d="M22 4H28V10H20V6H22V8H26V6H22V4Z" fill="#FFFFF5"/>
+            <path d="M38 10H30V4H36V2H38V10ZM32 6V8H36V6H32Z" fill="#FFFFF5"/>
+            <path d="M42 2V4H40V2H42ZM42 6V10H40V6H42Z" fill="#FFFFF5"/>
+            <path d="M44 4H52V10H50V6H46V10H44V4Z" fill="#FFFFF5"/>
+            <path d="M54 4H62V10H60V12H58V10H54V4ZM60 8V6H56V8H60Z" fill="#FFFFF5"/>
+            </g>
+        <path id="path-1" opacity="0.4" d="M64 10V8H66V10H64Z" fill="#FFFFF5"/>
+        <path id="path-2" opacity="0.4" d="M68 10V8H70V10H68Z" fill="#FFFFF5"/>
+        <path id="path-3" opacity="0.4" d="M72 10V8H74V10H72Z" fill="#FFFFF5"/>
+        </svg>
     </div>
     <div class="between column intro" id="intro">
         <div class="target-boxes" id="target-boxes"></div>
@@ -74,6 +91,8 @@
         </div>
         <div class="column rom-list flex-disable" id="rom-list"></div>
     </div>
+
+
     <!-- Layer Ingame -->
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
@@ -217,7 +236,7 @@
             <div class="gap-34 between setting" id="menu-list-pad">
                 <div class="flex-1 gap-15">
                     <div class="bc1 set-listStates" id="saveCheat"></div>
-                    <div class="set-cloud bc1" id="dropboxCloud"></div>
+                    <div class="set-cloud bc1" id=""></div>
                     <input type="checkbox" id="autoStateCheck" hidden>
                     <label for="autoStateCheck" class="switch bc1 ch cw" id="switch"></label>
                 </div>
@@ -247,4 +266,4 @@
     <script src="./js/global.js"></script>
 </body>
 
-</html>
+</html> 

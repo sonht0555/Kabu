@@ -29,7 +29,7 @@ const romsFile = document.getElementById("romsFile");
 const statesFile = document.getElementById("statesFile");
 const saveCheatsButton = document.getElementById("saveCheat");
 const Module = {canvas: document.getElementById("canvas")};
-const tests = document.getElementById("tests");
+const dropboxRestore = document.getElementById("dropboxRestore");
 /*----------------BackEnd----------------*/
 startGBA(Module)
 //Start GBA
@@ -120,6 +120,7 @@ async function inputGame(InputFile) {
 async function loadGame(gameName) {
     try {
         localStorage.setItem("gameName", gameName);
+        const slotStateSaved = localStorage.getItem("slotStateSaved");
         const stateName = gameName.replace(/\.(gba|gbc|gb)$/, ".ss0");
         const statesList = Module.listStates();
         intro.classList.add("disable");
@@ -138,8 +139,8 @@ async function loadGame(gameName) {
             await Module.loadGame(`/data/games/${gameName}`);
             await statusShow();
         }
-        await Module.SDL2();
         await delay(3000);
+        await led(slotStateSaved);
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
@@ -992,7 +993,7 @@ async function uploadFilesSequentially(files) {
 }
 
 // Gọi hàm để tải và up tất cả các tệp trong thư mục của người dùng
-tests.addEventListener("click", function() {
+dropboxRestore.addEventListener("click", function() {
     downloadAndUploadAllFiles();
 });
 

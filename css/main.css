@@ -62,7 +62,7 @@ label {
   border-radius: 2px;
   display: flex;
 }
-.intro,.localStorage,.divTest {
+.intro,.localStorage,.divTest,.firstLoading {
   background-color: black;
   width: calc(100vw - 32px);
   height: calc(100vh - 32px);
@@ -250,7 +250,6 @@ label {
 }
 .rom-list div,
 .rom-item {
-  margin: 0px 16px;
   padding: 16px 0px 6px 0px;
   border-bottom: 1px solid #0f0f0f;
   color: #787874;
@@ -556,7 +555,7 @@ label {
   scroll-margin-block: -9999px;
 }
 .rom {
-  margin-left: 32px;
+  margin-left: 16px;
   color: #fffff5;
   text-transform: lowercase;
 }
@@ -564,21 +563,23 @@ label {
   white-space: normal;
 }
 .storage {
-  justify-content: flex-end;
-  padding: 16px;
+  padding: 16px 0px;
 }
 .home {
-  width: 80px;
+  width: 74px;
   height: 26px;
-  background-repeat: no-repeat;
-  background-image: url("data:image/svg+xml,%3Csvg width='80' height='26' viewBox='0 0 80 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31 18H23V8H29V12H31V18ZM25 10V12H27V10H25ZM25 14V16H29V14H25Z' fill='%23FFFFF5'/%3E%3Cpath d='M35 12H41V18H33V14H35V16H39V14H35V12Z' fill='%23FFFFF5'/%3E%3Cpath d='M49 18H43V12H49V14H45V16H49V18Z' fill='%23FFFFF5'/%3E%3Cpath d='M57 12V14H55V12H57ZM53 16V18H51V10H53V14H55V16H53ZM57 18H55V16H57V18Z' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
 }
 .upload-file {
-  width: 80px;
+  width: 74px;
   height: 26px;
-  margin-right: 8px;
-  background-repeat: no-repeat;
-  background-image: url("data:image/svg+xml,%3Csvg width='80' height='26' viewBox='0 0 80 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M26.7998 16C26.9102 16 26.9998 15.9105 26.9998 15.8V8.2C26.9998 8.08954 27.0893 8 27.1998 8H28.7998C28.9102 8 28.9998 8.08954 28.9998 8.2V17.8C28.9998 17.9105 28.9102 18 28.7998 18H21.1998C21.0893 18 20.9998 17.9105 20.9998 17.8V8.2C20.9998 8.08954 21.0893 8 21.1998 8H22.7998C22.9102 8 22.9998 8.08954 22.9998 8.2V15.8C22.9998 15.9105 23.0893 16 23.1998 16H26.7998Z' fill='%23FFFFF5'/%3E%3Cpath d='M30.9998 12.2C30.9998 12.0895 31.0893 12 31.1998 12H38.7998C38.9102 12 38.9998 12.0895 38.9998 12.2V17.8C38.9998 17.9105 38.9102 18 38.7998 18H33.1998C33.0893 18 32.9998 18.0895 32.9998 18.2V19.8C32.9998 19.9105 32.9102 20 32.7998 20H31.1998C31.0893 20 30.9998 19.9105 30.9998 19.8V12.2ZM36.7998 16C36.9102 16 36.9998 15.9105 36.9998 15.8V14.2C36.9998 14.0895 36.9102 14 36.7998 14H33.1998C33.0893 14 32.9998 14.0895 32.9998 14.2V15.8C32.9998 15.9105 33.0893 16 33.1998 16H36.7998Z' fill='%23FFFFF5'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M49.6059 11.3113C49.5278 11.3894 49.5278 11.516 49.6059 11.5941L50.7373 12.7255C50.8154 12.8036 50.9421 12.8036 51.0202 12.7255L51.6586 12.087C51.7846 11.961 52.0001 12.0502 52.0001 12.2284V14.8C52.0001 14.9104 52.0896 15 52.2001 15H53.8001C53.9105 15 54.0001 14.9104 54.0001 14.8V12.2284C54.0001 12.0502 54.2155 11.961 54.3415 12.087L54.98 12.7255C55.0581 12.8036 55.1847 12.8036 55.2628 12.7255L56.3942 11.5941C56.4723 11.516 56.4723 11.3894 56.3942 11.3113L53.1415 8.05858C53.0634 7.98047 52.9367 7.98047 52.8586 8.05858L49.6059 11.3113ZM53.0001 11C53.0939 11 53.1409 10.8865 53.0746 10.8201C53.0334 10.7789 52.9667 10.7789 52.9255 10.8201C52.8592 10.8865 52.9062 11 53.0001 11Z' fill='%23FFFFF5'/%3E%3Cpath opacity='0.4' d='M47 16.2C47 16.0895 47.0895 16 47.2 16H58.8C58.9105 16 59 16.0895 59 16.2V17.8C59 17.9105 58.9105 18 58.8 18H47.2C47.0895 18 47 17.9105 47 17.8V16.2Z' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
+}
+.cloud-dropbox{
+  width: 74px;
+  height: 26px;
+}
+.cloud-restore{
+  width: 74px;
+  height: 26px;
 }
 .mib {
   opacity: 0.4;
@@ -954,4 +955,42 @@ dialog .rom-item {
 
 rect {
   transition: fill 0.4s ease-in-out ;
+}
+#path-1,#path-2,#path-3 {
+  opacity: 0;
+  animation: fadeInPath 1s ease-in-out forwards;
+}
+#path-1 { animation-delay: 0s; }
+#path-2 { animation-delay: 1s; }
+#path-3 { animation-delay: 2s; }
+.firstLoading{
+  position:absolute;
+  opacity: 1;
+  animation: firstLoading 1s ease-in-out forwards;
+  animation-delay: 3s;
+}
+.intro{
+  opacity: 0;
+  animation: intro 1s ease-in-out forwards;
+  animation-delay: 3s;
+}
+
+@keyframes fadeInPath {
+  from { opacity: 0; }
+  to { opacity: 0.4; }
+}
+@keyframes firstLoading {
+  from { opacity: 1; }
+  to {
+    opacity: 0; 
+    pointer-events: none;
+  }
+}
+@keyframes intro {
+  from { 
+    opacity: 0; 
+  }
+  to {
+    opacity: 1; 
+  }
 }

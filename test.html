@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Transition Example</title>
-  <style>
-    .text {
-      position: relative;
-      top: 0;
-      opacity: 1;
-      transition: top 1s ease, opacity 1s ease;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVG Animation</title>
+<style>
+#path-1,#path-2,#path-3 {
+    opacity: 0;
+    animation: fadeInPath 1s ease-in-out forwards;
+}
+#path-1 { animation-delay: 0s; }
+#path-2 { animation-delay: 1s; }
+#path-3 { animation-delay: 2s; }
 
-    .fade-out {
-      top: 100px; /* Di chuyển xuống dưới 100px */
-      opacity: 0;
-    }
-  </style>
+@keyframes fadeInPath {
+    from { opacity: 0; }
+    to { opacity: 0.4; }
+}
+
+
+</style>
 </head>
-<body>
-  <div id="container">
-    <div id="text1" class="text">This is the initial text.</div>
-    <div id="text2" class="text" style="display: none;">This is the new text.</div>
-    <button id="changeTextBtn">Change Text</button>
-  </div>
-
-  <script>
-    document.getElementById("changeTextBtn").addEventListener("click", function() {
-      var text1 = document.getElementById("text1");
-      var text2 = document.getElementById("text2");
-
-      // Xóa dần đoạn text hiện tại và di chuyển nó xuống dưới
-      text1.classList.add("fade-out");
-
-      // Sau khi hoàn thành việc xóa dần, hiển thị đoạn text mới
-      setTimeout(function() {
-        text1.style.display = "none";
-        text2.style.display = "block";
-      }, 1000); // Đợi 1s (thời gian transition trong CSS)
-    });
-  </script>
+<body style="background-color:black;">
+    <svg width="74" height="12" viewBox="0 0 74 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g opacity="0.4">
+            <path d="M2 8H8V10H0V0H2V8Z" fill="#FFFFF5"/>
+            <path d="M18 4V10H10V4H18ZM12 8H16V6H12V8Z" fill="#FFFFF5"/>
+            <path d="M22 4H28V10H20V6H22V8H26V6H22V4Z" fill="#FFFFF5"/>
+            <path d="M38 10H30V4H36V2H38V10ZM32 6V8H36V6H32Z" fill="#FFFFF5"/>
+            <path d="M42 2V4H40V2H42ZM42 6V10H40V6H42Z" fill="#FFFFF5"/>
+            <path d="M44 4H52V10H50V6H46V10H44V4Z" fill="#FFFFF5"/>
+            <path d="M54 4H62V10H60V12H58V10H54V4ZM60 8V6H56V8H60Z" fill="#FFFFF5"/>
+        </g>
+        <path id="path-1" opacity="0.4" d="M64 10V8H66V10H64Z" fill="#FFFFF5"/>
+        <path id="path-2" opacity="0.4" d="M68 10V8H70V10H68Z" fill="#FFFFF5"/>
+        <path id="path-3" opacity="0.4" d="M72 10V8H74V10H72Z" fill="#FFFFF5"/>
+    </svg>
 </body>
 </html>
