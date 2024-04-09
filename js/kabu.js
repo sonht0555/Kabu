@@ -594,7 +594,7 @@ document.addEventListener("DOMContentLoaded", function() {
            // const fileName = 'Pokemon - Emerald Version (U).ss0'
           //  dpDownloadFile(fileName);
     }, 3000);
-   // handleDropboxCallback();
+    handleDropboxCallback();
 })
 /*----------------FrontEnd----------------*/
 //Buton Upload File
@@ -792,9 +792,6 @@ async function getAccessToken(authorizationCode) {
     };
     xhr.send('code=' + authorizationCode + '&grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret + '&redirect_uri=' + encodeURIComponent(redirectUri));
 }
-dropboxCloud.addEventListener("click", function() {
-    authorizeWithDropbox();
-});
 //Cloud Refresh Token 
 async function dpRefreshToken() {
 	console.log("Refreshing token...");
@@ -992,8 +989,22 @@ async function uploadFilesSequentially(files) {
     }
 }
 
-// Gọi hàm để tải và up tất cả các tệp trong thư mục của người dùng
 dropboxRestore.addEventListener("click", function() {
-    downloadAndUploadAllFiles();
+    const uId = localStorage.getItem("uId");
+    if (uId === null || uId === "") {
+        window.alert("Need to login to Cloud first!")
+    } else {
+        downloadAndUploadAllFiles();
+    }
 });
+dropboxCloud.addEventListener("click", function() {
+    const uId = localStorage.getItem("uId");
+    if (uId === null || uId === "") {
+        authorizeWithDropbox();
+    } else {
+        if (window.confirm("You are logged in with ID " + uId + " Do you want to logout?")) {
+            localStorage.setItem("uId","");
+        }
+    }
 
+});
