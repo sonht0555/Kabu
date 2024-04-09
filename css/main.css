@@ -380,14 +380,14 @@ label {
   width: 44px;
 }
 .dpad {
-  max-width: 162px;
+  max-width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   position: relative;
 }
 .d-pad {
-  width: 226px;
-  height: 226px;
+  width: 136%;
+  height: 136%;
   position: absolute;
   transform: rotate(45deg);
 }
@@ -898,7 +898,6 @@ dialog .rom-item {
 }
 
 .switch {
-  width: 44px;
   height: 26px;
 }
 
