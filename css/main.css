@@ -208,6 +208,7 @@ label {
   display: flex;
 }
 #rom-list {
+  padding:0px 8px;
   max-height: 117px;
   overflow: auto;
   scroll-margin-block: -9999px;
@@ -249,7 +250,7 @@ label {
 }
 .rom-list div,
 .rom-item {
-  padding: 16px 0px 6px 0px;
+  padding: 16px 8px 6px 8px;
   border-bottom: 1px solid #0f0f0f;
   color: #787874;
   font-weight: 400;
@@ -562,7 +563,7 @@ label {
   white-space: normal;
 }
 .storage {
-  padding: 16px 0px;
+  padding: 16px 8px;
 }
 .home {
   width: 74px;
