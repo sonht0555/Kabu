@@ -439,7 +439,7 @@ function LoadstateInPage(saveSlot, divs, dateState) {
         stateList.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
-        notiMessage(`Loaded State in slot [${saveSlot}]`, 2000);
+        notiMessage(`Loaded State in Slot [${saveSlot}]`, 2000);
         setTimeout(() => {
             loadState(saveSlot);
             localStorage.setItem("slotStateSaved", saveSlot)
@@ -629,7 +629,7 @@ loadStateButton.addEventListener("click", function() {
     if (clickState === 2) {
         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
         loadState(slotStateNumbers);
-        notiMessage(`Loaded State in slot [${slotStateNumbers}]`, 1500);
+        notiMessage(`Loaded State in Slot [${slotStateNumbers}]`, 1500);
     }
     setTimeout(() => {
         clickState = 0
@@ -642,13 +642,13 @@ saveStateButton.addEventListener("click", function() {
         if (parseInt(localStorage.getItem("autoStateCheck") || 1) === 1) {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 3) + 1) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State in slot [${slotStateNumbers}]`, 1500);
+            notiMessage(`Saved State in Slot [${slotStateNumbers}]`, 1500);
             console.log("slotStateNumbers",slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State in slot [${slotStateNumbers}]`, 1500);
+            notiMessage(`Saved State in Slot [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         }
     }
