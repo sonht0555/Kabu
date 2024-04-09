@@ -79,7 +79,10 @@ async function led(slotStateNumbers) {
             document.getElementById("led03").style.fill = "#00FF00";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-        }else if(slotStateNumbers===0) {
+        }else if(slotStateNumbers===null) {
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
         }
     } catch (error) {
         console.error("Error Led:", error);
