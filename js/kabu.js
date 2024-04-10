@@ -962,16 +962,20 @@ async function downloadAndUploadAllFiles() {
                 throw "Download failed, unknown http status: " + resp.status;
             }
         } else {
+            const uId = localStorage.getItem("uId");
             const data = await resp.json();
-            console.log("Files in directory:", data.entries);
             const filesToUpload = data.entries.filter(entry => entry[".tag"] === "file");
-            uploadFilesSequentially(filesToUpload);
+            if (window.confirm("On Cloud " + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
+                uploadFilesSequentially(filesToUpload);
+            }
             return true;
         }
     }
     return false;
 }
 async function uploadFilesSequentially(files) {
+    let successfulDownloads = 0;
+    const totalFiles = files.length;
     for (const fileEntry of files) {
         const fileName = fileEntry.name;
         const filePath = fileEntry.path_lower;
@@ -990,10 +994,17 @@ async function uploadFilesSequentially(files) {
                 Module.FSSync();
             });
             localStorageFile();
+            successfulDownloads++;
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         } else {
             console.error("Error downloading file:", fileName);
         }
+    }
+
+    if (successfulDownloads === totalFiles) {
+        window.alert("All files downloaded successfully!");
+    } else {
+        window.alert("Some files failed to download.!");
     }
 }
 dropboxRestore.addEventListener("click", function() {
@@ -1004,12 +1015,12 @@ dropboxRestore.addEventListener("click", function() {
         downloadAndUploadAllFiles();
     }
 });
-dropboxCloud.addEventListener("click", async function() {
+dropboxCloud.addEventListener("click", function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
         authorizeWithDropbox();
     } else {
-        if (window.confirm("Your Cloud ID " + uId + ". Do you want to logout?")) {
+        if (window.confirm("Your Cloud ID " + uId + ". \nDo you want to logout?")) {
             localStorage.setItem("uId","");
         }
     }

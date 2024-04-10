@@ -976,7 +976,7 @@ rect {
 #path-3 { animation-delay: 1.5s; }
 .firstLoading{
   opacity: 1;
-  animation: firstLoading 1s ease-in-out forwards;
+  animation: firstLoading 0.5s ease-in-out forwards;
   animation-delay: 2s;
 }
 
