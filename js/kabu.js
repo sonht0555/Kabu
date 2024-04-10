@@ -776,7 +776,7 @@ function getUrlParameter(name) {
     var results = regex.exec(location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
-// Hàm để lấy access token và refresh token từ authorization code
+//Get access token & refresh token from authorization code
 async function getAccessToken(authorizationCode) {
     var grantType = 'authorization_code';
     var redirectUri = window.location.href.split('?')[0];
@@ -963,7 +963,7 @@ async function downloadAndUploadAllFiles() {
             const uId = localStorage.getItem("uId");
             const data = await resp.json();
             const filesToUpload = data.entries.filter(entry => entry[".tag"] === "file");
-            if (window.confirm("On Cloud " + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
+            if (window.confirm("Your Cloud ID" + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
                 uploadFilesSequentially(filesToUpload);
             }
             return true;

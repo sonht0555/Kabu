@@ -150,18 +150,6 @@ function checkContent() {
         inputText.classList.remove("no-content");
     }
 }
-//Clear Cache
-function clearCache (){
-    if ('serviceWorker' in navigator && 'controller' in navigator.serviceWorker) {
-        navigator.serviceWorker.controller.postMessage({
-            command: 'clearCache'
-        });
-        window.location.href = window.location.href;
-        console.log('Clear cache command sent to service worker.');
-    } else {
-        console.log('Service worker is not supported or not controlling this page.');
-    }
-}
 //Translate Focus
 inputText.addEventListener("focus", function() {
     input.classList.add("cs22");
@@ -266,20 +254,3 @@ document.addEventListener("DOMContentLoaded", function() {
     checkContent();
     checkCache();
 })
-function clearCaches() {
-    let timeout;
-    const divElement = document.getElementById('intro');
-
-    divElement.addEventListener('touchstart', function() {
-        timeout = setTimeout(function() {
-            if (confirm("Do you want to update?")) {
-                clearCache (); 
-            }
-        }, 1000);
-    });
-
-    divElement.addEventListener('touchend', function() {
-        clearTimeout(timeout);
-    });
-}
-clearCaches();
