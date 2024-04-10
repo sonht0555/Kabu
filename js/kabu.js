@@ -758,8 +758,6 @@ async function authorizeWithDropbox() {
     var tokenAccessType = 'offline';
     var authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=' + clientId + '&response_type=' + responseType + '&token_access_type=' + tokenAccessType + '&redirect_uri=' + encodeURIComponent(redirectUri);
     window.location.href = authorizeUrl;
-    dropboxRestore.classList.add("active");
-    dropboxCloud.classList.add("active");
 }
 //Callback to Dropbox
 function handleDropboxCallback() {
@@ -1022,6 +1020,8 @@ dropboxCloud.addEventListener("click", function() {
     } else {
         if (window.confirm("Your Cloud ID " + uId + ". \nDo you want to logout?")) {
             localStorage.setItem("uId","");
+            dropboxRestore.classList.remove("active");
+            dropboxCloud.classList.remove("active");
         }
     }
 });
