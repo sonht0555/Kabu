@@ -963,7 +963,7 @@ async function downloadAndUploadAllFiles() {
             const uId = localStorage.getItem("uId");
             const data = await resp.json();
             const filesToUpload = data.entries.filter(entry => entry[".tag"] === "file");
-            if (window.confirm("Your Cloud ID" + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
+            if (window.confirm("Cloud storage ID" + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
                 uploadFilesSequentially(filesToUpload);
             }
             return true;
