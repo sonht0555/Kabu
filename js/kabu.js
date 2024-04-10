@@ -960,10 +960,9 @@ async function downloadAndUploadAllFiles() {
                 throw "Download failed, unknown http status: " + resp.status;
             }
         } else {
-            const uId = localStorage.getItem("uId");
             const data = await resp.json();
             const filesToUpload = data.entries.filter(entry => entry[".tag"] === "file");
-            if (window.confirm("Cloud storage ID" + uId + " there are " + filesToUpload.length + " files. \nDo you want to download?")) {
+            if (window.confirm("Cloud storage has " + filesToUpload.length + " files. \nDo you want to download?")) {
                 uploadFilesSequentially(filesToUpload);
             }
             return true;
