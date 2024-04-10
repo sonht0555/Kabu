@@ -499,7 +499,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (parseInt(localStorage.getItem("autoStateCheck") | 1) === 1) {
             autoStateCheck.checked = true;
         }
-        listPad.classList.add("inactive");
         
         ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
             const element = document.getElementById(buttonId);
@@ -590,11 +589,10 @@ document.addEventListener("DOMContentLoaded", function() {
             // Joystick
         })
     },0);
-    setTimeout(() => {
-           // const fileName = 'Pokemon - Emerald Version (U).ss0'
-          //  dpDownloadFile(fileName);
-    }, 3000);
+
     handleDropboxCallback();
+
+ 
 })
 /*----------------FrontEnd----------------*/
 //Buton Upload File
@@ -670,9 +668,17 @@ backToHome.addEventListener("click", function() {
 })
 //Buton Open Local Storage
 openLocalStorage.addEventListener("click", function() {
+    const uId = localStorage.getItem("uId");
     storage.classList.remove("disable");
     intro.classList.add("disable");
     ingame.classList.add("disable");
+    if (uId === null || uId === "") {
+        dropboxRestore.classList.remove("active");
+        dropboxCloud.classList.remove("active");
+    } else {
+        dropboxRestore.classList.add("active");
+        dropboxCloud.classList.add("active");
+    }
 })
 //Buton Open Save States Page
 statePageButton.addEventListener("click", function() {
@@ -730,6 +736,7 @@ SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
         button.addEventListener("touchstart", function() {
+            Module.SDL2();
             const stateList = document.getElementById("stateList");
             if (listPad.classList.contains("active")) {
                 listPad.classList.remove("active");
@@ -745,12 +752,14 @@ SDL2ID.forEach(function(id) {
     }
 })
 //Uses OAuth 2.0
-function authorizeWithDropbox() {
+async function authorizeWithDropbox() {
     var redirectUri = window.location.href.split('?')[0];
     var responseType = 'code';
     var tokenAccessType = 'offline';
     var authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=' + clientId + '&response_type=' + responseType + '&token_access_type=' + tokenAccessType + '&redirect_uri=' + encodeURIComponent(redirectUri);
     window.location.href = authorizeUrl;
+    dropboxRestore.classList.add("active");
+    dropboxCloud.classList.add("active");
 }
 //Callback to Dropbox
 function handleDropboxCallback() {
@@ -762,7 +771,7 @@ function handleDropboxCallback() {
         console.log("Do not receive authorization")
     }
 }
-// Hàm trợ giúp để lấy tham số từ URL
+//Get url Parameter
 function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&#]' + name + '=([^&#]*)');
@@ -962,7 +971,6 @@ async function downloadAndUploadAllFiles() {
     }
     return false;
 }
-
 async function uploadFilesSequentially(files) {
     for (const fileEntry of files) {
         const fileName = fileEntry.name;
@@ -988,23 +996,22 @@ async function uploadFilesSequentially(files) {
         }
     }
 }
-
 dropboxRestore.addEventListener("click", function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
-        window.alert("Need to login to Cloud first!")
+        window.alert("Cloud login required!")
     } else {
         downloadAndUploadAllFiles();
     }
 });
-dropboxCloud.addEventListener("click", function() {
+dropboxCloud.addEventListener("click", async function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
         authorizeWithDropbox();
     } else {
-        if (window.confirm("You are logged in with ID " + uId + " Do you want to logout?")) {
+        if (window.confirm("Your Cloud ID " + uId + ". Do you want to logout?")) {
             localStorage.setItem("uId","");
         }
     }
-
 });
+
