@@ -1,4 +1,5 @@
 var messageTimeout;
+var timeoutIds;
 let stateAdj = 1;
 let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
 const inputText = document.getElementById("inputText");
@@ -37,12 +38,12 @@ function notiMessage(messageContent, second) {
     var message = document.getElementById("noti-mess");
 
     if (message.style.opacity === "0.4") {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutIds);
       message.style.opacity = "0";
     }
     message.textContent = messageContent;
     message.style.opacity = "0.4";
-    timeoutId = setTimeout(() => {
+    timeoutIds = setTimeout(() => {
       message.textContent = localStorage.getItem("gameName");
       message.style.opacity = "0.2";
     }, second);
@@ -97,7 +98,7 @@ function calculateLocalStorageSize() {
 }
 //Shader Setting
 function applyShaderClass(selectedValue) {
-    imgshader.classList.remove("sd-1", "sd-2", "sd-3", "sd-4", "sd-5", "sd-6");
+    imgshader.classList.remove("sd-1", "sd-2", "sd-3", "sd-4", "sd-5", "sd-6", "sd-7", "sd-8", "sd-9", "sd-10");
     if (selectedValue === "option1") {
         imgshader.classList.add("sd-1");
     } else if (selectedValue === "option2") {
@@ -110,6 +111,14 @@ function applyShaderClass(selectedValue) {
         imgshader.classList.add("sd-5");
     } else if (selectedValue === "option6") {
         imgshader.classList.add("sd-6");
+    } else if (selectedValue === "option7") {
+        imgshader.classList.add("sd-7");
+    } else if (selectedValue === "option8") {
+        imgshader.classList.add("sd-8");
+    } else if (selectedValue === "option9") {
+        imgshader.classList.add("sd-9");
+    } else if (selectedValue === "option10") {
+        imgshader.classList.add("sd-10");
     }
 }
 //Translate Function
