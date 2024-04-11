@@ -139,11 +139,14 @@ async function loadGame(gameName) {
             await Module.loadGame(`/data/games/${gameName}`);
             await statusShow();
         }
-        await delay(3000);
+        await delay(1500);
         await led(slotStateSaved);
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
+        }
+        if (parseInt(localStorage.getItem("autoStateCheck") | 1) === 1) {
+            document.getElementById("autoStateCheck").checked = true;
         }
         setInterval(() => {saveStatePeriodically()}, 10000);
         setInterval(() => {saveStateInCloud()}, 180000);
@@ -589,10 +592,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Joystick
         })
     },0);
-
     handleDropboxCallback();
-
- 
 })
 /*----------------FrontEnd----------------*/
 //Buton Upload File

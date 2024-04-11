@@ -261,5 +261,4 @@ document.addEventListener("DOMContentLoaded", function() {
         applyShaderClass(savedValue);
     }
     checkContent();
-    checkCache();
 })
