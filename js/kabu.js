@@ -145,9 +145,6 @@ async function loadGame(gameName) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
         }
-        if (parseInt(localStorage.getItem("autoStateCheck") | 1) === 1) {
-            document.getElementById("autoStateCheck").checked = true;
-        }
         setInterval(() => {saveStatePeriodically()}, 10000);
         setInterval(() => {saveStateInCloud()}, 180000);
     } catch (error) {
@@ -499,10 +496,6 @@ document.addEventListener("DOMContentLoaded", function() {
         romInput.accept = ".gba,.gbc,.gb";
         upLoadFile.accept = ".gba,.gbc,.gb,.sav,.ss0,.ss1,.ss2,.ss3,.cheats";
         led(parseInt(localStorage.getItem("slotStateSaved")));
-        if (parseInt(localStorage.getItem("autoStateCheck") | 1) === 1) {
-            autoStateCheck.checked = true;
-        }
-        
         ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
             const element = document.getElementById(buttonId);
             let currentButton = null;
@@ -591,6 +584,13 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             // Joystick
         })
+        if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
+            document.getElementById("autoStateCheck").checked = true;
+        } else {
+            document.getElementById("autoStateCheck").checked = false;
+            const autoStateCheck = 0
+            localStorage.setItem("autoStateCheck", autoStateCheck)
+        }
     },0);
     handleDropboxCallback();
 })
@@ -637,11 +637,10 @@ loadStateButton.addEventListener("click", function() {
 saveStateButton.addEventListener("click", function() {
     clickState++;
     if (clickState === 2) {
-        if (parseInt(localStorage.getItem("autoStateCheck") || 1) === 1) {
+        if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 3) + 1) || 1;
             saveState(slotStateNumbers);
             notiMessage(`Saved State in Slot [${slotStateNumbers}]`, 1500);
-            console.log("slotStateNumbers",slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
@@ -695,12 +694,14 @@ autoStateCheck.addEventListener("click", function() {
     if (this.checked) {
         const autoStateCheck = 1
         localStorage.setItem("autoStateCheck", autoStateCheck)
-        notiMessage("Auto Switches Slots", 2000);
+        console.log("autoStateCheck",parseInt(localStorage.getItem("autoStateCheck")))
+        notiMessage("Auto Switches Slots", 1500);
 
     } else {
         const autoStateCheck = 0
         localStorage.setItem("autoStateCheck", autoStateCheck)
-        notiMessage("Manual Switches Slots", 2000);
+        console.log("autoStateCheck",parseInt(localStorage.getItem("autoStateCheck")))
+        notiMessage("Manual Switches Slots", 1500);
     }
 })
 //Buton Cheats
