@@ -187,7 +187,6 @@ async function saveStatePeriodically() {
         await Module.saveState(0);
         await Module.FSSync();
         await screenShot(0);
-        notiMessage(`Saved [${++countAutoSave}] times`, 1500)
         console.log(`Auto save ${++countAutoSave} time(s)`);
     } catch (error) {
         console.error("Error saveStatePeriodically: ", error);
