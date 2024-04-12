@@ -67,19 +67,26 @@ function delay(ms) {
 //Led Notification
 async function led(slotStateNumbers) {
     try {
-        if (slotStateNumbers===1) {
+        if (slotStateNumbers === 1) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "#78C850";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-        } else if(slotStateNumbers===2) {
+        } else if(slotStateNumbers === 2) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led02").style.fill = "#78C850";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+        } else if(slotStateNumbers === 3) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-        } else if(slotStateNumbers===3) {
-            document.getElementById("led03").style.fill = "#78C850";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "#78C850";
+        }else {
+            document.getElementById("led00").style.fill = "#78C850";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-        }else if(slotStateNumbers===0) {
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
         }
     } catch (error) {
         console.error("Error Led:", error);
@@ -134,13 +141,10 @@ async function loadGame(gameName) {
                 if (confirm("Do you want to load save state?")) {
                     await Module.loadState(0);
                 }
-                await statusShow();
         } else {
             await Module.loadGame(`/data/games/${gameName}`);
-            await statusShow();
         }
-        await delay(1500);
-        await led(slotStateSaved);
+        await statusShow();
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
@@ -172,16 +176,17 @@ async function loadState(slot) {
 }
 //Auto Save Game In Local Every 10s
 async function saveStatePeriodically() {
+    const slotState = parseInt(localStorage.getItem("slotStateSaved"));
+    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
     try {
-        const slotState = parseInt(localStorage.getItem("slotStateSaved"));
-        const ledId = slotState === 1 ? "led01" : (slotState === 2 ? "led02" : "led03");
-        for (let i = 1; i <= 3; i++) {
+        for (let i = 0; i <= 3; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
         document.getElementById(ledId).style.fill = "#78C850";
-        await saveState(0);
-        notiMessage(`Saved [${++countUpload}] time`, 1500)
+        await Module.saveState(0);
+        await Module.FSSync();
+        await screenShot(0);
         console.log(`Auto save ${++countAutoSave} time(s)`);
     } catch (error) {
         console.error("Error saveStatePeriodically: ", error);
@@ -193,10 +198,10 @@ async function saveStateInCloud() {
         const gameName = localStorage.getItem("gameName");
         const stateName = gameName.replace(".gba", ".ss0");
         const uId = localStorage.getItem("uId");
-        const ledId = slotState === 1 ? "led01" : (slotState === 2 ? "led02" : "led03");
+        const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
         if (navigator.onLine) {
             if (uId) {
-                for (let i = 1; i <= 3; i++) {
+                for (let i = 0; i <= 3; i++) {
                     document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
                 }
                 await delay(1000); 
