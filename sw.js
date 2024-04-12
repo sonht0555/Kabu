@@ -1,11 +1,10 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
 workbox.setConfig({ debug: false });
-let revision = 'v1.0';
+let revision = '5';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
-  { url: '/', revision: revision },
   { url: './css/main.css', revision: revision },
   { url: './font/04b03b.ttf', revision: revision },
   { url: './font/Tuson.ttf', revision: revision },
