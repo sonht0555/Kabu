@@ -5,7 +5,7 @@ let revision = 'v1.0';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
-  { url: '/', revision: 'revision' },
+  { url: '/', revision: revision },
   { url: './css/main.css', revision: revision },
   { url: './font/04b03b.ttf', revision: revision },
   { url: './font/Tuson.ttf', revision: revision },
