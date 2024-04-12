@@ -181,7 +181,7 @@ async function saveStatePeriodically() {
         await delay(1000); 
         document.getElementById(ledId).style.fill = "#78C850";
         await saveState(0);
-        notiMessage(`Auto save [${++countUpload}] time`, 1500)
+        notiMessage(`Saved [${++countUpload}] time`, 1500)
         console.log(`Auto save ${++countAutoSave} time(s)`);
     } catch (error) {
         console.error("Error saveStatePeriodically: ", error);
