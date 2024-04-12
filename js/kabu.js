@@ -194,13 +194,13 @@ async function saveStateInCloud() {
         const stateName = gameName.replace(".gba", ".ss0");
         const uId = localStorage.getItem("uId");
         const ledId = slotState === 1 ? "led01" : (slotState === 2 ? "led02" : "led03");
-        for (let i = 1; i <= 3; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        await delay(1000); 
-        document.getElementById(ledId).style.fill = "#E0C068";
         if (navigator.onLine) {
             if (uId) {
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+                }
+                await delay(1000); 
+                document.getElementById(ledId).style.fill = "#E0C068";
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
                 notiMessage(`Upload in Cloud [${++countUpload}] time`, 1500)
