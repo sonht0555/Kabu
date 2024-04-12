@@ -236,14 +236,24 @@ ids.forEach(function(id) {
 touchedID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
-        button.addEventListener("touchstart", function() {
-            button.classList.add("touched");
-        });
-        button.addEventListener("touchend", function() {
-            button.classList.remove("touched");
-        });
+        if (id === 'saveStateButton' || id === 'loadStateButton') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-1");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-1");
+            });
+        } else {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched");
+            });
+        }
     }
-})
+});
+
 //Button Reset
 restart.addEventListener("click", function() {
     window.location.href = window.location.href;
