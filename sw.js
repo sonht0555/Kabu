@@ -1,37 +1,30 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+
+workbox.setConfig({ debug: false });
+let revision = 'v1.0';
+revision = (parseInt(revision) + 1).toString();
+
 workbox.precaching.precacheAndRoute([
-  { url: './css/main.css', revision: null },
-  { url: './font/04b03b.ttf', revision: null },
-  { url: './font/Tuson.ttf', revision: null },
-  { url: './img/favi.png', revision: null },
-  { url: './img/icon.png', revision: null },
-  { url: './js/cloud.js', revision: null },
-  { url: './js/global.js', revision: null },
-  { url: './js/kabu.js', revision: null },
-  { url: './js/mgba.js', revision: null },
-  { url: './js/mgba.wasm', revision: null },
-  { url: './js/nip.js', revision: null },
-  { url: './index.html', revision: null },
-  { url: './manifest.json', revision: null },
-  { url: './sw.js', revision: null },
+  { url: '/', revision: 'revision' },
+  { url: './css/main.css', revision: revision },
+  { url: './font/04b03b.ttf', revision: revision },
+  { url: './font/Tuson.ttf', revision: revision },
+  { url: './img/favi.png', revision: revision },
+  { url: './img/icon.png', revision: revision },
+  { url: './js/cloud.js', revision: revision },
+  { url: './js/global.js', revision: revision },
+  { url: './js/kabu.js', revision: revision },
+  { url: './js/mgba.js', revision: revision },
+  { url: './js/mgba.wasm', revision: revision },
+  { url: './js/nip.js', revision: revision },
+  { url: './sw.js', revision: revision },
+  { url: './index.html', revision: revision },
+  { url: './manifest.json', revision: revision },
 ]);
 
 workbox.routing.registerRoute(
-  new workbox.routing.NavigationRoute(
-    new workbox.strategies.StaleWhileRevalidate()
-  )
+  /\.(?:css|ttf|png|js|wasm|html|json)$/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'static-resources',
+  })
 );
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== workbox.core.cacheNames.runtime) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-});
