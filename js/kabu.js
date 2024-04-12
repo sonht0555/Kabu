@@ -187,6 +187,7 @@ async function saveStatePeriodically() {
         await Module.saveState(0);
         await Module.FSSync();
         await screenShot(0);
+        notiMessage(`Saved [${++countAutoSave}] times`, 1500)
         console.log(`Auto save ${++countAutoSave} time(s)`);
     } catch (error) {
         console.error("Error saveStatePeriodically: ", error);
@@ -208,7 +209,7 @@ async function saveStateInCloud() {
                 document.getElementById(ledId).style.fill = "#E0C068";
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
-                notiMessage(`Upload in Cloud [${++countUpload}] time`, 1500)
+                notiMessage(`Upload in Cloud [${++countUpload}] times`, 1500)
                 console.log(`Auto upload in Cloud ${++countUpload} time(s)`);
             } else {
                 console.log("Unable to upload to Cloud!");

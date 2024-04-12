@@ -253,7 +253,6 @@ touchedID.forEach(function(id) {
         }
     }
 });
-
 //Button Reset
 restart.addEventListener("click", function() {
     window.location.href = window.location.href;
