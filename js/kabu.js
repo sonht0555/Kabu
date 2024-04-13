@@ -4,8 +4,8 @@ let clickState = 0;
 let countAutoSave = 0;
 let countUpload = 0;
 var timeoutId;
-var clientId = 'knh3uz2mx2hp2eu'; // App Key
-var clientSecret = 'nwb3dnfh09rhs31'; // App Secret
+var clientId = 'knh3uz2mx2hp2eu';
+var clientSecret = 'nwb3dnfh09rhs31';
 const dropboxCloud = document.getElementById("dropboxCloud");
 const storage = document.getElementById("storage");
 const intro = document.getElementById("intro");
@@ -103,6 +103,7 @@ async function romList() {
             div.className = "flex-1";
             romlist.appendChild(div);
             div.textContent = gameName;
+            //div.textContent = gameName.substring(0, gameName.lastIndexOf('.'));
             div.onclick = () => {
                 loadGame(gameName);
                 localStorage.setItem("gameName", gameName);
@@ -127,7 +128,6 @@ async function inputGame(InputFile) {
 async function loadGame(gameName) {
     try {
         localStorage.setItem("gameName", gameName);
-        const slotStateSaved = localStorage.getItem("slotStateSaved");
         const stateName = gameName.replace(/\.(gba|gbc|gb)$/, ".ss0");
         const statesList = Module.listStates();
         intro.classList.add("disable");
