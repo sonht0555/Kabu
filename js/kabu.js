@@ -149,8 +149,8 @@ async function loadGame(gameName) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
         }
-        setInterval(() => {saveStatePeriodically()}, 10000);
-        setInterval(() => {saveStateInCloud()}, 180000);
+        setInterval(() => {saveStatePeriodically()}, 60000);
+        setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
         console.error("Error loadGame:", error);
     }
