@@ -4,6 +4,7 @@ let clickState = 0;
 let countAutoSave = 0;
 let countUpload = 0;
 var timeoutId;
+let clickTimer;
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
 const dropboxCloud = document.getElementById("dropboxCloud");
@@ -52,7 +53,6 @@ async function statusShow() {
             localStorage.setItem("internetStatus", "on");
             console.log("Have internet!")
         } else {
-            await notiMessage("Kabu v1.01", 1500);
             localStorage.setItem("internetStatus", "off");
         }
     } catch (error) {
@@ -149,7 +149,7 @@ async function loadGame(gameName) {
             await turboF(turboState);
         }
         await delay(1500);
-        await notiMessage("Kabu v1.01", 3000);
+        await notiMessage("Kabu v1.02", 3000);
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
@@ -385,8 +385,11 @@ function createElementStorage(parent, fileName, filePart) {
         deleteButton.classList.add("delete", "bc");
         actionDiv.appendChild(deleteButton);
         deleteButton.onclick = async () => {
-            if (window.confirm("Delete this file? " + fileName)) {
+            if (window.confirm("Delete this file? " + fileName + "and" + fileName.slice(-1))) {
+                const romName = fileName.replace(/\....$/, ".gba");
                 Module.deleteFile(filePart);
+                localStorage.removeItem(`${romName}_dateState${fileName.slice(-1)}`);
+                localStorage.removeItem(`${romName}_imageState${fileName.slice(-1)}`);
                 setTimeout(() => {Module.FSSync()},500);
                 localStorageFile();
                 dialog.close();
@@ -441,6 +444,7 @@ function localStorageFile() {
 //Load States In Page
 function LoadstateInPage(saveSlot, divs, dateState) {
     const imageStateDiv = document.getElementById(divs);
+    const getNameRom = localStorage.getItem("gameName");
     imageStateDiv.onclick = () => {
         const stateList = document.getElementById("stateList");
         stateList.classList.toggle("visible");
@@ -452,10 +456,30 @@ function LoadstateInPage(saveSlot, divs, dateState) {
             localStorage.setItem("slotStateSaved", saveSlot)
         }, 100);
     };
+    imageStateDiv.addEventListener("touchstart", function() {
+        const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(function() {
+            console.log(stateName)
+            Module.deleteFile(`/data/states/${stateName}`);
+            localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
+            localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
+            setTimeout(() => {
+                while (imageStateDiv.firstChild) {
+                    imageStateDiv.removeChild(imageStateDiv.firstChild);
+                }
+                const data = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
+                const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
+                let image = new Image();
+                image.src = data;
+                imageStateDiv.appendChild(image);
+                document.getElementById(dateState).textContent = date;
+            }, 100);
+        }, 3000);
+    });
     while (imageStateDiv.firstChild) {
         imageStateDiv.removeChild(imageStateDiv.firstChild);
     }
-    const getNameRom = localStorage.getItem("gameName");
     if (!getNameRom) {
         console.error("No game name identified.");
         return;
@@ -1033,4 +1057,3 @@ dropboxCloud.addEventListener("click", function() {
         }
     }
 });
-
