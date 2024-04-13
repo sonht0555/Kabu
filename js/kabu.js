@@ -149,7 +149,7 @@ async function loadGame(gameName) {
             await turboF(turboState);
         }
         await delay(1500);
-        await notiMessage("Kabu v1.03", 3000);
+        await notiMessage("Kabu v1.04", 3000);
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
@@ -445,20 +445,23 @@ function localStorageFile() {
 function LoadstateInPage(saveSlot, divs, dateState) {
     const imageStateDiv = document.getElementById(divs);
     const getNameRom = localStorage.getItem("gameName");
+    const stateList = document.getElementById("stateList");
+    const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
+
     imageStateDiv.onclick = () => {
-        if (confirm("Do you want to load save state?")) {
-            const stateList = document.getElementById("stateList");
-            stateList.classList.toggle("visible");
-            statePageButton.classList.toggle("active");
-            led(saveSlot);
-            notiMessage(`Loaded State in Slot [${saveSlot}]`, 2000);
-            setTimeout(() => {
-                loadState(saveSlot);
-                localStorage.setItem("slotStateSaved", saveSlot)
-            }, 100);
-        } else {
-            const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
-            clearTimeout(clickTimer);
+        stateList.classList.toggle("visible");
+        statePageButton.classList.toggle("active");
+        led(saveSlot);
+        notiMessage(`Loaded State in Slot [${saveSlot}]`, 2000);
+        setTimeout(() => {
+            loadState(saveSlot);
+            localStorage.setItem("slotStateSaved", saveSlot)
+        }, 100);
+    };
+
+    imageStateDiv.addEventListener("touchstart", function() {
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(function() {
             Module.deleteFile(`/data/states/${stateName}`);
             localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
             localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
@@ -473,8 +476,13 @@ function LoadstateInPage(saveSlot, divs, dateState) {
                 imageStateDiv.appendChild(image);
                 document.getElementById(dateState).textContent = date;
             }, 100);
-        }
-    };
+        }, 3000);
+    });
+
+    imageStateDiv.addEventListener("touchend", function() {
+        clearTimeout(clickTimer);
+    });
+
     while (imageStateDiv.firstChild) {
         imageStateDiv.removeChild(imageStateDiv.firstChild);
     }
