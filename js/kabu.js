@@ -289,6 +289,7 @@ async function downloadFile(filepath, filename) {
 }
 //Notification Message
 async function notiMessage(messageContent, second) {
+    const gameName = localStorage.getItem("gameName");
     var message = document.getElementById("noti-mess");
     if (message.style.opacity === "0.4") {
       clearTimeout(timeoutId);
@@ -297,7 +298,7 @@ async function notiMessage(messageContent, second) {
     message.textContent = messageContent;
     message.style.opacity = "0.4";
     timeoutId = setTimeout(() => {
-      message.textContent = localStorage.getItem("gameName");
+      message.textContent = gameName.substring(0, gameName.lastIndexOf('.'));
       message.style.opacity = "0.2";
     }, second);
 }
@@ -471,6 +472,7 @@ function LoadstateInPage(saveSlot, divs, dateState) {
                 }
                 const data = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
                 const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
+                notiMessage("Deleted State!", 2000);
                 let image = new Image();
                 image.src = data;
                 imageStateDiv.appendChild(image);
