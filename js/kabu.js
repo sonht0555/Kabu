@@ -47,15 +47,14 @@ async function startGBA(Module) {
 async function statusShow() {
     try {
         if(navigator.onLine){
-            await notiMessage("Have internet!", 3000);
+            await notiMessage("Have internet!", 1500);
             await delay(1000);
             localStorage.setItem("internetStatus", "on");
             console.log("Have internet!")
         } else {
-            await notiMessage("No internet!", 3000);
+            await notiMessage("Kabu v1.01", 1500);
             localStorage.setItem("internetStatus", "off");
         }
-
     } catch (error) {
         console.error("Error starting statusShow:", error);
     }
@@ -149,6 +148,8 @@ async function loadGame(gameName) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
         }
+        await delay(1500);
+        await notiMessage("Kabu v1.01", 3000);
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
