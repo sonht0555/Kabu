@@ -1,4 +1,5 @@
 import mGBA from "./mgba.js";
+let gameVer = 'Kabu v1.00';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -31,6 +32,7 @@ const statesFile = document.getElementById("statesFile");
 const saveCheatsButton = document.getElementById("saveCheat");
 const Module = {canvas: document.getElementById("canvas")};
 const dropboxRestore = document.getElementById("dropboxRestore");
+const stateList = document.getElementById("stateList");
 /*----------------BackEnd----------------*/
 startGBA(Module)
 //Start GBA
@@ -149,7 +151,7 @@ async function loadGame(gameName) {
             await turboF(turboState);
         }
         await delay(1500);
-        await notiMessage("Kabu v1.04", 3000);
+        await notiMessage(gameVer, 3000);
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
@@ -446,14 +448,23 @@ function localStorageFile() {
 function LoadstateInPage(saveSlot, divs, dateState) {
     const imageStateDiv = document.getElementById(divs);
     const getNameRom = localStorage.getItem("gameName");
-    const stateList = document.getElementById("stateList");
+    const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
     const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
+    const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || noneImage;
+    const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
+    while (imageStateDiv.firstChild) {
+        imageStateDiv.removeChild(imageStateDiv.firstChild);
+    }
+    let image = new Image();
+    image.src = data;
+    imageStateDiv.appendChild(image);
+    document.getElementById(dateState).textContent = date;
 
     imageStateDiv.onclick = () => {
         stateList.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
-        notiMessage(`Loaded State in Slot [${saveSlot}]`, 2000);
+        notiMessage(`Loaded State [${saveSlot}]`, 2000);
         setTimeout(() => {
             loadState(saveSlot);
             localStorage.setItem("slotStateSaved", saveSlot)
@@ -461,43 +472,31 @@ function LoadstateInPage(saveSlot, divs, dateState) {
     };
 
     imageStateDiv.addEventListener("touchstart", function() {
-        clearTimeout(clickTimer);
-        clickTimer = setTimeout(function() {
-            Module.deleteFile(`/data/states/${stateName}`);
-            localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
-            localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
-            setTimeout(() => {
-                while (imageStateDiv.firstChild) {
-                    imageStateDiv.removeChild(imageStateDiv.firstChild);
-                }
-                const data = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
-                const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
-                notiMessage("Deleted State!", 2000);
-                let image = new Image();
-                image.src = data;
-                imageStateDiv.appendChild(image);
-                document.getElementById(dateState).textContent = date;
-            }, 100);
-        }, 3000);
+        if (localStorage.getItem(`${getNameRom}_imageState${saveSlot}`)) {
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(function() {
+                Module.deleteFile(`/data/states/${stateName}`);
+                localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
+                localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
+                setTimeout(() => {
+                    while (imageStateDiv.firstChild) {
+                        imageStateDiv.removeChild(imageStateDiv.firstChild);
+                    }
+                    notiMessage("Deleted State!", 2000);
+                    let image = new Image();
+                    image.src = noneImage;
+                    imageStateDiv.appendChild(image);
+                    document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
+                }, 200);
+            }, 3000);
+        } else {
+            console.log ("Do not have State!")
+        }
     });
 
     imageStateDiv.addEventListener("touchend", function() {
         clearTimeout(clickTimer);
     });
-
-    while (imageStateDiv.firstChild) {
-        imageStateDiv.removeChild(imageStateDiv.firstChild);
-    }
-    if (!getNameRom) {
-        console.error("No game name identified.");
-        return;
-    }
-    const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
-    const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
-    let image = new Image();
-    image.src = data;
-    imageStateDiv.appendChild(image);
-    document.getElementById(dateState).textContent = date;
 }
 //Capture Screenshot
 async function screenShot(saveSlot) {
@@ -666,7 +665,7 @@ loadStateButton.addEventListener("click", function() {
     if (clickState === 2) {
         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
         loadState(slotStateNumbers);
-        notiMessage(`Loaded State in Slot [${slotStateNumbers}]`, 1500);
+        notiMessage(`Loaded State [${slotStateNumbers}]`, 1500);
     }
     setTimeout(() => {
         clickState = 0
@@ -679,12 +678,12 @@ saveStateButton.addEventListener("click", function() {
         if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 3) + 1) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State in Slot [${slotStateNumbers}]`, 1500);
+            notiMessage(`Saved State [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State in Slot [${slotStateNumbers}]`, 1500);
+            notiMessage(`Saved State [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
         }
     }
@@ -724,7 +723,6 @@ statePageButton.addEventListener("click", function() {
     LoadstateInPage(1, "state01", "dateState01")
     LoadstateInPage(2, "state02", "dateState02")
     LoadstateInPage(3, "state03", "dateState03")
-    const stateList = document.getElementById("stateList");
     stateList.classList.toggle("visible");
     statePageButton.classList.toggle("active");
 })
@@ -777,7 +775,6 @@ SDL2ID.forEach(function(id) {
     if(button) {
         button.addEventListener("touchstart", function() {
             Module.SDL2();
-            const stateList = document.getElementById("stateList");
             if (listPad.classList.contains("active")) {
                 listPad.classList.remove("active");
                 listPad.classList.add("inactive");
