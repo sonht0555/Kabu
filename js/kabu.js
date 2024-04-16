@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'Kabu v1.00';
+let gameVer = 'Ver1.02';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -33,9 +33,12 @@ const saveCheatsButton = document.getElementById("saveCheat");
 const Module = {canvas: document.getElementById("canvas")};
 const dropboxRestore = document.getElementById("dropboxRestore");
 const stateList = document.getElementById("stateList");
+const mgbaStorage = document.getElementById("mgba-storage");
+const appVer = document.getElementById("appVer");
 /*----------------BackEnd----------------*/
 startGBA(Module)
-//Start GBA
+appVer.textContent = gameVer
+//Start GBA 
 async function startGBA(Module) {
     try {
         const moduleInstance = await mGBA(Module);
@@ -362,21 +365,23 @@ function createElementStorage(parent, fileName, filePart) {
         dialog.onclose = () => dialog.remove();
         parent.appendChild(dialog);
         const back = document.createElement("div");
-        back.classList.add("storage");
+        back.classList.add("storage", "right");
         dialog.appendChild(back);
         const closeButton = document.createElement("div");
         closeButton.classList.add("home", "bc");
         back.appendChild(closeButton);
+        mgbaStorage.classList.add("opacity0");
         closeButton.onclick = () => {
             dialog.close();
             dialog.remove();
+            mgbaStorage.classList.remove("opacity0");
         };
         const Name = document.createElement("div");
         Name.classList.add("flex-1", "rom-item", "hw", "cw");
         Name.textContent = fileName;
         dialog.appendChild(Name);
         const actionDiv = document.createElement("div");
-        actionDiv.classList.add("actionDiv", "hw", "cw");
+        actionDiv.classList.add("actionDiv", "hw", "cw", "gap-16");
         dialog.appendChild(actionDiv);
         const downloadButton = document.createElement("div");
         downloadButton.classList.add("download", "bc");
@@ -388,7 +393,7 @@ function createElementStorage(parent, fileName, filePart) {
         deleteButton.classList.add("delete", "bc");
         actionDiv.appendChild(deleteButton);
         deleteButton.onclick = async () => {
-            if (window.confirm("Delete this file? " + fileName + "and" + fileName.slice(-1))) {
+            if (window.confirm("Delete this file?" + fileName)) {
                 const romName = fileName.replace(/\....$/, ".gba");
                 Module.deleteFile(filePart);
                 localStorage.removeItem(`${romName}_dateState${fileName.slice(-1)}`);
@@ -397,19 +402,21 @@ function createElementStorage(parent, fileName, filePart) {
                 localStorageFile();
                 dialog.close();
                 dialog.remove();
+                mgbaStorage.classList.remove("opacity0");
             }
         };
         const renameButton = document.createElement("div");
         renameButton.classList.add("rename", "bc");
         actionDiv.appendChild(renameButton);
         renameButton.onclick = async () => {
-            const newFilename = window.prompt("Edit filename for " + fileName, fileName);
+            const newFilename = window.prompt("Edit filename", fileName);
             if (newFilename !== null) {
                 Module.editFileName(filePart, fileName, newFilename);
                 setTimeout(() => {Module.FSSync()},500);
                 localStorageFile();
                 dialog.close();
                 dialog.remove();
+                mgbaStorage.classList.remove("opacity0");
             }
         };
         dialog.showModal();
@@ -702,6 +709,12 @@ backToHome.addEventListener("click", function() {
     storage.classList.add("disable");
     intro.classList.remove("disable");
     ingame.classList.add("disable");
+    while (romlist.firstChild) {
+        romlist.removeChild(romlist.firstChild);
+    }
+    setTimeout(() => {
+        romList();
+    },100);
 })
 //Buton Open Local Storage
 openLocalStorage.addEventListener("click", function() {
@@ -709,6 +722,7 @@ openLocalStorage.addEventListener("click", function() {
     storage.classList.remove("disable");
     intro.classList.add("disable");
     ingame.classList.add("disable");
+
     if (uId === null || uId === "") {
         dropboxRestore.classList.remove("active");
         dropboxCloud.classList.remove("active");
