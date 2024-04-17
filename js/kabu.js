@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'Ver1.02';
+let gameVer = 'Ver1.03';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;

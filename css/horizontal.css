@@ -1,0 +1,43 @@
+.shader, .message-container, .canvas, .canvas-container{
+    max-width: 480px !important;
+    max-height: 320px !important;
+}
+.dynamic, .target-boxes {
+    display: none;
+}
+.emu-canvas {
+    max-width: 480px !important;
+    max-height: 336px !important;
+}
+.emu-display {
+    width:100vw;
+    max-height: 336px !important;
+}
+.in-game {
+    margin: 0px -16px -16px -16px;
+    width: 100vw;
+    height: 100vh;
+}
+.dpad-l, .dpad-r {
+    width: 44px;
+}
+.emu {
+    gap:8px;
+    position: absolute;
+    height: 336px !important;
+}
+.gap-30 {
+    gap:8px;
+}
+.gap-16 {
+    gap:8px;
+}
+.roni, .notification-container{
+    width: 480px !important;
+}
+.emu-control{
+    width:100vw;  
+    background-color: rgba(255, 255, 245, 0);
+    margin: 0px;
+    padding: 0px;
+}

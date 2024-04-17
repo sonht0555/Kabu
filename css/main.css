@@ -158,7 +158,7 @@ label {
   border-radius: 0px !important;
 }
 #target-boxes {
-  margin-top: -15px;
+  margin-top: -16px;
   transition: margin-top 0.5s;
 }
 @keyframes fadeOut {
