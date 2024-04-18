@@ -201,12 +201,16 @@
         </div>
     </div>
     <div class="between column localStorage disable" id="storage">
-        <div class="storage between">
-            <div class="cloud-dropbox bc" id="dropboxCloud"></div>
-            <div class="cloud-restore bc" id="dropboxRestore"></div>
-            <label class="upload-file bc" for="upLoadFile"></label>
+        <div class="storage gap-10">
+            <div class="flex-1 home bc" id="backToHome"></div>
+            <label class="flex-1 upload-file bc" for="upLoadFile"></label>
+            <div class="flex-1 gap-10">
+                <div class="flex-1 cloud-restore" id="dropboxRestore"></div>
+                <div class="flex-1 cloud-backup" id="dropboxBackup"></div>
+            </div>
+            <div class="flex-1 cloud-dropbox" id="dropboxCloud"></div>
             <input type="file" id="upLoadFile" hidden />
-            <div class="home bc" id="backToHome"></div>
+        
         </div>
         <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
             <div class="flex-1 rom-item">ROM file.</div>
@@ -257,6 +261,12 @@
             <path id="path-2" opacity="0.4" d="M4 12V10H6V12H4Z" fill="#FFFFF5"/>
             <path id="path-3" opacity="0.4" d="M8 12V10H10V12H8Z" fill="#FFFFF5"/>
         </svg>
+    </div>
+    <div class="lockNoti column cw ch disable" id="lockNoti">
+        <div class="flex-1"></div>
+        <span class="" id="notiTitle"></span></br>
+        <span class="" id="notiDetail" style="opacity: 0.4"></span>
+        <div class="flex-1"></div>
     </div>
 
   
