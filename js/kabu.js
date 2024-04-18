@@ -107,7 +107,7 @@ async function romList() {
         for (const gameName of listRoms) {
             const div = document.createElement("div");
             div.className = "flex-1";
-            romlist.appendChild(div);
+            romlist.insertBefore(div, romlist.firstChild);
             div.textContent = gameName;
             //div.textContent = gameName.substring(0, gameName.lastIndexOf('.'));
             div.onclick = () => {
@@ -865,7 +865,7 @@ async function getAccessToken(authorizationCode) {
 }
 //Cloud Refresh Token 
 async function dpRefreshToken() {
-	console.log("Refreshing token...");
+    await lockNoti("", "Refreshing token...", 3000)
 	if (!(localStorage.getItem("refreshToken"))) {
 		throw "No refresh token";
 	}
@@ -882,7 +882,7 @@ async function dpRefreshToken() {
 		const data = await response.json();
 		if (!data.error) {
 			localStorage.setItem("accessToken", data.access_token);
-            console.log("New Access Token",data.access_token);
+            await lockNoti("", "New access token!", 3000)
 			return true;
 		} else {
 			alert(data.error_description || "Failed to refresh Dropbox token.");
@@ -1037,8 +1037,8 @@ dropboxRestore.addEventListener("click", async function() {
                 if (window.confirm(confirmMessage)) {
                     for (const entry of data.entries) {
                         if (entry[".tag"] === "file") {
+                            await lockNoti("Restoring...", entry.name, 3000)
                             await dpDownloadFile(entry.name);
-                            lockNoti("Restoring..", entry.name, 3000)
                         }
                     }
                 } else {
@@ -1071,8 +1071,8 @@ dropboxBackup.addEventListener("click", async function() {
                 for (const fileName of fileList) {
                     const fileData = await Module.downloadFile(`/data/${directory}/${fileName}`);
                     try {
+                        await lockNoti("Backing up...", fileName, 3000)
                         await dpUploadFile(fileName, fileData);
-                        console.log(`Uploaded file ${fileName}:`);
                     } catch (error) {
                         console.error(`Failed to upload file ${fileName}:`, error);
                     }
@@ -1088,7 +1088,7 @@ dropboxCloud.addEventListener("click", function() {
     if (uId === null || uId === "") {
         authorizeWithDropbox();
     } else {
-        if (window.confirm(`Do you want to logout ID:${uId}?`)) {
+        if (window.confirm(`Do you want to logout?`)) {
             localStorage.setItem("uId", "");
             dropboxRestore.classList.remove("active");
             dropboxBackup.classList.remove("active");
@@ -1105,8 +1105,8 @@ async function lockNoti(title, detail, second) {
     }
     notiTitle.textContent = title;
     notiDetail.textContent = detail;
-    lockNoti.classList.remove("disable");
+    lockNoti.classList.remove("visible");
     lockNotiTime = setTimeout(() => {
-        lockNoti.classList.add("disable");
+        lockNoti.classList.add("visible");
     }, second);
 }

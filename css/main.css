@@ -1028,6 +1028,6 @@ rect {
   opacity: 0;
   pointer-events: none;
 }
-#stateList{
+#stateList, #lockNoti{
   transition: opacity 0.5s ease-in-out;
 }
