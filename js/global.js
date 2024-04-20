@@ -51,22 +51,22 @@ function notiMessage(messageContent, second) {
 //Position Adjustment
 function positionAdjustment(stateAdj) {
     const states = [{
-            marginTop: "0px",
+            paddingTop: "0px",
             rectOpacity: [1, 1, 1],
             GOpacity: [0, 0, 0, 1]
         },
         {
-            marginTop: "40px",
+            paddingTop: "40px",
             rectOpacity: [0.4, 1, 1],
             GOpacity: [0, 0, 1, 0]
         },
         {
-            marginTop: "80px",
+            paddingTop: "80px",
             rectOpacity: [0.4, 0.4, 1],
             GOpacity: [0, 1, 0, 0]
         },
         {
-            marginTop: "120px",
+            paddingTop: "120px",
             rectOpacity: [0.4, 0.4, 0.4],
             GOpacity: [1, 0, 0, 0]
         }
@@ -74,7 +74,7 @@ function positionAdjustment(stateAdj) {
     if (stateAdj >= 1 && stateAdj <= 4) {
         const state = states[stateAdj - 1];
         document.querySelectorAll(".target-boxes").forEach(function(element, index) {
-            element.style.setProperty("margin-top", state.marginTop);
+            element.style.setProperty("padding-top", state.paddingTop);
         });
         document.getElementById("rect1").style.setProperty("opacity", state.rectOpacity[0]);
         document.getElementById("rect2").style.setProperty("opacity", state.rectOpacity[1]);

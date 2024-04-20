@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.05';
+let gameVer = 'V1.06';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -218,6 +218,7 @@ async function saveStateInCloud() {
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
                 notiMessage(`Upload in Cloud [${++countUpload}] times`, 1500)
                 console.log(`Auto upload in Cloud ${++countUpload} time(s)`);
+                await lockNoti("", `Cloud upload ${++countUpload} time(s)`, 2000)
             } else {
                 console.log("Unable to upload to Cloud!");
             }
@@ -865,11 +866,9 @@ async function getAccessToken(authorizationCode) {
 }
 //Cloud Refresh Token 
 async function dpRefreshToken() {
-    await lockNoti("", "Refreshing token...", 3000)
 	if (!(localStorage.getItem("refreshToken"))) {
 		throw "No refresh token";
 	}
-
 	try {
 		const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
 			method: 'POST',
@@ -882,7 +881,8 @@ async function dpRefreshToken() {
 		const data = await response.json();
 		if (!data.error) {
 			localStorage.setItem("accessToken", data.access_token);
-            await lockNoti("", "New access token!", 3000)
+            await lockNoti("", "Refreshing token...", 2000)
+            await delay(2000);
 			return true;
 		} else {
 			alert(data.error_description || "Failed to refresh Dropbox token.");
