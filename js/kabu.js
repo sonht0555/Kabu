@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.06';
+let gameVer = 'V1.07';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -10,6 +10,7 @@ let clickTimer;
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
 const dropboxCloud = document.getElementById("dropboxCloud");
+const input = document.getElementById("input-container");
 const storage = document.getElementById("storage");
 const intro = document.getElementById("intro");
 const ingame = document.getElementById("in-game");
@@ -803,6 +804,7 @@ SDL2ID.forEach(function(id) {
     if(button) {
         button.addEventListener("touchstart", function() {
             Module.SDL2();
+            input.classList.remove("cs22");
             if (listPad.classList.contains("active")) {
                 listPad.classList.remove("active");
                 listPad.classList.add("inactive");

@@ -162,11 +162,6 @@ function checkContent() {
 //Translate Focus
 inputText.addEventListener("focus", function() {
     input.classList.add("cs22");
-    moveCursorToEnd(inputText);
-})
-//Translate Blur
-inputText.addEventListener("blur", function() {
-    input.classList.remove("cs22");
 })
 //Translate Input
 inputText.addEventListener("input", function(event) {
