@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.11';
+let gameVer = 'V1.12';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -56,10 +56,10 @@ async function startGBA(Module) {
 async function statusShow() {
     try {
         if(navigator.onLine){
-            await notiMessage("Have internet!", 1500);
+            await notiMessage("Online!", 1500);
             await delay(1000);
             localStorage.setItem("internetStatus", "on");
-            console.log("Have internet!")
+            console.log("Online!")
         } else {
             localStorage.setItem("internetStatus", "off");
         }
@@ -208,6 +208,8 @@ async function saveStateInCloud() {
         const stateName = gameName.replace(".gba", ".ss0");
         const uId = localStorage.getItem("uId");
         const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
+        const img = localStorage.getItem(`${gameName}_imageState0`);
+        const date = localStorage.getItem(`${gameName}_dateState0`);
         if (navigator.onLine) {
             if (uId) {
                 for (let i = 0; i <= 3; i++) {
@@ -217,14 +219,19 @@ async function saveStateInCloud() {
                 document.getElementById(ledId).style.fill = "#E0C068";
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
-                notiMessage(`Upload in Cloud [${++countUpload}] times`, 1500)
-                console.log(`Auto upload in Cloud ${++countUpload} time(s)`);
+                if (img !== null) {
+                    const textContent = `${img}\n\n${date}`;
+                    const blob = new Blob([textContent], { type: "text/plain" });
+                    await dpUploadFile(`${gameName}_slot0.txt`, blob);
+                } else {
+                    console.log("No screenshot!");
+                }
                 await lockNoti("", `Cloud upload ${++countUpload} time(s)`, 2000)
             } else {
                 console.log("Unable to upload to Cloud!");
             }
         } else {
-            console.log("No internet!");
+            console.log("Online!");
         }        
     } catch (error) {
         console.error("Error saveStateInCloud:", error);
@@ -883,8 +890,8 @@ async function dpRefreshToken() {
 		const data = await response.json();
 		if (!data.error) {
 			localStorage.setItem("accessToken", data.access_token);
-            await lockNoti("", "Refreshing token...", 2000)
-            await delay(2000);
+            await lockNoti("", "Refreshing token...", 3000)
+            await delay(1000);
 			return true;
 		} else {
 			alert(data.error_description || "Failed to refresh Dropbox token.");
@@ -961,12 +968,21 @@ async function dpDownloadFile(fileName) {
         }
 
         const file = new File([await resp.blob()], fileName);
-        Module.uploadSaveOrSaveState(file, () => {
+        if (fileName.endsWith(".txt")) {
+            const textContent = await file.text();
+            const [img, date] = textContent.split("\n\n");
+            const gameName = fileName.substring(0, fileName.lastIndexOf("gba") + 3);
+            const slotNumber = fileName.charAt(fileName.length - 5);
+            localStorage.setItem(`${gameName}_dateState${slotNumber}`, date);
+            localStorage.setItem(`${gameName}_imageState${slotNumber}`, img);
             console.log("Cloud ↦ Kabu storage ◆", file.name);
-            localStorageFile();
-            Module.FSSync();
-        });
-
+        } else {
+            Module.uploadSaveOrSaveState(file, () => {
+                console.log("Cloud ↦ Kabu storage ◆", file.name);
+                localStorageFile();
+                Module.FSSync();
+            });
+        }
         return file;
     }
 
@@ -1075,6 +1091,18 @@ dropboxBackup.addEventListener("click", async function() {
                     try {
                         await lockNoti("Backing up...", fileName, 3000)
                         await dpUploadFile(fileName, fileData);
+                        for (let saveSlot = 0; saveSlot < 4; saveSlot++) {
+                            const getNameRom = fileName.substring(0, fileName.lastIndexOf('.'));
+                            const img = localStorage.getItem(`${getNameRom}.gba_imageState${saveSlot}`);
+                            const date = localStorage.getItem(`${getNameRom}.gba_dateState${saveSlot}`);
+                            if (img !== null) {
+                                const textContent = `${img}\n\n${date}`;
+                                const blob = new Blob([textContent], { type: "text/plain" });
+                                await dpUploadFile(`${getNameRom}.gba_slot${saveSlot}.txt`, blob);
+                            } else {
+                                console.log("No screenshot!");
+                            }
+                        }
                     } catch (error) {
                         console.error(`Failed to upload file ${fileName}:`, error);
                     }
@@ -1112,3 +1140,7 @@ async function lockNoti(title, detail, second) {
         lockNoti.classList.add("visible");
     }, second);
 }
+const tesst = document.getElementById("tesst");
+tesst.addEventListener("click", async function() {
+   
+});
