@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.12';
+let gameVer = 'V1.13';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -1098,6 +1098,7 @@ dropboxBackup.addEventListener("click", async function() {
                             if (img !== null) {
                                 const textContent = `${img}\n\n${date}`;
                                 const blob = new Blob([textContent], { type: "text/plain" });
+                                await lockNoti("Backing up...", `${getNameRom}.gba_slot${saveSlot}.txt`, 3000)
                                 await dpUploadFile(`${getNameRom}.gba_slot${saveSlot}.txt`, blob);
                             } else {
                                 console.log("No screenshot!");
