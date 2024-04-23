@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.14';
+let gameVer = 'V1.15';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -158,6 +158,7 @@ async function loadGame(gameName) {
         }
         await delay(1500);
         await notiMessage(gameVer, 3000);
+        await startTimer();
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
@@ -1139,6 +1140,33 @@ async function lockNoti(title, detail, second) {
         lockNoti.classList.add("visible");
     }, second);
 }
+async function startTimer() {
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+
+    setInterval(function() {
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+        let timeString = hours + "h" + pad(minutes) + "." + pad(seconds);
+        document.getElementById("timer").textContent = timeString;
+    }, 1000);
+}
+
+function pad(number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+    return number;
+}
+
 const tesst = document.getElementById("tesst");
 tesst.addEventListener("click", async function() {
    

@@ -1,265 +1,43 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <meta name="apple-mobile-web-app-capable" content="none" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-      <link rel="stylesheet" type="text/css" href="css/main.css" />
-      <link rel="stylesheet" type="text/css" href="css/horizontal.css" />
-      <link rel="apple-touch-icon" href="img/icon.png" />
-      <link rel="icon" href="img/favi.png" type="image/png" />
-      <link rel="manifest" href="manifest.json" />
-      <title>Kabu</title>
-  </head>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countup Timer</title>
+</head>
 <body>
-    <!-- Layer Ingame -->
-    <button id="est">est</button>
-    <div class="column in-game" id="in-game">
-        <div class="target-boxes" id="target-boxes"></div>
-        <div class="gap-16 emu-display">
-            <div class="flex-1 bc dpad-l disable" id="L">
-                <div class="load-state" id="loadStateButton"></div>
-            </div>
-            <div class="flex-1 column ch" >
-                <div class="notification-container bc">
-                        <svg width="24" height="15" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect id ="led00" x="06" y="8" width="2" height="3" fill="rgba(255, 255, 245, 0.2)"/>
-                            <rect id ="led01" x="10" y="8" width="2" height="3" fill="rgba(255, 255, 245, 0.2)"/>
-                            <rect id ="led02" x="14" y="8" width="2" height="3" fill="rgba(255, 255, 245, 0.2)"/>
-                            <rect id ="led03" x="18" y="8" width="2" height="3" fill="rgba(255, 255, 245, 0.2)"/>
-                        </svg> 
-                        <span id="noti-mess"></span>
-                </div>
-                <div class="flex-1">
-                    <div class="canvas-container cw hw">
-                        <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
-                    </div>
-                    <div class="column message-container">
-                        <div class="flex-1"></div>
-                        <div>
-                            <div id="input-container" class="input-container flex-1" tabindex="0" onclick="document.getElementById('inputText').focus()">
-                                <svg style="padding-top: 4px; padding-right:2px;" width="17" height="11" viewBox="0 0 17 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7 0H6V5H5V6H4V7H3V9H2V8H1V6H2V5H1V6H0V9H1V10H2V11H9V10H10V11H11V0H10V1H9V2H8V1H7V0ZM9 3H10V4H9V3ZM8 3V4H7V3H8Z" fill="#FFFFF5" />
-                                    <path d="M13 10V11H17V10H13Z" fill="#FFFFF5" />
-                                    <rect class="eye-1" width="1" height="1" x="7" y="2" fill="#FFFFF5" />
-                                    <rect class="eye-2" width="1" height="1" x="7" y="4" fill="#FFFFF5" />
-                                    <rect class="eye-1" width="1" height="1" x="9" y="2" fill="#FFFFF5" />
-                                    <rect class="eye-2" width="1" height="1" x="9" y="4" fill="#FFFFF5" />
-                                    <rect class="tail-1" x="2" y="4" width="1" height="1" fill="#FFFFF5" />
-                                    <rect class="tail-2" x="1" y="3" width="1" height="1" fill="#FFFFF5" />
-                                </svg>
-                                <div class="flex-1">
-                                    <div id="inputText" class="inputText" contenteditable="true"></div>
-                                    <div id="caret-tracker">_</div>
-                                </div>
-                                <svg style="padding-top: 4px;" class="disable" width="5" height="11" viewBox="0 0 5 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M5 6H4V7H3V8H2V7H1V6H0V7H1V8H2V9H1V10H0V11H1V10H2V9H3V10H4V11H5V10H4V9H3V8H4V7H5V6Z" fill="white" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column message-container column visible" id="stateList">
-                        <div class="flex-1">
-                            <div class="flex-1 column" id="state00Div">
-                                <div class="flex-1 slot-auto" id="state00"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">Auto</span>
-                                    <span id="dateState00" style="opacity: 0.6"></span>
-                                </div>
-                            </div>
-                            <div class="flex-1 column" id="state01Div">
-                                <div class="flex-1 slot-1" id="state01"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.01</span>
-                                    <span id="dateState01" style="opacity: 0.6"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex-1 column" id="state02Div">
-                                <div class="flex-1 slot-2" id="state02"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.02</span>
-                                    <span id="dateState02" style="opacity: 0.6"></span>
-                                </div>
-                            </div>
-                            <div class="flex-1 column" id="state03Div">
-                                <div class="flex-1 slot-3" id="state03"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.03</span>
-                                    <span id="dateState03" style="opacity: 0.6"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border-vertical"></div>
-                        <div class="border-horizontal"></div>
-                    </div>
-                    <div class="shader sd-1" id="img-shader" style=" pointer-events: none"></div>
-                </div>
-            </div>
-            <div class="flex-1 bc dpad-r disable" id="R">
-                <div class="save-state" id="saveStateButton"></div>
-            </div>
-        </div>
-        <div class="emu column flex-1">
-            <div class="flex-1 gap-16">
-                <div class="flex-1"></div>
-                <div class="bc dpad-l" id="L">
-                    <div class="load-state" id="loadStateButton"></div>
-                </div>
-                <div class="roni"></div>
-                <div class="bc dpad-r" id="R">
-                    <div class="load-state" id="loadStateButton"></div>
-                </div>
-                <div class="flex-1"></div>
-            </div>
-            <div class="gap-30 between emu-menu" id="control-pad">
-                <div class="flex-1 gap-16">
-                    <div class="bc dpad-state" id="statePageButton"></div>
-                    <div class="flex-1 bc dpad-select" id="Select"></div>
-                </div>
-                <div class="roni"></div>
-                <div class="flex-1 gap-16">
-                    <div class="flex-1 bc dpad-start" id="Start"></div>
-                    <div class="bc dpad-menu" id="menu-pad"></div>
-                </div>
-            </div>
-            <div class="between column bc emu-control" id="emu-control">
-                <div class="flex-1 gap-30">
-                    <div class="flex-1">
-                        <div class="flex-1 bc1 ch cw dpad">
-                            <div class="d-pad">
-                                <div class="ch">
-                                    <div class="pad-ul" id="Up-left"></div>
-                                </div>
-                                <div class="flex-1 column">
-                                    <div class="pad-ur" id="Up-right"></div>
-                                    <div class="flex-1 column">
-                                        <div class="flex-1">
-                                            <div class="flex-1 ch cw pad-u" id="Up"></div>
-                                            <div class="flex-1 ch cw pad-r" id="Right"></div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex-1 ch cw pad-l" id="Left"></div>
-                                            <div class="flex-1 ch cw pad-d" id="Down"></div>
-                                        </div>
-                                    </div>
-                                    <div class="pad-dl" id="Down-left"></div>
-                                </div>
-                                <div class="ch">
-                                    <div class="pad-dr" id="Down-right"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="roni"></div>
-                    <div class="flex-1 column gap-16">
-                        <div class="flex-1 gap-16">
-                            <div class="flex-1 bc1 dpad-a" id="A"></div>
-                            <div class="bc1 dpad-turbo" id="turbo"></div>
-                        </div>
-                        <div class="flex-1 gap-16 bc1" id="B">
-                            <div class="flex-1 dpad-b"></div>
-                            <div class="dpad-blank"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="gap-30 between setting inactive" id="menu-list-pad">
-                    <div class="flex-1 gap-16">
-                        <div class="bc1 set-listStates" id="saveCheat"></div>
-                        <div class="set-cloud bc1" id=""></div>
-                        <input type="checkbox" id="autoStateCheck" hidden>
-                        <label for="autoStateCheck" class="switch bc1 ch cw flex-1" id="switch"></label>
-                    </div>
-                    <div class="flex-1 gap-16">
-                        <div class="flex-1 bc1">
-                            <div class="minus-shader bc1 ch cw" id="minus-shader"></div>
-                            <select class="flex-1 bc2 ch cw br0 set-shader" id="shader">
-                                <option value="option1">Lcd</option>
-                                <option value="option2">Crt</option>
-                                <option value="option3">Pix</option>
-                                <option value="option4">Lin</option>
-                                <option value="option5">Gbc</option>
-                                <option value="option6">iOS</option>
-                                <option value="option7">A-1x</option>
-                                <option value="option8">A-2x</option>
-                                <option value="option9">B-1x</option>
-                                <option value="option10">B-2x</option>
-                            </select>
-                            <div class="plus-shader bc1 ch cw" id="plus-shader"></div>
-                        </div>
-                        <div class="bc1 set-restart" id="restart-game"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="dynamic" id="dynamic">
+<h1>Countup Timer</h1>
+<div id="timer"></div>
 
-        </div>
-    </div>
-    <div class="between column localStorage disable" id="storage">
-        <div class="storage between">
-            <div class="cloud-dropbox bc" id="dropboxCloud"></div>
-            <div class="cloud-restore bc" id="dropboxRestore"></div>
-            <label class="upload-file bc" for="upLoadFile"></label>
-            <input type="file" id="upLoadFile" hidden />
-            <div class="home bc" id="backToHome"></div>
-        </div>
-        <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
-            <div class="flex-1 rom-item">ROM file.</div>
-            <div id="romsFile" class="column"></div>
-            <div class="flex-1 rom-item">STATE file.</div>
-            <div id="statesFile" class="column"></div>
-            <div class="flex-1 rom-item">SAVE file.</div>
-            <div id="savesFile" class="column"></div>
-            <div class="flex-1 rom-item">CHEAT file.</div>
-            <div id="cheatsFile" class="column"></div>
-        </div>
-        <div class="flex-1"></div>
-    </div>
+<script>
+function startTimer() {
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
 
-    <div class="between column intro disable" id="intro">
-        <div class="target-boxes" id="target-boxes"></div>
-        <div class="flex-1 ch column gap-8">
-            <label class="logo" id="openLocalStorage"></label>
-            <div class="gap-8 file-section">
-                <div class="flex-1 bc">
-                    <svg id="setAdjustment" width="46" height="100" viewBox="0 0 46 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="46" height="100" fill="" />
-                        <rect id="rect1" x="16" y="16" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <rect id="rect2" x="16" y="24" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <rect id="rect3" x="16" y="32" width="14" height="4" rx="0.6" fill="#FFFFF5" />
-                        <path d="M22 68H14V58H22V68ZM16 60V66H20V60H16Z" fill="#FFFFF5" />
-                        <path id="G0" opacity="0" d="M32 68H24V58H32V68ZM26 60V66H30V60H26Z" fill="#FFFFF5" />
-                        <path id="G1" opacity="0" d="M26 68V60H24V58H28V68H26Z" fill="#FFFFF5" />
-                        <path id="G2" opacity="0" d="M24 58H32V64H26V66H32V68H24V62H30V60H24V58Z" fill="#FFFFF5" />
-                        <path id="G3" opacity="1" d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#FFFFF5" />
-                        <g opacity="0.4">
-                            <path d="M14 76H22V84H16V86H14V76ZM20 82V78H16V82H20Z" fill="#FFFFF5" />
-                            <path d="M28 86H24V78H26V80H28V82H26V84H28V86Z" fill="#FFFFF5" />
-                            <path d="M30 86V84H32V86H30Z" fill="#FFFFF5" />
-                        </g>
-                    </svg>
-                </div>
-                <label for="fileInput" class="flex-1 bc select-file" id="fileInputLable"></label>
-                <input type="file" id="fileInput" hidden />
-            </div>
-        </div>
-        <div class="column rom-list flex-disable" id="rom-list"></div>
-    </div>
-    <div class="firstLoading cw ch disable">
-        <span style="opacity: 0.4" id="appVer"></span>
-        <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="path-1" opacity="0.4" d="M0 12V10H2V12H0Z" fill="#FFFFF5"/>
-            <path id="path-2" opacity="0.4" d="M4 12V10H6V12H4Z" fill="#FFFFF5"/>
-            <path id="path-3" opacity="0.4" d="M8 12V10H10V12H8Z" fill="#FFFFF5"/>
-        </svg>
-    </div>
+    setInterval(function() {
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+        let timeString = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+        document.getElementById("timer").textContent = timeString;
+    }, 1000);
+}
+
+function pad(number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+    return number;
+}
+
+startTimer();
+</script>
 </body>
-
-</html> 
+</html>
