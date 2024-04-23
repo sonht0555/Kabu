@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.18';
+let gameVer = 'V1.19';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -554,9 +554,11 @@ async function screenShot(saveSlot) {
 //DOM Content Loaded
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
-        localStorageFile();
         romList();
-    },1000);
+    },2000);
+    setTimeout(() => {
+        localStorageFile();
+    },3000);
 
     setTimeout(() => {
         romInput.accept = ".gba,.gbc,.gb";
