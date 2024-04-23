@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.19';
+let gameVer = 'V1.20';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -56,10 +56,11 @@ async function startGBA(Module) {
 async function statusShow() {
     try {
         if(navigator.onLine){
-            await notiMessage("Online!", 1500);
-            await delay(1000);
+            await notiMessage("Online!", 2000);
+            await startTimer();
+            await delay(2000);
+            await notiMessage(gameVer, 2000);
             localStorage.setItem("internetStatus", "on");
-            console.log("Online!")
         } else {
             localStorage.setItem("internetStatus", "off");
         }
@@ -151,14 +152,12 @@ async function loadGame(gameName) {
         } else {
             await Module.loadGame(`/data/games/${gameName}`);
         }
-        await statusShow();
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
         }
-        await delay(1500);
-        await notiMessage(gameVer, 3000);
-        await startTimer();
+        await delay(2000);
+        await statusShow();
         setInterval(() => {saveStatePeriodically()}, 60000);
         setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
