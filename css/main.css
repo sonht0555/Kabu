@@ -4,7 +4,11 @@
 }
 @font-face {
   font-family: "04b";
-  src: url("../font/04b03b.ttf");
+  src: url("../font/04b.ttf");
+}
+@font-face {
+  font-family: "04bf";
+  src: url("../font/04bf.ttf");
 }
 @font-face {
   font-family: "tuson";
@@ -1037,4 +1041,5 @@ rect {
   padding-top: 5px;
   padding-right: 4px;
   opacity: 0.2;
+  font-family: "04bf" !important;
 }
