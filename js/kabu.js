@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.13';
+let gameVer = 'V1.14';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -515,7 +515,7 @@ function LoadstateInPage(saveSlot, divs, dateState) {
                     imageStateDiv.appendChild(image);
                     document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
                 }, 200);
-            }, 3000);
+            }, 1500);
         } else {
             console.log ("Do not have State!")
         }
@@ -968,6 +968,7 @@ async function dpDownloadFile(fileName) {
         }
 
         const file = new File([await resp.blob()], fileName);
+        console.log("Cloud ↦ Kabu storage ◆", file.name);
         if (fileName.endsWith(".txt")) {
             const textContent = await file.text();
             const [img, date] = textContent.split("\n\n");
@@ -975,10 +976,8 @@ async function dpDownloadFile(fileName) {
             const slotNumber = fileName.charAt(fileName.length - 5);
             localStorage.setItem(`${gameName}_dateState${slotNumber}`, date);
             localStorage.setItem(`${gameName}_imageState${slotNumber}`, img);
-            console.log("Cloud ↦ Kabu storage ◆", file.name);
         } else {
             Module.uploadSaveOrSaveState(file, () => {
-                console.log("Cloud ↦ Kabu storage ◆", file.name);
                 localStorageFile();
                 Module.FSSync();
             });
@@ -1091,17 +1090,16 @@ dropboxBackup.addEventListener("click", async function() {
                     try {
                         await lockNoti("Backing up...", fileName, 3000)
                         await dpUploadFile(fileName, fileData);
-                        for (let saveSlot = 0; saveSlot < 4; saveSlot++) {
-                            const getNameRom = fileName.substring(0, fileName.lastIndexOf('.'));
-                            const img = localStorage.getItem(`${getNameRom}.gba_imageState${saveSlot}`);
-                            const date = localStorage.getItem(`${getNameRom}.gba_dateState${saveSlot}`);
+                        if (fileName.endsWith(".ss0") || fileName.endsWith(".ss1") || fileName.endsWith(".ss2") || fileName.endsWith(".ss3")  ) {
+                            const gameName = fileName.substring(0, fileName.lastIndexOf('.'));
+                            const slotNumber = fileName.charAt(fileName.length - 1);
+                            const img = localStorage.getItem(`${gameName}.gba_imageState${slotNumber}`);
+                            const date = localStorage.getItem(`${gameName}.gba_dateState${slotNumber}`);
                             if (img !== null) {
                                 const textContent = `${img}\n\n${date}`;
                                 const blob = new Blob([textContent], { type: "text/plain" });
-                                await lockNoti("Backing up...", `${getNameRom}.gba_slot${saveSlot}.txt`, 3000)
-                                await dpUploadFile(`${getNameRom}.gba_slot${saveSlot}.txt`, blob);
-                            } else {
-                                console.log("No screenshot!");
+                                await lockNoti("Backing up...", `${gameName}.gba_slot${slotNumber}.txt`, 3000)
+                                await dpUploadFile(`${gameName}.gba_slot${slotNumber}.txt`, blob); 
                             }
                         }
                     } catch (error) {
