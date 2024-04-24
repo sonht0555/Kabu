@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.20';
+let gameVer = 'V1.21';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -55,15 +55,20 @@ async function startGBA(Module) {
 //Status Show
 async function statusShow() {
     try {
+        startTimer();
+        await delay(1500);
         if(navigator.onLine){
-            await notiMessage("Online!", 2000);
-            await startTimer();
-            await delay(2000);
-            await notiMessage(gameVer, 2000);
-            localStorage.setItem("internetStatus", "on");
+            await notiMessage("ON.line!", 1500);
         } else {
-            localStorage.setItem("internetStatus", "off");
+            await notiMessage("OFF.line!", 1500);
         }
+        await delay(1500);
+        if (savedTurboState !== null) {
+            turboState = parseInt(savedTurboState);
+            await turboF(turboState);
+        }
+        await delay(1500);
+        await notiMessage(gameVer, 1500);
     } catch (error) {
         console.error("Error starting statusShow:", error);
     }
@@ -152,14 +157,7 @@ async function loadGame(gameName) {
         } else {
             await Module.loadGame(`/data/games/${gameName}`);
         }
-        if (savedTurboState !== null) {
-            turboState = parseInt(savedTurboState);
-            await turboF(turboState);
-        }
-        await delay(2000);
         await statusShow();
-        setInterval(() => {saveStatePeriodically()}, 60000);
-        setInterval(() => {saveStateInCloud()}, 3600000);
     } catch (error) {
         console.error("Error loadGame:", error);
     }
@@ -332,17 +330,17 @@ function buttonPress(buttonName, isPress) {
 async function turboF(turboState) {
     try {
         if (turboState === 1) {
-            notiMessage("Normal Speed", 2000);
+            notiMessage("Normal Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.remove("turbo-fast");
             Module.setMainLoopTiming(0, 16);
         } else if (turboState === 2) {
-            notiMessage("Medium Speed", 2000);
+            notiMessage("Medium Speed", 1500);
             turbo.classList.add("turbo-medium");
             turbo.classList.remove("turbo-fast");
             Module.setMainLoopTiming(0, 8);
         } else if (turboState === 3) {
-            notiMessage("Fast Speed", 2000);
+            notiMessage("Fast Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.add("turbo-fast");
             Module.setMainLoopTiming(0, 1);
@@ -1145,9 +1143,13 @@ async function startTimer() {
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
+    let count1 = 0;
+    let count2 = 0;
 
     setInterval(function() {
         seconds++;
+        count1++;
+        count2++;
         if (seconds >= 60) {
             seconds = 0;
             minutes++;
@@ -1158,6 +1160,14 @@ async function startTimer() {
         }
         let timeString = hours + "h" + pad(minutes) + "." + pad(seconds);
         document.getElementById("timer").textContent = timeString;
+        if (count1 === 60) {
+            saveStatePeriodically();
+            count1 = 0;
+        }
+        if (count2 === 3600) {
+            saveStateInCloud();
+            count2 = 0;
+        }
     }, 1000);
 }
 
