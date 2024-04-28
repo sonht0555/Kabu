@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.22';
+let gameVer = 'V1.23';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -190,7 +190,7 @@ async function saveStatePeriodically() {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
-              for (let i = 0; i <= 3; i++) {
+        for (let i = 0; i <= 3; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         document.getElementById(ledId).style.fill = "#78C850";
@@ -216,7 +216,10 @@ async function saveStateInCloud() {
                 for (let i = 0; i <= 3; i++) {
                     document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
                 }
-                await delay(1000); 
+                await delay(1000);
+                for (let i = 0; i <= 3; i++) {
+                    document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+                }
                 document.getElementById(ledId).style.fill = "#E0C068";
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
