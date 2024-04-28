@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.21';
+let gameVer = 'V1.22';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -190,6 +190,9 @@ async function saveStatePeriodically() {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
+              for (let i = 0; i <= 3; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+        }
         document.getElementById(ledId).style.fill = "#78C850";
         await Module.saveState(0);
         await Module.FSSync();
