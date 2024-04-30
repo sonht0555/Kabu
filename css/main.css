@@ -1046,7 +1046,6 @@ rect {
 .stateDiv {
   flex-direction: column;
   border-radius: 0px;
-  box-shadow: -1px 0px 0px 0px rgba(255, 255, 245, 0.04);
   background-color: rgba(0, 0, 0, 1);
 }
 .stateImg,.stateInfo {
@@ -1057,6 +1056,7 @@ rect {
   border-radius: 0px;
   background-clip: padding-box; 
   pointer-events: none;
+  box-shadow: 0px 0px 16px 0px rgba(255, 255, 245, 0.01);
 }
 .stateInfo {
   gap: 2px;
@@ -1064,6 +1064,7 @@ rect {
   padding-bottom: 4px;
   justify-content: end;
   pointer-events: none;
+  box-shadow: 0px 0px 16px 0px rgba(255, 255, 245, 0.1);
 }
 .stateDate {
   opacity:0.4;
