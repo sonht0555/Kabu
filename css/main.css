@@ -1046,7 +1046,7 @@ rect {
 .stateDiv {
   flex-direction: column;
   border-radius: 0px;
-  box-shadow: 0px 0px 16px 0px rgba(255, 255, 245, 0.06);
+  box-shadow: -1px 0px 0px 0px rgba(255, 255, 245, 0.04);
   background-color: rgba(0, 0, 0, 1);
 }
 .stateImg,.stateInfo {
