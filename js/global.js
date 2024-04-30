@@ -10,7 +10,7 @@ const decreaseButton = document.getElementById("minus-shader");
 const imgshader = document.getElementById("img-shader");
 const setAdjustment = document.getElementById("setAdjustment");
 const savedStateAdj = localStorage.getItem("stateAdj");
-const ids = ['minus-shader', 'loadStateButton', 'input-container', 'saveStateButton', 'statePageButton', 'menu-pad', 'turbo', 'set-volume-range', 'minus-shader', 'shader', 'plus-shader', 'restart-game', 'slot-state', 'localStorages', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07','state00', 'state01', 'state02', 'state03', 'state04', 'state05', 'state06', 'state07', 'dynamic', 'switch', 'cheatsTextArea', 'cleanCheat', 'saveCheat', 'dropboxCloud'];
+const ids = ['minus-shader', 'loadStateButton', 'input-container', 'saveStateButton', 'statePageButton', 'menu-pad', 'turbo', 'set-volume-range', 'minus-shader', 'shader', 'plus-shader', 'restart-game', 'slot-state', 'localStorages', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07', 'dynamic', 'switch', 'cheatsTextArea', 'cleanCheat', 'saveCheat', 'dropboxCloud'];
 const touchedID = ['saveStateButton', 'loadStateButton','restart-game','minus-shader','plus-shader','fileInputLable','openLocalStorage','upLoadFile','backToHome'];
 const restart = document.getElementById("restart-game");
 const shader = document.getElementById("shader");
@@ -36,7 +36,8 @@ function checkCache() {
 //Notification Message
 function notiMessage(messageContent, second) {
     var message = document.getElementById("noti-mess");
-
+    const slotState = parseInt(localStorage.getItem("slotStateSaved")) || "0";
+    const gameName = localStorage.getItem("gameName");
     if (message.style.opacity === "0.4") {
       clearTimeout(timeoutIds);
       message.style.opacity = "0";
@@ -44,7 +45,7 @@ function notiMessage(messageContent, second) {
     message.textContent = messageContent;
     message.style.opacity = "0.4";
     timeoutIds = setTimeout(() => {
-      message.textContent = localStorage.getItem("gameName");
+      message.textContent =`[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
       message.style.opacity = "0.2";
     }, second);
 }

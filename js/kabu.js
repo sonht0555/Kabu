@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.24';
+let gameVer = 'V1.25';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -58,9 +58,9 @@ async function statusShow() {
         startTimer();
         await delay(1500);
         if(navigator.onLine){
-            await notiMessage("ON.line!", 1500);
+            await notiMessage("ON.line!", 2000);
         } else {
-            await notiMessage("OFF.line!", 1500);
+            await notiMessage("OFF.line!", 2000);
         }
         await delay(1500);
         if (savedTurboState !== null) {
@@ -68,7 +68,7 @@ async function statusShow() {
             await turboF(turboState);
         }
         await delay(1500);
-        await notiMessage(gameVer, 1500);
+        await notiMessage(gameVer, 2000);
     } catch (error) {
         console.error("Error starting statusShow:", error);
     }
@@ -80,86 +80,25 @@ function delay(ms) {
 //Led Notification
 async function led(slotStateNumbers) {
     try {
-        if (slotStateNumbers === 1) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "#78C850";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        } else if(slotStateNumbers === 2) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "#78C850";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        } else if(slotStateNumbers === 3) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "#78C850";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        else if(slotStateNumbers === 4) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "#78C850";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        else if(slotStateNumbers === 5) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "#78C850";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        else if(slotStateNumbers === 6) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "#78C850";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        else if(slotStateNumbers === 7) {
-            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "#78C850";
-        }else {
-            document.getElementById("led00").style.fill = "#78C850";
-            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
-            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
+        const ledInfo = [
+            { id: "led00", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led01", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led02", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led03", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led04", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led05", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led06", color: "rgba(255, 255, 245, 0.2)" },
+            { id: "led07", color: "rgba(255, 255, 245, 0.2)" }
+        ];
+
+        if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {
+            const activeColor = "#78C850";
+            ledInfo.forEach((led, index) => {
+                document.getElementById(led.id).style.fill = (index === slotStateNumbers) ? activeColor : led.color;
+            });
         }
     } catch (error) {
         console.error("Error Led:", error);
-
     }
 }
 //Rom List
@@ -269,11 +208,11 @@ async function saveStateInCloud() {
         const date = localStorage.getItem(`${gameName}_dateState0`);
         if (navigator.onLine) {
             if (uId) {
-                for (let i = 0; i <= 3; i++) {
+                for (let i = 0; i <= 7; i++) {
                     document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
                 }
                 await delay(1000);
-                for (let i = 0; i <= 3; i++) {
+                for (let i = 0; i <= 7; i++) {
                     document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
                 }
                 document.getElementById(ledId).style.fill = "#E0C068";
@@ -365,6 +304,7 @@ async function downloadFile(filepath, filename) {
 }
 //Notification Message
 async function notiMessage(messageContent, second) {
+    const slotState = parseInt(localStorage.getItem("slotStateSaved")) || "0";
     const gameName = localStorage.getItem("gameName");
     var message = document.getElementById("noti-mess");
     if (message.style.opacity === "0.4") {
@@ -374,7 +314,7 @@ async function notiMessage(messageContent, second) {
     message.textContent = messageContent;
     message.style.opacity = "0.4";
     timeoutId = setTimeout(() => {
-      message.textContent = gameName.substring(0, gameName.lastIndexOf('.'));
+      message.textContent =`[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
       message.style.opacity = "0.2";
     }, second);
 }
@@ -534,9 +474,10 @@ function localStorageFile() {
 //Load States In Page
 function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
+    const localSlot = localStorage.getItem("slotStateSaved")
     const stateDiv = document.getElementById(stateDivs);
     const getNameRom = localStorage.getItem("gameName");
-    const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMzQgMTZIMjZWMjRIMzRWMTZaTTMzIDE3SDMyVjE4SDMxVjE5SDMwVjIwSDI5VjIxSDI4VjIySDI3VjIzSDMzVjE3WiIgZmlsbD0iI0Q5RDlEOSIvPgo8L3N2Zz4K';
+    const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg2MFY0MEgwVjBaIiBmaWxsPSIjMTYxNjE2Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNCAxNkgyNlYyNEgzNFYxNlpNMzMgMTdIMzJWMThIMzFWMTlIMzBWMjBIMjlWMjFIMjhWMjJIMjdWMjNIMzNWMTdaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
     const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
     const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || noneImage;
     const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
@@ -544,21 +485,24 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     imageStateDiv.style.backgroundSize = 'cover';
     imageStateDiv.style.backgroundRepeat = 'no-repeat';
     imageStateDiv.style.backgroundPosition = 'center center';
-    document.getElementById(dateState).textContent = date || "--";
+    document.getElementById(dateState).textContent = date || "__";
+    if (parseInt(localSlot)===parseInt(saveSlot)) {
+        stateDiv.style.color = "#78C850";
+    } else {
+        stateDiv.style.color = "#fffff5";
+    }
 
     stateDiv.onclick = () => {
         stateList.classList.toggle("visible");
         canvas.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
-        notiMessage(`Loaded State [${saveSlot}]`, 2000);
-        setTimeout(() => {
-            loadState(saveSlot);
-            localStorage.setItem("slotStateSaved", saveSlot)
-        }, 100);
+        loadState(saveSlot);
+        localStorage.setItem("slotStateSaved", saveSlot)
+        notiMessage(`[${saveSlot}] Loaded State`, 1500);
     };
 
-    imageStateDiv.addEventListener("touchstart", function() {
+    stateDiv.addEventListener("touchstart", function() {
         if (localStorage.getItem(`${getNameRom}_imageState${saveSlot}`)) {
             clearTimeout(clickTimer);
             clickTimer = setTimeout(function() {
@@ -566,9 +510,9 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
                 localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
                 localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
                 setTimeout(() => {
-                    notiMessage("Deleted State!", 2000);
+                    notiMessage("Deleted State!", 1500);
                     imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
-                    document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`) || "--";
+                    document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`) || "__";
                 }, 200);
             }, 1500);
         } else {
@@ -576,7 +520,7 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         }
     });
 
-    imageStateDiv.addEventListener("touchend", function() {
+    stateDiv.addEventListener("touchend", function() {
         clearTimeout(clickTimer);
     });
 }
@@ -749,7 +693,7 @@ loadStateButton.addEventListener("click", function() {
     if (clickState === 2) {
         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
         loadState(slotStateNumbers);
-        notiMessage(`Loaded State [${slotStateNumbers}]`, 1500);
+        notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
     }
     setTimeout(() => {
         clickState = 0
@@ -762,13 +706,13 @@ saveStateButton.addEventListener("click", function() {
         if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
+            notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
-            notiMessage(`Saved State [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
+            notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         }
     }
     setTimeout(() => {
@@ -862,7 +806,7 @@ saveCheatsButton.addEventListener("click", function() {
             }, 500);
             if (cheatEnable) {
                 localStorage.setItem(`${gameName}_savedCheats`, newCheatCode);
-                notiMessage("Cheat enabled!", 1500);
+                notiMessage("Cheat Enabled!", 1500);
             }
         });
     }

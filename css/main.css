@@ -356,7 +356,7 @@ label {
 }
 .dpad-state {
   width: 44px;
-  transition: background-image 0.5s ease-in-out;
+  transition: background-image 0.2s ease-in-out;
   background: url("data:image/svg+xml,%3Csvg width='44' height='26' viewBox='0 0 44 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 14H19V16H15V10H21V12H17V14Z' fill='%23FFFFF5'/%3E%3Cpath opacity='0.4' d='M27 12H25V10H29V16H23V14H27V12Z' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
 }
 .dpad-state.active {
@@ -371,7 +371,7 @@ label {
 }
 .dpad-menu {
   width: 44px;
-  transition: background-image 0.5s ease-in-out;
+  transition: background-image 0.2s ease-in-out;
   background: url("data:image/svg+xml,%3Csvg width='44' height='26' viewBox='0 0 44 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='15' y='10' width='2' height='6' fill='%23FFFFF5'/%3E%3Crect x='21' y='10' width='2' height='6' fill='%23FFFFF5'/%3E%3Crect x='27' y='10' width='2' height='6' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
 }
 .dpad-menu.active {
@@ -1057,12 +1057,14 @@ rect {
   aspect-ratio: 3 / 2;
   border-radius: 0px;
   background-clip: padding-box; 
+  pointer-events: none;
 }
 .stateInfo {
   gap: 2px;
   padding-left: 6px;
   padding-bottom: 5px;
   justify-content: end;
+  pointer-events: none;
 }
 .stateDate {
   opacity:0.4;
