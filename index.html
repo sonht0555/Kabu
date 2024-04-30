@@ -36,15 +36,16 @@
             </div>
             <div class="flex-1 column" >
                 <div class="notification-container bc">
-                    <svg width="24" height="15" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g id ="led00" fill="rgba(255, 255, 245, 0.2)">
-                            <rect x="6" y="8"  width="2" height="1"/>
-                            <rect x="6" y="10" width="2" height="1"/>
-                        </g>
-                        <rect id ="led01" fill="rgba(255, 255, 245, 0.2)" x="10" y="8" width="2" height="3"/>
-                        <rect id ="led02" fill="rgba(255, 255, 245, 0.2)" x="14" y="8" width="2" height="3"/>
-                        <rect id ="led03" fill="rgba(255, 255, 245, 0.2)" x="18" y="8" width="2" height="3"/>
-                    </svg>
+                    <svg width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect id ="led00" x="6"  y="7" width="2" height="1" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led01" x="9"  y="6" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led02" x="12" y="6" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led03" x="15" y="6" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led04" x="6"  y="9" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led05" x="9"  y="9" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led06" x="12" y="9" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                        <rect id ="led07" x="15" y="9" width="2" height="2" fill="rgba(255, 255, 245, 0.2)"/>
+                    </svg>     
                     <span id="noti-mess"></span>
                     <div class="flex-1"></div>
                     <span class="timer" id="timer"></span>
@@ -77,45 +78,75 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column message-container column visible" id="stateList">
-                        <div class="flex-1">
-                            <div class="flex-1 column" id="state00Div">
-                                <div class="flex-1 slot-auto" id="state00"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">Auto</span>
-                                    <span id="dateState00" style="opacity: 0.6"></span>
+                    <div class="message-container visible" id="stateList">
+                        <div class="flex-1 column">
+                            <div class="flex-1 stateDiv" id="stateDiv00">
+                                <div class="stateImg" id="state00">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[00]</div>
+                                    <div class="stateDate" id="dateState00"></div>
                                 </div>
                             </div>
-                            <div class="flex-1 column" id="state01Div">
-                                <div class="flex-1 slot-1" id="state01"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.01</span>
-                                    <span id="dateState01" style="opacity: 0.6"></span>
+                            <div class="flex-1 stateDiv" id="stateDiv01">
+                                <div class="stateImg" id="state01">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[01]</div>
+                                    <div class="stateDate" id="dateState01"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1 stateDiv" id="stateDiv02">
+                                <div class="stateImg" id="state02">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[02]</div>
+                                    <div class="stateDate" id="dateState02"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1 stateDiv" id="stateDiv03">
+                                <div class="stateImg" id="state03">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[03]</div>
+                                    <div class="stateDate" id="dateState03"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-1">
-                            <div class="flex-1 column" id="state02Div">
-                                <div class="flex-1 slot-2" id="state02"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.02</span>
-                                    <span id="dateState02" style="opacity: 0.6"></span>
+                        <div class="flex-1 column">
+                            <div class="flex-1 stateDiv" id="stateDiv04">
+                                <div class="stateImg" id="state04">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[04]</div>
+                                    <div class="stateDate" id="dateState04"></div>
                                 </div>
                             </div>
-                            <div class="flex-1 column" id="state03Div">
-                                <div class="flex-1 slot-3" id="state03"></div>
-                                <div class="flex-1"></div>
-                                <div class="slot-footer">
-                                    <span class="flex-1">State.03</span>
-                                    <span id="dateState03" style="opacity: 0.6"></span>
+                            <div class="flex-1 stateDiv" id="stateDiv05">
+                                <div class="stateImg" id="state05">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[05]</div>
+                                    <div class="stateDate" id="dateState05"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1 stateDiv" id="stateDiv06">
+                                <div class="stateImg" id="state06">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[06]</div>
+                                    <div class="stateDate" id="dateState06"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1 stateDiv" id="stateDiv07">
+                                <div class="stateImg" id="state07">
+                                </div>
+                                <div class="flex-1 stateInfo column cw">
+                                    <div class="stateTitle">[07]</div>
+                                    <div class="stateDate" id="dateState07"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="border-vertical"></div>
-                        <div class="border-horizontal"></div>
                     </div>
                     <div class="shader sd-1" id="img-shader" style=" pointer-events: none"></div>
                 </div>

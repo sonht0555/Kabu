@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.23';
+let gameVer = 'V1.24';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -85,21 +85,77 @@ async function led(slotStateNumbers) {
             document.getElementById("led01").style.fill = "#78C850";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
         } else if(slotStateNumbers === 2) {
             document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led02").style.fill = "#78C850";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
         } else if(slotStateNumbers === 3) {
             document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led03").style.fill = "#78C850";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        else if(slotStateNumbers === 4) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "#78C850";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        else if(slotStateNumbers === 5) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "#78C850";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        else if(slotStateNumbers === 6) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "#78C850";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        else if(slotStateNumbers === 7) {
+            document.getElementById("led00").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "#78C850";
         }else {
             document.getElementById("led00").style.fill = "#78C850";
             document.getElementById("led01").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led02").style.fill = "rgba(255, 255, 245, 0.2)";
             document.getElementById("led03").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led04").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led05").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led06").style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led07").style.fill = "rgba(255, 255, 245, 0.2)";
         }
     } catch (error) {
         console.error("Error Led:", error);
@@ -184,13 +240,13 @@ async function loadState(slot) {
 //Auto Save Game In Local Every 10s
 async function saveStatePeriodically() {
     const slotState = parseInt(localStorage.getItem("slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
+    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
-        for (let i = 0; i <= 3; i++) {
+        for (let i = 0; i <= 7; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         await delay(1000); 
-        for (let i = 0; i <= 3; i++) {
+        for (let i = 0; i <= 7; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
         }
         document.getElementById(ledId).style.fill = "#78C850";
@@ -208,7 +264,7 @@ async function saveStateInCloud() {
         const gameName = localStorage.getItem("gameName");
         const stateName = gameName.replace(".gba", ".ss0");
         const uId = localStorage.getItem("uId");
-        const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
+        const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
         const img = localStorage.getItem(`${gameName}_imageState0`);
         const date = localStorage.getItem(`${gameName}_dateState0`);
         if (navigator.onLine) {
@@ -287,7 +343,7 @@ function formatDateTime(milliseconds) {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const day = date.getDate();
     const month = date.getMonth() + 1;
-    return `${hours}:${minutes} - ${day}.${month}`;
+    return `${hours}:${minutes} ${day}.${month}`;
 }
 //Download File
 async function downloadFile(filepath, filename) {
@@ -476,23 +532,23 @@ function localStorageFile() {
     }
 }
 //Load States In Page
-function LoadstateInPage(saveSlot, divs, dateState) {
+function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
+    const stateDiv = document.getElementById(stateDivs);
     const getNameRom = localStorage.getItem("gameName");
-    const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTIwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NyAyOEg1M1Y0Mkg2N1YyOFpNNjUgMjlINjZWMzBWMzFWMzJWMzNWMzRWMzVWMzZWMzdWMzhWMzlWNDBWNDFINTRWNDBINTVWMzlINTZWMzhINTdWMzdINThWMzZINTlWMzVINjBWMzRINjFWMzNINjJWMzJINjNWMzFINjRWMzBINjVWMjlaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
+    const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMjUyNTI1Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMzQgMTZIMjZWMjRIMzRWMTZaTTMzIDE3SDMyVjE4SDMxVjE5SDMwVjIwSDI5VjIxSDI4VjIySDI3VjIzSDMzVjE3WiIgZmlsbD0iI0Q5RDlEOSIvPgo8L3N2Zz4K';
     const stateName = getNameRom.replace(".gba", `.ss${saveSlot}`);
     const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || noneImage;
     const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
-    while (imageStateDiv.firstChild) {
-        imageStateDiv.removeChild(imageStateDiv.firstChild);
-    }
-    let image = new Image();
-    image.src = data;
-    imageStateDiv.appendChild(image);
-    document.getElementById(dateState).textContent = date;
+    imageStateDiv.style.backgroundImage = `url('${data}')`;
+    imageStateDiv.style.backgroundSize = 'cover';
+    imageStateDiv.style.backgroundRepeat = 'no-repeat';
+    imageStateDiv.style.backgroundPosition = 'center center';
+    document.getElementById(dateState).textContent = date || "--";
 
-    imageStateDiv.onclick = () => {
+    stateDiv.onclick = () => {
         stateList.classList.toggle("visible");
+        canvas.classList.toggle("visible");
         statePageButton.classList.toggle("active");
         led(saveSlot);
         notiMessage(`Loaded State [${saveSlot}]`, 2000);
@@ -510,14 +566,9 @@ function LoadstateInPage(saveSlot, divs, dateState) {
                 localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
                 localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
                 setTimeout(() => {
-                    while (imageStateDiv.firstChild) {
-                        imageStateDiv.removeChild(imageStateDiv.firstChild);
-                    }
                     notiMessage("Deleted State!", 2000);
-                    let image = new Image();
-                    image.src = noneImage;
-                    imageStateDiv.appendChild(image);
-                    document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
+                    imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
+                    document.getElementById(dateState).textContent = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`) || "--";
                 }, 200);
             }, 1500);
         } else {
@@ -709,7 +760,7 @@ saveStateButton.addEventListener("click", function() {
     clickState++;
     if (clickState === 2) {
         if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
-            const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 3) + 1) || 1;
+            const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
             saveState(slotStateNumbers);
             notiMessage(`Saved State [${slotStateNumbers}]`, 1500);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
@@ -761,10 +812,15 @@ openLocalStorage.addEventListener("click", function() {
 })
 //Buton Open Save States Page
 statePageButton.addEventListener("click", function() {
-    LoadstateInPage(0, "state00", "dateState00")
-    LoadstateInPage(1, "state01", "dateState01")
-    LoadstateInPage(2, "state02", "dateState02")
-    LoadstateInPage(3, "state03", "dateState03")
+    LoadstateInPage(0, "state00", "dateState00", "stateDiv00")
+    LoadstateInPage(1, "state01", "dateState01", "stateDiv01")
+    LoadstateInPage(2, "state02", "dateState02", "stateDiv02")
+    LoadstateInPage(3, "state03", "dateState03", "stateDiv03")
+    LoadstateInPage(4, "state04", "dateState04", "stateDiv04")
+    LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
+    LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
+    LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
+    canvas.classList.toggle("visible");
     stateList.classList.toggle("visible");
     statePageButton.classList.toggle("active");
 })
@@ -826,6 +882,7 @@ SDL2ID.forEach(function(id) {
             if (stateList.classList.contains("visible")){
             } else {
                 statePageButton.classList.remove("active");
+                canvas.classList.remove("visible");
                 stateList.classList.add("visible");
             }
         });
