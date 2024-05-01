@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.30';
+let gameVer = 'V1.29';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -471,6 +471,7 @@ function localStorageFile() {
         createElementStorage(cheatsFile, cheatsName, `/data/cheats/${cheatsName}`)
     }
 }
+let clickedOver1s = false;
 //Load States In Page
 function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
@@ -492,16 +493,6 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.style.color = "#fffff5";
     }
 
-    stateDiv.onclick = () => {
-        stateList.classList.toggle("visible");
-        canvas.classList.toggle("visible");
-        statePageButton.classList.toggle("active");
-        led(saveSlot);
-        loadState(saveSlot);
-        localStorage.setItem("slotStateSaved", saveSlot)
-        notiMessage(`[${saveSlot}] Loaded State`, 1500);
-    };
-
     stateDiv.addEventListener("touchstart", function() {
         if (localStorage.getItem(`${getNameRom}_imageState${saveSlot}`)) {
             clearTimeout(clickTimer);
@@ -522,6 +513,18 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
 
     stateDiv.addEventListener("touchend", function() {
         clearTimeout(clickTimer);
+        if (!clickedOver1s) {
+            stateDiv.onclick = () => {
+            canvas.classList.toggle("visible");
+            stateList.classList.toggle("visible");
+            statePageButton.classList.toggle("active");
+            led(saveSlot);
+            loadState(saveSlot);
+            localStorage.setItem("slotStateSaved", saveSlot)
+            notiMessage(`[${saveSlot}] Loaded State`, 1500);
+            };
+        }
+        clickedOver1s = false;
     });
 }
 //Capture Screenshot
