@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.29';
+let gameVer = 'V1.30';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -489,8 +489,10 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     document.getElementById(dateState).textContent = date || "__";
     if (parseInt(localSlot)===parseInt(saveSlot)) {
         stateDiv.style.color = "#78C850";
+        stateDiv.style.background = "rgba(120, 200, 80, 0.06)";
     } else {
         stateDiv.style.color = "#fffff5";
+        stateDiv.style.background = "rgba(120, 200, 80, 0)";
     }
 
     stateDiv.addEventListener("touchstart", function() {
