@@ -1047,6 +1047,7 @@ rect {
   flex-direction: column;
   border-radius: 0px;
   background-color: rgba(0, 0, 0, 1);
+  box-shadow: 0px 0px 8px 0px rgba(255, 255, 245, 0.06);
 }
 .stateImg,.stateInfo {
   font-size: 8px;
@@ -1063,7 +1064,6 @@ rect {
   padding-bottom: 4px;
   justify-content: end;
   pointer-events: none;
-  box-shadow: 0px 0px 8px 0px rgba(255, 255, 245, 0.06);
 }
 .stateDate {
   opacity:0.4;
