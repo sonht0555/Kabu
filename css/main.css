@@ -999,7 +999,6 @@ dialog .rom-item {
 }
 .notification-container span{
   padding-top: 5px;
-  padding-right: 6px;
 }
 
 rect {
@@ -1038,8 +1037,8 @@ rect {
   transition: opacity 0.5s ease-in-out;
 }
 .timer {
-  padding-top: 5px;
-  padding-right: 4px;
+  padding-top: 5px !important;
+  padding-right: 3px !important;
   opacity: 0.2;
   font-family: "04bf" !important;
 }
