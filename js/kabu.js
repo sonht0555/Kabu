@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.36';
+let gameVer = 'V1.38';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -101,7 +101,8 @@ async function led(slotStateNumbers) {
         console.error("Error Led:", error);
     }
 }
-async function ledSave (color) {
+//Led Save
+async function ledSave(color) {
     const slotState = parseInt(localStorage.getItem("slotStateSaved"));
     const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
@@ -191,7 +192,7 @@ async function loadState(slot) {
         console.error("Error loadState:", error);
     }      
 }
-//Auto Save Game In Local Every 10s
+//Auto Save Game In Local Every 16s
 async function saveStatePeriodically() {
     await ledSave("#78C850");
     await Module.saveState(0);
@@ -199,6 +200,7 @@ async function saveStatePeriodically() {
     await screenShot(0);
     console.log(`Auto save ${++countAutoSave} time(s)`); 
 }
+//Auto Save Game In Cloud Every 1h
 async function saveStateInCloud() {
     try {
         const gameName = localStorage.getItem("gameName");
@@ -706,13 +708,13 @@ saveStateButton.addEventListener("click", function() {
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
             ledSave("#F36868");
-            notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
+            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
             ledSave("#F36868");
-            notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
+            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
         }
     }
     setTimeout(() => {
@@ -1026,6 +1028,7 @@ async function checkFileExists(fileName) {
     }
     return false;
 }
+//Button Dropbox Restore
 dropboxRestore.addEventListener("click", async function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
@@ -1074,6 +1077,7 @@ dropboxRestore.addEventListener("click", async function() {
         return false;
     }
 });
+//Button Dropbox Backup
 dropboxBackup.addEventListener("click", async function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
@@ -1119,6 +1123,7 @@ dropboxBackup.addEventListener("click", async function() {
         }
     }
 });
+//Button Dropbox LogIn
 dropboxCloud.addEventListener("click", function() {
     const uId = localStorage.getItem("uId");
     if (uId === null || uId === "") {
@@ -1132,6 +1137,7 @@ dropboxCloud.addEventListener("click", function() {
         }
     }
 });
+//Lock Notification
 async function lockNoti(title, detail, second) {
     const lockNoti = document.getElementById("lockNoti");
     const notiTitle = document.getElementById("notiTitle");
@@ -1146,6 +1152,7 @@ async function lockNoti(title, detail, second) {
         lockNoti.classList.add("visible");
     }, second);
 }
+//Show Time InGame
 async function startTimer() {
     let hours = 0;
     let minutes = 0;
@@ -1177,14 +1184,13 @@ async function startTimer() {
         }
     }, 1000);
 }
-
+//Pad
 function pad(number) {
     if (number < 10) {
         return '0' + number;
     }
     return number;
 }
-
 const tesst = document.getElementById("tesst");
 tesst.addEventListener("click", async function() {
    
