@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.32';
+let gameVer = 'V1.34';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -101,6 +101,22 @@ async function led(slotStateNumbers) {
         console.error("Error Led:", error);
     }
 }
+async function ledSave (color) {
+    const slotState = parseInt(localStorage.getItem("slotStateSaved"));
+    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
+    try {
+        for (let i = 0; i <= 7; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        await delay(1000); 
+        for (let i = 0; i <= 7; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+        }
+        document.getElementById(ledId).style.fill = color;
+    } catch (error) {
+        console.error("Error ledSave:", error);
+    }
+};
 //Rom List
 async function romList() {
     try {
@@ -163,7 +179,6 @@ async function saveState(slot) {
         await Module.saveState(slot);
         await Module.FSSync();
         await screenShot(slot);
-        await led(slot);
     } catch (error) {
         console.error("Error saveState:", error);
     }      
@@ -178,44 +193,22 @@ async function loadState(slot) {
 }
 //Auto Save Game In Local Every 10s
 async function saveStatePeriodically() {
-    const slotState = parseInt(localStorage.getItem("slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
-    try {
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        await delay(1000); 
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
-        }
-        document.getElementById(ledId).style.fill = "#78C850";
-        await Module.saveState(0);
-        await Module.FSSync();
-        await screenShot(0);
-        console.log(`Auto save ${++countAutoSave} time(s)`);
-    } catch (error) {
-        console.error("Error saveStatePeriodically: ", error);
-    }   
+    await ledSave("#78C850");
+    await Module.saveState(0);
+    await Module.FSSync();
+    await screenShot(0);
+    console.log(`Auto save ${++countAutoSave} time(s)`); 
 }
 async function saveStateInCloud() {
     try {
-        const slotState = parseInt(localStorage.getItem("slotStateSaved"));
         const gameName = localStorage.getItem("gameName");
         const stateName = gameName.replace(".gba", ".ss0");
         const uId = localStorage.getItem("uId");
-        const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
         const img = localStorage.getItem(`${gameName}_imageState0`);
         const date = localStorage.getItem(`${gameName}_dateState0`);
         if (navigator.onLine) {
             if (uId) {
-                for (let i = 0; i <= 7; i++) {
-                    document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
-                }
-                await delay(1000);
-                for (let i = 0; i <= 7; i++) {
-                    document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
-                }
-                document.getElementById(ledId).style.fill = "#E0C068";
+                await ledSave("#E0C068");
                 await delay(1000);
                 await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
                 if (img !== null) {
@@ -712,11 +705,13 @@ saveStateButton.addEventListener("click", function() {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
+            ledSave("#D65858");
             notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
+            ledSave("#D65858");
             notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         }
     }
