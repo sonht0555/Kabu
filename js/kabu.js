@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.34';
+let gameVer = 'V1.36';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -705,13 +705,13 @@ saveStateButton.addEventListener("click", function() {
             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
-            ledSave("#D65858");
+            ledSave("#F36868");
             notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         } else {
             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
             saveState(slotStateNumbers);
             localStorage.setItem("slotStateSaved", slotStateNumbers)
-            ledSave("#D65858");
+            ledSave("#F36868");
             notiMessage(`[${slotStateNumbers}] Saved State`, 1500);
         }
     }
