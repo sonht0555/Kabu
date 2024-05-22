@@ -57,17 +57,17 @@ function positionAdjustment(stateAdj) {
             GOpacity: [0, 0, 0, 1]
         },
         {
-            paddingTop: "40px",
+            paddingTop: "60px",
             rectOpacity: [0.4, 1, 1],
             GOpacity: [0, 0, 1, 0]
         },
         {
-            paddingTop: "80px",
+            paddingTop: "120px",
             rectOpacity: [0.4, 0.4, 1],
             GOpacity: [0, 1, 0, 0]
         },
         {
-            paddingTop: "120px",
+            paddingTop: "180px",
             rectOpacity: [0.4, 0.4, 0.4],
             GOpacity: [1, 0, 0, 0]
         }
