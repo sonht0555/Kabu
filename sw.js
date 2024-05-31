@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '40';
+let revision = '42';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([

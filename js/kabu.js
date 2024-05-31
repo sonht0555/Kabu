@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.40';
+let gameVer = 'V1.42';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -57,6 +57,7 @@ async function statusShow() {
     try {
         startTimer();
         await delay(1500);
+        handleVisibilityChange();
         if(navigator.onLine){
             await notiMessage("ON.line!", 2000);
         } else {
@@ -1198,9 +1199,11 @@ tesst.addEventListener("click", async function() {
 const handleVisibilityChange = () => {
     if (document.visibilityState === 'hidden') {
       Module.pauseGame();
+      notiMessage("Game paused", 2000);
     } else {
       Module.resumeGame();
+      notiMessage("Game resumed", 2000);
     }
   };
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    handleVisibilityChange();
+    
