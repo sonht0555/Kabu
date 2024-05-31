@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.39';
+let gameVer = 'V1.40';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -330,17 +330,17 @@ async function turboF(turboState) {
             notiMessage("Normal Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.remove("turbo-fast");
-            Module.setMainLoopTiming(0, 16);
+            Module.setFastForwardMultiplier(1);
         } else if (turboState === 2) {
             notiMessage("Medium Speed", 1500);
             turbo.classList.add("turbo-medium");
             turbo.classList.remove("turbo-fast");
-            Module.setMainLoopTiming(0, 8);
+            Module.setFastForwardMultiplier(2);
         } else if (turboState === 3) {
             notiMessage("Fast Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.add("turbo-fast");
-            Module.setMainLoopTiming(0, 1);
+            Module.setFastForwardMultiplier(3);
         }
     } catch (error) {
         console.error("Error turboF:", error);
@@ -1195,3 +1195,12 @@ const tesst = document.getElementById("tesst");
 tesst.addEventListener("click", async function() {
    
 });
+const handleVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      Module.pauseGame();
+    } else {
+      Module.resumeGame();
+    }
+  };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    handleVisibilityChange();

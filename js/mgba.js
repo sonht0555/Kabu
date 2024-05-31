@@ -20,20 +20,20 @@ var mGBA = (() => {
               }
               return false
           };
-          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-          Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
-          Module.domToPng = () => Promise.resolve('dataurl')
-          Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
-          Module.deleteFile = (filepath) => FS.unlink(filepath);
-          Module.fileSize = (filepath) => FS.stat(filepath).size;
-          Module.downloadFile = (filepath) => FS.readFile(filepath);
-          Module.getSave = () => FS.readFile(Module.saveName);
-          Module.listRoms = () => FS.readdir("/data/games/");
-          Module.listSaves = () => FS.readdir("/data/saves/");
-          Module.listStates = () => FS.readdir("/data/states/");
-          Module.listCheats = () => FS.readdir("/data/cheats/");
-          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-          Module.FSInit = () => new Promise((resolve, reject) => {
+              // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+              Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
+              Module.domToPng = () => Promise.resolve('dataurl')
+              Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
+              Module.deleteFile = (filepath) => FS.unlink(filepath);
+              Module.fileSize = (filepath) => FS.stat(filepath).size;
+              Module.downloadFile = (filepath) => FS.readFile(filepath);
+              Module.getSave = () => FS.readFile(Module.saveName);
+              Module.listRoms = () => FS.readdir("/data/games/");
+              Module.listSaves = () => FS.readdir("/data/saves/");
+              Module.listStates = () => FS.readdir("/data/states/");
+              Module.listCheats = () => FS.readdir("/data/cheats/");
+              // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+              Module.FSInit = () => new Promise((resolve, reject) => {
               FS.mkdir("/data");
               FS.mount(FS.filesystems.IDBFS, {}, "/data");
               FS.syncfs(true, err => {
@@ -247,15 +247,22 @@ var mGBA = (() => {
               const autoLoadCheats = cwrap("autoLoadCheats", "bool", []);
               return autoLoadCheats()
           };
+          Module.setFastForwardMultiplier = multiplier => {
+              const setFastForwardMultiplier = cwrap("setFastForwardMultiplier", null, ["number"]);
+              return setFastForwardMultiplier(multiplier)
+          };
+          Module.getFastForwardMultiplier = multiplier => {
+              const getFastForwardMultiplier = cwrap("getFastForwardMultiplier", null, ["number"]);
+              return getFastForwardMultiplier(multiplier)
+          };
           var moduleOverrides = Object.assign({}, Module);
           var arguments_ = [];
           var thisProgram = "./this.program";
           var quit_ = (status, toThrow) => {
               throw toThrow
           };
-          var ENVIRONMENT_IS_WEB = typeof window == "object";
-          var ENVIRONMENT_IS_WORKER = typeof importScripts == "function";
-          var ENVIRONMENT_IS_NODE = typeof process == "object" && typeof process.versions == "object" && typeof process.versions.node == "string";
+          var ENVIRONMENT_IS_WEB = true;
+          var ENVIRONMENT_IS_WORKER = false;
           var scriptDirectory = "";
 
           function locateFile(path) {
@@ -503,7 +510,7 @@ var mGBA = (() => {
                   wasmExports = instance.exports;
                   wasmMemory = wasmExports["_d"];
                   updateMemoryViews();
-                  wasmTable = wasmExports["xe"];
+                  wasmTable = wasmExports["ze"];
                   addOnInit(wasmExports["$d"]);
                   removeRunDependency("wasm-instantiate");
                   return wasmExports
@@ -527,11 +534,11 @@ var mGBA = (() => {
           var tempDouble;
           var tempI64;
           var ASM_CONSTS = {
-              272272: ($0, $1) => {
+              272352: ($0, $1) => {
                   Module.canvas.width = $0;
                   Module.canvas.height = $1
               },
-              272329: ($0, $1, $2, $3, $4, $5, $6) => {
+              272409: ($0, $1, $2, $3, $4, $5, $6) => {
                   Module.version = {
                       gitCommit: UTF8ToString($0),
                       gitShort: UTF8ToString($1),
@@ -542,12 +549,12 @@ var mGBA = (() => {
                       projectVersion: UTF8ToString($6)
                   }
               },
-              272554: () => {
+              272634: () => {
                   FS.syncfs(function(err) {
                       assert(!err)
                   })
               },
-              272598: () => {
+              272678: () => {
                   if (typeof AudioContext !== "undefined") {
                       return true
                   } else if (typeof webkitAudioContext !== "undefined") {
@@ -555,7 +562,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              272745: () => {
+              272825: () => {
                   if (typeof navigator.mediaDevices !== "undefined" && typeof navigator.mediaDevices.getUserMedia !== "undefined") {
                       return true
                   } else if (typeof navigator.webkitGetUserMedia !== "undefined") {
@@ -563,7 +570,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              272979: $0 => {
+              273059: $0 => {
                   if (typeof Module["SDL2"] === "undefined") {
                       Module["SDL2"] = {}
                   }
@@ -585,11 +592,11 @@ var mGBA = (() => {
                   }
                   return SDL2.audioContext === undefined ? -1 : 0
               },
-              273472: () => {
+              273552: () => {
                   var SDL2 = Module["SDL2"];
                   return SDL2.audioContext.sampleRate
               },
-              273540: ($0, $1, $2, $3) => {
+              273620: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   var have_microphone = function(stream) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -630,7 +637,7 @@ var mGBA = (() => {
                       }, have_microphone, no_microphone)
                   }
               },
-              275192: ($0, $1, $2, $3) => {
+              275272: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   SDL2.audio.scriptProcessorNode = SDL2.audioContext["createScriptProcessor"]($1, 0, $0);
                   SDL2.audio.scriptProcessorNode["onaudioprocess"] = function(e) {
@@ -642,7 +649,7 @@ var mGBA = (() => {
                   };
                   SDL2.audio.scriptProcessorNode["connect"](SDL2.audioContext["destination"])
               },
-              275602: ($0, $1) => {
+              275682: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
                   for (var c = 0; c < numChannels; ++c) {
@@ -661,7 +668,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276207: ($0, $1) => {
+              276287: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
                   for (var c = 0; c < numChannels; ++c) {
@@ -674,7 +681,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276687: $0 => {
+              276767: $0 => {
                   var SDL2 = Module["SDL2"];
                   if ($0) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -712,7 +719,7 @@ var mGBA = (() => {
                       SDL2.audioContext = undefined
                   }
               },
-              277859: ($0, $1, $2) => {
+              277939: ($0, $1, $2) => {
                   var w = $0;
                   var h = $1;
                   var pixels = $2;
@@ -783,7 +790,7 @@ var mGBA = (() => {
                   }
                   SDL2.ctx.putImageData(SDL2.image, 0, 0)
               },
-              279328: ($0, $1, $2, $3, $4) => {
+              279408: ($0, $1, $2, $3, $4) => {
                   var w = $0;
                   var h = $1;
                   var hot_x = $2;
@@ -820,18 +827,18 @@ var mGBA = (() => {
                   stringToUTF8(url, urlBuf, url.length + 1);
                   return urlBuf
               },
-              280317: $0 => {
+              280397: $0 => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = UTF8ToString($0)
                   }
               },
-              280400: () => {
+              280480: () => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = "none"
                   }
               },
-              280469: () => window.innerWidth,
-              280499: () => window.innerHeight
+              280549: () => window.innerWidth,
+              280579: () => window.innerHeight
           };
 
           function ExitStatus(status) {
@@ -5366,10 +5373,10 @@ var mGBA = (() => {
           };
           var currentFullscreenStrategy = {};
           var maybeCStringToJsString = cString => cString > 2 ? UTF8ToString(cString) : cString;
-          var specialHTMLTargets = [0, typeof document != "undefined" ? document : 0, typeof window != "undefined" ? window : 0];
+          var specialHTMLTargets = [0, document, window];
           var findEventTarget = target => {
               target = maybeCStringToJsString(target);
-              var domElement = specialHTMLTargets[target] || (typeof document != "undefined" ? document.querySelector(target) : undefined);
+              var domElement = specialHTMLTargets[target] || document.querySelector(target);
               return domElement
           };
           var findCanvasEventTarget = findEventTarget;
@@ -7494,12 +7501,7 @@ var mGBA = (() => {
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
-          var _emscripten_set_visibilitychange_callback_on_thread = (userData, useCapture, callbackfunc, targetThread) => {
-              if (!specialHTMLTargets[1]) {
-                  return -4
-              }
-              return registerVisibilityChangeEventCallback(specialHTMLTargets[1], userData, useCapture, callbackfunc, 21, "visibilitychange", targetThread)
-          };
+          var _emscripten_set_visibilitychange_callback_on_thread = (userData, useCapture, callbackfunc, targetThread) => registerVisibilityChangeEventCallback(specialHTMLTargets[1], userData, useCapture, callbackfunc, 21, "visibilitychange", targetThread);
           var registerWheelEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
               if (!JSEvents.wheelEvent) JSEvents.wheelEvent = _malloc(104);
               var wheelHandlerFunc = (e = event) => {
@@ -7934,69 +7936,69 @@ var mGBA = (() => {
               miniTempWebGLIntBuffers[i] = miniTempWebGLIntBuffersStorage.subarray(0, i + 1)
           }
           var wasmImports = {
-              P: ___syscall_fcntl64,
-              sb: ___syscall_fstat64,
-              ab: ___syscall_ftruncate64,
-              nb: ___syscall_getcwd,
-              jb: ___syscall_getdents64,
-              tb: ___syscall_ioctl,
-              pb: ___syscall_lstat64,
-              kb: ___syscall_mkdirat,
-              qb: ___syscall_newfstatat,
-              Q: ___syscall_openat,
-              ib: ___syscall_readlinkat,
-              gb: ___syscall_rmdir,
-              rb: ___syscall_stat64,
-              hb: ___syscall_unlinkat,
-              eb: ___syscall_utimensat,
-              ub: __emscripten_get_now_is_monotonic,
-              bb: __emscripten_throw_longjmp,
-              Za: __localtime_js,
-              _a: __mktime_js,
-              Wa: __mmap_js,
-              Xa: __msync_js,
-              Ya: __munmap_js,
-              fb: __tzset_js,
+              Q: ___syscall_fcntl64,
+              rb: ___syscall_fstat64,
+              $a: ___syscall_ftruncate64,
+              mb: ___syscall_getcwd,
+              ib: ___syscall_getdents64,
+              sb: ___syscall_ioctl,
+              ob: ___syscall_lstat64,
+              jb: ___syscall_mkdirat,
+              pb: ___syscall_newfstatat,
+              R: ___syscall_openat,
+              hb: ___syscall_readlinkat,
+              fb: ___syscall_rmdir,
+              qb: ___syscall_stat64,
+              gb: ___syscall_unlinkat,
+              db: ___syscall_utimensat,
+              tb: __emscripten_get_now_is_monotonic,
+              ab: __emscripten_throw_longjmp,
+              Ya: __localtime_js,
+              Za: __mktime_js,
+              Va: __mmap_js,
+              Wa: __msync_js,
+              Xa: __munmap_js,
+              eb: __tzset_js,
               a: _abort,
-              Ra: _eglBindAPI,
-              Va: _eglChooseConfig,
-              Ia: _eglCreateContext,
-              Ka: _eglCreateWindowSurface,
-              Ja: _eglDestroyContext,
-              La: _eglDestroySurface,
-              cb: _eglGetConfigAttrib,
-              N: _eglGetDisplay,
-              Ha: _eglGetError,
-              Ta: _eglInitialize,
-              Ma: _eglMakeCurrent,
-              Ga: _eglQueryString,
-              Na: _eglSwapBuffers,
-              Oa: _eglSwapInterval,
-              Ua: _eglTerminate,
-              Qa: _eglWaitGL,
-              Pa: _eglWaitNative,
+              Qa: _eglBindAPI,
+              Ua: _eglChooseConfig,
+              Ha: _eglCreateContext,
+              Ja: _eglCreateWindowSurface,
+              Ia: _eglDestroyContext,
+              Ka: _eglDestroySurface,
+              bb: _eglGetConfigAttrib,
+              O: _eglGetDisplay,
+              Ga: _eglGetError,
+              Sa: _eglInitialize,
+              La: _eglMakeCurrent,
+              Fa: _eglQueryString,
+              Ma: _eglSwapBuffers,
+              Na: _eglSwapInterval,
+              Ta: _eglTerminate,
+              Pa: _eglWaitGL,
+              Oa: _eglWaitNative,
               i: _emscripten_asm_const_int,
               b: _emscripten_asm_const_int_sync_on_main_thread,
-              R: _emscripten_date_now,
-              Aa: _emscripten_exit_fullscreen,
-              Ea: _emscripten_exit_pointerlock,
+              S: _emscripten_date_now,
+              za: _emscripten_exit_fullscreen,
+              Da: _emscripten_exit_pointerlock,
               h: _emscripten_get_device_pixel_ratio,
               e: _emscripten_get_element_css_size,
-              U: _emscripten_get_gamepad_status,
+              V: _emscripten_get_gamepad_status,
               Z: _emscripten_get_main_loop_timing,
               p: _emscripten_get_now,
-              cc: _emscripten_get_num_gamepads,
-              Fa: _emscripten_get_screen_size,
-              ga: _emscripten_glActiveTexture,
-              fa: _emscripten_glAttachShader,
-              wa: _emscripten_glBeginQueryEXT,
-              ea: _emscripten_glBindAttribLocation,
-              da: _emscripten_glBindBuffer,
-              ca: _emscripten_glBindFramebuffer,
-              ba: _emscripten_glBindRenderbuffer,
-              aa: _emscripten_glBindTexture,
-              oa: _emscripten_glBindVertexArrayOES,
-              $: _emscripten_glBlendColor,
+              bc: _emscripten_get_num_gamepads,
+              Ea: _emscripten_get_screen_size,
+              fa: _emscripten_glActiveTexture,
+              ea: _emscripten_glAttachShader,
+              va: _emscripten_glBeginQueryEXT,
+              da: _emscripten_glBindAttribLocation,
+              ca: _emscripten_glBindBuffer,
+              ba: _emscripten_glBindFramebuffer,
+              aa: _emscripten_glBindRenderbuffer,
+              $: _emscripten_glBindTexture,
+              na: _emscripten_glBindVertexArrayOES,
+              _: _emscripten_glBlendColor,
               Zd: _emscripten_glBlendEquation,
               Yd: _emscripten_glBlendEquationSeparate,
               Xd: _emscripten_glBlendFunc,
@@ -8020,11 +8022,11 @@ var mGBA = (() => {
               Fd: _emscripten_glDeleteBuffers,
               Ed: _emscripten_glDeleteFramebuffers,
               Dd: _emscripten_glDeleteProgram,
-              ya: _emscripten_glDeleteQueriesEXT,
+              xa: _emscripten_glDeleteQueriesEXT,
               Cd: _emscripten_glDeleteRenderbuffers,
               Bd: _emscripten_glDeleteShader,
               Ad: _emscripten_glDeleteTextures,
-              na: _emscripten_glDeleteVertexArraysOES,
+              ma: _emscripten_glDeleteVertexArraysOES,
               zd: _emscripten_glDepthFunc,
               yd: _emscripten_glDepthMask,
               xd: _emscripten_glDepthRangef,
@@ -8032,13 +8034,13 @@ var mGBA = (() => {
               ud: _emscripten_glDisable,
               td: _emscripten_glDisableVertexAttribArray,
               sd: _emscripten_glDrawArrays,
-              ja: _emscripten_glDrawArraysInstancedANGLE,
-              ka: _emscripten_glDrawBuffersWEBGL,
+              ia: _emscripten_glDrawArraysInstancedANGLE,
+              ja: _emscripten_glDrawBuffersWEBGL,
               rd: _emscripten_glDrawElements,
-              ia: _emscripten_glDrawElementsInstancedANGLE,
+              ha: _emscripten_glDrawElementsInstancedANGLE,
               qd: _emscripten_glEnable,
               pd: _emscripten_glEnableVertexAttribArray,
-              va: _emscripten_glEndQueryEXT,
+              ua: _emscripten_glEndQueryEXT,
               od: _emscripten_glFinish,
               nd: _emscripten_glFlush,
               md: _emscripten_glFramebufferRenderbuffer,
@@ -8046,10 +8048,10 @@ var mGBA = (() => {
               kd: _emscripten_glFrontFace,
               jd: _emscripten_glGenBuffers,
               hd: _emscripten_glGenFramebuffers,
-              za: _emscripten_glGenQueriesEXT,
+              ya: _emscripten_glGenQueriesEXT,
               gd: _emscripten_glGenRenderbuffers,
               fd: _emscripten_glGenTextures,
-              ma: _emscripten_glGenVertexArraysOES,
+              la: _emscripten_glGenVertexArraysOES,
               id: _emscripten_glGenerateMipmap,
               ed: _emscripten_glGetActiveAttrib,
               dd: _emscripten_glGetActiveUniform,
@@ -8063,11 +8065,11 @@ var mGBA = (() => {
               Xc: _emscripten_glGetIntegerv,
               Vc: _emscripten_glGetProgramInfoLog,
               Wc: _emscripten_glGetProgramiv,
-              qa: _emscripten_glGetQueryObjecti64vEXT,
-              sa: _emscripten_glGetQueryObjectivEXT,
-              pa: _emscripten_glGetQueryObjectui64vEXT,
-              ra: _emscripten_glGetQueryObjectuivEXT,
-              ta: _emscripten_glGetQueryivEXT,
+              pa: _emscripten_glGetQueryObjecti64vEXT,
+              ra: _emscripten_glGetQueryObjectivEXT,
+              oa: _emscripten_glGetQueryObjectui64vEXT,
+              qa: _emscripten_glGetQueryObjectuivEXT,
+              sa: _emscripten_glGetQueryivEXT,
               Uc: _emscripten_glGetRenderbufferParameteriv,
               Rc: _emscripten_glGetShaderInfoLog,
               Qc: _emscripten_glGetShaderPrecisionFormat,
@@ -8087,16 +8089,16 @@ var mGBA = (() => {
               Cc: _emscripten_glIsEnabled,
               Bc: _emscripten_glIsFramebuffer,
               Ac: _emscripten_glIsProgram,
-              xa: _emscripten_glIsQueryEXT,
+              wa: _emscripten_glIsQueryEXT,
               zc: _emscripten_glIsRenderbuffer,
               yc: _emscripten_glIsShader,
               xc: _emscripten_glIsTexture,
-              la: _emscripten_glIsVertexArrayOES,
+              ka: _emscripten_glIsVertexArrayOES,
               wc: _emscripten_glLineWidth,
               vc: _emscripten_glLinkProgram,
               uc: _emscripten_glPixelStorei,
               tc: _emscripten_glPolygonOffset,
-              ua: _emscripten_glQueryCounterEXT,
+              ta: _emscripten_glQueryCounterEXT,
               sc: _emscripten_glReadPixels,
               rc: _emscripten_glReleaseShaderCompiler,
               qc: _emscripten_glRenderbufferStorage,
@@ -8113,89 +8115,89 @@ var mGBA = (() => {
               fc: _emscripten_glTexImage2D,
               ec: _emscripten_glTexParameterf,
               dc: _emscripten_glTexParameterfv,
-              bc: _emscripten_glTexParameteri,
-              ac: _emscripten_glTexParameteriv,
-              $b: _emscripten_glTexSubImage2D,
-              _b: _emscripten_glUniform1f,
-              Zb: _emscripten_glUniform1fv,
-              Yb: _emscripten_glUniform1i,
-              Xb: _emscripten_glUniform1iv,
-              Wb: _emscripten_glUniform2f,
-              Vb: _emscripten_glUniform2fv,
-              Ub: _emscripten_glUniform2i,
-              Tb: _emscripten_glUniform2iv,
-              Sb: _emscripten_glUniform3f,
-              Rb: _emscripten_glUniform3fv,
-              Qb: _emscripten_glUniform3i,
-              Pb: _emscripten_glUniform3iv,
-              Ob: _emscripten_glUniform4f,
-              Nb: _emscripten_glUniform4fv,
-              Mb: _emscripten_glUniform4i,
-              Lb: _emscripten_glUniform4iv,
-              Kb: _emscripten_glUniformMatrix2fv,
-              Jb: _emscripten_glUniformMatrix3fv,
-              Ib: _emscripten_glUniformMatrix4fv,
-              Hb: _emscripten_glUseProgram,
-              Gb: _emscripten_glValidateProgram,
-              Fb: _emscripten_glVertexAttrib1f,
-              Eb: _emscripten_glVertexAttrib1fv,
-              Db: _emscripten_glVertexAttrib2f,
-              Cb: _emscripten_glVertexAttrib2fv,
-              Bb: _emscripten_glVertexAttrib3f,
-              Ab: _emscripten_glVertexAttrib3fv,
-              zb: _emscripten_glVertexAttrib4f,
-              yb: _emscripten_glVertexAttrib4fv,
-              ha: _emscripten_glVertexAttribDivisorANGLE,
-              xb: _emscripten_glVertexAttribPointer,
-              wb: _emscripten_glViewport,
+              ac: _emscripten_glTexParameteri,
+              $b: _emscripten_glTexParameteriv,
+              _b: _emscripten_glTexSubImage2D,
+              Zb: _emscripten_glUniform1f,
+              Yb: _emscripten_glUniform1fv,
+              Xb: _emscripten_glUniform1i,
+              Wb: _emscripten_glUniform1iv,
+              Vb: _emscripten_glUniform2f,
+              Ub: _emscripten_glUniform2fv,
+              Tb: _emscripten_glUniform2i,
+              Sb: _emscripten_glUniform2iv,
+              Rb: _emscripten_glUniform3f,
+              Qb: _emscripten_glUniform3fv,
+              Pb: _emscripten_glUniform3i,
+              Ob: _emscripten_glUniform3iv,
+              Nb: _emscripten_glUniform4f,
+              Mb: _emscripten_glUniform4fv,
+              Lb: _emscripten_glUniform4i,
+              Kb: _emscripten_glUniform4iv,
+              Jb: _emscripten_glUniformMatrix2fv,
+              Ib: _emscripten_glUniformMatrix3fv,
+              Hb: _emscripten_glUniformMatrix4fv,
+              Gb: _emscripten_glUseProgram,
+              Fb: _emscripten_glValidateProgram,
+              Eb: _emscripten_glVertexAttrib1f,
+              Db: _emscripten_glVertexAttrib1fv,
+              Cb: _emscripten_glVertexAttrib2f,
+              Bb: _emscripten_glVertexAttrib2fv,
+              Ab: _emscripten_glVertexAttrib3f,
+              zb: _emscripten_glVertexAttrib3fv,
+              yb: _emscripten_glVertexAttrib4f,
+              xb: _emscripten_glVertexAttrib4fv,
+              ga: _emscripten_glVertexAttribDivisorANGLE,
+              wb: _emscripten_glVertexAttribPointer,
+              vb: _emscripten_glViewport,
               o: _emscripten_has_asyncify,
-              vb: _emscripten_memcpy_js,
-              V: _emscripten_pause_main_loop,
-              Ba: _emscripten_request_fullscreen_strategy,
-              L: _emscripten_request_pointerlock,
-              db: _emscripten_resize_heap,
-              M: _emscripten_resume_main_loop,
+              ub: _emscripten_memcpy_js,
+              q: _emscripten_pause_main_loop,
+              Aa: _emscripten_request_fullscreen_strategy,
+              M: _emscripten_request_pointerlock,
+              cb: _emscripten_resize_heap,
+              N: _emscripten_resume_main_loop,
               W: _emscripten_sample_gamepad_data,
-              r: _emscripten_set_beforeunload_callback_on_thread,
-              D: _emscripten_set_blur_callback_on_thread,
+              s: _emscripten_set_beforeunload_callback_on_thread,
+              E: _emscripten_set_blur_callback_on_thread,
               g: _emscripten_set_canvas_element_size,
               l: _emscripten_set_element_css_size,
-              E: _emscripten_set_focus_callback_on_thread,
-              u: _emscripten_set_fullscreenchange_callback_on_thread,
-              T: _emscripten_set_gamepadconnected_callback_on_thread,
-              S: _emscripten_set_gamepaddisconnected_callback_on_thread,
-              x: _emscripten_set_keydown_callback_on_thread,
-              v: _emscripten_set_keypress_callback_on_thread,
-              w: _emscripten_set_keyup_callback_on_thread,
-              Da: _emscripten_set_main_loop,
-              _: _emscripten_set_main_loop_timing,
-              J: _emscripten_set_mousedown_callback_on_thread,
-              H: _emscripten_set_mouseenter_callback_on_thread,
-              G: _emscripten_set_mouseleave_callback_on_thread,
-              K: _emscripten_set_mousemove_callback_on_thread,
-              I: _emscripten_set_mouseup_callback_on_thread,
-              y: _emscripten_set_pointerlockchange_callback_on_thread,
-              t: _emscripten_set_resize_callback_on_thread,
-              z: _emscripten_set_touchcancel_callback_on_thread,
-              B: _emscripten_set_touchend_callback_on_thread,
-              A: _emscripten_set_touchmove_callback_on_thread,
-              C: _emscripten_set_touchstart_callback_on_thread,
-              s: _emscripten_set_visibilitychange_callback_on_thread,
-              F: _emscripten_set_wheel_callback_on_thread,
-              Ca: _emscripten_set_window_title,
+              F: _emscripten_set_focus_callback_on_thread,
+              v: _emscripten_set_fullscreenchange_callback_on_thread,
+              U: _emscripten_set_gamepadconnected_callback_on_thread,
+              T: _emscripten_set_gamepaddisconnected_callback_on_thread,
+              y: _emscripten_set_keydown_callback_on_thread,
+              w: _emscripten_set_keypress_callback_on_thread,
+              x: _emscripten_set_keyup_callback_on_thread,
+              Ca: _emscripten_set_main_loop,
+              cc: _emscripten_set_main_loop_timing,
+              K: _emscripten_set_mousedown_callback_on_thread,
+              I: _emscripten_set_mouseenter_callback_on_thread,
+              H: _emscripten_set_mouseleave_callback_on_thread,
+              L: _emscripten_set_mousemove_callback_on_thread,
+              J: _emscripten_set_mouseup_callback_on_thread,
+              z: _emscripten_set_pointerlockchange_callback_on_thread,
+              u: _emscripten_set_resize_callback_on_thread,
+              A: _emscripten_set_touchcancel_callback_on_thread,
+              C: _emscripten_set_touchend_callback_on_thread,
+              B: _emscripten_set_touchmove_callback_on_thread,
+              D: _emscripten_set_touchstart_callback_on_thread,
+              t: _emscripten_set_visibilitychange_callback_on_thread,
+              G: _emscripten_set_wheel_callback_on_thread,
+              Ba: _emscripten_set_window_title,
               m: _emscripten_sleep,
-              lb: _environ_get,
-              mb: _environ_sizes_get,
-              Sa: _exit,
+              kb: _environ_get,
+              lb: _environ_sizes_get,
+              Ra: _exit,
               j: _fd_close,
-              O: _fd_read,
-              $a: _fd_seek,
-              ob: _fd_sync,
+              P: _fd_read,
+              _a: _fd_seek,
+              nb: _fd_sync,
               n: _fd_write,
               Y: invoke_ii,
               X: invoke_iii,
               c: invoke_iiii,
-              q: invoke_iiiii,
+              r: invoke_iiiii,
               Sc: invoke_vi,
               d: invoke_vii,
               k: invoke_viii,
@@ -8213,47 +8215,49 @@ var mGBA = (() => {
           var _getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = () => (_getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = wasmExports["fe"])();
           var _getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = () => (_getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = wasmExports["ge"])();
           var _setMainLoopTiming = Module["_setMainLoopTiming"] = (a0, a1) => (_setMainLoopTiming = Module["_setMainLoopTiming"] = wasmExports["he"])(a0, a1);
-          var _quitGame = Module["_quitGame"] = () => (_quitGame = Module["_quitGame"] = wasmExports["ie"])();
-          var _quitMgba = Module["_quitMgba"] = () => (_quitMgba = Module["_quitMgba"] = wasmExports["je"])();
-          var _quickReload = Module["_quickReload"] = () => (_quickReload = Module["_quickReload"] = wasmExports["ke"])();
-          var _pauseGame = Module["_pauseGame"] = () => (_pauseGame = Module["_pauseGame"] = wasmExports["le"])();
-          var _resumeGame = Module["_resumeGame"] = () => (_resumeGame = Module["_resumeGame"] = wasmExports["me"])();
-          var _setEventEnable = Module["_setEventEnable"] = a0 => (_setEventEnable = Module["_setEventEnable"] = wasmExports["ne"])(a0);
-          var _bindKey = Module["_bindKey"] = (a0, a1) => (_bindKey = Module["_bindKey"] = wasmExports["oe"])(a0, a1);
-          var _saveState = Module["_saveState"] = a0 => (_saveState = Module["_saveState"] = wasmExports["pe"])(a0);
-          var _loadState = Module["_loadState"] = a0 => (_loadState = Module["_loadState"] = wasmExports["qe"])(a0);
-          var _autoLoadCheats = Module["_autoLoadCheats"] = () => (_autoLoadCheats = Module["_autoLoadCheats"] = wasmExports["re"])();
-          var _loadGame = Module["_loadGame"] = a0 => (_loadGame = Module["_loadGame"] = wasmExports["se"])(a0);
-          var _saveStateSlot = Module["_saveStateSlot"] = (a0, a1) => (_saveStateSlot = Module["_saveStateSlot"] = wasmExports["te"])(a0, a1);
-          var _loadStateSlot = Module["_loadStateSlot"] = (a0, a1) => (_loadStateSlot = Module["_loadStateSlot"] = wasmExports["ue"])(a0, a1);
-          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["ve"])();
-          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["we"])(a0, a1);
-          var _malloc = a0 => (_malloc = wasmExports["ye"])(a0);
-          var setTempRet0 = a0 => (setTempRet0 = wasmExports["ze"])(a0);
-          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["Ae"])(a0, a1);
-          var _setThrew = (a0, a1) => (_setThrew = wasmExports["Be"])(a0, a1);
-          var stackSave = () => (stackSave = wasmExports["Ce"])();
-          var stackRestore = a0 => (stackRestore = wasmExports["De"])(a0);
-          var stackAlloc = a0 => (stackAlloc = wasmExports["Ee"])(a0);
-          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["Fe"])(a0, a1);
-          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Ge"])(a0, a1, a2, a3, a4);
-          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["He"])(a0, a1, a2, a3, a4, a5);
-          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Ie"])(a0, a1, a2);
-          var _GBAInputInfo = Module["_GBAInputInfo"] = 109888;
-          var _binaryName = Module["_binaryName"] = 186960;
-          var _projectName = Module["_projectName"] = 186964;
-          var _projectVersion = Module["_projectVersion"] = 186968;
-          var _gitCommit = Module["_gitCommit"] = 186944;
-          var _gitCommitShort = Module["_gitCommitShort"] = 186948;
-          var _gitBranch = Module["_gitBranch"] = 186952;
-          var _gitRevision = Module["_gitRevision"] = 186956;
-          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 49344;
-          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 64608;
-          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 64612;
-          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 93104;
-          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 138384;
-          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 138176;
-          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 138180;
+          var _setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = a0 => (_setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = wasmExports["ie"])(a0);
+          var _getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = () => (_getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = wasmExports["je"])();
+          var _quitGame = Module["_quitGame"] = () => (_quitGame = Module["_quitGame"] = wasmExports["ke"])();
+          var _quitMgba = Module["_quitMgba"] = () => (_quitMgba = Module["_quitMgba"] = wasmExports["le"])();
+          var _quickReload = Module["_quickReload"] = () => (_quickReload = Module["_quickReload"] = wasmExports["me"])();
+          var _pauseGame = Module["_pauseGame"] = () => (_pauseGame = Module["_pauseGame"] = wasmExports["ne"])();
+          var _resumeGame = Module["_resumeGame"] = () => (_resumeGame = Module["_resumeGame"] = wasmExports["oe"])();
+          var _setEventEnable = Module["_setEventEnable"] = a0 => (_setEventEnable = Module["_setEventEnable"] = wasmExports["pe"])(a0);
+          var _bindKey = Module["_bindKey"] = (a0, a1) => (_bindKey = Module["_bindKey"] = wasmExports["qe"])(a0, a1);
+          var _saveState = Module["_saveState"] = a0 => (_saveState = Module["_saveState"] = wasmExports["re"])(a0);
+          var _loadState = Module["_loadState"] = a0 => (_loadState = Module["_loadState"] = wasmExports["se"])(a0);
+          var _autoLoadCheats = Module["_autoLoadCheats"] = () => (_autoLoadCheats = Module["_autoLoadCheats"] = wasmExports["te"])();
+          var _loadGame = Module["_loadGame"] = a0 => (_loadGame = Module["_loadGame"] = wasmExports["ue"])(a0);
+          var _saveStateSlot = Module["_saveStateSlot"] = (a0, a1) => (_saveStateSlot = Module["_saveStateSlot"] = wasmExports["ve"])(a0, a1);
+          var _loadStateSlot = Module["_loadStateSlot"] = (a0, a1) => (_loadStateSlot = Module["_loadStateSlot"] = wasmExports["we"])(a0, a1);
+          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["xe"])();
+          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["ye"])(a0, a1);
+          var _malloc = a0 => (_malloc = wasmExports["Ae"])(a0);
+          var setTempRet0 = a0 => (setTempRet0 = wasmExports["Be"])(a0);
+          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["Ce"])(a0, a1);
+          var _setThrew = (a0, a1) => (_setThrew = wasmExports["De"])(a0, a1);
+          var stackSave = () => (stackSave = wasmExports["Ee"])();
+          var stackRestore = a0 => (stackRestore = wasmExports["Fe"])(a0);
+          var stackAlloc = a0 => (stackAlloc = wasmExports["Ge"])(a0);
+          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["He"])(a0, a1);
+          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Ie"])(a0, a1, a2, a3, a4);
+          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Je"])(a0, a1, a2, a3, a4, a5);
+          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Ke"])(a0, a1, a2);
+          var _GBAInputInfo = Module["_GBAInputInfo"] = 109952;
+          var _binaryName = Module["_binaryName"] = 187024;
+          var _projectName = Module["_projectName"] = 187028;
+          var _projectVersion = Module["_projectVersion"] = 187032;
+          var _gitCommit = Module["_gitCommit"] = 187008;
+          var _gitCommitShort = Module["_gitCommitShort"] = 187012;
+          var _gitBranch = Module["_gitBranch"] = 187016;
+          var _gitRevision = Module["_gitRevision"] = 187020;
+          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 49408;
+          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 64672;
+          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 64676;
+          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 93168;
+          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 138448;
+          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 138240;
+          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 138244;
 
           function invoke_iiiii(index, a1, a2, a3, a4) {
               var sp = stackSave();
