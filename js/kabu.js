@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.44';
+let gameVer = 'V1.45';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -796,6 +796,7 @@ saveCheatsButton.addEventListener("click", function() {
     const newCheatCode = window.prompt("Edit cheat code", localStorage.getItem(`${gameName}_savedCheats`) || 'xxxx xx');
     if (newCheatCode !== null) {
         const enableCheat = confirm("CANCEL is disable a cheat / OK is enable a cheat");
+        Module.SDL2();
         cheatEnable = enableCheat;
         cheatsContent += `cheat0_enable = ${cheatEnable}\ncheat0_code = "${newCheatCode}"`;
         const blob = new Blob([cheatsContent], {
@@ -812,6 +813,8 @@ saveCheatsButton.addEventListener("click", function() {
                 notiMessage("Cheat Enabled!", 1500);
             }
         });
+    } else {
+        Module.SDL2();
     }
 })
 //SDL2 Enable
