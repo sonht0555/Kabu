@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.43';
+let gameVer = 'V1.44';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -328,17 +328,17 @@ function buttonPress(buttonName, isPress) {
 async function turboF(turboState) {
     try {
         if (turboState === 1) {
-            notiMessage("Normal Speed", 1500);
+            notiMessage("1x Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.remove("turbo-fast");
             Module.setFastForwardMultiplier(1);
         } else if (turboState === 2) {
-            notiMessage("Medium Speed", 1500);
+            notiMessage("2x Speed", 1500);
             turbo.classList.add("turbo-medium");
             turbo.classList.remove("turbo-fast");
             Module.setFastForwardMultiplier(2);
-        } else if (turboState === 3) {
-            notiMessage("Fast Speed", 1500);
+        } else if (turboState === 4) {
+            notiMessage("4x Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.add("turbo-fast");
             Module.setFastForwardMultiplier(3);
@@ -819,7 +819,6 @@ SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
         button.addEventListener("touchstart", function() {
-            Module.SDL2();
             input.classList.remove("cs22");
             if (listPad.classList.contains("active")) {
                 listPad.classList.remove("active");
@@ -1199,10 +1198,12 @@ tesst.addEventListener("click", async function() {
 const handleVisibilityChange = () => {
     if (document.visibilityState === 'hidden') {
       Module.pauseGame();
-      notiMessage("Paused", 2000);
+      Module.SDL2();
+      notiMessage("Paused!", 2000);
     } else {
       Module.resumeGame();
-      notiMessage("Resumed", 2000);
+      Module.SDL2();
+      notiMessage("Resumed!", 2000);
     }
   };
     document.addEventListener('visibilitychange', handleVisibilityChange);
