@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.45';
+let gameVer = 'V1.46';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -337,11 +337,11 @@ async function turboF(turboState) {
             turbo.classList.add("turbo-medium");
             turbo.classList.remove("turbo-fast");
             Module.setFastForwardMultiplier(2);
-        } else if (turboState === 4) {
+        } else if (turboState === 3) {
             notiMessage("4x Speed", 1500);
             turbo.classList.remove("turbo-medium");
             turbo.classList.add("turbo-fast");
-            Module.setFastForwardMultiplier(3);
+            Module.setFastForwardMultiplier(4);
         }
     } catch (error) {
         console.error("Error turboF:", error);

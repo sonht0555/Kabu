@@ -20,20 +20,20 @@ var mGBA = (() => {
               }
               return false
           };
-              // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-              Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
-              Module.domToPng = () => Promise.resolve('dataurl')
-              Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
-              Module.deleteFile = (filepath) => FS.unlink(filepath);
-              Module.fileSize = (filepath) => FS.stat(filepath).size;
-              Module.downloadFile = (filepath) => FS.readFile(filepath);
-              Module.getSave = () => FS.readFile(Module.saveName);
-              Module.listRoms = () => FS.readdir("/data/games/");
-              Module.listSaves = () => FS.readdir("/data/saves/");
-              Module.listStates = () => FS.readdir("/data/states/");
-              Module.listCheats = () => FS.readdir("/data/cheats/");
-              // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-              Module.FSInit = () => new Promise((resolve, reject) => {
+          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+          Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
+          Module.domToPng = () => Promise.resolve('dataurl')
+          Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
+          Module.deleteFile = (filepath) => FS.unlink(filepath);
+          Module.fileSize = (filepath) => FS.stat(filepath).size;
+          Module.downloadFile = (filepath) => FS.readFile(filepath);
+          Module.getSave = () => FS.readFile(Module.saveName);
+          Module.listRoms = () => FS.readdir("/data/games/");
+          Module.listSaves = () => FS.readdir("/data/saves/");
+          Module.listStates = () => FS.readdir("/data/states/");
+          Module.listCheats = () => FS.readdir("/data/cheats/");
+          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+          Module.FSInit = () => new Promise((resolve, reject) => {
               FS.mkdir("/data");
               FS.mount(FS.filesystems.IDBFS, {}, "/data");
               FS.syncfs(true, err => {
@@ -249,11 +249,11 @@ var mGBA = (() => {
           };
           Module.setFastForwardMultiplier = multiplier => {
               const setFastForwardMultiplier = cwrap("setFastForwardMultiplier", null, ["number"]);
-              return setFastForwardMultiplier(multiplier)
+              setFastForwardMultiplier(multiplier)
           };
-          Module.getFastForwardMultiplier = multiplier => {
-              const getFastForwardMultiplier = cwrap("getFastForwardMultiplier", null, ["number"]);
-              return getFastForwardMultiplier(multiplier)
+          Module.getFastForwardMultiplier = () => {
+              const getFastForwardMultiplier = cwrap("getFastForwardMultiplier", "number", []);
+              return getFastForwardMultiplier()
           };
           var moduleOverrides = Object.assign({}, Module);
           var arguments_ = [];
@@ -534,11 +534,11 @@ var mGBA = (() => {
           var tempDouble;
           var tempI64;
           var ASM_CONSTS = {
-              272352: ($0, $1) => {
+              272288: ($0, $1) => {
                   Module.canvas.width = $0;
                   Module.canvas.height = $1
               },
-              272409: ($0, $1, $2, $3, $4, $5, $6) => {
+              272345: ($0, $1, $2, $3, $4, $5, $6) => {
                   Module.version = {
                       gitCommit: UTF8ToString($0),
                       gitShort: UTF8ToString($1),
@@ -549,12 +549,12 @@ var mGBA = (() => {
                       projectVersion: UTF8ToString($6)
                   }
               },
-              272634: () => {
+              272570: () => {
                   FS.syncfs(function(err) {
                       assert(!err)
                   })
               },
-              272678: () => {
+              272614: () => {
                   if (typeof AudioContext !== "undefined") {
                       return true
                   } else if (typeof webkitAudioContext !== "undefined") {
@@ -562,7 +562,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              272825: () => {
+              272761: () => {
                   if (typeof navigator.mediaDevices !== "undefined" && typeof navigator.mediaDevices.getUserMedia !== "undefined") {
                       return true
                   } else if (typeof navigator.webkitGetUserMedia !== "undefined") {
@@ -570,7 +570,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              273059: $0 => {
+              272995: $0 => {
                   if (typeof Module["SDL2"] === "undefined") {
                       Module["SDL2"] = {}
                   }
@@ -592,11 +592,11 @@ var mGBA = (() => {
                   }
                   return SDL2.audioContext === undefined ? -1 : 0
               },
-              273552: () => {
+              273488: () => {
                   var SDL2 = Module["SDL2"];
                   return SDL2.audioContext.sampleRate
               },
-              273620: ($0, $1, $2, $3) => {
+              273556: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   var have_microphone = function(stream) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -637,7 +637,7 @@ var mGBA = (() => {
                       }, have_microphone, no_microphone)
                   }
               },
-              275272: ($0, $1, $2, $3) => {
+              275208: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   SDL2.audio.scriptProcessorNode = SDL2.audioContext["createScriptProcessor"]($1, 0, $0);
                   SDL2.audio.scriptProcessorNode["onaudioprocess"] = function(e) {
@@ -649,7 +649,7 @@ var mGBA = (() => {
                   };
                   SDL2.audio.scriptProcessorNode["connect"](SDL2.audioContext["destination"])
               },
-              275682: ($0, $1) => {
+              275618: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
                   for (var c = 0; c < numChannels; ++c) {
@@ -668,7 +668,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276287: ($0, $1) => {
+              276223: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
                   for (var c = 0; c < numChannels; ++c) {
@@ -681,7 +681,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276767: $0 => {
+              276703: $0 => {
                   var SDL2 = Module["SDL2"];
                   if ($0) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -719,7 +719,7 @@ var mGBA = (() => {
                       SDL2.audioContext = undefined
                   }
               },
-              277939: ($0, $1, $2) => {
+              277875: ($0, $1, $2) => {
                   var w = $0;
                   var h = $1;
                   var pixels = $2;
@@ -790,7 +790,7 @@ var mGBA = (() => {
                   }
                   SDL2.ctx.putImageData(SDL2.image, 0, 0)
               },
-              279408: ($0, $1, $2, $3, $4) => {
+              279344: ($0, $1, $2, $3, $4) => {
                   var w = $0;
                   var h = $1;
                   var hot_x = $2;
@@ -827,18 +827,18 @@ var mGBA = (() => {
                   stringToUTF8(url, urlBuf, url.length + 1);
                   return urlBuf
               },
-              280397: $0 => {
+              280333: $0 => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = UTF8ToString($0)
                   }
               },
-              280480: () => {
+              280416: () => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = "none"
                   }
               },
-              280549: () => window.innerWidth,
-              280579: () => window.innerHeight
+              280485: () => window.innerWidth,
+              280515: () => window.innerHeight
           };
 
           function ExitStatus(status) {
@@ -8243,21 +8243,21 @@ var mGBA = (() => {
           var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Ie"])(a0, a1, a2, a3, a4);
           var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Je"])(a0, a1, a2, a3, a4, a5);
           var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Ke"])(a0, a1, a2);
-          var _GBAInputInfo = Module["_GBAInputInfo"] = 109952;
-          var _binaryName = Module["_binaryName"] = 187024;
-          var _projectName = Module["_projectName"] = 187028;
-          var _projectVersion = Module["_projectVersion"] = 187032;
-          var _gitCommit = Module["_gitCommit"] = 187008;
-          var _gitCommitShort = Module["_gitCommitShort"] = 187012;
-          var _gitBranch = Module["_gitBranch"] = 187016;
-          var _gitRevision = Module["_gitRevision"] = 187020;
-          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 49408;
-          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 64672;
-          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 64676;
-          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 93168;
-          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 138448;
-          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 138240;
-          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 138244;
+          var _GBAInputInfo = Module["_GBAInputInfo"] = 109888;
+          var _binaryName = Module["_binaryName"] = 186960;
+          var _projectName = Module["_projectName"] = 186964;
+          var _projectVersion = Module["_projectVersion"] = 186968;
+          var _gitCommit = Module["_gitCommit"] = 186944;
+          var _gitCommitShort = Module["_gitCommitShort"] = 186948;
+          var _gitBranch = Module["_gitBranch"] = 186952;
+          var _gitRevision = Module["_gitRevision"] = 186956;
+          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 49344;
+          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 64608;
+          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 64612;
+          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 93104;
+          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 138384;
+          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 138176;
+          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 138180;
 
           function invoke_iiiii(index, a1, a2, a3, a4) {
               var sp = stackSave();
