@@ -1,9 +1,10 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.48';
+let gameVer = 'V1.50';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
 let countUpload = 0;
+let selectedIndex = 0;
 var timeoutId;
 var lockNotiTime;
 let clickTimer;
@@ -21,7 +22,6 @@ const listPad = document.getElementById("menu-list-pad");
 const loadStateButton = document.getElementById("loadStateButton");
 const saveStateButton = document.getElementById("saveStateButton");
 const statePageButton = document.getElementById("statePageButton");
-const autoStateCheck = document.getElementById("autoStateCheck");
 const romInput = document.getElementById("fileInput");
 const turbo = document.getElementById("turbo");
 const savedTurboState = localStorage.getItem("turboState");
@@ -31,13 +31,22 @@ const openLocalStorage = document.getElementById("openLocalStorage");
 const savesFile = document.getElementById("savesFile");
 const romsFile = document.getElementById("romsFile");
 const statesFile = document.getElementById("statesFile");
-const saveCheatsButton = document.getElementById("saveCheat");
 const Module = {canvas: document.getElementById("canvas")};
 const dropboxRestore = document.getElementById("dropboxRestore");
 const dropboxBackup = document.getElementById("dropboxBackup");
 const stateList = document.getElementById("stateList");
 const mgbaStorage = document.getElementById("mgba-storage");
 const appVer = document.getElementById("appVer");
+const canvas = document.getElementById("canvas");
+const controlSetting = document.getElementById("control-setting");
+const imgShader = document.getElementById('img-shader') || "sd-4";
+const brightnessX = localStorage.getItem("brightness") || 1.0;
+const contrastX = localStorage.getItem("contrast") || 1.0;
+const saturateX = localStorage.getItem("saturate") || 1.0;
+const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
+const sepiaX = localStorage.getItem("sepia") || 0.0;
+const boxes = document.querySelectorAll('.box');
+const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7', 'sd-8', 'sd-9', 'sd-10'];
 /*----------------BackEnd----------------*/
 startGBA(Module)
 appVer.textContent = gameVer
@@ -193,7 +202,7 @@ async function loadState(slot) {
         console.error("Error loadState:", error);
     }      
 }
-//Auto Save Game In Local Every 16s
+//Auto Save Game In Local Every 60s
 async function saveStatePeriodically() {
     await ledSave("#78C850");
     await Module.saveState(0);
@@ -560,6 +569,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },3000);
 
     setTimeout(() => {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
         romInput.accept = ".gba,.gbc,.gb";
         upLoadFile.accept = ".gba,.gbc,.gb,.sav,.ss0,.ss1,.ss2,.ss3,.cheats";
         led(parseInt(localStorage.getItem("slotStateSaved")));
@@ -649,15 +659,269 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateButtonState(currentDirection, false);
                 currentDirection = '';
             });
-            // Joystick
-        })
+            })
+        // Box1
+        const gameName = localStorage.getItem("gameName") || "xxxx xx";
+        box1.textContent = localStorage.getItem(`${gameName}_savedCheats`) || "xxxx xx"
+        // Box2
         if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
-            document.getElementById("autoStateCheck").checked = true;
+            box2.textContent = 'On'
         } else {
-            document.getElementById("autoStateCheck").checked = false;
+            box2.textContent = 'Off'
             const autoStateCheck = 0
             localStorage.setItem("autoStateCheck", autoStateCheck)
         }
+        // Box3
+        box3.textContent = localStorage.getItem("selectedShader") || "sd-4";
+        // Box4
+        box4.textContent = localStorage.getItem("opacity") || 0.5;
+        // Box5 
+        box5.textContent = localStorage.getItem("brightness") || 1.0;
+        // Box6
+        box6.textContent = localStorage.getItem("contrast") || 1.0;
+        // Box7
+        box7.textContent = localStorage.getItem("saturate") || 1.0;
+        // Box8
+        box8.textContent = localStorage.getItem("hueRotate") || 0.0;
+        // Box9
+        box9.textContent = localStorage.getItem("sepia") || 0.0;
+        // Box3-9 Content
+        imgShader.classList.add(localStorage.getItem("selectedShader"))
+        imgshader.style.opacity = localStorage.getItem("opacity") || 0.5;
+        canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+        let currentShaderClass = sdValues[0];
+        const updateSelection = () => {
+            boxes.forEach((box, index) => {
+                if (index === selectedIndex) {
+                    box.classList.add('selected');
+                } else {
+                    box.classList.remove('selected');
+                }
+            });
+        };
+        updateSelection();
+        ["mousedown", "touchstart"].forEach(eventType => {});
+        ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+            document.getElementById('A').addEventListener(eventType, () => {
+                if (menuPad.classList.contains("active")) {
+                    if (document.getElementById('box1').classList.contains('selected')) {
+                        let box1 = document.getElementById('box1');
+                        const gameName = localStorage.getItem("gameName");
+                        const cheatName = gameName.replace(".gba", ".cheats");
+                        const defaultCheatContent = "cheats = 1\n";
+                        let cheatEnable = false;
+                        let cheatsContent = defaultCheatContent;
+                        const newCheatCode = window.prompt("Edit cheat code", localStorage.getItem(`${gameName}_savedCheats`) || 'xxxx xx');
+                        if (newCheatCode !== null) {
+                            const enableCheat = confirm("CANCEL is disable a cheat / OK is enable a cheat");
+                            Module.SDL2();
+                            cheatEnable = enableCheat;
+                            cheatsContent += `cheat0_enable = ${cheatEnable}\ncheat0_code = "${newCheatCode}"`;
+                            const blob = new Blob([cheatsContent], {
+                                type: "text/plain"
+                            });
+                            const file = new File([blob], cheatName);
+                            Module.uploadCheats(file, () => {
+                                Module.autoLoadCheats();
+                                setTimeout(() => {
+                                    Module.FSSync();
+                                }, 500);
+                                if (cheatEnable) {
+                                    localStorage.setItem(`${gameName}_savedCheats`, newCheatCode);
+                                    notiMessage("Cheat Enabled!", 1500);
+                                }
+                                box1.textContent = localStorage.getItem(`${gameName}_savedCheats` || 'Off');
+                            });
+                        } else {
+                            Module.SDL2();
+                        }
+                    }
+                }
+            });
+            document.getElementById('Up').addEventListener(eventType, () => {
+                if (menuPad.classList.contains("active")) {
+                    if (selectedIndex > 0) {
+                        selectedIndex--;
+                        updateSelection();
+                    }
+                }
+            });
+            document.getElementById('Down').addEventListener(eventType, () => {
+                if (menuPad.classList.contains("active")) {
+                    if (selectedIndex < boxes.length - 1) {
+                        selectedIndex++;
+                        updateSelection();
+                    }
+                }
+            });
+            document.getElementById('Right').addEventListener(eventType, () => {
+                if (menuPad.classList.contains("active")) {
+                    if (document.getElementById('box2').classList.contains('selected')) {
+                        let box2 = document.getElementById('box2');
+                        box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
+                        if (box2.textContent === 'On') {
+                            const autoStateCheck = 1
+                            localStorage.setItem("autoStateCheck", autoStateCheck)
+                            console.log("autoStateCheck", parseInt(localStorage.getItem("autoStateCheck")))
+                            notiMessage("Auto Switches Slots", 1500);
+                        } else {
+                            const autoStateCheck = 0
+                            localStorage.setItem("autoStateCheck", autoStateCheck)
+                            console.log("autoStateCheck", parseInt(localStorage.getItem("autoStateCheck")))
+                            notiMessage("Manual Switches Slots", 1500);
+                        }
+                    }
+                    if (document.getElementById('box3').classList.contains('selected')) {
+                        let box3 = document.getElementById('box3');
+                        let currentIndex = sdValues.indexOf(box3.textContent);
+                        if (currentIndex < sdValues.length - 1) {
+                            box3.textContent = sdValues[currentIndex + 1];
+                        } else {
+                            box3.textContent = sdValues[0];
+                        }
+                        console.log(box3.textContent);
+                        sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                        currentShaderClass = box3.textContent;
+                        imgShader.classList.add(currentShaderClass);
+                        localStorage.setItem("selectedShader", currentShaderClass);
+                    }
+                    if (document.getElementById('box4').classList.contains('selected')) {
+                        Right('box4', 1, 0.1, 'opacity', 'opacity');
+                    }
+                    if (document.getElementById('box5').classList.contains('selected')) {
+                        Right('box5', 2, 0.1, 'brightness', 'brightness');
+                    }
+                    if (document.getElementById('box6').classList.contains('selected')) {
+                        Right('box6', 2, 0.1, 'contrast', 'contrast');
+                    }
+                    if (document.getElementById('box7').classList.contains('selected')) {
+                        Right('box7', 2, 0.1, 'saturate', 'saturate');
+                    }
+                    if (document.getElementById('box8').classList.contains('selected')) {
+                        Right('box8', 10, 1, 'hueRotate', 'hueRotate');
+                    }
+                    if (document.getElementById('box9').classList.contains('selected')) {
+                        Right('box9', 1, 0.1, 'sepia', 'sepia');
+                    }
+                }
+            });
+            document.getElementById('Left').addEventListener(eventType, () => {
+                if (menuPad.classList.contains("active")) {
+                    if (document.getElementById('box2').classList.contains('selected')) {
+                        let box2 = document.getElementById('box2');
+                        box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
+                        if (box2.textContent === 'On') {
+                            const autoStateCheck = 1
+                            localStorage.setItem("autoStateCheck", autoStateCheck)
+                            console.log("autoStateCheck", parseInt(localStorage.getItem("autoStateCheck")))
+                            notiMessage("Auto Switches Slots", 1500);
+                        } else {
+                            const autoStateCheck = 0
+                            localStorage.setItem("autoStateCheck", autoStateCheck)
+                            console.log("autoStateCheck", parseInt(localStorage.getItem("autoStateCheck")))
+                            notiMessage("Manual Switches Slots", 1500);
+                        }
+                    }
+                    if (document.getElementById('box3').classList.contains('selected')) {
+                        let box3 = document.getElementById('box3');
+                        let currentIndex = sdValues.indexOf(box3.textContent);
+                        if (currentIndex > 0) {
+                            box3.textContent = sdValues[currentIndex - 1];
+                        } else {
+                            box3.textContent = sdValues[sdValues.length - 1];
+                        }
+                        sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                        currentShaderClass = box3.textContent;
+                        imgShader.classList.add(currentShaderClass);
+                        localStorage.setItem("selectedShader", currentShaderClass);
+                    }
+                    if (document.getElementById('box4').classList.contains('selected')) {
+                        Left('box4', 0, 0.1, 'opacity', 'opacity');
+                    }
+                    if (document.getElementById('box5').classList.contains('selected')) {
+                        Left('box5', 0, 0.1, 'brightness', 'brightness');
+                    }
+                    if (document.getElementById('box6').classList.contains('selected')) {
+                        Left('box6', 0, 0.1, 'contrast', 'contrast');
+                    }
+                    if (document.getElementById('box7').classList.contains('selected')) {
+                        Left('box7', 0, 0.1, 'saturate', 'saturate');
+                    }
+                    if (document.getElementById('box8').classList.contains('selected')) {
+                        Left('box8', 0, 1, 'hueRotate', 'hueRotate');
+                    }
+                    if (document.getElementById('box9').classList.contains('selected')) {
+                        Left('box9', 0, 0.1, 'sepia', 'sepia');
+                    }
+                }
+            });
+            //Button Turbo
+            turbo.addEventListener(eventType, () => {
+                turboState = (turboState % 3) + 1;
+                turboF(turboState);
+                localStorage.setItem("turboState", turboState);
+            });
+            //Button Load State
+            loadStateButton.addEventListener(eventType, () => {
+                clickState++;
+                if (clickState === 2) {
+                    const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
+                    loadState(slotStateNumbers);
+                    notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
+                }
+                setTimeout(() => {
+                    clickState = 0
+                }, 300);
+            });
+            //Button Save State
+            saveStateButton.addEventListener(eventType, () => {
+                clickState++;
+                if (clickState === 2) {
+                    if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
+                        const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
+                        saveState(slotStateNumbers);
+                        localStorage.setItem("slotStateSaved", slotStateNumbers)
+                        ledSave("#F36868");
+                        notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                    } else {
+                        const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
+                        saveState(slotStateNumbers);
+                        localStorage.setItem("slotStateSaved", slotStateNumbers)
+                        ledSave("#F36868");
+                        notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                    }
+                }
+                setTimeout(() => {
+                    clickState = 0
+                }, 300);
+            });
+            //Buton Open Save States Page
+            statePageButton.addEventListener(eventType, () => {
+                LoadstateInPage(0, "state00", "dateState00", "stateDiv00")
+                LoadstateInPage(1, "state01", "dateState01", "stateDiv01")
+                LoadstateInPage(2, "state02", "dateState02", "stateDiv02")
+                LoadstateInPage(3, "state03", "dateState03", "stateDiv03")
+                LoadstateInPage(4, "state04", "dateState04", "stateDiv04")
+                LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
+                LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
+                LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
+                canvas.classList.toggle("visible");
+                stateList.classList.toggle("visible");
+                statePageButton.classList.toggle("active");
+            });
+            //Buton Menu In GamePad
+            menuPad.addEventListener(eventType, () => {
+                menuPad.classList.toggle("active");
+                controlSetting.classList.toggle("visible");
+                if (controlSetting.classList.contains("visible")) {
+                    Module.resumeGame();
+                    notiMessage("Resumed!", 2000);
+                } else {
+                    Module.pauseGame();
+                    notiMessage("Paused!", 2000);
+                }
+            })
+        }); 
     },0);
     handleDropboxCallback();
 })
@@ -677,56 +941,6 @@ upLoadFile.addEventListener("change", function() {
 romInput.addEventListener("change", function() {
     notiMessage();
     inputGame(romInput);
-})
-//Buton Menu In GamePad
-menuPad.addEventListener("click", function() {
-    menuPad.classList.toggle("active");
-    listPad.classList.toggle("active");
-    if (listPad.classList.contains("active")) {
-        listPad.classList.remove("inactive");
-    } else {
-        listPad.classList.add("inactive");
-    }
-})
-//Button Load State
-loadStateButton.addEventListener("click", function() {
-    clickState++;
-    if (clickState === 2) {
-        const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
-        loadState(slotStateNumbers);
-        notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
-    }
-    setTimeout(() => {
-        clickState = 0
-    }, 300);
-})
-//Button Save State
-saveStateButton.addEventListener("click", function() {
-    clickState++;
-    if (clickState === 2) {
-        if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
-            const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
-            saveState(slotStateNumbers);
-            localStorage.setItem("slotStateSaved", slotStateNumbers)
-            ledSave("#F36868");
-            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
-        } else {
-            const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
-            saveState(slotStateNumbers);
-            localStorage.setItem("slotStateSaved", slotStateNumbers)
-            ledSave("#F36868");
-            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
-        }
-    }
-    setTimeout(() => {
-        clickState = 0
-    }, 300);
-})
-//Button Turbo
-turbo.addEventListener("click", function() {
-    turboState = (turboState % 3) + 1;
-    turboF(turboState);
-    localStorage.setItem("turboState", turboState);
 })
 //Buton Back Local Storage
 backToHome.addEventListener("click", function() {
@@ -755,66 +969,6 @@ openLocalStorage.addEventListener("click", function() {
         dropboxRestore.classList.add("active");
         dropboxBackup.classList.add("active");
         dropboxCloud.classList.add("active");
-    }
-})
-//Buton Open Save States Page
-statePageButton.addEventListener("click", function() {
-    LoadstateInPage(0, "state00", "dateState00", "stateDiv00")
-    LoadstateInPage(1, "state01", "dateState01", "stateDiv01")
-    LoadstateInPage(2, "state02", "dateState02", "stateDiv02")
-    LoadstateInPage(3, "state03", "dateState03", "stateDiv03")
-    LoadstateInPage(4, "state04", "dateState04", "stateDiv04")
-    LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
-    LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
-    LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
-    canvas.classList.toggle("visible");
-    stateList.classList.toggle("visible");
-    statePageButton.classList.toggle("active");
-})
-//Auto Save States In Page
-autoStateCheck.addEventListener("click", function() {
-    if (this.checked) {
-        const autoStateCheck = 1
-        localStorage.setItem("autoStateCheck", autoStateCheck)
-        console.log("autoStateCheck",parseInt(localStorage.getItem("autoStateCheck")))
-        notiMessage("Auto Switches Slots", 1500);
-
-    } else {
-        const autoStateCheck = 0
-        localStorage.setItem("autoStateCheck", autoStateCheck)
-        console.log("autoStateCheck",parseInt(localStorage.getItem("autoStateCheck")))
-        notiMessage("Manual Switches Slots", 1500);
-    }
-})
-//Buton Cheats
-saveCheatsButton.addEventListener("click", function() {
-    const gameName = localStorage.getItem("gameName");
-    const cheatName = gameName.replace(".gba", ".cheats");
-    const defaultCheatContent = "cheats = 1\n";
-    let cheatEnable = false;
-    let cheatsContent = defaultCheatContent;
-    const newCheatCode = window.prompt("Edit cheat code", localStorage.getItem(`${gameName}_savedCheats`) || 'xxxx xx');
-    if (newCheatCode !== null) {
-        const enableCheat = confirm("CANCEL is disable a cheat / OK is enable a cheat");
-        Module.SDL2();
-        cheatEnable = enableCheat;
-        cheatsContent += `cheat0_enable = ${cheatEnable}\ncheat0_code = "${newCheatCode}"`;
-        const blob = new Blob([cheatsContent], {
-            type: "text/plain"
-        });
-        const file = new File([blob], cheatName);
-        Module.uploadCheats(file, () => {
-            Module.autoLoadCheats();
-            setTimeout(() => {
-                Module.FSSync();
-            }, 500);
-            if (cheatEnable) {
-                localStorage.setItem(`${gameName}_savedCheats`, newCheatCode);
-                notiMessage("Cheat Enabled!", 1500);
-            }
-        });
-    } else {
-        Module.SDL2();
     }
 })
 //SDL2 Enable
@@ -999,38 +1153,6 @@ async function dpDownloadFile(fileName) {
 
     return false;
 }
-//Cloud Check File Exists
-async function checkFileExists(fileName) {
-    var requestData = { path: '/' + localStorage.getItem("uId") + '/' + fileName };
-    for (var retry = 0; retry < 2; retry++) {
-        var resp = await fetch('https://api.dropboxapi.com/2/files/get_metadata', {
-            method: 'POST',
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(requestData)
-        });
-        console.log("status: ", resp.status);
-        if (resp.status != 200) {
-            if (resp.status == 401) {
-                var ret = await dpRefreshToken();
-                if (!ret) {
-                    throw "Unable to refresh token";
-                }
-                continue;
-            } else {
-                throw "Download failed, unknown http status: " + resp.status;
-            }
-        }else {
-            const obj = await resp.json();
-            console.log("Có game nhé");
-            return obj
-		}
-     
-    }
-    return false;
-}
 //Button Dropbox Restore
 dropboxRestore.addEventListener("click", async function() {
     const uId = localStorage.getItem("uId");
@@ -1204,10 +1326,46 @@ const handleVisibilityChange = () => {
       Module.SDL2();
       notiMessage("Paused!", 2000);
     } else {
-      Module.resumeGame();
-      Module.SDL2();
-      notiMessage("Resumed!", 2000);
+        if (controlSetting.classList.contains("visible")) {
+            Module.resumeGame();
+            Module.SDL2();
+            notiMessage("Resumed!", 2000);
+        }
     }
-  };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+};
+async function Right(boxId, limit, increment, property, localStorageKey) {
+    let box = document.getElementById(boxId);
+    let currentValue = parseFloat(box.textContent);
+    currentValue = Math.min(limit, currentValue + increment);
+    box.textContent = currentValue.toFixed(1);
+    if (property === 'opacity') {
+        imgShader.style.opacity = box.textContent;
+    } else {
+        localStorage.setItem(localStorageKey, box.textContent);
+        await delay(100);
+        const brightnessX = localStorage.getItem("brightness") || 1;
+        const contrastX = localStorage.getItem("contrast") || 1;
+        const saturateX = localStorage.getItem("saturate") || 1;
+        const hueRotateX = localStorage.getItem("hueRotate") || 0;
+        const sepiaX = localStorage.getItem("sepia") || 0;
+        canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+    }
+}
+async function Left(boxId, limit, decrement, property, localStorageKey) {
+    let box = document.getElementById(boxId);
+    let currentValue = parseFloat(box.textContent);
+    currentValue = Math.max(limit, currentValue - decrement);
+    box.textContent = currentValue.toFixed(1);
+    if (property === 'opacity') {
+        imgShader.style.opacity = box.textContent;
+    } else {
+        localStorage.setItem(localStorageKey, box.textContent);
+        await delay(100);
+        const brightnessX = localStorage.getItem("brightness") || 1;
+        const contrastX = localStorage.getItem("contrast") || 1;
+        const saturateX = localStorage.getItem("saturate") || 1;
+        const hueRotateX = localStorage.getItem("hueRotate") || 0;
+        const sepiaX = localStorage.getItem("sepia") || 0;
+        canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+    }
+}

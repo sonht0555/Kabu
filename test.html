@@ -1,43 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countup Timer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Press Example</title>
+    <style>
+        #myButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #myButton.touched {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<h1>Countup Timer</h1>
-<div id="timer"></div>
+    <button id="myButton">Press Me</button>
 
-<script>
-function startTimer() {
-    let hours = 0;
-    let minutes = 0;
-    let seconds = 0;
+    <script>
+        // Giả sử đây là nút của bạn
+        const button = document.getElementById('myButton');
 
-    setInterval(function() {
-        seconds++;
-        if (seconds >= 60) {
-            seconds = 0;
-            minutes++;
-            if (minutes >= 60) {
-                minutes = 0;
-                hours++;
+        // Ngăn chặn sự kiện mặc định trên touchstart
+        button.ontouchstart = (e) => {
+            e.preventDefault();
+        };
+
+        // Thêm sự kiện khi bắt đầu nhấn
+        button.addEventListener("mousedown", (e) => {
+            handleButtonPress(true);
+        });
+        button.addEventListener("touchstart", (e) => {
+            handleButtonPress(true);
+        });
+
+        // Thêm sự kiện khi kết thúc nhấn
+        button.addEventListener("mouseup", (e) => {
+            handleButtonPress(false);
+        });
+        button.addEventListener("touchend", (e) => {
+            handleButtonPress(false);
+        });
+        button.addEventListener("touchcancel", (e) => {
+            handleButtonPress(false);
+        });
+
+        // Hàm handleButtonPress để xử lý hành động của nút
+        function handleButtonPress(isPressed) {
+            if (!isPressed) {
+                // Chỉ thực hiện hành động khi nút được nhả ra
+                ads();
             }
         }
-        let timeString = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-        document.getElementById("timer").textContent = timeString;
-    }, 1000);
-}
 
-function pad(number) {
-    if (number < 10) {
-        return '0' + number;
-    }
-    return number;
-}
-
-startTimer();
-</script>
+        // Hàm ads để thực hiện hành động khi nhấn và nhả nút
+        function ads() {
+            console.log('Button is pressed and released.');
+            alert('Button is pressed and released.');
+            // Thực hiện các chức năng khác tại đây
+        }
+    </script>
 </body>
 </html>
