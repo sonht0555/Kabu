@@ -288,9 +288,10 @@ label {
   background-color:#111111;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
+  overflow: hidden;
 }
 .canvas {
-  border-radius: 0px 0px 2px 2px;
+  border-radius: 0px 0px 0px 0px;
   image-rendering: pixelated;
   /* filter: brightness(1) contrast(1.1) saturate(1.4) hue-rotate(4deg) sepia(0.4) */
 }
@@ -1074,7 +1075,7 @@ rect {
 .control-setting{
   font-size: 8px;
   border-radius: 0px 0px 0px 0px;
-  background-color: #161616;
+  background-color: #000;
   padding: 7px 8px 6px 8px;
   gap:5px;
 }

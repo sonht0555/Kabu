@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.51';
+let gameVer = 'V1.52';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -915,9 +915,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 controlSetting.classList.toggle("visible");
                 if (controlSetting.classList.contains("visible")) {
                     Module.resumeGame();
+                    canvas.style.borderRadius = "0px 0px 0px 0px";
                     notiMessage("Resumed!", 2000);
                 } else {
                     Module.pauseGame();
+                    canvas.style.borderRadius = "0px 0px 0px 2.2px";
                     notiMessage("Paused!", 2000);
                 }
             })
@@ -969,26 +971,6 @@ openLocalStorage.addEventListener("click", function() {
         dropboxRestore.classList.add("active");
         dropboxBackup.classList.add("active");
         dropboxCloud.classList.add("active");
-    }
-})
-//SDL2 Enable
-SDL2ID.forEach(function(id) {
-    const button = document.getElementById(id);
-    if(button) {
-        button.addEventListener("touchstart", function() {
-            input.classList.remove("cs22");
-            if (listPad.classList.contains("active")) {
-                listPad.classList.remove("active");
-                listPad.classList.add("inactive");
-                menuPad.classList.remove("active");
-            }
-            if (stateList.classList.contains("visible")){
-            } else {
-                statePageButton.classList.remove("active");
-                canvas.classList.remove("visible");
-                stateList.classList.add("visible");
-            }
-        });
     }
 })
 //Uses OAuth 2.0
