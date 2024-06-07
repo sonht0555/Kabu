@@ -1340,6 +1340,7 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.opacity = box.textContent;
+        localStorage.setItem(localStorageKey, box.textContent);
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
         await delay(100);
@@ -1358,6 +1359,7 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.opacity = box.textContent;
+        localStorage.setItem(localStorageKey, box.textContent);
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
         await delay(100);

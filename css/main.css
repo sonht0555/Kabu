@@ -1073,7 +1073,7 @@ rect {
 
 .control-setting{
   font-size: 8px;
-  border-radius: 0px 0px 0px 2px;
+  border-radius: 0px 0px 0px 0px;
   background-color: #161616;
   padding: 7px 8px 6px 8px;
   gap:5px;
