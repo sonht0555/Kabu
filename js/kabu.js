@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.52';
+let gameVer = 'V1.53';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -527,6 +527,8 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
             statePageButton.classList.toggle("active");
             led(saveSlot);
             loadState(saveSlot);
+            Module.resumeGame();
+            notiMessage("Resumed!", 2000);
             localStorage.setItem("slotStateSaved", saveSlot)
             notiMessage(`[${saveSlot}] Loaded State`, 1500);
             };
@@ -908,6 +910,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 canvas.classList.toggle("visible");
                 stateList.classList.toggle("visible");
                 statePageButton.classList.toggle("active");
+                if (stateList.classList.contains("visible")) {
+                    Module.resumeGame();
+                    notiMessage("Resumed!", 2000);
+                } else {
+                    Module.pauseGame();
+                    notiMessage("Paused!", 2000);
+                }
             });
             //Buton Menu In GamePad
             menuPad.addEventListener(eventType, () => {
@@ -1353,3 +1362,19 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
         canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     }
 }
+
+SDL2ID.forEach(function(id) {
+    const button = document.getElementById(id);
+    if(button) {
+        button.addEventListener("touchstart", function() {
+            input.classList.remove("cs22");
+            if (!stateList.classList.contains("visible")){
+                statePageButton.classList.remove("active");
+                canvas.classList.remove("visible");
+                stateList.classList.add("visible");
+                Module.resumeGame();
+                notiMessage("Resumed!", 2000);
+            }
+        });
+    }
+})
