@@ -1116,3 +1116,11 @@ rect {
 .selected {
   color: #78C850;
 }
+#box1 {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 46px;
+  text-overflow: ellipsis;
+  display: block;
+  text-align: left;
+}

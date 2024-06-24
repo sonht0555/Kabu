@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.53';
+let gameVer = 'V1.54';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -18,7 +18,6 @@ const ingame = document.getElementById("in-game");
 const upLoadFile = document.getElementById("upLoadFile");
 const romlist = document.getElementById("rom-list");
 const menuPad = document.getElementById("menu-pad");
-const listPad = document.getElementById("menu-list-pad");
 const loadStateButton = document.getElementById("loadStateButton");
 const saveStateButton = document.getElementById("saveStateButton");
 const statePageButton = document.getElementById("statePageButton");
@@ -46,6 +45,7 @@ const saturateX = localStorage.getItem("saturate") || 1.0;
 const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
 const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
+const resetEmu = document.getElementById("reset-emu");
 const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7', 'sd-8', 'sd-9', 'sd-10'];
 /*----------------BackEnd----------------*/
 startGBA(Module)
@@ -875,6 +875,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     clickState = 0
                 }, 300);
             });
+            //Button Reset
+            resetEmu.addEventListener(eventType, () => {
+                clickState++;
+                if (clickState === 2) {
+                    if (window.confirm("Do you want to restart?")) {
+                        window.location.href = window.location.href;
+                    }
+                }
+                setTimeout(() => {
+                    clickState = 0
+                }, 300);
+            });
             //Button Save State
             saveStateButton.addEventListener(eventType, () => {
                 clickState++;
@@ -1362,7 +1374,6 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
         canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     }
 }
-
 SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
