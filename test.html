@@ -3,68 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button Press Example</title>
+    <title>Overlay Example</title>
     <style>
-        #myButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
+        /* Đặt nền cho phần tử chính */
+        .content {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: #3498db; /* Màu nền ban đầu */
             color: white;
-            border: none;
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px auto;
         }
 
-        #myButton.touched {
-            background-color: #0056b3;
+        /* Tạo lớp overlay đậm hơn */
+        .content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #000; /* Màu đen để trộn với nền */
+            opacity: 0.2; /* Độ đậm của overlay */
+            mix-blend-mode: multiply; /* Chế độ trộn */
+            pointer-events: none; /* Đảm bảo overlay không tương tác với sự kiện chuột */
         }
     </style>
 </head>
 <body>
-    <button id="myButton">Press Me</button>
-
-    <script>
-        // Giả sử đây là nút của bạn
-        const button = document.getElementById('myButton');
-
-        // Ngăn chặn sự kiện mặc định trên touchstart
-        button.ontouchstart = (e) => {
-            e.preventDefault();
-        };
-
-        // Thêm sự kiện khi bắt đầu nhấn
-        button.addEventListener("mousedown", (e) => {
-            handleButtonPress(true);
-        });
-        button.addEventListener("touchstart", (e) => {
-            handleButtonPress(true);
-        });
-
-        // Thêm sự kiện khi kết thúc nhấn
-        button.addEventListener("mouseup", (e) => {
-            handleButtonPress(false);
-        });
-        button.addEventListener("touchend", (e) => {
-            handleButtonPress(false);
-        });
-        button.addEventListener("touchcancel", (e) => {
-            handleButtonPress(false);
-        });
-
-        // Hàm handleButtonPress để xử lý hành động của nút
-        function handleButtonPress(isPressed) {
-            if (!isPressed) {
-                // Chỉ thực hiện hành động khi nút được nhả ra
-                ads();
-            }
-        }
-
-        // Hàm ads để thực hiện hành động khi nhấn và nhả nút
-        function ads() {
-            console.log('Button is pressed and released.');
-            alert('Button is pressed and released.');
-            // Thực hiện các chức năng khác tại đây
-        }
-    </script>
+    <div class="content">
+        Nội dung ở đây
+    </div>
 </body>
 </html>

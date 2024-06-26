@@ -280,8 +280,10 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='44' height='175' viewBox='0 0 44 175' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 80.2C19 80.0895 18.9105 80 18.8 80H17.2C17.0895 80 17 80.0895 17 80.2V93.8C17 93.9105 17.0895 94 17.2 94H26.8C26.9105 94 27 93.9105 27 93.8V92.2C27 92.0895 26.9105 92 26.8 92H19.2C19.0895 92 19 91.9105 19 91.8V80.2Z' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
 }
 .load-state {
-  width: 100%;
-  height: 40%;
+  width: 44px;
+  height: 80px;
+  position: absolute;
+  z-index: 12;
 }
 .canvas-container{
   border-radius: 0px 0px 2px 2px;
@@ -348,8 +350,11 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='44' height='175' viewBox='0 0 44 175' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M27 80.2C27 80.0895 26.9105 80 26.8 80H17.2C17.0895 80 17 80.0895 17 80.2V93.8C17 93.9105 17.0895 94 17.2 94H18.8C18.9105 94 19 93.9105 19 93.8V82.2C19 82.0895 19.0895 82 19.2 82H24.8C24.9105 82 25 82.0895 25 82.2V85.8C25 85.9105 24.9105 86 24.8 86H22.2C22.0895 86 22 86.0895 22 86.2V87.8C22 87.9105 22.0895 88 22.2 88H24.8C24.9105 88 25 88.0895 25 88.2V93.8C25 93.9105 25.0895 94 25.2 94H26.8C26.9105 94 27 93.9105 27 93.8V80.2Z' fill='%23FFFFF5'/%3E%3C/svg%3E%0A");
 }
 .save-state {
-  width: 100%;
-  height: 40%;
+    width: 44px;
+    height: 80px;
+    position: absolute;
+    z-index: 12;
+    right: 16px;
 }
 .emu-menu,
 .setting {
@@ -700,13 +705,13 @@ dialog .rom-item {
   font-size: 8px;
   color: rgba(255, 255, 245, 1);
   border-radius: 0px;
-  background: rgba(37, 37, 37, 0);
+  background: rgba(0, 0, 0, 0);
   opacity: 0;
   appearance: none;
   box-shadow: none;
   outline: none;
   caret-color: rgba(255, 255, 245, 0);
-  border-radius: 0px 0px 2px 2px;
+  border-radius: 0px;
 }
 .inputText {
   padding-right: 1px;
@@ -727,8 +732,9 @@ dialog .rom-item {
 }
 .cs22 {
   opacity: 1;
-  background: rgba(37, 37, 37, 0.24);
+  background: rgba(0, 0, 0, 0.6);
   transition: all 0.5s ease-in-out;
+  mix-blend-mode:luminosity;
 }
 #caret-tracker {
   animation: caret-blink 1s infinite alternate;

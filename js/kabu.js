@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.58';
+let gameVer = 'V1.59';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -45,7 +45,6 @@ const saturateX = localStorage.getItem("saturate") || 1.0;
 const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
 const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
-const resetEmu = document.getElementById("reset-emu");
 const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7', 'sd-8', 'sd-9', 'sd-10'];
 /*----------------BackEnd----------------*/
 startGBA(Module)
@@ -684,9 +683,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // Box7
         box7.textContent = localStorage.getItem("saturate") || 1.0;
         // Box8
-        box8.textContent = localStorage.getItem("hueRotate") || 0.0;
+
         // Box9
-        box9.textContent = localStorage.getItem("sepia") || 0.0;
+        box8.textContent = localStorage.getItem("sepia") || 0.0;
         // Box3-9 Content
         imgShader.classList.add(localStorage.getItem("selectedShader"))
         imgshader.style.opacity = localStorage.getItem("opacity") || 0.5;
@@ -706,6 +705,9 @@ document.addEventListener("DOMContentLoaded", function() {
         ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
             document.getElementById('A').addEventListener(eventType, () => {
                 if (menuPad.classList.contains("active")) {
+                    if (document.getElementById('box0').classList.contains('selected')) {
+                        window.location.href = window.location.href;
+                    }
                     if (document.getElementById('box1').classList.contains('selected')) {
                         let box1 = document.getElementById('box1');
                         const gameName = localStorage.getItem("gameName");
@@ -797,13 +799,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         Right('box6', 2, 0.1, 'contrast', 'contrast');
                     }
                     if (document.getElementById('box7').classList.contains('selected')) {
-                        Right('box7', 2, 0.1, 'saturate', 'saturate');
+                        Right('box7', 4, 0.1, 'saturate', 'saturate');
                     }
                     if (document.getElementById('box8').classList.contains('selected')) {
-                        Right('box8', 10, 1, 'hueRotate', 'hueRotate');
-                    }
-                    if (document.getElementById('box9').classList.contains('selected')) {
-                        Right('box9', 1, 0.1, 'sepia', 'sepia');
+                        Right('box8', 1, 0.1, 'sepia', 'sepia');
                     }
                 }
             });
@@ -850,10 +849,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         Left('box7', 0, 0.1, 'saturate', 'saturate');
                     }
                     if (document.getElementById('box8').classList.contains('selected')) {
-                        Left('box8', 0, 1, 'hueRotate', 'hueRotate');
-                    }
-                    if (document.getElementById('box9').classList.contains('selected')) {
-                        Left('box9', 0, 0.1, 'sepia', 'sepia');
+                        Left('box8', 0, 0.1, 'sepia', 'sepia');
                     }
                 }
             });
@@ -870,18 +866,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
                     loadState(slotStateNumbers);
                     notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
-                }
-                setTimeout(() => {
-                    clickState = 0
-                }, 300);
-            });
-            //Button Reset
-            resetEmu.addEventListener(eventType, () => {
-                clickState++;
-                if (clickState === 2) {
-                    if (window.confirm("Do you want to restart?")) {
-                        window.location.href = window.location.href;
-                    }
                 }
                 setTimeout(() => {
                     clickState = 0
@@ -936,10 +920,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 controlSetting.classList.toggle("visible");
                 if (controlSetting.classList.contains("visible")) {
                     Module.resumeGame();
+                    Module.SDL2();
                     canvas.style.borderRadius = "0px 0px 0px 0px";
                     notiMessage("Resumed!", 2000);
                 } else {
                     Module.pauseGame();
+                    Module.SDL2();
                     canvas.style.borderRadius = "0px 0px 0px 2.2px";
                     notiMessage("Paused!", 2000);
                 }
@@ -1319,10 +1305,6 @@ function pad(number) {
     }
     return number;
 }
-const tesst = document.getElementById("tesst");
-tesst.addEventListener("click", async function() {
-   
-});
 const handleVisibilityChange = () => {
     if (document.visibilityState === 'hidden') {
       Module.pauseGame();
@@ -1384,6 +1366,7 @@ SDL2ID.forEach(function(id) {
                 canvas.classList.remove("visible");
                 stateList.classList.add("visible");
                 Module.resumeGame();
+                Module.SDL2();
                 notiMessage("Resumed!", 2000);
             }
         });

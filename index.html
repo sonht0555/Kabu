@@ -31,9 +31,8 @@
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
-            <div class="flex-1 bc dpad-l" id="L">
-                <div class="load-state" id="loadStateButton"></div>
-            </div>
+            <div class="load-state" id="loadStateButton"></div>
+            <div class="flex-1 bc dpad-l" id="L"></div>
             <div class="flex-1 column" >
                 <div class="notification-container bc">
                     <svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -54,19 +53,12 @@
                     <div class="canvas-container cw hw">
                         <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
                     </div>
-                    <div class="column message-container" id="reset-emu">
+                    <div class="column message-container" id="">
                         <div class="flex-1"></div>
                         <div>
                             <div id="input-container" class="input-container flex-1" tabindex="0" onclick="document.getElementById('inputText').focus()">
-                                <svg style="padding-top: 4px; padding-right:2px;" width="17" height="11" viewBox="0 0 17 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7 0H6V5H5V6H4V7H3V9H2V8H1V6H2V5H1V6H0V9H1V10H2V11H9V10H10V11H11V0H10V1H9V2H8V1H7V0ZM9 3H10V4H9V3ZM8 3V4H7V3H8Z" fill="#FFFFF5" />
-                                    <path d="M13 10V11H17V10H13Z" fill="#FFFFF5" />
-                                    <rect class="eye-1" width="1" height="1" x="7" y="2" fill="#FFFFF5" />
-                                    <rect class="eye-2" width="1" height="1" x="7" y="4" fill="#FFFFF5" />
-                                    <rect class="eye-1" width="1" height="1" x="9" y="2" fill="#FFFFF5" />
-                                    <rect class="eye-2" width="1" height="1" x="9" y="4" fill="#FFFFF5" />
-                                    <rect class="tail-1" x="2" y="4" width="1" height="1" fill="#FFFFF5" />
-                                    <rect class="tail-2" x="1" y="3" width="1" height="1" fill="#FFFFF5" />
+                                <svg style="padding-top: 4px" width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect y="10" width="4" height="1" fill="#FFFFF5"/>
                                 </svg>
                                 <div class="flex-1">
                                     <div id="inputText" class="inputText" contenteditable="true"></div>
@@ -80,6 +72,14 @@
                     </div>
                     <div class="message-container visible" id="control-setting">
                         <div class="flex-1 column control-setting">
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Power</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-blank"></div>
+                                    <div id="box0" class="flex-1 box">Reboot</div>
+                                    <div class="cs-next"></div>
+                                </div>
+                            </div>
                             <div class="flex-1">
                                 <div class="flex-1 cs-name">Cheat</div>
                                 <div class="flex-1 cs-detail">
@@ -138,18 +138,10 @@
                                 </div>
                             </div>
                             <div class="flex-1">
-                                <div class="flex-1 cs-name">Hue-rotate</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box8" class="flex-1 box">0.0</div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
                                 <div class="flex-1 cs-name">Sepia</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box9" class="flex-1 box">0.0</div>
+                                    <div id="box8" class="flex-1 box">0.0</div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -229,9 +221,8 @@
                     <div class="shader sd-1" id="img-shader" style=" pointer-events: none"></div>
                 </div>
             </div>
-            <div class="flex-1 bc dpad-r" id="R">
-                <div class="save-state" id="saveStateButton"></div>
-            </div>
+            <div class="flex-1 bc dpad-r" id="R"></div>
+            <div class="save-state" id="saveStateButton"></div>
         </div>
         <div class="gap-34 between emu-menu" id="control-pad">
             <div class="flex-1 gap-15">
