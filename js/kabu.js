@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.59';
+let gameVer = 'V1.60';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -435,6 +435,23 @@ function createElementStorage(parent, fileName, filePart) {
         renameButton.onclick = async () => {
             const newFilename = window.prompt("Edit filename", fileName);
             if (newFilename !== null) {
+                const oldRomName = fileName.replace(/\....$/, ".gba");
+                const newRomName = newFilename.replace(/\....$/, ".gba");
+                const oldDateStateKey = `${oldRomName}_dateState${fileName.slice(-1)}`;
+                const oldImageStateKey = `${oldRomName}_imageState${fileName.slice(-1)}`;
+                const newDateStateKey = `${newRomName}_dateState${newFilename.slice(-1)}`;
+                const newImageStateKey = `${newRomName}_imageState${newFilename.slice(-1)}`;
+                const dateStateValue = localStorage.getItem(oldDateStateKey);
+                const imageStateValue = localStorage.getItem(oldImageStateKey);
+                if (dateStateValue !== null) {
+                    localStorage.setItem(newDateStateKey, dateStateValue);
+                    localStorage.removeItem(oldDateStateKey);
+                }
+        
+                if (imageStateValue !== null) {
+                    localStorage.setItem(newImageStateKey, imageStateValue);
+                    localStorage.removeItem(oldImageStateKey);
+                }
                 Module.editFileName(filePart, fileName, newFilename);
                 setTimeout(() => {Module.FSSync()},500);
                 localStorageFile();
