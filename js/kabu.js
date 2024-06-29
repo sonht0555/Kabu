@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.60';
+let gameVer = 'V1.61';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -521,6 +521,7 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
             clearTimeout(clickTimer);
             clickTimer = setTimeout(function() {
                 Module.deleteFile(`/data/states/${stateName}`);
+                setTimeout(() => {Module.FSSync()},500);
                 localStorage.removeItem(`${getNameRom}_dateState${saveSlot}`);
                 localStorage.removeItem(`${getNameRom}_imageState${saveSlot}`);
                 setTimeout(() => {
