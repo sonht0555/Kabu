@@ -115,6 +115,9 @@ label {
 .gap-48 {
   gap: 48px;
 }
+.gap-42 {
+  gap: 42px;
+}
 .gap-30 {
   gap: 30px;
 }
@@ -429,13 +432,13 @@ label {
 }
 .pad-ul,
 .pad-dr {
-  width: 36px;
+  width: 38px;
   height: 100%;
 }
 .pad-ur,
 .pad-dl {
   width: 100%;
-  height: 36px;
+  height: 38px;
 }
 .pad-r::before {
   content: "";
