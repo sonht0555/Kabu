@@ -27,7 +27,7 @@
   </head>
 <body>
       <!-- Layer Ingame -->
-      <button id="tesst" class="disable">tesst</button>
+      <button id="test" class="disable">tesst</button>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
@@ -57,12 +57,11 @@
                         <div class="flex-1"></div>
                         <div>
                             <div id="input-container" class="input-container flex-1" tabindex="0" onclick="document.getElementById('inputText').focus()">
-                                <svg style="padding-top: 4px" width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect y="10" width="4" height="1" fill="#FFFFF5"/>
-                                </svg>
+                                <svg width="10" height="18" viewBox="0 0 10 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 9H4V10H3V9ZM3 13V10H2V11H1V12H2V13H3ZM4 13V14H3V13H4ZM4 13V10H5V11H6V12H5V13H4Z" fill="#FFFFF5"/>
+                                    </svg>
                                 <div class="flex-1">
-                                    <div id="inputText" class="inputText" contenteditable="true"></div>
-                                    <div id="caret-tracker">_</div>
+                                    <div id="inputText" class="inputText"></div>
                                 </div>
                                 <svg style="padding-top: 4px;" class="disable" width="5" height="11" viewBox="0 0 5 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M5 6H4V7H3V8H2V7H1V6H0V7H1V8H2V9H1V10H0V11H1V10H2V9H3V10H4V11H5V10H4V9H3V8H4V7H5V6Z" fill="white" />
@@ -224,11 +223,12 @@
             <div class="flex-1 bc dpad-r" id="R"></div>
             <div class="save-state" id="saveStateButton"></div>
         </div>
-        <div class="gap-34 between emu-menu" id="control-pad">
+        <div class="gap-15 between emu-menu" id="control-pad">
             <div class="flex-1 gap-15">
                 <div class="bc dpad-state" id="statePageButton"></div>
                 <div class="flex-1 bc dpad-select" id="Select"></div>
             </div>
+            <div class="gap-15 bc ocr" id="ocr"></div>
             <div class="flex-1 gap-15">
                 <div class="flex-1 bc dpad-start" id="Start"></div>
                 <div class="bc dpad-menu" id="menu-pad"></div>

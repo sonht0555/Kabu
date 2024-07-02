@@ -1,5 +1,5 @@
 import mGBA from "./mgba.js";
-let gameVer = 'V1.61';
+let gameVer = 'V1.62';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -45,6 +45,9 @@ const saturateX = localStorage.getItem("saturate") || 1.0;
 const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
 const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
+const inputText = document.getElementById("inputText");
+const inputContainer = document.getElementById("input-container");
+const ocr = document.getElementById("ocr");
 const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7', 'sd-8', 'sd-9', 'sd-10'];
 /*----------------BackEnd----------------*/
 startGBA(Module)
@@ -948,6 +951,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     notiMessage("Paused!", 2000);
                 }
             })
+            ocr.addEventListener(eventType, () => {
+                getImage();
+            })
+            
         }); 
     },0);
     handleDropboxCallback();
@@ -1390,3 +1397,115 @@ SDL2ID.forEach(function(id) {
         });
     }
 })
+
+async function getImage() {
+    inputContainer.classList.add('cs22');
+    try {
+        Module.screenShot(() => {
+            var screen = document.getElementById('canvas');
+            
+            // Vẽ toàn bộ ảnh lên resizedCanvas
+            var resizedCanvas = document.createElement('canvas');
+            var resizedContext = resizedCanvas.getContext('2d');
+            resizedCanvas.width = screen.clientWidth;
+            resizedCanvas.height = screen.clientHeight;
+            resizedContext.drawImage(screen, 0, 0, resizedCanvas.width, resizedCanvas.height);
+            let dataURL1 = resizedCanvas.toDataURL();
+            console.log("dataURL1",dataURL1)
+            // Tọa độ và kích thước cắt
+            var cropX = 80; // ví dụ
+            var cropY = 0; // ví dụ
+            var cropWidth = 160; // ví dụ
+            var cropHeight = 52; // ví dụ
+            
+            // Lấy dữ liệu ảnh từ vùng cần cắt
+            var imageData = resizedContext.getImageData(cropX, cropY, cropWidth, cropHeight);
+            
+            // Tạo một canvas mới để chứa dữ liệu ảnh đã cắt
+            var croppedCanvas = document.createElement('canvas');
+            var croppedContext = croppedCanvas.getContext('2d');
+            croppedCanvas.width = cropWidth;
+            croppedCanvas.height = cropHeight;
+            croppedContext.putImageData(imageData, 0, 0);
+            
+            // Chuyển canvas đã cắt thành dữ liệu base64
+            let dataURL = croppedCanvas.toDataURL();
+            console.log("dataURL",dataURL)
+            var base64data = dataURL.split(',')[1];
+            sendDataToServer(base64data);
+        });
+    } catch (error) {
+        console.error("Error GetImage:", error);
+    }
+}
+
+
+async function sendDataToServer(datas) {
+	let response;
+    inputText.textContent = "...";
+	try {
+		const imageBlob = dataURItoBlob(datas);
+		const formData = new FormData();
+		formData.append("image", imageBlob, "image.png");
+		formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
+		response = await fetch("https://kabuto-d8dc06f14db0.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+			method: "POST",
+			body: formData,
+		});
+
+		if (!response.ok) {
+			if (response.status === 500) {
+				throw new Error("Internal Server Error");
+			} else {
+				const errorData = await response.json();
+				const error = new Error(errorData.error.message);
+				error.code = errorData.error.code;
+				throw error;
+			}
+		}
+		const data = await response.json();
+		if (data.type === "error") {
+			const error = new Error(data.error.message);
+			error.code = data.error.code;
+			throw error;
+		}
+        console.log(data.text)
+        const cleanData = data.text.replace(/[\r\n]+/g, '');
+        const cleanData1 = cleanData.replace(/[^\w\s.,;'"?!()]/gi, '')
+		translateText(cleanData1)
+        console.log(cleanData1)
+	} catch (error) {
+		console.log("Error:", error.message);
+	} finally {}
+}
+
+function dataURItoBlob(dataURI) {
+	const byteString = atob(dataURI);
+	const buffer = new ArrayBuffer(byteString.length);
+	const intArray = new Uint8Array(buffer);
+
+	for (let i = 0; i < byteString.length; i++) {
+		intArray[i] = byteString.charCodeAt(i);
+	}
+
+	return new Blob([buffer], {
+		type: 'image/png'
+	});
+}
+
+function translateText(textContent) {
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
+    fetch(apiUrl)
+        .then((response) => response.json())
+        .then((result) => {
+            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+                var translatedText = result[0].map(sentence => sentence[0]).join(' ');
+                const cleanData = translatedText.replace(/ {2,}/g, ' ')
+                inputText.textContent = cleanData;
+                console.log(cleanData);
+            } else {
+                console.error("Invalid translation result format:", result);
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+}

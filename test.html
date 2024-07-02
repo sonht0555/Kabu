@@ -1,43 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlay Example</title>
-    <style>
-        /* Đặt nền cho phần tử chính */
-        .content {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            background-color: #3498db; /* Màu nền ban đầu */
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 1.5em;
-            margin: 20px auto;
-        }
-
-        /* Tạo lớp overlay đậm hơn */
-        .content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background-color: #000; /* Màu đen để trộn với nền */
-            opacity: 0.2; /* Độ đậm của overlay */
-            mix-blend-mode: multiply; /* Chế độ trộn */
-            pointer-events: none; /* Đảm bảo overlay không tương tác với sự kiện chuột */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to Text Converter</title>
 </head>
 <body>
-    <div class="content">
-        Nội dung ở đây
-    </div>
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="convertImageToText()">Convert</button>
+  <div id="result"></div>
+
+  <script>
+    async function convertImageToText() {
+      const fileInput = document.getElementById('imageInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Please select an image file.');
+        return;
+      }
+
+      try {
+        const base64 = await getBase64(file);
+        console.log('Base64:', base64);
+        await sendDataToServer("111", base64, "32323");
+      } catch (error) {
+        console.error('Error:', error.message);
+        displayResult('Failed to convert image to text.');
+      }
+    }
+
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    function displayResult(text) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = text;
+    }
+
+    async function sendDataToServer(tabId, imageBase64, srcUrl) {
+      let response;
+      try {
+        const imageBlob = dataURItoBlob(imageBase64);
+        const formData = new FormData();
+        formData.append("image", imageBlob, "image.png");
+        formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
+
+        response = await fetch("https://cors-anywhere.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          if (response.status === 500) {
+            throw new Error("Internal Server Error");
+          } else {
+            const errorData = await response.json();
+            const error = new Error(errorData.error.message);
+            error.code = errorData.error.code;
+            throw error;
+          }
+        }
+
+        const data = await response.json();
+
+        if (data.type === "error") {
+          const error = new Error(data.error.message);
+          error.code = data.error.code;
+          throw error;
+        }
+
+        displayResult(data.text);
+      } catch (error) {
+        displayResult(error.message);
+        console.log("Error:", error.message);
+      }
+    }
+
+    function dataURItoBlob(dataURI) {
+      const byteString = atob(dataURI);
+      const buffer = new ArrayBuffer(byteString.length);
+      const intArray = new Uint8Array(buffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+        intArray[i] = byteString.charCodeAt(i);
+      }
+
+      return new Blob([buffer], { type: 'image/png' });
+    }
+  </script>
 </body>
 </html>

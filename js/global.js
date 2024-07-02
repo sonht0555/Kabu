@@ -87,65 +87,6 @@ function calculateLocalStorageSize() {
     var totalSizeKB = totalLength / 1024;
     console.log("Dung lượng của localStorage", totalSizeKB.toFixed(2), "Kib/10Mib");
 }
-//Translate Function
-function translateText() {
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(inputText.textContent);
-    fetch(apiUrl).then((response) => response.json()).then((result) => {
-        var translatedText = result[0][0][0];
-        inputText.textContent = translatedText;
-        moveCursorToEnd(inputText);
-    }).catch((error) => console.error("Error:", error));
-}
-function moveCursorToEnd(element) {
-    var range = document.createRange();
-    var selection = window.getSelection();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
-function handleKeyPress(event) {
-    if (event.key === "Enter") {
-        if (!inputText.textContent.trim()) {
-            clearInput();
-        } else {
-            checkContent();
-            translateText();
-        }
-    }
-}
-function clearInput() {
-    inputText.textContent = "";
-    inputText.classList.add("no-content");
-}
-function checkContent() {
-    if (!inputText.innerHTML.trim()) {
-        inputText.classList.add("no-content");
-    } else {
-        inputText.classList.remove("no-content");
-    }
-}
-//Translate Focus
-inputText.addEventListener("focus", function() {
-    input.classList.add("cs22");
-})
-//Translate Input
-inputText.addEventListener("input", function(event) {
-    checkContent();
-})
-//Translate Onkeyup
-inputText.onkeyup = (event) => {
-    handleKeyPress(event);
-}
-//Translate Touchstart
-input.addEventListener("touchstart", function(event) {
-    var touch = event.touches[0];
-    var rect = input.getBoundingClientRect();
-    var quarterWidth = rect.width / 8;
-    if (touch.clientX > rect.right - quarterWidth) {
-        clearInput();
-    }
-})
 //Disable Touched
 ingame.ontouchstart = (e) => {
     e.preventDefault();
@@ -191,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function() {
         stateAdj = parseInt(savedStateAdj);
         positionAdjustment(stateAdj);
     }
-    checkContent();
     ["mousedown", "touchstart"].forEach(eventType => {});
     ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
         
