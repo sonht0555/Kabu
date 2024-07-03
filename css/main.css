@@ -731,6 +731,7 @@ dialog .rom-item {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scrollbar-width: none;
+  height: 30px;
 }
 .no-inputText::-webkit-scrollbar {
   display: none;

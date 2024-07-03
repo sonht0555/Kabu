@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
-import { taskA } from "./cloud.js";
-let gameVer = 'V1.71';
+//import { taskA } from "./cloud.js";
+let gameVer = 'V1.72';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -11,6 +11,10 @@ var lockNotiTime;
 let clickTimer;
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
+var scrollAmount = 0;
+var scrollSpeed = 0.25;
+var runCount = 0;
+var maxRunCount = 4;
 const dropboxCloud = document.getElementById("dropboxCloud");
 const input = document.getElementById("input-container");
 const storage = document.getElementById("storage");
@@ -1394,7 +1398,6 @@ SDL2ID.forEach(function(id) {
         });
     }
 })
-
 async function getImage() {
     inputContainer.classList.add('cs22');
     try {
@@ -1422,7 +1425,6 @@ async function getImage() {
         console.error("Error GetImage:", error);
     }
 }
-
 async function sendDataToServer(datas) {
 	let response;
     inputText.textContent = "...";
@@ -1453,7 +1455,7 @@ async function sendDataToServer(datas) {
 			throw error;
 		}
         console.log(data.text)
-        const cleanData = data.text.replace(/[\r\n]+/g, '');
+        const cleanData = data.text.replace(/[\r\n]+/g, ' ');
         const cleanData1 = cleanData.replace(/[^\w\s.,;'"?!()]/gi, '')
 		translateText(cleanData1)
         console.log(cleanData1)
@@ -1461,7 +1463,6 @@ async function sendDataToServer(datas) {
 		console.log("Error:", error.message);
 	} finally {}
 }
-
 function dataURItoBlob(dataURI) {
 	const byteString = atob(dataURI);
 	const buffer = new ArrayBuffer(byteString.length);
@@ -1475,7 +1476,6 @@ function dataURItoBlob(dataURI) {
 		type: 'image/png'
 	});
 }
-
 function translateText(textContent) {
     var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
     fetch(apiUrl)
@@ -1485,6 +1485,9 @@ function translateText(textContent) {
                 var translatedText = result[0].map(sentence => sentence[0]).join(' ');
                 const cleanData = translatedText.replace(/ {2,}/g, ' ')
                 inputText.textContent = cleanData;
+                setTimeout(() => {
+                    startAutoScroll();
+                }, 2000);
                 console.log(cleanData);
             } else {
                 console.error("Invalid translation result format:", result);
@@ -1492,7 +1495,23 @@ function translateText(textContent) {
         })
         .catch((error) => console.error("Error:", error));
 }
-
 document.getElementById("tests").addEventListener("click", function() {
-    taskA();
 });
+function autoScroll() {
+    var maxScroll = inputText.scrollWidth - inputText.clientWidth;
+    if (runCount >= maxRunCount) return;
+    scrollAmount += scrollSpeed;
+    if (scrollAmount >= maxScroll || scrollAmount <= 0) {
+        scrollSpeed = -scrollSpeed;
+        runCount++;  
+    }
+    inputText.scrollLeft = scrollAmount;
+    requestAnimationFrame(autoScroll);
+}
+
+function startAutoScroll() {
+    scrollAmount = 0;
+    runCount = 0;      
+    scrollSpeed = 0.25; 
+    autoScroll();
+}
