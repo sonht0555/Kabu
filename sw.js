@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '68';
+let revision = '69';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
@@ -11,6 +11,7 @@ workbox.precaching.precacheAndRoute([
   { url: './img/favi.png', revision: revision },
   { url: './img/icon.png', revision: revision },
   { url: './js/cloud.js', revision: revision },
+  { url: './js/initialize.js', revision: revision },
   { url: './js/global.js', revision: revision },
   { url: './js/kabu.js', revision: revision },
   { url: './js/mgba.js', revision: revision },

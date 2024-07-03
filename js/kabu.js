@@ -1,5 +1,6 @@
-import mGBA from "./mgba.js";
-let gameVer = 'V1.68';
+import { startGBA } from "./initialize.js";
+import { taskA } from "./cloud.js";
+let gameVer = 'V1.69';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -47,22 +48,10 @@ const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
 const inputText = document.getElementById("inputText");
 const inputContainer = document.getElementById("input-container");
-const ocr = document.getElementById("ocr");
 const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7', 'sd-8', 'sd-9', 'sd-10'];
 /*----------------BackEnd----------------*/
-startGBA(Module)
 appVer.textContent = gameVer
-//Start GBA 
-async function startGBA(Module) {
-    try {
-        const moduleInstance = await mGBA(Module);
-        const mGBAVersion = moduleInstance.version.projectName + " " + moduleInstance.version.projectVersion;
-        console.log("Version: ", mGBAVersion);
-        moduleInstance.FSInit();
-    } catch (error) {
-        console.error("Error starting GBA:", error);
-    }
-}
+startGBA(Module);
 //Status Show
 async function statusShow() {
     try {
@@ -893,25 +882,32 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 300);
             });
             //Button Save State
+            let clickTimeout;
             saveStateButton.addEventListener(eventType, () => {
                 clickState++;
-                if (clickState === 2) {
-                    if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
-                        const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
-                        saveState(slotStateNumbers);
-                        localStorage.setItem("slotStateSaved", slotStateNumbers)
-                        ledSave("#F36868");
-                        notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                clearTimeout(clickTimeout);
+
+                clickTimeout = setTimeout(() => {
+                    if (clickState === 2) {
+                        if (parseInt(localStorage.getItem("autoStateCheck")) === 1) {
+                            const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
+                            saveState(slotStateNumbers);
+                            localStorage.setItem("slotStateSaved", slotStateNumbers);
+                            ledSave("#F36868");
+                            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                        } else {
+                            const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
+                            saveState(slotStateNumbers);
+                            localStorage.setItem("slotStateSaved", slotStateNumbers);
+                            ledSave("#F36868");
+                            notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                        }
+                    } else if (clickState === 1) {
+                        getImage();
                     } else {
-                        const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
-                        saveState(slotStateNumbers);
-                        localStorage.setItem("slotStateSaved", slotStateNumbers)
-                        ledSave("#F36868");
-                        notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                        notiMessage("Save Failed", 2000);
                     }
-                }
-                setTimeout(() => {
-                    clickState = 0
+                    clickState = 0;
                 }, 300);
             });
             //Buton Open Save States Page
@@ -951,9 +947,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     notiMessage("Paused!", 2000);
                 }
             })
-            ocr.addEventListener(eventType, () => {
-                getImage();
-            })
+
             
         }); 
     },0);
@@ -1439,7 +1433,6 @@ async function getImage() {
     }
 }
 
-
 async function sendDataToServer(datas) {
 	let response;
     inputText.textContent = "...";
@@ -1509,3 +1502,7 @@ function translateText(textContent) {
         })
         .catch((error) => console.error("Error:", error));
 }
+
+document.getElementById("tests").addEventListener("click", function() {
+    taskA();
+});
