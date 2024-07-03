@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.72';
+let gameVer = 'V1.73';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -12,9 +12,9 @@ let clickTimer;
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
 var scrollAmount = 0;
-var scrollSpeed = 0.25;
+var scrollSpeed = 0.5;
 var runCount = 0;
-var maxRunCount = 4;
+var maxRunCount = 2;
 const dropboxCloud = document.getElementById("dropboxCloud");
 const input = document.getElementById("input-container");
 const storage = document.getElementById("storage");
@@ -1512,6 +1512,6 @@ function autoScroll() {
 function startAutoScroll() {
     scrollAmount = 0;
     runCount = 0;      
-    scrollSpeed = 0.25; 
+    scrollSpeed = 0.5; 
     autoScroll();
 }
