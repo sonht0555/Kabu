@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 import { taskA } from "./cloud.js";
-let gameVer = 'V1.69';
+let gameVer = 'V1.70';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -301,7 +301,7 @@ async function downloadFile(filepath, filename) {
 //Notification Message
 async function notiMessage(messageContent, second) {
     const slotState = parseInt(localStorage.getItem("slotStateSaved")) || "0";
-    const gameName = localStorage.getItem("gameName");
+    const gameName = localStorage.getItem("gameName") || "Kabu.gba";
     var message = document.getElementById("noti-mess");
     if (message.style.opacity === "0.4") {
       clearTimeout(timeoutId);
@@ -905,7 +905,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else if (clickState === 1) {
                         getImage();
                     } else {
-                        notiMessage("Save Failed", 2000);
+                        let setAreaLocal = localStorage.getItem("setArea") || "0,0,240,160";
+                        let setArea = prompt("Set selection area", setAreaLocal);
+                        if (setArea !== null && setArea !== "") {
+                            localStorage.setItem("setArea", setArea);                        }
                     }
                     clickState = 0;
                 }, 300);
@@ -1397,34 +1400,21 @@ async function getImage() {
     try {
         Module.screenShot(() => {
             var screen = document.getElementById('canvas');
-            
-            // Vẽ toàn bộ ảnh lên resizedCanvas
             var resizedCanvas = document.createElement('canvas');
             var resizedContext = resizedCanvas.getContext('2d');
             resizedCanvas.width = screen.clientWidth;
             resizedCanvas.height = screen.clientHeight;
             resizedContext.drawImage(screen, 0, 0, resizedCanvas.width, resizedCanvas.height);
-            let dataURL1 = resizedCanvas.toDataURL();
-            console.log("dataURL1",dataURL1)
-            // Tọa độ và kích thước cắt
-            var cropX = 80; // ví dụ
-            var cropY = 0; // ví dụ
-            var cropWidth = 160; // ví dụ
-            var cropHeight = 52; // ví dụ
-            
-            // Lấy dữ liệu ảnh từ vùng cần cắt
+            const setArea = localStorage.getItem("setArea") || '0,0,240,160';
+            const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
             var imageData = resizedContext.getImageData(cropX, cropY, cropWidth, cropHeight);
-            
-            // Tạo một canvas mới để chứa dữ liệu ảnh đã cắt
             var croppedCanvas = document.createElement('canvas');
             var croppedContext = croppedCanvas.getContext('2d');
             croppedCanvas.width = cropWidth;
             croppedCanvas.height = cropHeight;
             croppedContext.putImageData(imageData, 0, 0);
-            
-            // Chuyển canvas đã cắt thành dữ liệu base64
             let dataURL = croppedCanvas.toDataURL();
-            console.log("dataURL",dataURL)
+            console.log(dataURL);
             var base64data = dataURL.split(',')[1];
             sendDataToServer(base64data);
         });
