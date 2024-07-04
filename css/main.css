@@ -305,7 +305,7 @@ label {
   position: absolute;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
-  overflow: hidden;
+  overflow:visible !important;
   border-radius: 0px 0px 2px 2px;
 }
 .message {
@@ -741,7 +741,7 @@ dialog .rom-item {
 }
 .cs22 {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   transition: all 0.5s ease-in-out;
   mix-blend-mode:luminosity;
 }
