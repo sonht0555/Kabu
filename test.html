@@ -16,7 +16,7 @@
 <body>
   <script>
 function translateText(textContent) {
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
     fetch(apiUrl)
         .then((response) => response.json())
         .then((result) => {
@@ -31,7 +31,7 @@ function translateText(textContent) {
         })
         .catch((error) => console.error("Error:", error));
 }
-let textContent = "I want to return home, but the road is closed.";
+let textContent = "再発防止へ「全力で取り組む」＝沖縄米兵事件で遺憾表明―米国務省高官";
 console.log(textContent);
 translateText(textContent);
     

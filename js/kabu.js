@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.78';
+let gameVer = 'V1.79';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -1479,9 +1479,9 @@ function dataURItoBlob(dataURI) {
 	});
 }
 function translateText(textContent) {
-    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\w\s.,;'"?!()]/gi, '').replace(/ {2,}/g, ' ').trim();
+    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').trim();    
     console.log(cleanData);
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(cleanData);
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=" + encodeURIComponent(cleanData);
     fetch(apiUrl)
         .then((response) => {
             if (!response.ok) {
