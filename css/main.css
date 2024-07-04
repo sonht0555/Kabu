@@ -713,7 +713,7 @@ dialog .rom-item {
   font-size: 8px;
   color: rgba(247, 247, 189, 1);
   border-radius: 0px;
-  background: rgba(0, 0, 0, 0);
+  background: rgba(41, 8, 41, 0.8);
   opacity: 0;
   appearance: none;
   box-shadow: none;
@@ -742,7 +742,6 @@ dialog .rom-item {
 }
 .cs22 {
   opacity: 1;
-  background: rgba(41, 8, 41, 0.8);
   transition: all 0.5s ease-in-out;
 }
 #caret-tracker {

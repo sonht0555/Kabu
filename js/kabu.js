@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.76';
+let gameVer = 'V1.77';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
