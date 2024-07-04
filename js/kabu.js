@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.73';
+let gameVer = 'V1.74';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -909,10 +909,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else if (clickState === 1) {
                         getImage();
                     } else {
-                        let setAreaLocal = localStorage.getItem("setArea") || "0,0,240,160";
-                        let setArea = prompt("Set selection area", setAreaLocal);
+                        const gameName = localStorage.getItem("gameName");
+                        let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || "0,0,240,160";
+                        let setArea = prompt(`${gameName}`, setAreaLocal);
                         if (setArea !== null && setArea !== "") {
-                            localStorage.setItem("setArea", setArea);                        }
+                            localStorage.setItem(`${gameName}_setArea`, setArea);                        }
                     }
                     clickState = 0;
                 }, 300);
@@ -1408,7 +1409,8 @@ async function getImage() {
             resizedCanvas.width = screen.clientWidth;
             resizedCanvas.height = screen.clientHeight;
             resizedContext.drawImage(screen, 0, 0, resizedCanvas.width, resizedCanvas.height);
-            const setArea = localStorage.getItem("setArea") || '0,0,240,160';
+            const gameName = localStorage.getItem("gameName");
+            const setArea = localStorage.getItem(`${gameName}_setArea`) || '0,0,240,160';
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
             var imageData = resizedContext.getImageData(cropX, cropY, cropWidth, cropHeight);
             var croppedCanvas = document.createElement('canvas');
@@ -1433,7 +1435,8 @@ async function sendDataToServer(datas) {
 		const formData = new FormData();
 		formData.append("image", imageBlob, "image.png");
 		formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
-		response = await fetch("https://kabuto-d8dc06f14db0.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+	//	response = await fetch("https://kabuto-d8dc06f14db0.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+        response = await fetch("https://cors-anywhere.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
 			method: "POST",
 			body: formData,
 		});
@@ -1455,12 +1458,10 @@ async function sendDataToServer(datas) {
 			throw error;
 		}
         console.log(data.text)
-        const cleanData = data.text.replace(/[\r\n]+/g, ' ');
-        const cleanData1 = cleanData.replace(/[^\w\s.,;'"?!()]/gi, '')
-		translateText(cleanData1)
-        console.log(cleanData1)
+		translateText(data.text)
 	} catch (error) {
-		console.log("Error:", error.message);
+		inputText.textContent = error.message;
+        window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
 	} finally {}
 }
 function dataURItoBlob(dataURI) {
@@ -1477,23 +1478,39 @@ function dataURItoBlob(dataURI) {
 	});
 }
 function translateText(textContent) {
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
+    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\w\s.,;'"?!()]/gi, '').replace(/ {2,}/g, ' ').trim();
+    console.log(cleanData);
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(cleanData);
     fetch(apiUrl)
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Internal Server Error");
+                } else {
+                    return response.json().then(errorData => {
+                        const error = new Error(errorData.error.message);
+                        error.code = errorData.error.code;
+                        throw error;
+                    });
+                }
+            }
+            return response.json();
+        })
         .then((result) => {
             if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
                 var translatedText = result[0].map(sentence => sentence[0]).join(' ');
-                const cleanData = translatedText.replace(/ {2,}/g, ' ')
-                inputText.textContent = cleanData;
+                inputText.textContent = translatedText.replace(/ {2,}/g, ' ');
                 setTimeout(() => {
                     startAutoScroll();
                 }, 2000);
-                console.log(cleanData);
+                console.log(translatedText.replace(/ {2,}/g, ' '));
             } else {
-                console.error("Invalid translation result format:", result);
+                inputText.textContent = result
             }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+            inputText.textContent = error.message
+        });
 }
 document.getElementById("tests").addEventListener("click", function() {
 });

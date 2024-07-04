@@ -432,13 +432,13 @@ label {
 }
 .pad-ul,
 .pad-dr {
-  width: 36px;
+  width: 37px;
   height: 100%;
 }
 .pad-ur,
 .pad-dl {
   width: 100%;
-  height: 36px;
+  height: 37px;
 }
 .pad-r::before {
   content: "";

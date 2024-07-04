@@ -14,41 +14,27 @@
     </style>
 </head>
 <body>
-  <div id="Div">
-    <div id="scrollingDiv">
-      <!-- Nội dung dài để cuộn -->
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nec varius velit. Nam laoreet, urna nec dictum pretium, nisi elit fringilla augue,
-    </div>
-  </div>
-
-  <!-- Nút để gọi lại autoScroll -->
-  <button onclick="startAutoScroll()">Start Auto Scroll</button>
-
   <script>
-    var scrollingDiv = document.getElementById('scrollingDiv');
-    var scrollAmount = 0;
-    var scrollSpeed = 0.25;
-    var runCount = 0;
-    var maxRunCount = 4;
-
-    function autoScroll() {
-        var maxScroll = scrollingDiv.scrollWidth - scrollingDiv.clientWidth;
-        if (runCount >= maxRunCount) return;
-        scrollAmount += scrollSpeed;
-        if (scrollAmount >= maxScroll || scrollAmount <= 0) {
-            scrollSpeed = -scrollSpeed;
-            runCount++;  
-        }
-        scrollingDiv.scrollLeft = scrollAmount;
-        requestAnimationFrame(autoScroll);
-    }
-
-    function startAutoScroll() {
-        scrollAmount = 0;  // Reset giá trị scrollAmount
-        runCount = 0;      // Reset biến đếm
-        scrollSpeed = 0.25; // Reset giá trị scrollSpeed (nếu cần)
-        autoScroll();
-    }
+function translateText(textContent) {
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
+    fetch(apiUrl)
+        .then((response) => response.json())
+        .then((result) => {
+            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+              console.log(result);
+                var translatedText = result[0].map(sentence => sentence[0]).join(' ');
+                const cleanData = translatedText.replace(/ {2,}/g, ' ')
+                console.log(cleanData);
+            } else {
+                console.error("Invalid translation result format:", result);
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+}
+let textContent = "I want to return home, but the road is closed.";
+console.log(textContent);
+translateText(textContent);
+    
   </script>
 </body>
 </html>
