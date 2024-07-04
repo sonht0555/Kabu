@@ -305,7 +305,7 @@ label {
   position: absolute;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
-  overflow:visible !important;
+  overflow:visible;
   border-radius: 0px 0px 2px 2px;
 }
 .message {
@@ -711,22 +711,23 @@ dialog .rom-item {
   padding: 1px 6px 3px 6px;
   font-family: "tuson";
   font-size: 8px;
-  color: rgba(255, 255, 245, 1);
+  color: rgba(247, 247, 189, 1);
   border-radius: 0px;
   background: rgba(0, 0, 0, 0);
   opacity: 0;
   appearance: none;
   box-shadow: none;
   outline: none;
-  caret-color: rgba(255, 255, 245, 0);
+  caret-color: rgba(247, 247, 189, 1);
   border-radius: 0px;
+  overflow: hidden;
 }
 .inputText {
   padding-right: 1px;
   white-space: nowrap;
   overflow: auto;
   text-overflow: ellipsis;
-  max-width: 218px;
+  max-width: 216px;
   border-radius: 0px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -741,9 +742,8 @@ dialog .rom-item {
 }
 .cs22 {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(41, 8, 41, 0.8);
   transition: all 0.5s ease-in-out;
-  mix-blend-mode:luminosity;
 }
 #caret-tracker {
   animation: caret-blink 1s infinite alternate;

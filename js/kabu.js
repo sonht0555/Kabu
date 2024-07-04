@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.75';
+let gameVer = 'V1.76';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -704,6 +704,7 @@ document.addEventListener("DOMContentLoaded", function() {
         imgShader.classList.add(localStorage.getItem("selectedShader"))
         imgshader.style.opacity = localStorage.getItem("opacity") || 0.5;
         canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+        inputContainer.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
         let currentShaderClass = sdValues[0];
         const updateSelection = () => {
             boxes.forEach((box, index) => {
