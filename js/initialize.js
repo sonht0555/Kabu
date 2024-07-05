@@ -1,4 +1,4 @@
-import mGBA from "./mgba.js";
+import mGBA from "./emulator/mgba.js";
 let Module = null;
 export async function startGBA(Module) {
     try {

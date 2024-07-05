@@ -9,7 +9,7 @@
       <link rel="apple-touch-icon" href="img/icon.png" />
       <link rel="icon" href="img/favi.png" type="image/png" />
       <link rel="manifest" href="manifest.json" />
-      <script src="./js/nip.js"></script>
+      <script src="./js/library/nip.js"></script>
       <title>Kabu</title>
       <script>
        if ('serviceWorker' in navigator) {
@@ -58,11 +58,11 @@
                         <div>
                             <div id="input-container" class="input-container flex-1" tabindex="0" onclick="document.getElementById('inputText').focus()">
                                 <svg width="10" height="18" viewBox="0 0 10 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 9H4V10H3V9ZM3 13V10H2V11H1V12H2V13H3ZM4 13V14H3V13H4ZM4 13V10H5V11H6V12H5V13H4Z" fill="#F7F7BD"/>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 9H4V10H3V9ZM3 13V10H2V11H1V12H2V13H3ZM4 13V14H3V13H4ZM4 13V10H5V11H6V12H5V13H4Z" fill="#fffff5"/>
                                     </svg>
                                 <div class="flex-1" style="height:18px;">
                                     <div id="inputText" class="inputText"></div>
-                                </div>
+                                </div> 
                             </div>
                         </div>
                     </div>
@@ -346,6 +346,8 @@
 
   
     <script type="module" src="./js/kabu.js"></script> 
+    <script type="module" src="./js/ocr.js"></script> 
+    <script type="module" src="./js/cloud.js"></script> 
     <script src="./js/global.js"></script>
 </body>
 
