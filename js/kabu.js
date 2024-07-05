@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.82';
+let gameVer = 'V1.83';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -913,13 +913,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
                 LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
                 LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
-                canvas.classList.toggle("visible");
                 stateList.classList.toggle("visible");
                 statePageButton.classList.toggle("active");
                 if (stateList.classList.contains("visible")) {
+                    canvas.style.borderRadius = "0px 0px 2px 2px";
                     Module.resumeGame();
                     notiMessage("Resumed!", 2000);
                 } else {
+                    canvas.style.borderRadius = "0px 0px 2px 2px";
                     Module.pauseGame();
                     notiMessage("Paused!", 2000);
                 }
@@ -931,7 +932,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (controlSetting.classList.contains("visible")) {
                     Module.resumeGame();
                     Module.SDL2();
-                    canvas.style.borderRadius = "0px 0px 0px 0px";
+                    canvas.style.borderRadius = "0px 0px 2px 2px";
                     notiMessage("Resumed!", 2000);
                 } else {
                     Module.pauseGame();

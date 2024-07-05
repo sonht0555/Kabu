@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '82';
+let revision = '83';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
@@ -22,20 +22,9 @@ workbox.precaching.precacheAndRoute([
   { url: './index.html', revision: revision },
   { url: './manifest.json', revision: revision },
 ]);
-if (navigator.onLine) {
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'static-resources',
   })
 );
-} else {
-  workbox.routing.registerRoute(
-    /\.(?:css|ttf|png|js|wasm|html|json)$/,
-    new workbox.strategies.CacheFirst({
-      cacheName: 'static-resources',
-    })
-  );
-}
-
-

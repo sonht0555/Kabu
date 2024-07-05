@@ -62,7 +62,6 @@ div,
 canvas,
 span,
 label {
-  border-radius: 2px;
   display: flex;
 }
 .intro,.localStorage,.divTest,.firstLoading,.lockNoti {
@@ -305,7 +304,7 @@ label {
   position: absolute;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
-  overflow:visible;
+  overflow:hidden;
   border-radius: 0px 0px 2px 2px;
 }
 .message {
@@ -728,7 +727,7 @@ dialog .rom-item {
   overflow: auto;
   text-overflow: ellipsis;
   max-width: 216px;
-  border-radius: 0px;
+  border-radius: 0px 0px 2px 2px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scrollbar-width: none;
@@ -993,11 +992,13 @@ dialog .rom-item {
   background-color: #252525;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 2px;
 }
 .bc1 {
   background-color: #323232;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 2px;
 }
 .bc2 {
   background-color: #3c3c3c;
