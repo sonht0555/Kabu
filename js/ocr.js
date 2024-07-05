@@ -50,10 +50,16 @@ async function sendDataToServer(datas) {
         const formData = new FormData();
         formData.append("image", imageBlob, "image.png");
         formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
-        //response = await fetch("https://kabuto-d8dc06f14db0.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
-        response = await fetch("https://cors-server.fly.dev/http://158.160.66.115:40000/image_to_text", {
+        //https://kabuto-d8dc06f14db0.herokuapp.com/
+        //https://cors-server.fly.dev/
+        response = await fetch("https://seep.eu.org/http://158.160.66.115:40000/image_to_text", {
             method: "POST",
             body: formData,
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest',
+                'User-Agent': navigator.userAgent
+            }
         });
         if (!response.ok) {
             if (response.status === 500) {
@@ -75,7 +81,8 @@ async function sendDataToServer(datas) {
         }
     } catch (error) {
         inputText.textContent = error.message;
-       // window.location.href = "https://cors-server.fly.dev";
+        //https://cors-anywhere.herokuapp.com/corsdemo
+        window.location.href = "https://seep.eu.org/";
     } finally {}
 }
 async function translateText(textContent) {
