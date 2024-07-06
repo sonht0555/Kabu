@@ -4,36 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Scroll Div</title>
-    <style>
-        #scrollingDiv {
-            width: 300px;
-            white-space: nowrap; /* Để không ngắt dòng và cho phép cuộn ngang */
-            overflow-x: auto;
-            border: 1px solid #000;
-        }
-    </style>
 </head>
 <body>
-  <script>
-function translateText(textContent) {
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=" + encodeURIComponent(textContent);
-    fetch(apiUrl)
-        .then((response) => response.json())
-        .then((result) => {
-            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
-              console.log(result);
-                var translatedText = result[0].map(sentence => sentence[0]).join(' ');
-                const cleanData = translatedText.replace(/ {2,}/g, ' ')
-                console.log(cleanData);
+  <script>function detectLanguage(textContent) {
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=ld&q=" + encodeURIComponent(textContent);
+    return fetch(apiUrl)
+        .then(response => response.json())
+        .then(result => {
+            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[8]) && result[8].length > 0) {
+                var detectedLanguage = result[8][0][0];
+                console.log("Detected language:", detectedLanguage);
+                return detectedLanguage;
             } else {
-                console.error("Invalid translation result format:", result);
+                throw new Error("Unable to detect language");
             }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error detecting language:", error);
+            throw error;
+        });
 }
-let textContent = "再発防止へ「全力で取り組む」＝沖縄米兵事件で遺憾表明―米国務省高官";
-console.log(textContent);
-translateText(textContent);
+
+function translateText(textContent, sourceLang, targetLang) {
+    var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(textContent)}`;
+    return fetch(apiUrl)
+        .then(response => response.json())
+        .then(result => {
+            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+                var translatedText = result[0].map(sentence => sentence[0]).join(' ');
+                const cleanData = translatedText.replace(/ {2,}/g, ' ');
+                console.log("Cleaned translated text:", cleanData);
+                return cleanData;
+            } else {
+                throw new Error("Invalid translation result format");
+            }
+        })
+        .catch(error => {
+            console.error("Error translating text:", error);
+            throw error;
+        });
+}
+
+function translateWithLogic(textContent) {
+    detectLanguage(textContent)
+        .then(detectedLanguage => {
+            if (detectedLanguage === 'en') {
+                console.log("Detected language is English. Translating directly to Vietnamese.");
+                return translateText(textContent, 'en', 'vi');
+            } else {
+                console.log(`Detected language is ${detectedLanguage}. Translating to English first.`);
+                return translateText(textContent, detectedLanguage, 'en')
+                    .then(intermediateText => {
+                        console.log("Intermediate text (translated to English):", intermediateText);
+                        return translateText(intermediateText, 'en', 'vi');
+                    });
+            }
+        })
+        .then(finalTranslation => {
+            console.log("Final translated text:", finalTranslation);
+        })
+        .catch(error => {
+            console.error("Error in translation process:", error);
+        });
+}
+
+let textContent = "はじめまして! あなたは? おとこのこ! おんなのこ!";
+console.log("Original text:", textContent);
+translateWithLogic(textContent);
     
   </script>
 </body>

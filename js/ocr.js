@@ -73,7 +73,8 @@ async function sendDataToServer(datas) {
         }
         const data = await response.json();
         console.log(data.text)
-        await translateText(data.text)
+        transLogic(data.text);
+       // await translateText(data.text)
         if (data.type === "error") {
             const error = new Error(data.error.message);
             error.code = data.error.code;
@@ -82,14 +83,14 @@ async function sendDataToServer(datas) {
     } catch (error) {
         inputText.textContent = error.message;
         //https://cors-anywhere.herokuapp.com/corsdemo
-        window.location.href = "https://seep.eu.org/";
+        // window.location.href = "https://seep.eu.org/";
     } finally {}
 }
-async function translateText(textContent) {
+async function translateText(textContent, sourceLang, targetLang) {
     inputText.textContent = ".."
     const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').trim();
     console.log(cleanData);
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=" + encodeURIComponent(cleanData);
+    var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=` + encodeURIComponent(cleanData);
     try {
         const response = await fetch(apiUrl);
         
@@ -113,11 +114,14 @@ async function translateText(textContent) {
                 startAutoScroll();
             }, 2000);
             console.log(translatedText.replace(/ {2,}/g, ' '));
+            return translatedText.replace(/ {2,}/g, ' ');
         } else {
             inputText.textContent = result;
+            return result;
         }
     } catch (error) {
         inputText.textContent = error.message;
+        throw error;
     } finally {}
 }
 function dataURItoBlob(dataURI) {
@@ -142,12 +146,42 @@ function autoScroll() {
     inputText.scrollLeft = scrollAmount;
     requestAnimationFrame(autoScroll);
 }
-
 function startAutoScroll() {
     scrollAmount = 0;
     runCount = 0;
     scrollSpeed = 0.5;
     autoScroll();
+}
+async function detectLanguage(textContent) {
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=ld&q=" + encodeURIComponent(textContent);
+    try {
+        const response = await fetch(apiUrl);
+        const result = await response.json();
+        var detectedLanguage = result[8][0][0];
+        console.log("Language:", detectedLanguage);
+        return detectedLanguage;
+    } catch (error) {
+        console.error("Error detecting language:", error);
+        throw error;
+    }
+}
+async function transLogic(textContent) {
+    const gameName = localStorage.getItem("gameName");
+    const gameLang = localStorage.getItem(`${gameName}_gameLang`);
+    if (gameLang === null) {
+        console.log("so1");
+        const lang = await detectLanguage(textContent);
+        localStorage.setItem(`${gameName}_gameLang`, lang);
+        const intermediateText = await translateText(textContent, lang, 'en');
+        return translateText(intermediateText, 'en', 'vi');
+    } else if (gameLang === "en") {
+        console.log("so2");
+        return translateText(textContent, "en", "vi");
+    } else {
+        console.log("so3");
+        const intermediateText = await translateText(textContent, gameLang, 'en');
+        return translateText(intermediateText, 'en', 'vi');
+    }
 }
 // --- processing ---
 document.addEventListener("DOMContentLoaded", function() {
