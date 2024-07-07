@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.85';
+let gameVer = 'V1.86';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -527,7 +527,6 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         clearTimeout(clickTimer);
         if (!clickedOver1s) {
             stateDiv.onclick = () => {
-            canvas.classList.toggle("visible");
             stateList.classList.toggle("visible");
             statePageButton.classList.toggle("active");
             led(saveSlot);

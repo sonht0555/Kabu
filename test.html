@@ -3,75 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Scroll Div</title>
+    <title>Crop Example</title>
+    <style>
+        #largeDiv {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        #smallDiv {
+            position: absolute;
+            border: 1px solid red;
+        }
+        .btn-group {
+            margin-top: 10px;
+        }
+        button {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
-  <script>function detectLanguage(textContent) {
-    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=ld&q=" + encodeURIComponent(textContent);
-    return fetch(apiUrl)
-        .then(response => response.json())
-        .then(result => {
-            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[8]) && result[8].length > 0) {
-                var detectedLanguage = result[8][0][0];
-                console.log("Detected language:", detectedLanguage);
-                return detectedLanguage;
-            } else {
-                throw new Error("Unable to detect language");
-            }
-        })
-        .catch(error => {
-            console.error("Error detecting language:", error);
-            throw error;
-        });
-}
+    <div id="largeDiv">
+        <div id="smallDiv"></div>
+    </div>
+    <div class="btn-group">
+        <button onclick="increaseCropX()">Increase Crop X</button>
+        <button onclick="decreaseCropX()">Decrease Crop X</button>
+        <button onclick="increaseCropY()">Increase Crop Y</button>
+        <button onclick="decreaseCropY()">Decrease Crop Y</button>
+        <button onclick="increaseCropWidth()">Increase Crop Width</button>
+        <button onclick="decreaseCropWidth()">Decrease Crop Width</button>
+        <button onclick="increaseCropHeight()">Increase Crop Height</button>
+        <button onclick="decreaseCropHeight()">Decrease Crop Height</button>
+    </div>
 
-function translateText(textContent, sourceLang, targetLang) {
-    var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(textContent)}`;
-    return fetch(apiUrl)
-        .then(response => response.json())
-        .then(result => {
-            if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
-                var translatedText = result[0].map(sentence => sentence[0]).join(' ');
-                const cleanData = translatedText.replace(/ {2,}/g, ' ');
-                console.log("Cleaned translated text:", cleanData);
-                return cleanData;
-            } else {
-                throw new Error("Invalid translation result format");
-            }
-        })
-        .catch(error => {
-            console.error("Error translating text:", error);
-            throw error;
-        });
-}
+    <script>
+        // Initial crop values
+        var cropX = 80;
+        var cropY = 240;
+        var cropWidth = 158;
+        var cropHeight = 52;
 
-function translateWithLogic(textContent) {
-    detectLanguage(textContent)
-        .then(detectedLanguage => {
-            if (detectedLanguage === 'en') {
-                console.log("Detected language is English. Translating directly to Vietnamese.");
-                return translateText(textContent, 'en', 'vi');
-            } else {
-                console.log(`Detected language is ${detectedLanguage}. Translating to English first.`);
-                return translateText(textContent, detectedLanguage, 'en')
-                    .then(intermediateText => {
-                        console.log("Intermediate text (translated to English):", intermediateText);
-                        return translateText(intermediateText, 'en', 'vi');
-                    });
-            }
-        })
-        .then(finalTranslation => {
-            console.log("Final translated text:", finalTranslation);
-        })
-        .catch(error => {
-            console.error("Error in translation process:", error);
-        });
-}
+        // Function to update the small div's properties
+        function updateCrop() {
+            var smallDiv = document.getElementById('smallDiv');
+            smallDiv.style.left = cropX + 'px';
+            smallDiv.style.top = cropY + 'px';
+            smallDiv.style.width = cropWidth + 'px';
+            smallDiv.style.height = cropHeight + 'px';
+        }
 
-let textContent = "はじめまして! あなたは? おとこのこ! おんなのこ!";
-console.log("Original text:", textContent);
-translateWithLogic(textContent);
-    
-  </script>
+        // Call the function to set initial values
+        updateCrop();
+
+        // Functions to increase crop values and update the div
+        function increaseCropX() {
+            cropX += 10;
+            updateCrop();
+        }
+
+        function decreaseCropX() {
+            cropX -= 10;
+            updateCrop();
+        }
+
+        function increaseCropY() {
+            cropY += 10;
+            updateCrop();
+        }
+
+        function decreaseCropY() {
+            cropY -= 10;
+            updateCrop();
+        }
+
+        function increaseCropWidth() {
+            cropWidth += 10;
+            updateCrop();
+        }
+
+        function decreaseCropWidth() {
+            cropWidth -= 10;
+            updateCrop();
+        }
+
+        function increaseCropHeight() {
+            cropHeight += 10;
+            updateCrop();
+        }
+
+        function decreaseCropHeight() {
+            cropHeight -= 10;
+            updateCrop();
+        }
+    </script>
 </body>
 </html>
