@@ -21,9 +21,7 @@ async function getImage() {
             var screen = document.getElementById('canvas');
             var resizedCanvas = document.createElement('canvas');
             var resizedContext = resizedCanvas.getContext('2d');
-            resizedCanvas.width = screen.clientWidth;
-            resizedCanvas.height = screen.clientHeight;
-            resizedContext.drawImage(screen, 0, 0, resizedCanvas.width, resizedCanvas.height);
+            resizedContext.drawImage(screen, 0, 0, '240', '160');
             const gameName = localStorage.getItem("gameName");
             const setArea = localStorage.getItem(`${gameName}_setArea`) || '0,0,240,160';
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
