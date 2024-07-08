@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.89';
+let gameVer = 'V1.90';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -10,7 +10,6 @@ var timeoutId;
 var lockNotiTime;
 let clickTimer;
 const dropboxCloud = document.getElementById("dropboxCloud");
-const input = document.getElementById("input-container");
 const storage = document.getElementById("storage");
 const intro = document.getElementById("intro");
 const ingame = document.getElementById("in-game");
