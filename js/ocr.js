@@ -48,7 +48,7 @@ async function sendDataToServer(datas) {
     const interval = setInterval(() => {
         progress += 1;
         if (progress <= 100) {
-            inputText.textContent = `Detect_${progress}%`;
+            inputText.textContent = `Waiting..${progress}%`;
         }
     }, 100);
     try {
