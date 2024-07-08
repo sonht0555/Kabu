@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.87';
+let gameVer = 'V1.88';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -1100,7 +1100,6 @@ SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if(button) {
         button.addEventListener("touchstart", function() {
-            input.classList.remove("cs22");
             if (!stateList.classList.contains("visible")){
                 statePageButton.classList.remove("active");
                 canvas.classList.remove("visible");

@@ -729,7 +729,7 @@ dialog .rom-item {
   white-space: nowrap;
   overflow: auto;
   text-overflow: ellipsis;
-  max-width: 216px;
+  max-width: calc(100vw - 174px);
   border-radius: 0px 0px 2px 2px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
