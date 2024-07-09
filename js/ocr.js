@@ -18,6 +18,7 @@ window.addEventListener("gbaInitialized", (event) => {
 // --- function ---
 async function getImage() {
     inputContainer.classList.add('cs22');
+    canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
     try {
         Module.screenShot(() => {
             var screen = document.getElementById('canvas');
@@ -184,38 +185,49 @@ async function transLogic(textContent) {
     }
 }
 // --- processing ---
+
+document.addEventListener("DOMContentLoaded", function() {
+})
+// Lặp qua các ID và thêm sự kiện touchstart
 ID.forEach(function(id) {
     const button = document.getElementById(id);
-    if(button) {
+    if (button) {
         button.addEventListener("touchstart", function() {
             if (!isFunctionARunning) {
                 input.classList.remove("cs22");
+                canvas.style.borderRadius = "0px 0px 2px 2px";
             }
         });
     }
-})
-document.addEventListener("DOMContentLoaded", function() {
-    ["mousedown", "touchstart"].forEach(eventType => {});
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
-        saveStateButton.addEventListener(eventType, () => {
-            clickState++;
-            clearTimeout(clickTimeout);
-            clickTimeout = setTimeout(() => {
-                if (clickState === 1) {
-                    if (!isFunctionARunning) {
-                        isFunctionARunning = true;
-                        getImage();
-                    }
-                } else if (clickState === 3) {
-                    const gameName = localStorage.getItem("gameName");
-                    let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || "0,0,240,160";
-                    let setArea = prompt(`${gameName}`, setAreaLocal);
-                    if (setArea !== null && setArea !== "") {
-                        localStorage.setItem(`${gameName}_setArea`, setArea);
-                    }
+});
+
+// Thêm sự kiện cho saveStateButton
+["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    saveStateButton.addEventListener(eventType, () => {
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(() => {
+            if (clickState === 1) {
+                if (!isFunctionARunning) {
+                    isFunctionARunning = true;
+                    getImage();
+                    logoOcr()
                 }
-                clickState = 0;
-            }, 300);
-        });
-    })
-})
+            } else if (clickState === 3) {
+                const gameName = localStorage.getItem("gameName");
+                let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || "0,0,240,160";
+                let setArea = prompt(`${gameName}`, setAreaLocal);
+                if (setArea !== null && setArea !== "") {
+                    localStorage.setItem(`${gameName}_setArea`, setArea);
+                }
+            }
+            clickState = 0;
+        }, 300);
+    });
+});
+
+function logoOcr() {
+        var s = Math.floor(Math.random() * 3) + 1;
+        var newPositionX = -15 * s + 'px';
+        document.getElementById('logoOcr').style.backgroundPositionX = newPositionX;
+}

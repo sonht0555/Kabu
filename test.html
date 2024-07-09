@@ -3,100 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop Example</title>
+    <title>Move Div</title>
     <style>
-        #largeDiv {
+        #container {
+            width: 11px;
+            height: 11px;
             position: relative;
-            width: 500px;
-            height: 500px;
-            border: 1px solid black;
+            overflow: hidden; /* Để chỉ hiển thị phần trong vùng 10px x 10px */
         }
-        #smallDiv {
+
+        #movingDiv {
+            width: 352px; /* Chiều rộng chứa tất cả các icon */
+            height: 11px;
+            background: url("img/Frame\ 7516.svg"); /* Thay 'your-image-url.png' bằng URL của bạn */
             position: absolute;
-            border: 1px solid red;
+            animation: moveIcons 25s steps(5) infinite;
         }
-        .btn-group {
-            margin-top: 10px;
-        }
-        button {
-            margin-right: 5px;
+
+        @keyframes moveIcons {
+            0% { left: 0; }
+            20% { left: -11px; }
+            40% { left: -22px; }
+            60% { left: -33px; }
+            80% { left: -44px; }
+            100% { left: -55px; }
         }
     </style>
 </head>
 <body>
-    <div id="largeDiv">
-        <div id="smallDiv"></div>
+    <div id="container">
+        <div id="movingDiv"></div>
     </div>
-    <div class="btn-group">
-        <button onclick="increaseCropX()">Increase Crop X</button>
-        <button onclick="decreaseCropX()">Decrease Crop X</button>
-        <button onclick="increaseCropY()">Increase Crop Y</button>
-        <button onclick="decreaseCropY()">Decrease Crop Y</button>
-        <button onclick="increaseCropWidth()">Increase Crop Width</button>
-        <button onclick="decreaseCropWidth()">Decrease Crop Width</button>
-        <button onclick="increaseCropHeight()">Increase Crop Height</button>
-        <button onclick="decreaseCropHeight()">Decrease Crop Height</button>
-    </div>
-
-    <script>
-        // Initial crop values
-        var cropX = 80;
-        var cropY = 240;
-        var cropWidth = 158;
-        var cropHeight = 52;
-
-        // Function to update the small div's properties
-        function updateCrop() {
-            var smallDiv = document.getElementById('smallDiv');
-            smallDiv.style.left = cropX + 'px';
-            smallDiv.style.top = cropY + 'px';
-            smallDiv.style.width = cropWidth + 'px';
-            smallDiv.style.height = cropHeight + 'px';
-        }
-
-        // Call the function to set initial values
-        updateCrop();
-
-        // Functions to increase crop values and update the div
-        function increaseCropX() {
-            cropX += 10;
-            updateCrop();
-        }
-
-        function decreaseCropX() {
-            cropX -= 10;
-            updateCrop();
-        }
-
-        function increaseCropY() {
-            cropY += 10;
-            updateCrop();
-        }
-
-        function decreaseCropY() {
-            cropY -= 10;
-            updateCrop();
-        }
-
-        function increaseCropWidth() {
-            cropWidth += 10;
-            updateCrop();
-        }
-
-        function decreaseCropWidth() {
-            cropWidth -= 10;
-            updateCrop();
-        }
-
-        function increaseCropHeight() {
-            cropHeight += 10;
-            updateCrop();
-        }
-
-        function decreaseCropHeight() {
-            cropHeight -= 10;
-            updateCrop();
-        }
-    </script>
 </body>
 </html>

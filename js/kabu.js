@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.92';
+let gameVer = 'V1.93';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -918,7 +918,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     Module.resumeGame();
                     notiMessage("Resumed!", 2000);
                 } else {
-                    canvas.style.borderRadius = "0px 0px 2px 2px";
+                    canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
                     Module.pauseGame();
                     notiMessage("Paused!", 2000);
                 }
@@ -935,7 +935,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     Module.pauseGame();
                     Module.SDL2();
-                    canvas.style.borderRadius = "0px 0px 0px 2.2px";
+                    canvas.style.borderRadius = "0px 0px 2px 2.4px";
                     notiMessage("Paused!", 2000);
                 }
             })
