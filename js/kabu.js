@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.93';
+let gameVer = 'V1.94';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -9,6 +9,7 @@ let selectedIndex = 0;
 var timeoutId;
 var lockNotiTime;
 let clickTimer;
+let clickTimeout;
 const dropboxCloud = document.getElementById("dropboxCloud");
 const storage = document.getElementById("storage");
 const intro = document.getElementById("intro");
@@ -867,17 +868,23 @@ document.addEventListener("DOMContentLoaded", function() {
             //Button Load State
             loadStateButton.addEventListener(eventType, () => {
                 clickState++;
-                if (clickState === 2) {
-                    const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
-                    loadState(slotStateNumbers);
-                    notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
-                }
-                setTimeout(() => {
-                    clickState = 0
+                clearTimeout(clickTimeout);
+                clickTimeout = setTimeout(() => {
+                    if (clickState === 2) {
+                        const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
+                        loadState(slotStateNumbers);
+                        notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
+                    } else if (clickState === 3) {
+                        let setApiAzure = localStorage.getItem("ApiAzure");
+                        let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
+                        if (ApiAzure !== null && ApiAzure !== "") {
+                            localStorage.setItem("ApiAzure", ApiAzure);
+                        }
+                    }
+                    clickState = 0;
                 }, 300);
             });
             //Button Save State
-            let clickTimeout;
             saveStateButton.addEventListener(eventType, () => {
                 clickState++;
                 clearTimeout(clickTimeout);

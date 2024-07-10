@@ -2,37 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Move Div</title>
-    <style>
-        #container {
-            width: 11px;
-            height: 11px;
-            position: relative;
-            overflow: hidden; /* Để chỉ hiển thị phần trong vùng 10px x 10px */
-        }
-
-        #movingDiv {
-            width: 352px; /* Chiều rộng chứa tất cả các icon */
-            height: 11px;
-            background: url("img/Frame\ 7516.svg"); /* Thay 'your-image-url.png' bằng URL của bạn */
-            position: absolute;
-            animation: moveIcons 25s steps(5) infinite;
-        }
-
-        @keyframes moveIcons {
-            0% { left: 0; }
-            20% { left: -11px; }
-            40% { left: -22px; }
-            60% { left: -33px; }
-            80% { left: -44px; }
-            100% { left: -55px; }
-        }
-    </style>
+    <title>Form Example</title>
 </head>
 <body>
-    <div id="container">
-        <div id="movingDiv"></div>
-    </div>
+    <form id="dataForm">
+        <label for="data">Enter some data:</label>
+        <input type="text" id="data" name="data">
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const data = document.getElementById('data').value;
+            const githubToken = ''; // Thay thế bằng Personal Access Token của bạn
+            
+            const gistData = {
+                description: "Sample gist",
+                public: true,
+                files: {
+                    "data.txt": {
+                        content: data
+                    }
+                }
+            };
+            
+            fetch('https://api.github.com/gists', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'token ' + githubToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(gistData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                alert('Gist created: ' + result.html_url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
 </body>
 </html>

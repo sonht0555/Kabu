@@ -37,13 +37,19 @@ async function getImage() {
             let dataURL = croppedCanvas.toDataURL();
             console.log(dataURL);
             var base64data = dataURL.split(',')[1];
-            sendDataToServer(base64data);
+            let ApiAzure = localStorage.getItem("ApiAzure");
+            if (ApiAzure !== null && ApiAzure !== "") {
+                azureServer(base64data);
+            } else {
+                freeServer(base64data);
+            }
+            
         });
     } catch (error) {
         inputText.textContent = error;
     }
 }
-async function sendDataToServer(datas) {
+async function freeServer(base64data) {
     let response;
     let progress = 0;
     const interval = setInterval(() => {
@@ -52,11 +58,13 @@ async function sendDataToServer(datas) {
             inputText.textContent = `Waiting..${progress}%`;
         }
     }, 100);
+
     try {
-        const imageBlob = dataURItoBlob(datas);
+        const imageBlob = dataURItoBlob(base64data);
         const formData = new FormData();
         formData.append("image", imageBlob, "image.png");
         formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
+
         response = await fetch("https://seep.eu.org/http://158.160.66.115:40000/image_to_text", {
             method: "POST",
             body: formData,
@@ -66,29 +74,60 @@ async function sendDataToServer(datas) {
                 'User-Agent': navigator.userAgent
             }
         });
-        if (!response.ok) {
-            if (response.status === 500) {
-                throw new Error("Internal Server Error");
-            } else {
-                const errorData = await response.json();
-                const error = new Error(errorData.error.message);
-                error.code = errorData.error.code;
-                throw error;
-            }
-        }
+
         const data = await response.json();
+
+        // Kiểm tra lỗi từ response và từ dữ liệu trả về
+        if (!response.ok || data.type === "error") {
+            const errorMessage = response.ok ? data.error.message : (response.status === 500 ? "Internal Server Error" : (await response.json()).error.message);
+            throw new Error(errorMessage);
+        }
+
         console.log(data.text);
         transLogic(data.text);
-        if (data.type === "error") {
-            const error = new Error(data.error.message);
-            error.code = data.error.code;
-            throw error;
-        }
+
     } catch (error) {
         inputText.textContent = error.message;
         // window.location.href = "https://kabuto-d8dc06f14db0.herokuapp.com/";
         // window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
         // window.location.href = "https://seep.eu.org/";
+    } finally {
+        clearInterval(interval);
+        isFunctionARunning = false;
+    }
+}
+async function azureServer(base64data) {
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 1;
+        if (progress <= 100) {
+            inputText.textContent = `Waiting..${progress}%`;
+        }
+    }, 100);
+    try {
+        const ApiAzure = localStorage.getItem("ApiAzure")
+        const [apiKey, endpoint, countTimes] = ApiAzure.split(',');
+        console.log("ApiAzure", ApiAzure);
+        console.log("apiKey,endpoint,countTimes", apiKey, endpoint, countTimes);
+        const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {
+            method: 'POST',
+            headers: {
+                'Ocp-Apim-Subscription-Key': apiKey,
+                'Content-Type': 'application/octet-stream',
+            },
+            body: dataURItoBlob(base64data)
+        });
+        const data = await response.json();
+        if (!response.ok || data.type === "error") {
+            const errorMessage = response.ok ? data.error.message : (response.status === 500 ? "500 Internal Server Error" : (await response.json()).error.message);
+            throw new Error(errorMessage);
+        }
+        const readResult = data.readResult.blocks[0];
+        const lines = readResult.lines || [];
+        const text = lines.map(line => line.text).join('\n');
+        transLogic(text);
+    } catch (error) {
+        inputText.textContent = error.message;
     } finally {
         clearInterval(interval);
         isFunctionARunning = false;
@@ -185,10 +224,8 @@ async function transLogic(textContent) {
     }
 }
 // --- processing ---
-
 document.addEventListener("DOMContentLoaded", function() {
 })
-// Lặp qua các ID và thêm sự kiện touchstart
 ID.forEach(function(id) {
     const button = document.getElementById(id);
     if (button) {
@@ -200,8 +237,6 @@ ID.forEach(function(id) {
         });
     }
 });
-
-// Thêm sự kiện cho saveStateButton
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     saveStateButton.addEventListener(eventType, () => {
         clickState++;
