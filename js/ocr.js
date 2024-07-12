@@ -23,16 +23,19 @@ async function getImage() {
         Module.screenShot(() => {
             var screen = document.getElementById('canvas');
             var resizedCanvas = document.createElement('canvas');
+            resizedCanvas.width = 240;
+            resizedCanvas.height = 160;
             var resizedContext = resizedCanvas.getContext('2d');
-            resizedContext.drawImage(screen, 0, 0, '240', '160');
+            resizedContext.drawImage(screen, 0, 0, 240, 160);
             const gameName = localStorage.getItem("gameName");
-            const setArea = localStorage.getItem(`${gameName}_setArea`) || '0,0,240,160';
+            const generalRatio = (240 / (window.innerWidth - 150)).toFixed(0);
+            const setArea = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
-            var imageData = resizedContext.getImageData(cropX, cropY, cropWidth, cropHeight);
+            var imageData = resizedContext.getImageData(cropX * generalRatio, cropY * generalRatio, cropWidth * generalRatio, cropHeight * generalRatio);
             var croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = cropWidth * generalRatio;
+            croppedCanvas.height = cropHeight * generalRatio;
             var croppedContext = croppedCanvas.getContext('2d');
-            croppedCanvas.width = cropWidth;
-            croppedCanvas.height = cropHeight;
             croppedContext.putImageData(imageData, 0, 0);
             let dataURL = croppedCanvas.toDataURL();
             console.log(dataURL);
@@ -97,18 +100,25 @@ async function freeServer(base64data) {
     }
 }
 async function azureServer(base64data) {
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += 1;
-        if (progress <= 100) {
-            inputText.textContent = `Waiting..${progress}%`;
+    inputText.textContent = '...';
+    const ApiAzure = localStorage.getItem("ApiAzure");
+    let [apiKey, endpoint, countTimes] = ApiAzure.split(',');
+    countTimes = parseInt(countTimes);
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const lastSavedDate = localStorage.getItem("lastSavedDate");
+    const lastSaved = lastSavedDate ? new Date(lastSavedDate) : null;
+
+    if (countTimes >= 4950) {
+        if (lastSaved && (currentMonth === lastSaved.getMonth() && currentYear === lastSaved.getFullYear())) {
+            inputText.textContent = 'Used more than 4950 times. Continue using next month.';
+            return;
+        } else {
+            countTimes = 0;
         }
-    }, 100);
+    }
     try {
-        const ApiAzure = localStorage.getItem("ApiAzure")
-        const [apiKey, endpoint, countTimes] = ApiAzure.split(',');
-        console.log("ApiAzure", ApiAzure);
-        console.log("apiKey,endpoint,countTimes", apiKey, endpoint, countTimes);
         const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {
             method: 'POST',
             headers: {
@@ -128,9 +138,16 @@ async function azureServer(base64data) {
         transLogic(text);
     } catch (error) {
         inputText.textContent = error.message;
+        const newTime = ++countTimes;
+        notiMessage(`[${newTime}] Times Azure`, 2000);
+        localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
+        localStorage.setItem("lastSavedDate", currentDate.toISOString());
     } finally {
-        clearInterval(interval);
+        const newTime = ++countTimes;
+        notiMessage(`[${newTime}] Times Azure`, 2000);
         isFunctionARunning = false;
+        localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
+        localStorage.setItem("lastSavedDate", currentDate.toISOString());
     }
 }
 async function translateText(textContent, sourceLang, targetLang) {
@@ -250,7 +267,7 @@ ID.forEach(function(id) {
                 }
             } else if (clickState === 3) {
                 const gameName = localStorage.getItem("gameName");
-                let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || "0,0,240,160";
+                let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
                 let setArea = prompt(`${gameName}`, setAreaLocal);
                 if (setArea !== null && setArea !== "") {
                     localStorage.setItem(`${gameName}_setArea`, setArea);
@@ -260,7 +277,6 @@ ID.forEach(function(id) {
         }, 300);
     });
 });
-
 function logoOcr() {
         var s = Math.floor(Math.random() * 3) + 1;
         var newPositionX = -15 * s + 'px';

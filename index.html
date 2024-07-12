@@ -9,6 +9,7 @@
       <link rel="apple-touch-icon" href="img/icon.png" />
       <link rel="icon" href="img/favi.png" type="image/png" />
       <link rel="manifest" href="manifest.json" />
+      <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
       <script src="./js/library/nip.js"></script>
       <title>Kabu</title>
       <script>
@@ -26,8 +27,8 @@
       </script>
   </head>
 <body>
-      <!-- Layer Ingame -->
-      <button id="tests" class="disable">tesst</button>
+    <!-- Layer Ingame -->
+    <button id="tests" class="disable">tesst</button>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
@@ -54,9 +55,10 @@
                         <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
                     </div>
                     <div class="column message-container" id="">
-                        <div class="flex-1"></div>
+                        <div class="flex-1" id="areaSet"></div>
+                        <div class="flex-1" id=""></div>
                         <div>
-                            <div id="input-container" class="input-container flex-1" tabindex="0" onclick="document.getElementById('inputText').focus()">
+                            <div id="input-container" class="input-container flex-1">
                                 <div id="logoOcr" class="logoOcr"></div>
                                 <div class="flex-1" style="height:18px;">
                                     <div id="inputText" class="inputText"></div>
@@ -211,6 +213,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="message-container column visible" id="areaTrans">
+                        <div id="resizable-draggable">
+                            <div class="resizer bottom-right"></div>
+                            <div class="resizer top-left"></div> 
+                          </div>
                     </div>
                     <div class="shader sd-1" id="img-shader" style=" pointer-events: none"></div>
                 </div>

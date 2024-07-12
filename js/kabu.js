@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.94';
+let gameVer = 'V1.95';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -10,6 +10,8 @@ var timeoutId;
 var lockNotiTime;
 let clickTimer;
 let clickTimeout;
+const areaTrans = document.getElementById('areaTrans');
+const areaSet = document.getElementById('areaSet');
 const dropboxCloud = document.getElementById("dropboxCloud");
 const storage = document.getElementById("storage");
 const intro = document.getElementById("intro");
@@ -51,6 +53,7 @@ startGBA(Module);
 //Status Show
 async function statusShow() {
     try {
+        restoreArea();
         startTimer();
         await delay(1500);
         handleVisibilityChange();
@@ -946,7 +949,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     notiMessage("Paused!", 2000);
                 }
             })
-
+            //Buton Area Translate
+            areaSet.addEventListener(eventType, () => {
+                areaTrans.classList.toggle("visible");
+            })
             
         }); 
     },0);
@@ -1114,8 +1120,51 @@ SDL2ID.forEach(function(id) {
                 Module.SDL2();
                 notiMessage("Resumed!", 2000);
             }
+            if (!areaTrans.classList.contains("visible")) {
+                areaTrans.classList.toggle("visible");
+            }
         });
     }
 })
 document.getElementById("tests").addEventListener("click", function() {
 })
+interact('#resizable-draggable')
+  .resizable({
+    edges: { top: true, left: true, right: true, bottom: true },
+    modifiers: [
+      interact.modifiers.restrictEdges({
+        outer: 'parent'
+      }),
+      interact.modifiers.restrictSize({
+        min: { width: 50, height: 50 }
+      })
+    ],
+    listeners: {
+      move(event) {
+        const target = event.target;
+        let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.deltaRect.left;
+        let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
+        target.style.width = event.rect.width + 'px';
+        target.style.height = event.rect.height + 'px';
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+        const gameName = localStorage.getItem("gameName");
+        localStorage.setItem(`${gameName}_setArea`, `${x.toFixed(0)},${y.toFixed(0)},${event.rect.width.toFixed(0)},${event.rect.height.toFixed(0)}`);
+        console.log(localStorage.getItem(`${gameName}_setArea`));
+      }
+    }
+  });
+  function restoreArea() {
+    const gameName = localStorage.getItem("gameName");
+    const savedState = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
+    if (savedState) {
+      const [x, y, width, height] = savedState.split(',').map(Number);
+      const target = document.getElementById('resizable-draggable');
+      target.style.width = width + 'px';
+      target.style.height = height + 'px';
+      target.style.transform = `translate(${x}px, ${y}px)`;
+      target.setAttribute('data-x', x);
+      target.setAttribute('data-y', y);
+    }
+  }
