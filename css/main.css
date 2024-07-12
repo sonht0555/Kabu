@@ -74,6 +74,7 @@ label {
 }
 .gbc{
   margin: 8px 0px;
+  border-radius: 0px !important;
 }
 .in-game{
   position: fixed;
