@@ -20,36 +20,40 @@ async function getImage() {
     inputContainer.classList.add('cs22');
     canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
     try {
-        Module.screenShot(() => {
-            var screen = document.getElementById('canvas');
-            var resizedCanvas = document.createElement('canvas');
-            resizedCanvas.width = 240;
-            resizedCanvas.height = 160;
-            var resizedContext = resizedCanvas.getContext('2d');
-            resizedContext.drawImage(screen, 0, 0, 240, 160);
-            const gameName = localStorage.getItem("gameName");
-            const generalRatio = (240 / (window.innerWidth - 150)).toFixed(0);
+        const gameName = localStorage.getItem("gameName");
+        const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, ".png");
+        await Module.screenshot(screenshotName);
+        const data = Module.downloadFile(`/data/screenshots/${screenshotName}`);
+        const blob = new Blob([data], {
+            type: 'image/png'
+        });
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+        const img = new Image();
+        img.src = base64;
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const generalRatio = Math.round(240 / (window.innerWidth - 150));
             const setArea = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
-            var imageData = resizedContext.getImageData(cropX * generalRatio, cropY * generalRatio, cropWidth * generalRatio, cropHeight * generalRatio);
-            var croppedCanvas = document.createElement('canvas');
-            croppedCanvas.width = cropWidth * generalRatio;
-            croppedCanvas.height = cropHeight * generalRatio;
-            var croppedContext = croppedCanvas.getContext('2d');
-            croppedContext.putImageData(imageData, 0, 0);
-            let dataURL = croppedCanvas.toDataURL();
-            console.log(dataURL);
-            var base64data = dataURL.split(',')[1];
-            let ApiAzure = localStorage.getItem("ApiAzure");
-            if (ApiAzure !== null && ApiAzure !== "") {
+            canvas.width = cropWidth * generalRatio;
+            canvas.height = cropHeight * generalRatio;
+            ctx.drawImage(img, cropX * generalRatio, cropY * generalRatio, cropWidth * generalRatio, cropHeight * generalRatio, 0, 0, cropWidth * generalRatio, cropHeight * generalRatio);
+            const base64data = canvas.toDataURL("image/png").split(',')[1];
+            const ApiAzure = localStorage.getItem("ApiAzure");
+            if (ApiAzure) {
                 azureServer(base64data);
             } else {
                 freeServer(base64data);
             }
-            
-        });
+        };
     } catch (error) {
-        inputText.textContent = error;
+        inputText.textContent = error.message;
     }
 }
 async function freeServer(base64data) {

@@ -1,6 +1,6 @@
 import { startGBA } from "./initialize.js";
 //import { taskA } from "./cloud.js";
-let gameVer = 'V1.98';
+let gameVer = 'V1.99';
 let turboState = 1;
 let clickState = 0;
 let countAutoSave = 0;
@@ -31,6 +31,7 @@ const openLocalStorage = document.getElementById("openLocalStorage");
 const savesFile = document.getElementById("savesFile");
 const romsFile = document.getElementById("romsFile");
 const statesFile = document.getElementById("statesFile");
+const screenshotsFile = document.getElementById("screenshotsFile");
 const Module = {canvas: document.getElementById("canvas")};
 const dropboxRestore = document.getElementById("dropboxRestore");
 const dropboxBackup = document.getElementById("dropboxBackup");
@@ -464,7 +465,8 @@ export function localStorageFile() {
     const listSaves = Module.listSaves().filter((file) => file !== "." && file !== "..");
     const listStates = Module.listStates().filter((file) => file !== "." && file !== "..");
     const listCheats = Module.listCheats().filter((file) => file !== "." && file !== "..");
-    const refreshList = [romsFile, savesFile, statesFile, cheatsFile];
+    const listScreenshots = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
+    const refreshList = [romsFile, savesFile, statesFile, cheatsFile, screenshotsFile];
     for (const refresh of refreshList) {
         while (refresh.firstChild) {
             refresh.lastChild.remove();
@@ -481,6 +483,9 @@ export function localStorageFile() {
     }
     for (const cheatsName of listCheats) {
         createElementStorage(cheatsFile, cheatsName, `/data/cheats/${cheatsName}`)
+    }
+    for (const screenshotsName of listScreenshots) {
+        createElementStorage(screenshotsFile, screenshotsName, `/data/screenshots/${screenshotsName}`)
     }
 }
 let clickedOver1s = false;
@@ -546,24 +551,25 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
 //Capture Screenshot
 async function screenShot(saveSlot) {
     try {
-        Module.screenShot(() => {
-            var resizedCanvas = document.createElement('canvas');
-            var resizedContext = resizedCanvas.getContext('2d');
-            var screen = document.getElementById('canvas');
-            resizedCanvas.height = screen.clientHeight;
-            resizedCanvas.width = screen.clientWidth;
-            resizedContext.drawImage(screen, 0, 0, resizedCanvas.width, resizedCanvas.height);
-            let data = resizedCanvas.toDataURL();
+        const gameName = localStorage.getItem("gameName");
+        const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, "_");
+        await Module.screenshot(`${screenshotName}${saveSlot}.png`);
+        await Module.FSSync();
+        const data = Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`);
+        const blob = new Blob([data], { type: 'image/png' });
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                resolve(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
             const currentTime = Date.now();
             const date = formatDateTime(currentTime);
-            const getNameRom = localStorage.getItem("gameName");
-            if (!getNameRom) {
-                console.error("No game name identified.");
-                return;
-            }
-            localStorage.setItem(`${getNameRom}_dateState${saveSlot}`, date);
-            localStorage.setItem(`${getNameRom}_imageState${saveSlot}`, data);
-        });
+            localStorage.setItem(`${gameName}_dateState${saveSlot}`, date);
+            localStorage.setItem(`${gameName}_imageState${saveSlot}`, base64);
+        
     } catch (error) {
         console.error("Error screenShot:", error);
     }

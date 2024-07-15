@@ -244,7 +244,7 @@ dropboxBackup.addEventListener("click", async function() {
                     try {
                         await lockNoti("Backing up...", fileName, 3000)
                         await dpUploadFile(fileName, fileData);
-                        if (fileName.endsWith(".ss0") || fileName.endsWith(".ss1") || fileName.endsWith(".ss2") || fileName.endsWith(".ss3")  ) {
+                        if (fileName.endsWith(".ss0") || fileName.endsWith(".ss1") || fileName.endsWith(".ss2") || fileName.endsWith(".ss3") || fileName.endsWith(".ss4") || fileName.endsWith(".ss5") || fileName.endsWith(".ss6") || fileName.endsWith(".ss7") ) {
                             const gameName = fileName.substring(0, fileName.lastIndexOf('.'));
                             const slotNumber = fileName.charAt(fileName.length - 1);
                             const img = localStorage.getItem(`${gameName}.gba_imageState${slotNumber}`);
