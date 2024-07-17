@@ -1,5 +1,5 @@
-import {getModule} from "./initialize.js";
-// --- declaration ---
+// --------------- import ---------------
+// --------------- declaration ---------------
 var scrollAmount = 0;
 var scrollSpeed = 0.5;
 var runCount = 0;
@@ -10,12 +10,12 @@ let clickTimeout;
 const inputText = document.getElementById("inputText");
 const inputContainer = document.getElementById("input-container");
 const ID = ['A','B','R','L'];
-// --- initialization ---
+// --------------- initialization ---------------
 let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-// --- function ---
+// --------------- function ---------------
 async function getImage() {
     inputContainer.classList.add('cs22');
     canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
@@ -244,7 +244,7 @@ async function transLogic(textContent) {
         return translateText(intermediateText, 'en', 'vi');
     }
 }
-// --- processing ---
+// --------------- processing ---------------
 document.addEventListener("DOMContentLoaded", function() {
 })
 ID.forEach(function(id) {

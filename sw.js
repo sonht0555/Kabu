@@ -15,6 +15,8 @@ workbox.precaching.precacheAndRoute([
   { url: './js/initialize.js', revision: revision },
   { url: './js/global.js', revision: revision },
   { url: './js/kabu.js', revision: revision },
+  { url: './js/storage.js', revision: revision },
+  { url: './js/welcome.js', revision: revision },
   { url: './js/emulator/mgba.js', revision: revision },
   { url: './js/emulator/mgba.wasm', revision: revision },
   { url: './js/library/nip.js', revision: revision },

@@ -1,5 +1,7 @@
-import {getModule} from "./initialize.js";
-import { localStorageFile,lockNoti } from "./kabu.js";
+
+// --------------- import ---------------
+import { localStorageFile } from "./storage.js";
+import { lockNoti } from "./kabu.js";
 // --------------- declaration ---------------
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
@@ -9,7 +11,7 @@ window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
 // --------------- function ---------------
-//Uses OAuth 2.0
+// Uses OAuth 2.0
 async function authorizeWithDropbox() {
     var redirectUri = window.location.href.split('?')[0];
     var responseType = 'code';
@@ -17,7 +19,7 @@ async function authorizeWithDropbox() {
     var authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=' + clientId + '&response_type=' + responseType + '&token_access_type=' + tokenAccessType + '&redirect_uri=' + encodeURIComponent(redirectUri);
     window.location.href = authorizeUrl;
 }
-//Callback to Dropbox
+// Callback to Dropbox
 function handleDropboxCallback() {
     var authorizationCode = getUrlParameter('code');
     if (authorizationCode) {
@@ -27,14 +29,14 @@ function handleDropboxCallback() {
         console.log("Do not receive authorization")
     }
 }
-//Get url Parameter
+// Get url Parameter
 function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&#]' + name + '=([^&#]*)');
     var results = regex.exec(location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
-//Get access token & refresh token from authorization code
+// Get access token & refresh token from authorization code
 async function getAccessToken(authorizationCode) {
     var grantType = 'authorization_code';
     var redirectUri = window.location.href.split('?')[0];
@@ -57,7 +59,7 @@ async function getAccessToken(authorizationCode) {
     };
     xhr.send('code=' + authorizationCode + '&grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret + '&redirect_uri=' + encodeURIComponent(redirectUri));
 }
-//Cloud Refresh Token 
+// Cloud Refresh Token 
 async function dpRefreshToken() {
 	if (!(localStorage.getItem("refreshToken"))) {
 		throw "No refresh token";
@@ -86,7 +88,7 @@ async function dpRefreshToken() {
 
 	return false;
 }
-//Cloud Upload File
+// Cloud Upload File
 async function dpUploadFile(fileName, fileData) {
     const uId = localStorage.getItem("uId");
 	var uploadArg = JSON.stringify({
@@ -127,7 +129,7 @@ async function dpUploadFile(fileName, fileData) {
 	}
 	return false
 }
-//Cloud Download File
+// Cloud Download File
 async function dpDownloadFile(fileName) {
     const uId = localStorage.getItem("uId");
     var downloadArg = JSON.stringify({"path": '/' + uId + '/' + fileName});
