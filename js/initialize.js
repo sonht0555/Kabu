@@ -17,10 +17,10 @@ export async function startGBA(Module) {
         console.error("Error starting GBA:", error);
     }
 }
-startGBA(Module);
 export async function getModule() {
     return Module;
 }
+startGBA(Module);
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
         romList();

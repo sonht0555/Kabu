@@ -7,9 +7,10 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V1.99';
+let gameVer = 'V2.01';
 let turboState = 1;
 let clickState = 0;
+let clickTurbo = 0
 let countAutoSave = 0;
 let countUpload = 0;
 let selectedIndex = 0;
@@ -609,9 +610,16 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             //Button Turbo
             turbo.addEventListener(eventType, () => {
-                turboState = (turboState % 3) + 1;
-                turboF(turboState);
-                localStorage.setItem("turboState", turboState);
+                clickTurbo++;
+                clearTimeout(clickTimeout);
+                clickTimeout = setTimeout(() => {
+                if (clickTurbo === 2) {
+                        turboState = (turboState % 3) + 1;
+                        turboF(turboState);
+                        localStorage.setItem("turboState", turboState);
+                    }
+                    clickTurbo = 0;
+                }, 300);
             });
             //Button Load State
             loadStateButton.addEventListener(eventType, () => {
@@ -622,13 +630,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
                         loadState(slotStateNumbers);
                         notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
-                    } else if (clickState === 3) {
-                        let setApiAzure = localStorage.getItem("ApiAzure");
-                        let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
-                        if (ApiAzure !== null && ApiAzure !== "") {
-                            localStorage.setItem("ApiAzure", ApiAzure);
-                        }
-                    }
+                    } 
                     clickState = 0;
                 }, 300);
             });

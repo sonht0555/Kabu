@@ -6,6 +6,7 @@ var runCount = 0;
 let isFunctionARunning = false;
 var maxRunCount = 2;
 let clickState = 0;
+let clickTurbo = 0
 let clickTimeout;
 const inputText = document.getElementById("inputText");
 const inputContainer = document.getElementById("input-container");
@@ -188,17 +189,6 @@ async function translateText(textContent, sourceLang, targetLang) {
         throw error;
     } finally {}
 }
-async function dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI);
-    const buffer = new ArrayBuffer(byteString.length);
-    const intArray = new Uint8Array(buffer);
-    for (let i = 0; i < byteString.length; i++) {
-        intArray[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([buffer], {
-        type: 'image/png'
-    });
-}
 async function autoScroll() {
     var maxScroll = inputText.scrollWidth - inputText.clientWidth;
     if (runCount >= maxRunCount) return;
@@ -244,45 +234,50 @@ async function transLogic(textContent) {
         return translateText(intermediateText, 'en', 'vi');
     }
 }
+function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI);
+    const buffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(buffer);
+    for (let i = 0; i < byteString.length; i++) {
+        intArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([buffer], {
+        type: 'image/png'
+    });
+}
+function logoOcr() {
+    var s = Math.floor(Math.random() * 3) + 1;
+    var newPositionX = -15 * s + 'px';
+    document.getElementById('logoOcr').style.backgroundPositionX = newPositionX;
+}
 // --------------- processing ---------------
 document.addEventListener("DOMContentLoaded", function() {
-})
-ID.forEach(function(id) {
-    const button = document.getElementById(id);
-    if (button) {
-        button.addEventListener("touchstart", function() {
-            if (!isFunctionARunning) {
-                input.classList.remove("cs22");
-                canvas.style.borderRadius = "0px 0px 2px 2px";
-            }
-        });
-    }
-});
-["mouseup", "touchend", "touchcancel"].forEach(eventType => {
-    saveStateButton.addEventListener(eventType, () => {
-        clickState++;
-        clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
-            if (clickState === 1) {
+    ID.forEach(function(id) {
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener("touchstart", function() {
                 if (!isFunctionARunning) {
-                    isFunctionARunning = true;
-                    getImage();
-                    logoOcr()
+                    input.classList.remove("cs22");
+                    canvas.style.borderRadius = "0px 0px 2px 2px";
                 }
-            } else if (clickState === 3) {
-                const gameName = localStorage.getItem("gameName");
-                let setAreaLocal = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
-                let setArea = prompt(`${gameName}`, setAreaLocal);
-                if (setArea !== null && setArea !== "") {
-                    localStorage.setItem(`${gameName}_setArea`, setArea);
-                }
-            }
-            clickState = 0;
-        }, 300);
+            });
+        }
     });
-});
-function logoOcr() {
-        var s = Math.floor(Math.random() * 3) + 1;
-        var newPositionX = -15 * s + 'px';
-        document.getElementById('logoOcr').style.backgroundPositionX = newPositionX;
-}
+    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+        turbo.addEventListener(eventType, () => {
+            clickTurbo++;
+            clearTimeout(clickTimeout);
+    
+            clickTimeout = setTimeout(() => {
+                if (clickTurbo === 1) {
+                    if (!isFunctionARunning) {
+                        isFunctionARunning = true;
+                        getImage();
+                        logoOcr()
+                    }
+                }
+                clickTurbo = 0;
+            }, 300);
+        });
+    });
+})
