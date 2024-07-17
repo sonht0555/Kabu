@@ -188,7 +188,7 @@ async function translateText(textContent, sourceLang, targetLang) {
         throw error;
     } finally {}
 }
-function dataURItoBlob(dataURI) {
+async function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI);
     const buffer = new ArrayBuffer(byteString.length);
     const intArray = new Uint8Array(buffer);
@@ -199,7 +199,7 @@ function dataURItoBlob(dataURI) {
         type: 'image/png'
     });
 }
-function autoScroll() {
+async function autoScroll() {
     var maxScroll = inputText.scrollWidth - inputText.clientWidth;
     if (runCount >= maxRunCount) return;
     scrollAmount += scrollSpeed;
@@ -210,7 +210,7 @@ function autoScroll() {
     inputText.scrollLeft = scrollAmount;
     requestAnimationFrame(autoScroll);
 }
-function startAutoScroll() {
+async function startAutoScroll() {
     scrollAmount = 0;
     runCount = 0;
     scrollSpeed = 0.5;

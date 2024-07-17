@@ -1,16 +1,17 @@
-// --- import ---
+// --------------- import ---------------
 import { uploadRom } from "./welcome.js";
-// --- initialization ---
-let Module = null;
-window.addEventListener("gbaInitialized", (event) => {
-    Module = event.detail.Module;
-});
+// --------------- declaration ---------------
 const mgbaStorage = document.getElementById("mgba-storage");
 const savesFile = document.getElementById("savesFile");
 const romsFile = document.getElementById("romsFile");
 const statesFile = document.getElementById("statesFile");
 const screenshotsFile = document.getElementById("screenshotsFile");
-//Save .Sav and .ss0,1,2 in LocalStorage
+// --------------- initialization ---------------
+let Module = null;
+window.addEventListener("gbaInitialized", (event) => {
+    Module = event.detail.Module;
+});
+// --------------- function ---------------
 async function uploadSavSta(SavStaFile) {
     try {
         const file = SavStaFile.files[0];
@@ -23,21 +24,7 @@ async function uploadSavSta(SavStaFile) {
         console.error("Error uploadSavSta:", error);
     }  
 }
-//Save Cheat in LocalStorage
-export async function uploadCheat(cheatFile) {
-    try {
-       const file = cheatFile.files[0];
-       await Module.uploadCheats(file, () => {
-            console.log("Cheat uploaded successfully:", file.name);
-            localStorageFile();
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadCheat:", error);
-    }  
-}
-//File Size
-function humanFileSize(bytes, si = false, dp = 1) {
+async function humanFileSize(bytes, si = false, dp = 1) {
     const thresh = si ? 1e3 : 1024;
     const units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
     let u = -1;
@@ -47,26 +34,7 @@ function humanFileSize(bytes, si = false, dp = 1) {
     } while (Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(dp) + ' ' + units[u];
 }
-//Download File
-export async function downloadFile(filepath, filename) {
-    try {
-        const save = Module.downloadFile(filepath);
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.download = filename;
-        const blob = new Blob([save], {
-            type: "application/octet-stream",
-        });
-        a.href = URL.createObjectURL(blob);
-        a.click();
-        URL.revokeObjectURL(blob);
-        a.remove();
-    } catch (error) {
-        console.error("Error downloadFile:", error);
-    }
-}
-//Element Storage
-function createElementStorage(parent, fileName, filePart) {
+async function createElementStorage(parent, fileName, filePart) {
     const Name = document.createElement("div");
     Name.classList.add("flex-1", "rom-item", "rom");
     parent.appendChild(Name);
@@ -166,8 +134,7 @@ function createElementStorage(parent, fileName, filePart) {
     mib.classList.add("mib");
     Name.appendChild(mib);
 }
-//local Storage File
-export function localStorageFile() {
+export async function localStorageFile() {
     const listRoms = Module.listRoms().filter((file) => file !== "." && file !== "..");
     const listSaves = Module.listSaves().filter((file) => file !== "." && file !== "..");
     const listStates = Module.listStates().filter((file) => file !== "." && file !== "..");
@@ -195,6 +162,36 @@ export function localStorageFile() {
         createElementStorage(screenshotsFile, screenshotsName, `/data/screenshots/${screenshotsName}`)
     }
 }
+export async function uploadCheat(cheatFile) {
+    try {
+       const file = cheatFile.files[0];
+       await Module.uploadCheats(file, () => {
+            console.log("Cheat uploaded successfully:", file.name);
+            localStorageFile();
+            Module.FSSync();
+        });
+    } catch (error) {
+        console.error("Error uploadCheat:", error);
+    }  
+}
+export async function downloadFile(filepath, filename) {
+    try {
+        const save = Module.downloadFile(filepath);
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        a.download = filename;
+        const blob = new Blob([save], {
+            type: "application/octet-stream",
+        });
+        a.href = URL.createObjectURL(blob);
+        a.click();
+        URL.revokeObjectURL(blob);
+        a.remove();
+    } catch (error) {
+        console.error("Error downloadFile:", error);
+    }
+}
+// --------------- processing ---------------
 document.addEventListener("DOMContentLoaded", function() {
     upLoadFile.addEventListener("change", function() {
         const fileName = upLoadFile.files[0].name;

@@ -18,7 +18,7 @@ export async function startGBA(Module) {
     }
 }
 startGBA(Module);
-export function getModule() {
+export async function getModule() {
     return Module;
 }
 document.addEventListener("DOMContentLoaded", function() {

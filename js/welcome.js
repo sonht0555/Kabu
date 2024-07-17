@@ -1,33 +1,15 @@
-// --- import ---
+// --------------- import ---------------
 import { statusShow,delay } from "./kabu.js";
 import { localStorageFile } from "./storage.js";
-// --- initialization ---
+// --------------- declaration ---------------
+const romlist = document.getElementById("rom-list");
+const romInput = document.getElementById("fileInput");
+// --------------- initialization ---------------
 let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-const romlist = document.getElementById("rom-list");
-const romInput = document.getElementById("fileInput");
-//Rom List
-export async function romList() {
-    try {
-        const listRoms = Module.listRoms().filter(
-            (file) => file !== "." && file !== "..");
-        for (const gameName of listRoms) {
-            const div = document.createElement("div");
-            div.className = "flex-1";
-            romlist.insertBefore(div, romlist.firstChild);
-            div.textContent = gameName;
-            div.onclick = () => {
-                loadGame(gameName);
-                localStorage.setItem("gameName", gameName);
-            };
-        }
-    } catch (error) {
-        console.error("Error starting romList:", error);
-    }
-}
-//Input ROM
+// --------------- function ---------------
 async function inputGame(InputFile) {
     try {
         const gameName = InputFile.files[0].name;
@@ -38,7 +20,6 @@ async function inputGame(InputFile) {
         console.error("Error InputGame:", error);
     }
 }
-//Load Game
 async function loadGame(gameName) {
     try {
         localStorage.setItem("gameName", gameName);
@@ -63,7 +44,24 @@ async function loadGame(gameName) {
         console.error("Error loadGame:", error);
     }
 }
-//Save Rom in LocalStorage
+export async function romList() {
+    try {
+        const listRoms = Module.listRoms().filter(
+            (file) => file !== "." && file !== "..");
+        for (const gameName of listRoms) {
+            const div = document.createElement("div");
+            div.className = "flex-1";
+            romlist.insertBefore(div, romlist.firstChild);
+            div.textContent = gameName;
+            div.onclick = () => {
+                loadGame(gameName);
+                localStorage.setItem("gameName", gameName);
+            };
+        }
+    } catch (error) {
+        console.error("Error starting romList:", error);
+    }
+}
 export async function uploadRom(romFile) {
     try {
         const file = romFile.files[0];
@@ -76,6 +74,7 @@ export async function uploadRom(romFile) {
         console.error("Error uploadRom:", error);
     }   
 }
+// --------------- processing ---------------
 document.addEventListener("DOMContentLoaded", function() {
     romInput.addEventListener("change", function() {
         inputGame(romInput);
