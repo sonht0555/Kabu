@@ -158,10 +158,10 @@ label {
   border: 0px;
 }
 .touched {
-  background-color: #383838 !important;
+  background-color: #363636 !important;
 }
 .touched-1 {
-  background: linear-gradient(0deg, rgba(56,56,56,0) 0%, rgba(56,56,56,1) 100%);
+  background: linear-gradient(0deg, rgba(54,54,54,0) 0%, rgba(54,54,54,1) 100%);
 }
 .br0 {
   border-radius: 0px !important;
@@ -267,7 +267,7 @@ label {
 .rom-item {
   padding: 24px 8px 6px 8px;
   border-bottom: 1px solid #0f0f0f;
-  color: #787874;
+  color: rgba(245, 232, 209, 0.4);
   font-weight: 400;
   line-height: 16px;
   white-space: nowrap;
@@ -527,7 +527,7 @@ label {
 .statesName {
   padding: 2px 0px 0px 2px;
   text-align-last: center;
-  color: #666666;
+  color: #F5E8D1;
   appearance: none;
   border: none;
   box-shadow: none;
@@ -1065,7 +1065,7 @@ rect {
 .timer {
   padding-top: 5px !important;
   padding-right: 3px !important;
-  opacity: 0.2;
+  opacity: 0.3;
   font-family: "04bf" !important;
 }
 .stateDiv {
@@ -1110,7 +1110,7 @@ rect {
 }
 
 .cs-name {
-  opacity: 0.2;
+  opacity: 0.3;
   height: 10px;
 }
 .cs-detail {

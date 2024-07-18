@@ -2,12 +2,13 @@
 import {romList} from "./welcome.js";
 import {uploadCheat,downloadFile} from "./storage.js";
 import {getModule} from "./initialize.js";
+import {dpUploadFile,dpRefreshToken} from "./cloud.js";
 // --------------- initialization ---------------
 let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.05';
+let gameVer = 'V2.06';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -644,13 +645,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
                             saveState(slotStateNumbers);
                             localStorage.setItem("slotStateSaved", slotStateNumbers);
-                            ledSave("#F36868");
+                            ledSave("#DD5639");
                             notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                         } else {
                             const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
                             saveState(slotStateNumbers);
                             localStorage.setItem("slotStateSaved", slotStateNumbers);
-                            ledSave("#F36868");
+                            ledSave("#DD5639");
                             notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                         }
                     }

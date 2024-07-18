@@ -55,7 +55,7 @@ function getAccessToken(authorizationCode) {
     };
     xhr.send('code=' + authorizationCode + '&grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret + '&redirect_uri=' + encodeURIComponent(redirectUri));
 }
-async function dpRefreshToken() {
+export async function dpRefreshToken() {
 	if (!(localStorage.getItem("refreshToken"))) {
 		throw "No refresh token";
 	}
@@ -83,7 +83,7 @@ async function dpRefreshToken() {
 
 	return false;
 }
-async function dpUploadFile(fileName, fileData) {
+export async function dpUploadFile(fileName, fileData) {
     const uId = localStorage.getItem("uId");
 	var uploadArg = JSON.stringify({
 		"autorename": true,
