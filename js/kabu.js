@@ -7,7 +7,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.04';
+let gameVer = 'V2.05';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -77,14 +77,14 @@ export function delay(ms) {
 async function led(slotStateNumbers) {
     try {
         const ledInfo = [
-            { id: "led00", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led01", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led02", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led03", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led04", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led05", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led06", color: "rgba(255, 255, 245, 0.2)" },
-            { id: "led07", color: "rgba(255, 255, 245, 0.2)" }
+            { id: "led00", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led01", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led02", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led03", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led04", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led05", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led06", color: "rgba(245, 232, 209, 0.2)" },
+            { id: "led07", color: "rgba(245, 232, 209, 0.2)" }
         ];
 
         if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {
@@ -103,11 +103,11 @@ async function ledSave(color) {
     const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
         }
         await delay(1000); 
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(255, 255, 245, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
         }
         document.getElementById(ledId).style.fill = color;
     } catch (error) {
@@ -249,7 +249,7 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.style.color = "#78C850";
         stateDiv.style.background = "rgba(120, 200, 80, 0.06)";
     } else {
-        stateDiv.style.color = "#fffff5";
+        stateDiv.style.color = "#F5E8D1";
         stateDiv.style.background = "rgba(120, 200, 80, 0)";
     }
 

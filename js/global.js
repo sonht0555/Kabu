@@ -19,7 +19,7 @@ const savedValue = localStorage.getItem("selectedShader");
 var dynamicZone = document.getElementById("dynamic");
 var nippleOptions = {
     zone: dynamicZone,
-    color: "#323232",
+    color: "#2F2F2F",
     size: 120
 };
 var dynamic = nipplejs.create(nippleOptions);
