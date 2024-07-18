@@ -57,20 +57,14 @@ export async function statusShow() {
     try {
         restoreArea();
         startTimer();
-        await delay(1500);
         handleVisibilityChange();
-        if(navigator.onLine){
-            await notiMessage("ON.line!", 2000);
-        } else {
-            await notiMessage("OFF.line!", 2000);
-        }
-        await delay(1500);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
         }
-        await delay(1500);
-        await notiMessage(gameVer, 2000);
+        await delay(1000);
+        await notiMessage(gameVer, 1000);
     } catch (error) {
         console.error("Error starting statusShow:", error);
     }
@@ -324,7 +318,6 @@ async function screenShot(saveSlot) {
 //DOM Content Loaded
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
-        document.addEventListener('visibilitychange', handleVisibilityChange);
         romInput.accept = ".gba,.gbc,.gb";
         upLoadFile.accept = ".gba,.gbc,.gb,.sav,.ss0,.ss1,.ss2,.ss3,.cheats";
         led(parseInt(localStorage.getItem("slotStateSaved")));
