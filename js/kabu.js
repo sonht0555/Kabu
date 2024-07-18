@@ -623,7 +623,13 @@ document.addEventListener("DOMContentLoaded", function() {
                         const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
                         loadState(slotStateNumbers);
                         notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
-                    } 
+                    } else if (clickState === 3) {
+                        let setApiAzure = localStorage.getItem("ApiAzure");
+                        let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
+                        if (ApiAzure !== null && ApiAzure !== "") {
+                            localStorage.setItem("ApiAzure", ApiAzure);
+                        }
+                    }
                     clickState = 0;
                 }, 300);
             });
