@@ -308,6 +308,11 @@ label {
   overflow:hidden;
   border-radius: 0px 0px 2px 2px;
 }
+.gbc1 {
+  width: calc(100vw - 230px);
+  height: calc((100vw - 230px)* 9 / 10);
+  margin: 8px 40px;
+}
 .message {
   background-color: rgba(0, 0, 0, 0.4);
   padding: 4px 4px 2px 6px;

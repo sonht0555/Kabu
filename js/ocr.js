@@ -39,12 +39,20 @@ async function getImage() {
         img.onload = () => {
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
-            const generalRatio = Math.round(240 / (window.innerWidth - 150));
-            const setArea = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
+            let generalRatio;
+            if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
+                generalRatio = Math.round(160 / (window.innerWidth - 230));
+                console.log("gbc",generalRatio);
+            } else {
+                generalRatio = Math.round(240 / (window.innerWidth - 150));
+                console.log("gba", generalRatio);
+            }
+            const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
             canvas.width = cropWidth * generalRatio;
             canvas.height = cropHeight * generalRatio;
             ctx.drawImage(img, cropX * generalRatio, cropY * generalRatio, cropWidth * generalRatio, cropHeight * generalRatio, 0, 0, cropWidth * generalRatio, cropHeight * generalRatio);
+            console.log(canvas.toDataURL("image/png"))
             const base64data = canvas.toDataURL("image/png").split(',')[1];
             const ApiAzure = localStorage.getItem("ApiAzure");
             if (ApiAzure) {
@@ -267,7 +275,6 @@ document.addEventListener("DOMContentLoaded", function() {
         turbo.addEventListener(eventType, () => {
             clickTurbo++;
             clearTimeout(clickTimeout);
-    
             clickTimeout = setTimeout(() => {
                 if (clickTurbo === 1) {
                     if (!isFunctionARunning) {

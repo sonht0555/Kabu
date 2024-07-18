@@ -29,6 +29,10 @@ async function loadGame(gameName) {
         ingame.classList.remove("disable");
         if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
             canvas.classList.add("gbc");
+            areaTrans.classList.add("gbc1");
+            localStorage.setItem("screenSize",`0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
+        } else {
+            localStorage.setItem("screenSize",`0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
         }
         await delay(100);
         if (statesList.includes(stateName)) {

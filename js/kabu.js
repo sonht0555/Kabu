@@ -888,7 +888,7 @@ interact('#resizable-draggable')
   });
   function restoreArea() {
     const gameName = localStorage.getItem("gameName");
-    const savedState = localStorage.getItem(`${gameName}_setArea`) || `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`;
+    const savedState = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize")
     if (savedState) {
       const [x, y, width, height] = savedState.split(',').map(Number);
       const target = document.getElementById('resizable-draggable');
