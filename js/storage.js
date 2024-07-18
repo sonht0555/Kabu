@@ -12,19 +12,7 @@ window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
 // --------------- function ---------------
-async function uploadSavSta(SavStaFile) {
-    try {
-        const file = SavStaFile.files[0];
-        await Module.uploadSaveOrSaveState(file, () => {
-            console.log("Save/State uploaded successfully:", file.name);
-            localStorageFile();
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadSavSta:", error);
-    }  
-}
-async function humanFileSize(bytes, si = false, dp = 1) {
+function humanFileSize(bytes, si = false, dp = 1) {
     const thresh = si ? 1e3 : 1024;
     const units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
     let u = -1;
@@ -34,7 +22,7 @@ async function humanFileSize(bytes, si = false, dp = 1) {
     } while (Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(dp) + ' ' + units[u];
 }
-async function createElementStorage(parent, fileName, filePart) {
+function createElementStorage(parent, fileName, filePart) {
     const Name = document.createElement("div");
     Name.classList.add("flex-1", "rom-item", "rom");
     parent.appendChild(Name);
@@ -133,6 +121,18 @@ async function createElementStorage(parent, fileName, filePart) {
     mib.textContent = humanFileSize(Module.fileSize(filePart));
     mib.classList.add("mib");
     Name.appendChild(mib);
+}
+export async function uploadSavSta(SavStaFile) {
+    try {
+        const file = SavStaFile.files[0];
+        await Module.uploadSaveOrSaveState(file, () => {
+            console.log("Save/State uploaded successfully:", file.name);
+            localStorageFile();
+            Module.FSSync();
+        });
+    } catch (error) {
+        console.error("Error uploadSavSta:", error);
+    }  
 }
 export async function localStorageFile() {
     const listRoms = Module.listRoms().filter((file) => file !== "." && file !== "..");
