@@ -1065,7 +1065,7 @@ rect {
 .timer {
   padding-top: 5px !important;
   padding-right: 3px !important;
-  opacity: 0.3;
+  opacity: 0.2;
   font-family: "04bf" !important;
 }
 .stateDiv {
@@ -1110,7 +1110,7 @@ rect {
 }
 
 .cs-name {
-  opacity: 0.3;
+  opacity: 0.4;
   height: 10px;
 }
 .cs-detail {
