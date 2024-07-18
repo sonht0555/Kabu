@@ -11,14 +11,14 @@ window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
 // --------------- function ---------------
-async function authorizeWithDropbox() {
+function authorizeWithDropbox() {
     var redirectUri = window.location.href.split('?')[0];
     var responseType = 'code';
     var tokenAccessType = 'offline';
     var authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=' + clientId + '&response_type=' + responseType + '&token_access_type=' + tokenAccessType + '&redirect_uri=' + encodeURIComponent(redirectUri);
     window.location.href = authorizeUrl;
 }
-async function handleDropboxCallback() {
+function handleDropboxCallback() {
     var authorizationCode = getUrlParameter('code');
     if (authorizationCode) {
         getAccessToken(authorizationCode);
@@ -27,13 +27,13 @@ async function handleDropboxCallback() {
         console.log("Do not receive authorization")
     }
 }
-async function getUrlParameter(name) {
+function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&#]' + name + '=([^&#]*)');
     var results = regex.exec(location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
-async function getAccessToken(authorizationCode) {
+function getAccessToken(authorizationCode) {
     var grantType = 'authorization_code';
     var redirectUri = window.location.href.split('?')[0];
     var xhr = new XMLHttpRequest();
