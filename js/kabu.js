@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.10';
+let gameVer = 'V2.12';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -43,14 +43,14 @@ const stateList = document.getElementById("stateList");
 const appVer = document.getElementById("appVer");
 const canvas = document.getElementById("canvas");
 const controlSetting = document.getElementById("control-setting");
-const imgShader = document.getElementById('img-shader') || "sd-1";
+const imgShader = document.getElementById('img-shader') || "Sega";
 const brightnessX = localStorage.getItem("brightness") || 1.0;
 const contrastX = localStorage.getItem("contrast") || 1.0;
 const saturateX = localStorage.getItem("saturate") || 1.0;
 const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
 const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
-const sdValues = ['sd-1', 'sd-2', 'sd-3', 'sd-4', 'sd-5', 'sd-6', 'sd-7'];
+const sdValues = ['Sega', 'Crt-1', 'Crt-2', 'Line'];
 /*----------------BackEnd----------------*/
 appVer.textContent = gameVer
 //Status Show
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem("autoStateCheck", autoStateCheck)
         }
         // Box3
-        box3.textContent = localStorage.getItem("selectedShader") || "sd-1";
+        box3.textContent = localStorage.getItem("selectedShader") || "Sega";
         // Box4
         box4.textContent = localStorage.getItem("opacity") || 1.0;
         // Box5 
