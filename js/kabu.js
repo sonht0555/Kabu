@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.12';
+let gameVer = 'V2.13';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -50,7 +50,7 @@ const saturateX = localStorage.getItem("saturate") || 1.0;
 const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
 const sepiaX = localStorage.getItem("sepia") || 0.0;
 const boxes = document.querySelectorAll('.box');
-const sdValues = ['Sega', 'Crt-1', 'Crt-2', 'Line'];
+const sdValues = ['Sega', 'Crt-1', 'Crt-2', 'Gg-1', 'Gg-2', 'Line'];
 /*----------------BackEnd----------------*/
 appVer.textContent = gameVer
 //Status Show
