@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '18';
+let revision = '16';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
@@ -47,14 +47,13 @@ workbox.routing.registerRoute(
   }
 );
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'RELOAD_PAGE') {
+  if (event.data && event.data.type === 'DELETE_CACHE') {
     if (navigator.onLine) {
       caches.open('static-resources').then((cache) => {
         cache.keys().then((keys) => {
           keys.forEach((request) => cache.delete(request));
         });
       });
-      window.location.reload();
     }
   }
 });
