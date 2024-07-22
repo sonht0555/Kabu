@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.20';
+let gameVer = 'V2.22';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -89,7 +89,7 @@ async function led(slotStateNumbers) {
         ];
 
         if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {
-            const activeColor = "#78C850";
+            const activeColor = "#20A5A6";
             ledInfo.forEach((led, index) => {
                 document.getElementById(led.id).style.fill = (index === slotStateNumbers) ? activeColor : led.color;
             });
@@ -135,7 +135,7 @@ async function loadState(slot) {
 }
 //Auto Save Game In Local Every 60s
 async function saveStatePeriodically() {
-    await ledSave("#78C850");
+    await ledSave("#20A5A6");
     await Module.saveState(0);
     await Module.FSSync();
     await screenShot(0);
@@ -247,11 +247,11 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     imageStateDiv.style.backgroundPosition = 'center center';
     document.getElementById(dateState).textContent = date || "__";
     if (parseInt(localSlot)===parseInt(saveSlot)) {
-        stateDiv.style.color = "#78C850";
-        stateDiv.style.background = "rgba(120, 200, 80, 0.06)";
+        stateDiv.style.color = "#20A5A6";
+        stateDiv.style.background = "rgba(32, 165, 166, 0.06)";
     } else {
         stateDiv.style.color = "#F5E8D1";
-        stateDiv.style.background = "rgba(120, 200, 80, 0)";
+        stateDiv.style.background = "rgba(32, 165, 166, 0)";
     }
 
     stateDiv.addEventListener("touchstart", function() {
