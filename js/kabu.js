@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.20';
+let gameVer = 'V2.16';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
