@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.19';
+let gameVer = 'V2.20';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -457,7 +457,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (document.getElementById('box0').classList.contains('selected')) {
                         setTimeout(() => {
                             //window.location.href = window.location.href;
-                        },500);
+                            window.location.reload(true);
+                        },100);
                         navigator.serviceWorker.controller.postMessage({ type: 'DELETE_CACHE' });
                     }
                     if (document.getElementById('box1').classList.contains('selected')) {
