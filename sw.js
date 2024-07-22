@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '14';
+let revision = '15';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
@@ -26,7 +26,23 @@ workbox.precaching.precacheAndRoute([
 ]);
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'static-resources',
-  })
+  async ({ event }) => {
+    const cache = await caches.open('static-resources');
+    const cachedResponse = await cache.match(event.request);
+    const latestRevision = await fetchRevisionFromServer();
+    if (navigator.onLine && latestRevision !== revision) {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse.ok) {
+        cache.put(event.request, networkResponse.clone());
+        revision = latestRevision;
+      }
+      return networkResponse;
+    } else {
+      if (cachedResponse) {
+        return cachedResponse;
+      } else {
+        return new Response('404', { status: 404 });
+      }
+    }
+  }
 );
