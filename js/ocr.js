@@ -10,6 +10,7 @@ let clickTurbo = 0
 let clickTimeout;
 const inputText = document.getElementById("inputText");
 const inputContainer = document.getElementById("input-container");
+const turbo =  document.getElementById("turbo");
 const ID = ['A','B','R','L'];
 // --------------- initialization ---------------
 let Module = null;
@@ -19,6 +20,7 @@ window.addEventListener("gbaInitialized", (event) => {
 // --------------- function ---------------
 async function getImage() {
     inputContainer.classList.add('cs22');
+    turbo.classList.add('turbo-ocr');
     canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
     try {
         const gameName = localStorage.getItem("gameName");
@@ -195,7 +197,7 @@ async function translateText(textContent, sourceLang, targetLang) {
     } catch (error) {
         inputText.textContent = error.message;
         throw error;
-    } finally {}
+    } finally {turbo.classList.remove('turbo-ocr');}
 }
 async function autoScroll() {
     var maxScroll = inputText.scrollWidth - inputText.clientWidth;
