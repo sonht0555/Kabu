@@ -326,17 +326,20 @@ label {
 .Sega {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_2109_22190)'%3E%3Cpath d='M0.222685 1C0.147629 1 0.0738444 1 0 1C0 0.666753 0 0.333505 0 0C0.0832705 0 0.166601 0 0.25 0C0.25 0.332963 0.25 0.666184 0.25 1C0.241365 1 0.232661 1 0.222685 1Z' fill='%23240A31' fill-opacity='0.6'/%3E%3Cpath d='M0.972685 1C0.897629 1 0.823844 1 0.75 1C0.75 0.666753 0.75 0.333505 0.75 0C0.833271 0 0.916601 0 1 0C1 0.332963 1 0.666184 1 1C0.991365 1 0.982661 1 0.972685 1Z' fill='%23072024' fill-opacity='0.7'/%3E%3Cpath d='M0.5 0H0.25V1H0.5V0Z' fill='%23BE7DB8' fill-opacity='0.2'/%3E%3Cpath d='M0.75 0H0.5V1H0.75V0Z' fill='%234D6757' fill-opacity='0.3'/%3E%3Cpath d='M1 0.5H0V0.25H1V0.5Z' fill='black' fill-opacity='0.04'/%3E%3Cpath d='M1 1H0V0.75H1V1Z' fill='black' fill-opacity='0.04'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_2109_22190'%3E%3Crect width='1' height='1' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
 }
-.Crt-1 {
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H0.333333L0 0.333333V0Z' fill='black'/%3E%3Cpath d='M0 0.666687L0.333333 1.00002H0V0.666687Z' fill='black'/%3E%3Cpath d='M0.666748 0H1.00008V0.333333L0.666748 0Z' fill='black'/%3E%3Cpath d='M0.666748 1.00002L1.00008 0.666687V1.00002H0.666748Z' fill='black'/%3E%3C/svg%3E%0A");
+.Crt {
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0 0.5V0H0.5L0 0.5Z' fill='black'/%3E%3Cpath d='M0.5 1L1 0.5V1H0.5Z' fill='black'/%3E%3C/svg%3E%0A");
 }
-.Crt-2 {
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H0.5L0 0.5V0Z' fill='black'/%3E%3Cpath d='M0 0.5L0.5 1H0V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0H1V0.5L0.5 0Z' fill='black'/%3E%3Cpath d='M1 0.5V1H0.5L1 0.5Z' fill='black'/%3E%3C/svg%3E%0A");
+.Gt-1 {
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 1L1 0.5V1H0.5Z' fill='black'/%3E%3Cpath d='M0.5 0L0 0.5V0L0.5 0Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 1V0.5H0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 0V0.5H0.5Z' fill='black'/%3E%3C/svg%3E%0A");
 }
-.Gg-1 {
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 1L1 0.5V1H0.5Z' fill='black'/%3E%3Cpath d='M0.5 1L1 0.5V1H0.5Z' fill='black'/%3E%3Cpath d='M0.5 0L0 0.5V0L0.5 0Z' fill='black'/%3E%3Cpath d='M0.5 0L0 0.5V0L0.5 0Z' fill='black'/%3E%3Cpath d='M0.5 0L0 0.5V0L0.5 0Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 1V0.5H0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 0V0.5H0.5Z' fill='black'/%3E%3C/svg%3E%0A");
+.Gt-2 {
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 0H0.5V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 1H0.5V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
 }
-.Gg-2 {
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 0H0.5V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 1H0.5V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
+.Gt-3 {
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 1L0 0.5H0.5V1Z' fill='black'/%3E%3Cpath d='M0.5 0L1 0.5H0.5V0Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 0H0.5V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 1H0.5V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
+}
+.Gt-4 {
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0.5L0.5 1V0.5H1Z' fill='black'/%3E%3Cpath d='M0 0.5L0.5 0V0.5H0Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 1V0.5H0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 0V0.5H0.5Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Line {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect opacity='0.6' y='0.5' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.6' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.4' y='0.25' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.4' x='0.25' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.4' x='0.25' y='0.5' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.2' x='0.25' y='0.25' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.6' x='0.5' y='0.5' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.6' x='0.5' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.4' x='0.5' y='0.25' width='0.25' height='0.25' fill='black'/%3E%3Crect opacity='0.8' x='0.75' width='0.25' height='0.75' fill='black'/%3E%3Crect opacity='0.8' y='0.75' width='1' height='0.25' fill='black'/%3E%3C/svg%3E%0A");
