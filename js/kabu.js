@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.24';
+let gameVer = 'V2.23';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -58,8 +58,6 @@ export async function statusShow() {
     try {
         restoreArea();
         startTimer();
-        handleVisibilityChange();
-        document.addEventListener('visibilitychange', handleVisibilityChange);
         if (savedTurboState !== null) {
             turboState = parseInt(savedTurboState);
             await turboF(turboState);
@@ -795,32 +793,11 @@ function pad(number) {
     }
     return number;
 }
-const handleVisibilityChange = () => {
-    if (document.visibilityState === 'hidden') {
-      Module.pauseGame();
-      Module.SDL2();
-      notiMessage("Paused!", 2000);
-      canvas.classList.add("visible");
-    } else {
-    setTimeout(() => {
-        canvas.classList.remove("visible");
-    },600);
-        if (controlSetting.classList.contains("visible")) {
-            Module.resumeGame();
-            Module.SDL2();
-            notiMessage("Resumed!", 2000);
-        }
-    }
-};
-window.addEventListener('beforeunload', (event) => {
-    Module.pauseGame();
-    Module.SDL2();
-    notiMessage("Paused!", 2000);
-    canvas.classList.add("visible");
-});
-document.addEventListener('pagehide', handlePageHide);
-function handlePageHide(event) {
-    if (event.persisted) {
+document.addEventListener('pagehide', handleVisibilityChange);
+document.addEventListener('visibilitychange', handleVisibilityChange);
+window.addEventListener('beforeunload', handleVisibilityChange);
+function handleVisibilityChange(event) {
+    if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.pauseGame();
         Module.SDL2();
         notiMessage("Paused!", 2000);
@@ -828,14 +805,14 @@ function handlePageHide(event) {
     } else {
         setTimeout(() => {
             canvas.classList.remove("visible");
-        },600);
-            if (controlSetting.classList.contains("visible")) {
-                Module.resumeGame();
-                Module.SDL2();
-                notiMessage("Resumed!", 2000);
-            }
+        }, 600);
+        if (controlSetting.classList.contains("visible")) {
+            Module.resumeGame();
+            Module.SDL2();
+            notiMessage("Resumed!", 2000);
+        }
     }
-  }
+}
 async function Right(boxId, limit, increment, property, localStorageKey) {
     let box = document.getElementById(boxId);
     let currentValue = parseFloat(box.textContent);
