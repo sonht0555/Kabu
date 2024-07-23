@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.23';
+let gameVer = 'V2.24';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -56,6 +56,9 @@ appVer.textContent = gameVer
 //Status Show
 export async function statusShow() {
     try {
+        document.addEventListener('pagehide', handleVisibilityChange);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('beforeunload', handleVisibilityChange);
         restoreArea();
         startTimer();
         if (savedTurboState !== null) {
@@ -793,9 +796,6 @@ function pad(number) {
     }
     return number;
 }
-document.addEventListener('pagehide', handleVisibilityChange);
-document.addEventListener('visibilitychange', handleVisibilityChange);
-window.addEventListener('beforeunload', handleVisibilityChange);
 function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.pauseGame();
