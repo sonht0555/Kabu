@@ -298,7 +298,7 @@ label {
 .canvas {
   border-radius: 0px 0px 0px 0px;
   image-rendering: pixelated;
-  transition: opacity 0.3s ease-in-out;
+  /* transition: opacity 0.3s ease-in-out; /*
   /* filter: brightness(1) contrast(1.1) saturate(1.4) hue-rotate(4deg) sepia(0.4) */
 }
 .shader,
