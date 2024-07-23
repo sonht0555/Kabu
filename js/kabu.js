@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.23';
+let gameVer = 'V2.22';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -800,12 +800,12 @@ const handleVisibilityChange = () => {
       Module.pauseGame();
       Module.SDL2();
       notiMessage("Paused!", 2000);
-      imgShader.classList.add("visible");
+      canvas.classList.add("visible");
     } else {
         if (controlSetting.classList.contains("visible")) {
             setTimeout(() => {
-                imgShader.classList.remove("visible");
-            },300);
+                canvas.classList.remove("visible");
+            },800);
             Module.resumeGame();
             Module.SDL2();
             notiMessage("Resumed!", 2000);
