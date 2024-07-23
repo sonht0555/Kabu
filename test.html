@@ -1,148 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="apple-mobile-web-app-capable" content="none" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-  <link rel="apple-touch-icon" href="img/icon.png" />
-  <link rel="icon" href="img/favi.png" type="image/png" />
-  <link rel="manifest" href="manifest.json" />
-  <title>Resizable and Draggable Div from All Edges</title>
+  <title>Hiệu ứng TV cũ</title>
   <style>
-    #container {
-      width: 240px;
-      height: 160px;
-      background-color: lightgray;
-      position: relative;
-      overflow: hidden; /* Đảm bảo không cho phép các phần tử con vượt ra ngoài */
+    body {
+      background-color: #222; /* Màu nền tối */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
-    #resizable-draggable {
-      background-color: lightblue;
-      position: absolute;
-      box-sizing: border-box;
-      transform-origin: top left; /* Chỉnh origin để scale từ góc trái trên */
-      top: 0px; /* Vị trí ban đầu */
-      left: 0px; /* Vị trí ban đầu */
+    .tv {
+      width: 300px; /* Điều chỉnh kích thước TV */
+      height: 200px;
+      border: 10px solid #555; /* Viền TV */
+      border-radius: 15px;
+      overflow: hidden;
     }
 
-    .resizer {
-      width: 20px;
-      height: 20px;
-      background: gray;
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: all;
+    .screen {
+      width: 100%;
+      height: 100%;
+      background-color: #000; /* Màn hình đen */
+      transition: opacity 0.5s ease; /* Hiệu ứng chuyển tiếp */
     }
 
-    .resizer.top-left {
-      top: -10px;
-      left: -10px;
-      cursor: nw-resize; /* Hình dạng con trỏ khi resize */
+    .screen.off {
+      opacity: 0; /* Màn hình tắt (trong suốt) */
     }
 
-    .resizer.top-right {
-      top: -10px;
-      right: -10px;
-      cursor: ne-resize; /* Hình dạng con trỏ khi resize */
-    }
-
-    .resizer.bottom-left {
-      bottom: -10px;
-      left: -10px;
-      cursor: sw-resize; /* Hình dạng con trỏ khi resize */
-    }
-
-    .resizer.bottom-right {
-      bottom: -10px;
-      right: -10px;
-      cursor: se-resize; /* Hình dạng con trỏ khi resize */
+    #powerButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50; /* Màu xanh lá cây */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
-<body ontouchstart="(em) => { em.preventDefault(); }">
-  <div id="container">
-    <div id="resizable-draggable" data-x="0" data-y="0">
-      Resize me from all edges
-      <div class="resizer top-left"></div>
-      <div class="resizer top-right"></div>
-      <div class="resizer bottom-left"></div>
-      <div class="resizer bottom-right"></div>
-    </div>
-  </div>
-  <div id="info">
-    <p>Top-left corner: (<span id="x">0</span>, <span id="y">0</span>)</p>
-    <p>Width: <span id="width">200</span>px</p>
-    <p>Height: <span id="height">200</span>px</p>
+<body>
+  <div class="tv">
+    <div class="screen"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+  <button id="powerButton">Bật/Tắt</button>
+
   <script>
-    // Ngăn chặn sự kiện mặc định cho các phần tử tương tác
-    document.querySelectorAll('#resizable-draggable, .resizer').forEach(el => {
-      el.setAttribute('touch-action', 'none');
+    const powerButton = document.getElementById('powerButton');
+    const screen = document.querySelector('.screen');
+
+    powerButton.addEventListener('click', () => {
+      screen.classList.toggle('off'); // Bật/tắt lớp CSS "off"
     });
-
-    // Khôi phục trạng thái từ localStorage
-    function restoreState() {
-      const savedState = localStorage.getItem('resizable-draggable-state');
-      if (savedState) {
-        const [x, y, width, height] = savedState.split(',').map(Number);
-        const target = document.getElementById('resizable-draggable');
-        target.style.width = width + 'px';
-        target.style.height = height + 'px';
-        target.style.transform = `translate(${x}px, ${y}px)`;
-        target.setAttribute('data-x', x);
-        target.setAttribute('data-y', y);
-      }
-    }
-
-    // Lưu trạng thái vào localStorage
-    function saveState(x, y, width, height) {
-      const state = `${x},${y},${width},${height}`;
-      localStorage.setItem('resizable-draggable-state', state);
-    }
-
-    // Sử dụng Interact.js cho resizable
-    interact('#resizable-draggable')
-      .resizable({
-        edges: { top: true, left: true, right: true, bottom: true }, // Cho phép resize từ bốn góc
-        modifiers: [
-          interact.modifiers.restrictEdges({
-            outer: 'parent'
-          }),
-          interact.modifiers.restrictSize({
-            min: { width: 50, height: 50 }
-          })
-        ],
-        listeners: {
-          move(event) {
-            const target = event.target;
-            let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.deltaRect.left;
-            let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
-
-            // Cập nhật kích thước và vị trí của target
-            target.style.width = event.rect.width + 'px';
-            target.style.height = event.rect.height + 'px';
-            target.style.transform = `translate(${x}px, ${y}px)`;
-
-            target.setAttribute('data-x', x);
-            target.setAttribute('data-y', y);
-
-            // Cập nhật thông tin về tọa độ và kích thước
-            document.getElementById('x').textContent = x.toFixed(0);
-            document.getElementById('y').textContent = y.toFixed(0);
-            document.getElementById('width').textContent = event.rect.width.toFixed(0);
-            document.getElementById('height').textContent = event.rect.height.toFixed(0);
-            localStorage.setItem('resizable-draggable-state', `${x.toFixed(0)},${y.toFixed(0)},${event.rect.width.toFixed(0)},${event.rect.height.toFixed(0)}`);
-            console.log(localStorage.getItem('resizable-draggable-state'));
-          }
-        }
-      });
-
-    // Gọi hàm khôi phục trạng thái khi tải trang
-    restoreState();
   </script>
 </body>
 </html>

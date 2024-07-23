@@ -307,6 +307,7 @@ label {
   height: calc((100vw - 150px) * 2 / 3);
   overflow:hidden;
   border-radius: 0px 0px 2px 2px;
+  transition: opacity 1s ease-in-out;
 }
 .gbc1 {
   width: calc(100vw - 230px);
@@ -1050,8 +1051,8 @@ rect {
 }
 
 .visible {
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 #stateList, #lockNoti, #control-setting{
   transition: opacity 0.3s ease-in-out;

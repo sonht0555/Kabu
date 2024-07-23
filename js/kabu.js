@@ -800,8 +800,12 @@ const handleVisibilityChange = () => {
       Module.pauseGame();
       Module.SDL2();
       notiMessage("Paused!", 2000);
+      imgShader.classList.add("visible");
     } else {
         if (controlSetting.classList.contains("visible")) {
+            setTimeout(() => {
+                imgShader.classList.remove("visible");
+            },300);
             Module.resumeGame();
             Module.SDL2();
             notiMessage("Resumed!", 2000);
