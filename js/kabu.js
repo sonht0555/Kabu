@@ -8,7 +8,7 @@ let Module = null;
 window.addEventListener("gbaInitialized", (event) => {
     Module = event.detail.Module;
 });
-let gameVer = 'V2.23';
+let gameVer = 'V2.24';
 let turboState = 1;
 let clickState = 0;
 let clickTurbo = 0
@@ -812,6 +812,30 @@ const handleVisibilityChange = () => {
         }
     }
 };
+window.addEventListener('beforeunload', (event) => {
+    Module.pauseGame();
+    Module.SDL2();
+    notiMessage("Paused!", 2000);
+    canvas.classList.add("visible");
+});
+document.addEventListener('pagehide', handlePageHide);
+function handlePageHide(event) {
+    if (event.persisted) {
+        Module.pauseGame();
+        Module.SDL2();
+        notiMessage("Paused!", 2000);
+        canvas.classList.add("visible");
+    } else {
+        setTimeout(() => {
+            canvas.classList.remove("visible");
+        },600);
+            if (controlSetting.classList.contains("visible")) {
+                Module.resumeGame();
+                Module.SDL2();
+                notiMessage("Resumed!", 2000);
+            }
+    }
+  }
 async function Right(boxId, limit, increment, property, localStorageKey) {
     let box = document.getElementById(boxId);
     let currentValue = parseFloat(box.textContent);
