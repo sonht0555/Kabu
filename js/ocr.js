@@ -94,8 +94,6 @@ async function freeServer(base64data) {
         });
 
         const data = await response.json();
-
-        // Kiểm tra lỗi từ response và từ dữ liệu trả về
         if (!response.ok || data.type === "error") {
             const errorMessage = response.ok ? data.error.message : (response.status === 500 ? "Internal Server Error" : (await response.json()).error.message);
             throw new Error(errorMessage);
@@ -124,14 +122,14 @@ async function azureServer(base64data) {
     const currentYear = currentDate.getFullYear();
     const lastSavedDate = localStorage.getItem("lastSavedDate");
     const lastSaved = lastSavedDate ? new Date(lastSavedDate) : null;
-
+    // Reset countTimes if it's a new month
+    if (lastSaved && (currentMonth !== lastSaved.getMonth() || currentYear !== lastSaved.getFullYear())) {
+        countTimes = 0;
+        localStorage.setItem("lastSavedDate", currentDate.toISOString());
+    }
     if (countTimes >= 4950) {
-        if (lastSaved && (currentMonth === lastSaved.getMonth() && currentYear === lastSaved.getFullYear())) {
-            inputText.textContent = 'Used more than 4950 times. Continue using next month.';
-            return;
-        } else {
-            countTimes = 0;
-        }
+        inputText.textContent = 'Used more than 4950 times. Continue using next month.';
+        return;
     }
     try {
         const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {
