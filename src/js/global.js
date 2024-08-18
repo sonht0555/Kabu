@@ -1,5 +1,5 @@
 /* --------------- Declaration --------------- */
-let gameVer = 'V2.28';
+let gameVer = 'V2.26';
 appVer.textContent = gameVer
 var messageTimeout;
 let stateAdj = 1;

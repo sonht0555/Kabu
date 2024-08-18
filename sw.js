@@ -1,6 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
-let revision = '28';
+let revision = '26';
 revision = (parseInt(revision) + 1).toString();
 
 workbox.precaching.precacheAndRoute([
@@ -21,7 +21,7 @@ workbox.precaching.precacheAndRoute([
   { url: './src/js/welcome.js', revision: revision },
   { url: './src/core/mgba.js', revision: revision },
   { url: './src/core/mgba.wasm', revision: revision },
-  { url: './src/js/library/nip.js', revision: revision },
+  { url: './src/library/nip.js', revision: revision },
   { url: './sw.js', revision: revision },
   { url: './index.html', revision: revision },
   { url: './manifest.json', revision: revision },
