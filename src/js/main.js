@@ -1,4 +1,4 @@
-import mGBA from "./src/core/mgba.js";
+import mGBA from "../core/mgba.js";
 import * as gamepPad from './gamepad.js';
 import { localStorageFile } from "./storage.js";
 import {dpUploadFile,dpRefreshToken} from "./cloud.js";
