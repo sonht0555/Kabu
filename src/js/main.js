@@ -44,6 +44,7 @@ async function statusShow() {
         await gamepPad.turboF(turboState);
     }
     await delay(1000);
+    await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
 // Game Name
