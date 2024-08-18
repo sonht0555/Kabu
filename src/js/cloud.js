@@ -1,16 +1,9 @@
-
-// --------------- import ---------------
+import * as Main from './main.js';
 import { localStorageFile } from "./storage.js";
-import { lockNoti } from "./kabu.js";
-// --------------- declaration ---------------
+/* --------------- Declaration --------------- */
 var clientId = 'knh3uz2mx2hp2eu';
 var clientSecret = 'nwb3dnfh09rhs31';
-// --------------- initialization ---------------
-let Module = null;
-window.addEventListener("gbaInitialized", (event) => {
-    Module = event.detail.Module;
-});
-// --------------- function ---------------
+/* --------------- Function ------------------ */
 function authorizeWithDropbox() {
     var redirectUri = window.location.href.split('?')[0];
     var responseType = 'code';
@@ -156,17 +149,16 @@ async function dpDownloadFile(fileName) {
             localStorage.setItem(`${gameName}_dateState${slotNumber}`, date);
             localStorage.setItem(`${gameName}_imageState${slotNumber}`, img);
         } else {
-            Module.uploadSaveOrSaveState(file, () => {
+                Main.uploadSaveOrSaveState(file, () => {
                 localStorageFile();
                 Module.FSSync();
             });
         }
         return file;
     }
-
     return false;
 }
-// --------------- processing ---------------
+/* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
 dropboxRestore.addEventListener("click", async function() {
     const uId = localStorage.getItem("uId");
@@ -221,21 +213,17 @@ dropboxBackup.addEventListener("click", async function() {
     if (uId === null || uId === "") {
         window.alert("Cloud login required!");
     } else {
-        const directories = ["states", "saves"];
+        const directories = ["state", "save"];
         let totalFilesUploaded = 0;
         for (const directory of directories) {
-            const fileList = Module[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]().filter(
-                (file) => file !== "." && file !== ".."
-            );
+            const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
             totalFilesUploaded += fileList.length;
         }
         if (window.confirm(`Do you want to backup ${totalFilesUploaded} files in Kabu?`)) {
             for (const directory of directories) {
-                const fileList = Module[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]().filter(
-                    (file) => file !== "." && file !== ".."
-                );
+                const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
                 for (const fileName of fileList) {
-                    const fileData = await Module.downloadFile(`/data/${directory}/${fileName}`);
+                    const fileData = await Main.downloadFileInCloud(`/data/${directory}s/${fileName}`);
                     try {
                         await lockNoti("Backing up...", fileName, 3000)
                         await dpUploadFile(fileName, fileData);

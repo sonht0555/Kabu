@@ -1,17 +1,11 @@
-// --------------- import ---------------
-import { uploadRom } from "./welcome.js";
-// --------------- declaration ---------------
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
 const mgbaStorage = document.getElementById("mgba-storage");
 const savesFile = document.getElementById("savesFile");
 const romsFile = document.getElementById("romsFile");
 const statesFile = document.getElementById("statesFile");
 const screenshotsFile = document.getElementById("screenshotsFile");
-// --------------- initialization ---------------
-let Module = null;
-window.addEventListener("gbaInitialized", (event) => {
-    Module = event.detail.Module;
-});
-// --------------- function ---------------
+/* --------------- Function ------------------ */
 function humanFileSize(bytes, si = false, dp = 1) {
     const thresh = si ? 1e3 : 1024;
     const units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
@@ -66,7 +60,7 @@ function createElementStorage(parent, fileName, filePart) {
         downloadButton.classList.add("download", "bc");
         actionDiv.appendChild(downloadButton);
         downloadButton.onclick = () => {
-            downloadFile(filePart, fileName);
+            Main.downloadFile(filePart, fileName);
         };
         const deleteButton = document.createElement("div");
         deleteButton.classList.add("delete", "bc");
@@ -74,10 +68,9 @@ function createElementStorage(parent, fileName, filePart) {
         deleteButton.onclick = async () => {
             if (window.confirm("Delete this file?" + fileName)) {
                 const romName = fileName.replace(/\....$/, ".gba");
-                Module.deleteFile(filePart);
+                Main.deleteFile(filePart);
                 localStorage.removeItem(`${romName}_dateState${fileName.slice(-1)}`);
                 localStorage.removeItem(`${romName}_imageState${fileName.slice(-1)}`);
-                setTimeout(() => {Module.FSSync()},500);
                 localStorageFile();
                 dialog.close();
                 dialog.remove();
@@ -107,8 +100,7 @@ function createElementStorage(parent, fileName, filePart) {
                     localStorage.setItem(newImageStateKey, imageStateValue);
                     localStorage.removeItem(oldImageStateKey);
                 }
-                Module.editFileName(filePart, fileName, newFilename);
-                setTimeout(() => {Module.FSSync()},500);
+                Main.editFile(filePart, fileName, newFilename);
                 localStorageFile();
                 dialog.close();
                 dialog.remove();
@@ -118,28 +110,16 @@ function createElementStorage(parent, fileName, filePart) {
         dialog.showModal();
     }
     const mib = document.createElement("span");
-    mib.textContent = humanFileSize(Module.fileSize(filePart));
+    mib.textContent = humanFileSize(Main.fileSize(filePart));
     mib.classList.add("mib");
     Name.appendChild(mib);
 }
-export async function uploadSavSta(SavStaFile) {
-    try {
-        const file = SavStaFile.files[0];
-        await Module.uploadSaveOrSaveState(file, () => {
-            console.log("Save/State uploaded successfully:", file.name);
-            localStorageFile();
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadSavSta:", error);
-    }  
-}
-export async function localStorageFile() {
-    const listRoms = Module.listRoms().filter((file) => file !== "." && file !== "..");
-    const listSaves = Module.listSaves().filter((file) => file !== "." && file !== "..");
-    const listStates = Module.listStates().filter((file) => file !== "." && file !== "..");
-    const listCheats = Module.listCheats().filter((file) => file !== "." && file !== "..");
-    const listScreenshots = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
+export function localStorageFile() {
+    const listRoms = Main.listGame();
+    const listSaves = Main.listSave();
+    const listStates = Main.listState();
+    const listCheats = Main.listCheat();
+    const listScreenshots = Main.listScreenshot();
     const refreshList = [romsFile, savesFile, statesFile, cheatsFile, screenshotsFile];
     for (const refresh of refreshList) {
         while (refresh.firstChild) {
@@ -162,45 +142,36 @@ export async function localStorageFile() {
         createElementStorage(screenshotsFile, screenshotsName, `/data/screenshots/${screenshotsName}`)
     }
 }
-export async function uploadCheat(cheatFile) {
-    try {
-       const file = cheatFile.files[0];
-       await Module.uploadCheats(file, () => {
-            console.log("Cheat uploaded successfully:", file.name);
-            localStorageFile();
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadCheat:", error);
-    }  
-}
-export async function downloadFile(filepath, filename) {
-    try {
-        const save = Module.downloadFile(filepath);
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.download = filename;
-        const blob = new Blob([save], {
-            type: "application/octet-stream",
-        });
-        a.href = URL.createObjectURL(blob);
-        a.click();
-        URL.revokeObjectURL(blob);
-        a.remove();
-    } catch (error) {
-        console.error("Error downloadFile:", error);
-    }
-}
-// --------------- processing ---------------
+/* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     upLoadFile.addEventListener("change", function() {
         const fileName = upLoadFile.files[0].name;
         if (fileName.endsWith(".cheats")) {
-            uploadCheat(upLoadFile);
+            Main.uploadCheat(upLoadFile);
         } else if (fileName.endsWith(".gba") || fileName.endsWith(".gbc") || fileName.endsWith(".bc")) {
-            uploadRom(upLoadFile);
+            Main.uploadGame(upLoadFile);
         } else {
-            uploadSavSta(upLoadFile);
+            Main.uploadSavSta(upLoadFile);
         }
     })
+    //Buton Open Local Storage
+    openLocalStorage.addEventListener("click", function() {
+        const uId = localStorage.getItem("uId");
+        storage.classList.remove("disable");
+        intro.classList.add("disable");
+        ingame.classList.add("disable");
+    
+        if (uId === null || uId === "") {
+            dropboxRestore.classList.remove("active");
+            dropboxBackup.classList.remove("active");
+            dropboxCloud.classList.remove("active");
+        } else {
+            dropboxRestore.classList.add("active");
+            dropboxBackup.classList.add("active");
+            dropboxCloud.classList.add("active");
+        }
+    })
+    setTimeout(() => {
+        localStorageFile();
+    },3000);
 })
