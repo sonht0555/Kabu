@@ -1,8 +1,19 @@
-#!/bin/bash
-
 # Directories
 SRC_DIR="./src"
-DEST_DIR="./docs"
+Docs_DIR="./docs"
+Js_DIR="./docs/src"
+
+# Obfuscate JavaScript and Minify CSS
+mkdir -p $Js_DIR/js $Js_DIR/css
+for file in $SRC_DIR/js/*.js; do
+  filename=$(basename $file)
+  javascript-obfuscator "$file" --output "$Js_DIR/js/$filename"
+done
+
+for file in $SRC_DIR/css/*.css; do
+  filename=$(basename $file)
+  cleancss -o "$Js_DIR/css/$filename" "$file"
+done
 
 # Increment revision in sw.js
 revision=$(grep "let revision =" ./sw.js | sed "s/.*'V//;s/'.*//")
@@ -17,7 +28,6 @@ if [ $minor_version -ge 100 ]; then
 fi
 
 new_revision="V${major_version}.$(printf "%02d" $minor_version)"
-echo "Updating revision to $new_revision"
 
 # Update revision in sw.js
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -25,8 +35,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   sed -i "s/let revision = 'V[0-9]*\.[0-9]*';/let revision = '$new_revision';/" ./sw.js
 fi
-
-echo "Revision updated to $new_revision."
 
 # Increment version in index.html
 game_version=$(grep "let gameVer =" ./index.html | sed "s/.*'V//;s/';.*//")
@@ -41,7 +49,6 @@ if [ $minor_version -ge 100 ]; then
 fi
 
 new_game_version="V${major_version}.$(printf "%02d" $minor_version)"
-echo "Updating game version to $new_game_version"
 
 # Update version in index.html
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -50,27 +57,19 @@ else
   sed -i "s/let gameVer = 'V[0-9]*\.[0-9]*';/let gameVer = '$new_game_version';/" ./index.html
 fi
 
-echo "Game version updated to $new_game_version."
-
-# Obfuscate JavaScript and Minify CSS
-mkdir -p $DEST_DIR/js $DEST_DIR/css
-for file in $SRC_DIR/js/*.js; do
-  filename=$(basename $file)
-  javascript-obfuscator "$file" --output "$DEST_DIR/js/$filename"
-done
-echo "JavaScript Obfuscation completed."
-
-for file in $SRC_DIR/css/*.css; do
-  filename=$(basename $file)
-  cleancss -o "$DEST_DIR/css/$filename" "$file"
-done
-echo "CSS Minification completed."
-
 # Copy static files
-cp ./index.html ./manifest.json ./sw.js $DEST_DIR/
-mkdir -p $DEST_DIR/img
-cp ./img/* $DEST_DIR/img/
-echo "Static files copied."
+cp ./index.html ./manifest.json ./sw.js $Docs_DIR/
+mkdir -p $Docs_DIR/img
+cp ./img/* $Docs_DIR/img/
+mkdir -p $Docs_DIR/src/font/
+cp ./src/font/* $Docs_DIR/src/font/
+mkdir -p $Docs_DIR/src/core/
+cp ./src/core/* $Docs_DIR/src/core/
+mkdir -p $Docs_DIR/src/library/
+cp ./src/library/* $Docs_DIR/src/library/
+
+echo "------ Minify $new_game_version ------"
+
 
 # --- (install minify) ---
 # sudo npm install -g javascript-obfuscator
