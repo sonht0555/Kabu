@@ -104,6 +104,34 @@ function startTimer() {
         if (count1 === 3600) {saveStateInCloud(); count2=0};
     }, 1000);
 }
+// Switch Core
+const coreSwitchButton = document.getElementById('coreSwitch');
+coreSwitchButton.addEventListener('click', () => {
+    let coreState = localStorage.getItem("coreState");
+    if (!coreState) {
+        coreState = "mGBA";
+    }
+    if (coreState === "mGBA") {
+        console.log("Switched to Vba");
+       // Module.pauseGame();
+       Module.quitGame();
+        const gameName = localStorage.getItem("gameName");
+        const saveName = gameName.replace(/\.(gba|gbc|gb)$/, "");
+        const data = uint8ArrayToBase64(Module.downloadFile(`/data/saves/${saveName}.sav`))
+        localStorage.setItem(`${gameName}.sav`,data)
+        setTimeout(() => {
+            const game = Module.downloadFile(`/data/games/${saveName}.gba`)
+            console.log("Downloaded!",  Module.downloadFile(`/data/games/${gameName}`));
+           loadGameVBA(game);
+        }, 600);
+        console.log(data,saveName);
+        localStorage.setItem("coreState", "Vba");
+        
+    } else if (coreState === "Vba") {
+        console.log("Switched to mGBA");
+        localStorage.setItem("coreState", "mGBA");
+    }
+});
 /* --------------- Export Function --------------- */
 export async function uploadGame(gameName) {
     const file = gameName.files[0];
@@ -112,7 +140,7 @@ export async function uploadGame(gameName) {
     });
 }
 export async function loadGame(gameName) {
-    const stateName = reName(gameName, ".ss0")
+    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, "ss0");
     const statesList = Module.listStates();
     intro.classList.add("disable");
     ingame.classList.remove("disable");
@@ -135,6 +163,8 @@ export async function loadGame(gameName) {
     }
     // show status ingame
     await statusShow();
+    localStorage.setItem("gameName", gameName);
+    console.log(gameName);
 }
 export async function saveState(slot) {
     await Module.saveState(slot);
@@ -143,7 +173,7 @@ export async function saveState(slot) {
 export async function loadState(slot) {
     await Module.loadState(slot);
 }
-export async function downloadFile(filepath, filename) {
+export function downloadFile(filepath, filename) {
     const save = Module.downloadFile(filepath);
     const a = document.createElement("a");
     document.body.appendChild(a);
@@ -155,6 +185,7 @@ export async function downloadFile(filepath, filename) {
     a.click();
     URL.revokeObjectURL(blob);
     a.remove();
+    return save;
 }
 export function downloadFileInCloud(filepath) {
     const data = Module.downloadFile(filepath);
@@ -246,7 +277,7 @@ export async function buttonUnpress(key) {
 }
 export async function screenShot(saveSlot) {
     const gameName = localStorage.getItem("gameName");
-    const screenshotName = reName(gameName, "_")
+    const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, "_");
     await Module.screenshot(`${screenshotName}${saveSlot}.png`);
     await Module.FSSync();
     const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`))

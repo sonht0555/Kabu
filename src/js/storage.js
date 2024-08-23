@@ -61,6 +61,9 @@ function createElementStorage(parent, fileName, filePart) {
         actionDiv.appendChild(downloadButton);
         downloadButton.onclick = () => {
             Main.downloadFile(filePart, fileName);
+            console.log(filePart);
+            console.log(fileName);
+            console.log(Main.downloadFile(filePart, fileName));
         };
         const deleteButton = document.createElement("div");
         deleteButton.classList.add("delete", "bc");
