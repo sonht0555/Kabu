@@ -16,22 +16,24 @@ async function getImage() {
     input.classList.add('cs22');
     turbo.classList.add('turbo-ocr');
     canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
-    try {
         const gameName = localStorage.getItem("gameName");
         const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, ".png");
-        const file = await Main.captureOCR(screenshotName);
-        console.log(file);
-        const blob = new Blob([file], {
-            type: 'image/png'
-        });
-        const base64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
+        let base64;
+        if (coreState === "mGBA") {
+            const file = await Main.captureOCR(screenshotName);
+            const blob = new Blob([file], {
+                type: 'image/png'
+            });
+                base64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } else {
+            base64 = canvas.toDataURL('image/png'); 
+        }
         const img = new Image();
-        console.log(base64);
         img.src = base64;
         img.onload = () => {
             const canvas = document.createElement("canvas");
@@ -58,9 +60,6 @@ async function getImage() {
                 freeServer(base64data);
             }
         };
-    } catch (error) {
-        inputText.textContent = error.message;
-    }
 }
 async function freeServer(base64data) {
     let response;

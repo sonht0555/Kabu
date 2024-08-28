@@ -9,7 +9,9 @@ function initializeCore(coreInitFunction, module) {
         module.FSInit();
     });
 }
-initializeCore(mGBA, Module);
+if (coreState === "mGBA") {
+    initializeCore(mGBA, Module);
+}
 /* --------------- Declaration --------------- */
 let countAutoSave = 0;
 let turboState = 1;
@@ -46,12 +48,6 @@ async function statusShow() {
     await delay(1000);
     await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
-}
-// Game Name
-function reName(gameName, fileExtension) {
-    localStorage.setItem("gameName", gameName);
-    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, fileExtension);
-    return stateName;
 }
 // Auto Save Every 1m
 async function saveStatePeriodically() {
@@ -112,7 +108,8 @@ export async function uploadGame(gameName) {
     });
 }
 export async function loadGame(gameName) {
-    const stateName = reName(gameName, ".ss0")
+    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, ".ss0");
+    const saveName = gameName.replace(/\.(gba|gbc|gb)$/, ".sav");
     const statesList = Module.listStates();
     intro.classList.add("disable");
     ingame.classList.remove("disable");
@@ -127,14 +124,19 @@ export async function loadGame(gameName) {
     // check save state in local
     if (statesList.includes(stateName)) {
         await Module.loadGame(`/data/games/${gameName}`);
+        const base64 = localStorage.getItem(saveName);
+        await uploadSaveOrSaveState1(base64ToUint8Array(base64),saveName)
         if (confirm("Do you want to load save state?")) {
             await Module.loadState(0);
         }
     } else {
+        await uploadSaveOrSaveState1(base64ToUint8Array(base64),saveName)
         await Module.loadGame(`/data/games/${gameName}`);
     }
     // show status ingame
     await statusShow();
+    localStorage.setItem("gameName", gameName);
+    console.log(gameName);
 }
 export async function saveState(slot) {
     await Module.saveState(slot);
@@ -143,7 +145,7 @@ export async function saveState(slot) {
 export async function loadState(slot) {
     await Module.loadState(slot);
 }
-export async function downloadFile(filepath, filename) {
+export function downloadFile(filepath, filename) {
     const save = Module.downloadFile(filepath);
     const a = document.createElement("a");
     document.body.appendChild(a);
@@ -155,6 +157,7 @@ export async function downloadFile(filepath, filename) {
     a.click();
     URL.revokeObjectURL(blob);
     a.remove();
+    return save;
 }
 export function downloadFileInCloud(filepath) {
     const data = Module.downloadFile(filepath);
@@ -164,6 +167,7 @@ export async function uploadFile(fileName) {
     const file = fileName.files[0];
     Module.uploadSaveOrSaveState(file, () => {
         Module.FSSync();
+        console.log("Uploaded!");
     });
 }
 export async function editFile(filepath, filename, newFilename) {
@@ -229,13 +233,21 @@ export async function uploadSaveOrSaveState(file) {
     });
 }
 export async function resumeGame() {
-    Module.resumeGame();
-    Module.SDL2();
+    if (coreState === "mGBA") {
+        Module.resumeGame();
+        Module.SDL2();
+    } else {
+
+    }
     notiMessage("Resumed!", 2000);
 }
 export async function pauseGame() {
-    Module.pauseGame();
-    Module.SDL2();
+    if (coreState === "mGBA") {
+        Module.pauseGame();
+        Module.SDL2();
+    } else {
+
+    }
     notiMessage("Paused!", 2000);
 }
 export async function buttonPress(key) {
@@ -246,7 +258,7 @@ export async function buttonUnpress(key) {
 }
 export async function screenShot(saveSlot) {
     const gameName = localStorage.getItem("gameName");
-    const screenshotName = reName(gameName, "_")
+    const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, "_");
     await Module.screenshot(`${screenshotName}${saveSlot}.png`);
     await Module.FSSync();
     const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`))
@@ -276,3 +288,25 @@ export function uploadCheats(file,gameName,newCheatCode,cheatEnable,box1) {
         box1.textContent = localStorage.getItem(`${gameName}_savedCheats` || 'Off');
     });
 }
+// Switch Core
+const coreSwitchButton = document.getElementById('coreSwitch');
+coreSwitchButton.addEventListener('click', () => {
+    const gameName = localStorage.getItem("gameName");
+    const saveName = gameName.replace(/\.(gba|gbc|gb)$/, ".sav");
+    if (coreState === "mGBA") {
+        console.log("Switched to Vba");
+        const data = uint8ArrayToBase64(Module.downloadFile(`/data/saves/${saveName}`))
+        localStorage.setItem(saveName,data)
+        localStorage.setItem("coreState", "Vba");
+    } else if (coreState === "Vba") {
+        console.log("Switched to mGBA");
+        localStorage.setItem("coreState", "mGBA");
+    }
+});
+export async function uploadSaveOrSaveState1(uint8ArrayData, fileName) {
+    const file = new File([uint8ArrayData], fileName, { type: 'application/octet-stream' });
+    Module.uploadSaveOrSaveState(file, () => {
+        Module.FSSync();
+    });
+}
+

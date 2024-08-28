@@ -227,7 +227,7 @@ async function fileToBase64(data) {
     return base64;
 }
 // Lock Notification
- async function lockNoti(title, detail, second) {
+async function lockNoti(title, detail, second) {
     const lockNoti = document.getElementById("lockNoti");
     const notiTitle = document.getElementById("notiTitle");
     const notiDetail = document.getElementById("notiDetail");
@@ -247,4 +247,4 @@ document.addEventListener("DOMContentLoaded", function() {
         stateAdj = parseInt(savedStateAdj);
         positionAdjustment(stateAdj);
     }
-})
+});

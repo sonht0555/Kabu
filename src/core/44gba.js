@@ -370,7 +370,7 @@ function isFileURI(filename) {
     return filename.startsWith("file://")
 }
 var wasmBinaryFile;
-wasmBinaryFile = "vba.wasm";
+wasmBinaryFile = "44gba.wasm";
 if (!isDataURI(wasmBinaryFile)) {
     wasmBinaryFile = locateFile(wasmBinaryFile)
 }
@@ -478,10 +478,7 @@ var ASM_CONSTS = {
     }
     ,
     98524: ()=>{
-        let coreState = localStorage.getItem("coreState");
-        if (coreState === "mGBA") {
         wasmReady()
-        }
     }
 };
 function ExitStatus(status) {
