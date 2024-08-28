@@ -61,27 +61,29 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     });
 }
 /* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
-        //Buton Open Save States Page
-        statePageButton.addEventListener(eventType, () => {
-            LoadstateInPage(0, "state00", "dateState00", "stateDiv00")
-            LoadstateInPage(1, "state01", "dateState01", "stateDiv01")
-            LoadstateInPage(2, "state02", "dateState02", "stateDiv02")
-            LoadstateInPage(3, "state03", "dateState03", "stateDiv03")
-            LoadstateInPage(4, "state04", "dateState04", "stateDiv04")
-            LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
-            LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
-            LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
-            stateList.classList.toggle("visible");
-            statePageButton.classList.toggle("active");
-            if (stateList.classList.contains("visible")) {
-                canvas.style.borderRadius = "0px 0px 2px 2px";
-                Main.resumeGame();
-            } else {
-                canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
-                Main.pauseGame();
-            }
+if (coreState === "mGBA") {
+    document.addEventListener("DOMContentLoaded", function() {
+        ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+            //Buton Open Save States Page
+            statePageButton.addEventListener(eventType, () => {
+                LoadstateInPage(0, "state00", "dateState00", "stateDiv00")
+                LoadstateInPage(1, "state01", "dateState01", "stateDiv01")
+                LoadstateInPage(2, "state02", "dateState02", "stateDiv02")
+                LoadstateInPage(3, "state03", "dateState03", "stateDiv03")
+                LoadstateInPage(4, "state04", "dateState04", "stateDiv04")
+                LoadstateInPage(5, "state05", "dateState05", "stateDiv05")
+                LoadstateInPage(6, "state06", "dateState06", "stateDiv06")
+                LoadstateInPage(7, "state07", "dateState07", "stateDiv07")
+                stateList.classList.toggle("visible");
+                statePageButton.classList.toggle("active");
+                if (stateList.classList.contains("visible")) {
+                    canvas.style.borderRadius = "0px 0px 2px 2px";
+                    Main.resumeGame();
+                } else {
+                    canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
+                    Main.pauseGame();
+                }
+            });
         });
     });
-});
+};

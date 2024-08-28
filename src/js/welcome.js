@@ -16,21 +16,30 @@ async function romList() {
         romlist.insertBefore(div, romlist.firstChild);
     });
 }
+romInput.addEventListener("change", function() {
+    inputGame(romInput);
+})
 async function inputGame(InputFile) {
-    const gameName = InputFile.files[0].name;
+    const file = InputFile.files[0];
+    const gameName = file.name;
     localStorage.setItem("gameName", gameName);
-    await Main.uploadGame(romInput);
-    await delay(500);
-    await Main.loadGame(gameName);
+    if (coreState === "mGBA") {
+        await Main.uploadGame(romInput);
+        await delay(500);
+        await Main.loadGame(gameName);
+    } else if (coreState === "Vba") {
+        tryInitSound();
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => loadGameVBA(event.target.result);
+        fileReader.readAsArrayBuffer(file);
+    }
 }
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
+if (coreState === "mGBA") {
     setTimeout(() => {
         romList();
     },2000);
-    romInput.addEventListener("change", function() {
-        inputGame(romInput);
-    })
     backToHome.addEventListener("click", function() {
         storage.classList.add("disable");
         intro.classList.remove("disable");
@@ -42,4 +51,8 @@ document.addEventListener("DOMContentLoaded", function() {
             romList();
         },100);
     })
+}
+romInput.addEventListener("change", function() {
+    inputGame(romInput);
+})
 });

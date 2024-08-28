@@ -33,9 +33,11 @@ var turboInterval = -1
 var fastForwardMode = false
 var muteMode = false
 var isSaveSupported = true
-canvasVba = document.getElementById('vba-canvas')
-drawContext = canvasVba.getContext('2d')
-emuLoop()
+if (coreState === "Vba") {
+    initVK()
+    emuLoop()
+    canvas = document.getElementById('canvas')
+}
 function emuLoop() {
     window.requestAnimationFrame(emuLoop)
     emuRunFrame()
@@ -54,6 +56,7 @@ function emuRunFrame() {
         } else if (turboMode) {
             Module._emuRunFrame(getVKState());
         }
+        drawContext = canvas.getContext('2d')
         drawContext.putImageData(idata, 0, 0);
     }
 }
@@ -147,8 +150,19 @@ function uint8ArrayToBase64(uint8Array) {
     return btoa(binaryString);
 }
 // ---
+function startTimer() {
+    let [hours, minutes, seconds, count1, count2] = [0, 0, 0, 0, 0];
+    setInterval(() => {
+        seconds++;
+        count1++;
+        count2++;
+        if (seconds === 60)[seconds, minutes] = [0, minutes + 1];
+        if (minutes === 60)[minutes, hours] = [0, hours + 1];
+        document.getElementById("timer").textContent = `${hours}h${minutes.toString().padStart(2, '0')}.${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
 function capture() {
-    const image = canvasVba.toDataURL('image/png');
+    const image = canvas.toDataURL('image/png');
     const imgElement = document.createElement('img');
     imgElement.src = image;
     document.body.appendChild(imgElement);
@@ -156,9 +170,12 @@ function capture() {
 }
 function loadSave() {
     const gameName = localStorage.getItem("gameName");
-    const base64 = localStorage.getItem(`${gameName}.sav`);
+    const saveName = gameName.replace(/\.(gba|gbc|gb)$/, ".sav");
+    console.log(saveName);
+    const base64 = localStorage.getItem(saveName);
     if (base64) {
         wasmSaveBuf.set(base64ToUint8Array(base64));
+        console.log(base64ToUint8Array(base64))
         isRunning = true
     } else {
         isRunning = false
@@ -169,10 +186,12 @@ function loadSave() {
     console.log(base64)
 }
 function saveSave() {
+    const gameName = localStorage.getItem("gameName");
+    const saveName = gameName.replace(/\.(gba|gbc|gb)$/, ".sav");
     tmpSaveBuf.set(wasmSaveBuf)
     setTimeout(() => {
         const base64String = uint8ArrayToBase64(wasmSaveBuf);
-        localStorage.setItem('gba-2' + gameID + '-save-' + '0',base64String)
+        localStorage.setItem(saveName,base64String)
     }, 600);
 }
 function checkSave() {
@@ -188,6 +207,14 @@ function checkSave() {
 }
 function loadGameVBA(arrayBuffer) {
     isRunning = false
+    intro.classList.add("disable");
+    ingame.classList.remove("disable");
+    startTimer();
+    notiMessage(gameVer, 1000);
+    led(parseInt(localStorage.getItem("slotStateSaved")));
+    localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
+    restoreArea();
+    
     var u8 = new Uint8Array(arrayBuffer)
     gameID = ""
     for (var i = 0xAC; i < 0xB2; i++) {
@@ -213,7 +240,6 @@ function onFileSelected() {
         fileReader.readAsArrayBuffer(file)
 }
 // ---
-initVK()
 function initVK() {
     var vks = document.getElementsByClassName('vk')
     for (var i = 0; i < vks.length; i++) {
@@ -222,21 +248,19 @@ function initVK() {
         keyState[k] = [vk, 0, 0]
     }
 }
-
 function updateKeyState() {
     for (var k in keyState) {
         if (keyState[k][1] != keyState[k][2]) {
             var dom = keyState[k][0];
             keyState[k][1] = keyState[k][2];
             if (keyState[k][1]) {
-                dom.classList.add('vk-touched');
+                dom.classList.add('touched');
             } else {
-                dom.classList.remove('vk-touched');
+                dom.classList.remove('touched');
             }
         }
     }
 }
-
 function handleTouch(event) {
     tryInitSound();
     for (var k in keyState) {
@@ -268,10 +292,6 @@ function handleTouch(event) {
     fastForwardMode = keyState['turbo'][2];
     updateKeyState();
 }
-
-['touchstart', 'touchmove', 'touchend', 'touchcancel', 'touchenter', 'touchleave'].forEach((val) => {
-    window.addEventListener(val, handleTouch)
-})
 function getVKState() {
     var ret = 0;
     for (var i = 0; i < 10; i++) {
@@ -280,3 +300,8 @@ function getVKState() {
     }
     return ret;
 }
+['touchstart', 'touchmove', 'touchend', 'touchcancel', 'touchenter', 'touchleave'].forEach((val) => {
+    if (coreState === "Vba") {
+    window.addEventListener(val, handleTouch)
+    }
+})

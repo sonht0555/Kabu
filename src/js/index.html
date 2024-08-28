@@ -11,7 +11,7 @@
     <body class="class">
         <button class="flex-item" onclick="document.getElementById('romFile').click()" id="btn-choose">choose</button>
         <input type="file" id="romFile" onchange="onFileSelected()" hidden />
-        <canvas width="240" height="160" id="gba-canvas" class="flex-item"></canvas>
+        <canvas width="240" height="160" id="vba-canvas" class="flex-item"></canvas>
         <div id="vk-layer"> 
             <button class="vk-rect vk" onclick="capture()">Capture</button>
             <button class="vk-rect vk" data-k="r">r</button>
@@ -36,8 +36,8 @@
         <div id="msg-layer" hidden="">
             <p id="msg-text">Gamepad disconnected.</p>
         </div>
-        <script src="js/app.js"></script>
-        <script src="js/44gba.js"></script>
+        <script src="/src/core/vba.js"></script>
+        <script src="/src/js/app.js"></script>
         <script>
           
         </script>

@@ -146,35 +146,37 @@ export function localStorageFile() {
     }
 }
 /* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {
-    upLoadFile.addEventListener("change", function() {
-        const fileName = upLoadFile.files[0].name;
-        if (fileName.endsWith(".cheats")) {
-            Main.uploadCheat(upLoadFile);
-        } else if (fileName.endsWith(".gba") || fileName.endsWith(".gbc") || fileName.endsWith(".bc")) {
-            Main.uploadGame(upLoadFile);
-        } else {
-            Main.uploadSavSta(upLoadFile);
-        }
-    })
-    //Buton Open Local Storage
-    openLocalStorage.addEventListener("click", function() {
-        const uId = localStorage.getItem("uId");
-        storage.classList.remove("disable");
-        intro.classList.add("disable");
-        ingame.classList.add("disable");
-    
-        if (uId === null || uId === "") {
-            dropboxRestore.classList.remove("active");
-            dropboxBackup.classList.remove("active");
-            dropboxCloud.classList.remove("active");
-        } else {
-            dropboxRestore.classList.add("active");
-            dropboxBackup.classList.add("active");
-            dropboxCloud.classList.add("active");
-        }
-    })
-    setTimeout(() => {
-        localStorageFile();
-    },3000);
-})
+if (coreState === "mGBA") {
+    document.addEventListener("DOMContentLoaded", function() {
+        upLoadFile.addEventListener("change", function() {
+            const fileName = upLoadFile.files[0].name;
+            if (fileName.endsWith(".cheats")) {
+                Main.uploadCheat(upLoadFile);
+            } else if (fileName.endsWith(".gba") || fileName.endsWith(".gbc") || fileName.endsWith(".bc")) {
+                Main.uploadGame(upLoadFile);
+            } else {
+                Main.uploadSavSta(upLoadFile);
+            }
+        })
+        //Buton Open Local Storage
+        openLocalStorage.addEventListener("click", function() {
+            const uId = localStorage.getItem("uId");
+            storage.classList.remove("disable");
+            intro.classList.add("disable");
+            ingame.classList.add("disable");
+        
+            if (uId === null || uId === "") {
+                dropboxRestore.classList.remove("active");
+                dropboxBackup.classList.remove("active");
+                dropboxCloud.classList.remove("active");
+            } else {
+                dropboxRestore.classList.add("active");
+                dropboxBackup.classList.add("active");
+                dropboxCloud.classList.add("active");
+            }
+        })
+        setTimeout(() => {
+            localStorageFile();
+        },3000);
+    });
+};

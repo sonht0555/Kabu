@@ -29,30 +29,12 @@
 <body>
     <!-- Layer Ingame -->
     <button id="coreSwitch" class="">Core Switch</button>
-    <div id="vk-layer" style="display: none;"> 
-        <button class="vk-rect vk" onclick="capture()">Capture</button>
-        <button class="vk-rect vk" data-k="r">r</button>
-        <button class="vk-rect vk" data-k="l">l</button>
-        <button class="vk-rect vk" data-k="select">select</button>
-        <button class="vk-rect vk" data-k="start">start</button>
-        <button class="vk-rect vk" data-k="menu">menu</button>
-        <button class="vk-rect vk" data-k="ur">ur</button>
-        <button class="vk-rect vk" data-k="ul">ul</button>
-        <button class="vk-rect vk" data-k="up">up</button>
-        <button class="vk-rect vk" data-k="left">left</button>
-        <button class="vk-rect vk" data-k="right">right</button>
-        <button class="vk-rect vk" data-k="down">down</button>
-        <button class="vk-rect vk" data-k="dr">dr</button>
-        <button class="vk-rect vk" data-k="dl">dl</button>
-        <button class="vk-rect vk" data-k="a">a</button>
-        <button class="vk-rect vk" data-k="b">b</button>
-        <button class="vk-rect vk" data-k="turbo">turbo</button>
     </div>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
             <div class="load-state" id="loadStateButton"></div>
-            <div class="flex-1 bc dpad-l" id="L"></div>
+            <div class="flex-1 bc dpad-l vk" id="L" data-k="l"></div>
             <div class="flex-1 column" >
                 <div class="notification-container bc">
                     <svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,7 +54,6 @@
                 <div class="flex-1">
                     <div class="canvas-container cw hw">
                         <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
-                        <canvas width="240" height="160" class="canvas" id="vba-canvas"></canvas>
                     </div>
                     <div class="column message-container" id="">
                         <div class="flex-1" id="areaSet"></div>
@@ -243,16 +224,16 @@
                     <div class="shader Sega" id="img-shader" style=" pointer-events: none"></div>
                 </div>
             </div>
-            <div class="flex-1 bc dpad-r" id="R"></div>
+            <div class="flex-1 bc dpad-r vk" id="R" data-k="r"></div>
             <div class="save-state" id="saveStateButton"></div>
         </div>
         <div class="gap-34 emu-menu" id="control-pad">
             <div class="flex-1 gap-15">
                 <div class="bc dpad-state" id="statePageButton"></div>
-                <div class="flex-1 bc dpad-select" id="Select"></div>
+                <div class="flex-1 bc dpad-select vk" id="Select" data-k="select"></div>
             </div>
             <div class="flex-1 gap-15">
-                <div class="flex-1 bc dpad-start" id="Start"></div>
+                <div class="flex-1 bc dpad-start vk" id="Start" data-k="start"></div>
                 <div class="bc dpad-menu" id="menu-pad"></div>
             </div>
         </div>
@@ -262,36 +243,36 @@
                     <div class="flex-1 bc1 ch cw dpad">
                         <div class="d-pad">
                             <div class="ch">
-                                <div class="pad-ul" id="Up-left"></div>
+                                <div class="pad-ul vk" id="Up-left" data-k="ul"></div>
                             </div>
                             <div class="flex-1 column">
-                                <div class="pad-ur" id="Up-right"></div>
+                                <div class="pad-ur vk" id="Up-right" data-k="ur"></div>
                                 <div class="flex-1 column">
                                     <div class="flex-1">
-                                        <div class="flex-1 ch cw pad-u" id="Up"></div>
-                                        <div class="flex-1 ch cw pad-r" id="Right"></div>
+                                        <div class="flex-1 ch cw pad-u vk" id="Up" data-k="up"></div>
+                                        <div class="flex-1 ch cw pad-r vk" id="Right" data-k="right"></div>
                                     </div>
                                     <div class="flex-1">
-                                        <div class="flex-1 ch cw pad-l" id="Left"></div>
-                                        <div class="flex-1 ch cw pad-d" id="Down"></div>
+                                        <div class="flex-1 ch cw pad-l vk" id="Left" data-k="left"></div>
+                                        <div class="flex-1 ch cw pad-d vk" id="Down" data-k="down"></div>
                                     </div>
                                 </div>
-                                <div class="pad-dl" id="Down-left"></div>
+                                <div class="pad-dl vk" id="Down-left" data-k="dl"></div>
                             </div>
                             <div class="ch">
-                                <div class="pad-dr" id="Down-right"></div>
+                                <div class="pad-dr vk" id="Down-right" data-k="dr"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex-1 column gap-15">
                     <div class="flex-1 gap-15">
-                        <div class="flex-1 bc1 dpad-a" id="A"></div>
-                        <div class="bc1 dpad-turbo" id="turbo"></div>
+                        <div class="flex-1 bc1 dpad-a vk" id="A" data-k="a"></div>
+                        <div class="bc1 dpad-turbo vk" id="turbo" data-k="turbo"></div>
                     </div>
-                    <div class="flex-1 gap-15 bc1" id="B">
-                        <div class="flex-1 dpad-b"></div>
-                        <div class="dpad-blank"></div>
+                    <div class="flex-1 gap-15 bc1 vk" id="B" data-k="b">
+                        <div class="flex-1 dpad-b" style=" pointer-events: none"></div>
+                        <div class="dpad-blank" style=" pointer-events: none"></div>
                     </div>
                 </div>
             </div>
@@ -375,6 +356,12 @@
         <div class="flex-1"></div>
     </div>
     <script>let gameVer = 'V2.07';</script>
+    <script>
+        let coreState = localStorage.getItem("coreState");
+        if (!coreState) {
+        coreState = "mGBA";
+        }
+    </script>
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
     <script type="module" src="./src/js/gamepad.js"></script> 
@@ -385,7 +372,7 @@
     <script type="module" src="./src/js/cloud.js"></script> 
     <script type="" src="./src/js/global.js"></script> 
     <script type="" src="./src/js/app.js"></script> 
-    <script type="" src="./src/core/vba.js"></script> 
+    <script type="" src="./src/core/44gba.js"></script> 
 </body>
 
 </html> 
