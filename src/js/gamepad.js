@@ -27,30 +27,20 @@ async function loadState(slot) {
 // Turbo
 export async function turboF(turboState) {
     if (turboState === 1) {
-        notiMessage("Normal Speed", 1500);
-        turbo.classList.remove("turbo-normal");
-        turbo.classList.remove("turbo-medium");
-        turbo.classList.remove("turbo-fast");
-        await Main.setFastForwardMultiplier(1);
-        await Module.setMainLoopTiming(0, 16); 
-    } else if (turboState === 2) {
         notiMessage("1x Speed", 1500);
-        turbo.classList.add("turbo-normal");
         turbo.classList.remove("turbo-medium");
         turbo.classList.remove("turbo-fast");
-        await Main.setFastForwardMultiplier(1);
-    } else if (turboState === 3) {
+        Main.setFastForwardMultiplier(1);
+    } else if (turboState === 2) {
         notiMessage("2x Speed", 1500);
-        turbo.classList.remove("turbo-normal");
         turbo.classList.add("turbo-medium");
         turbo.classList.remove("turbo-fast");
-        await Main.setFastForwardMultiplier(2);
-    } else if (turboState === 4) {
+        Main.setFastForwardMultiplier(2);
+    } else if (turboState === 3) {
         notiMessage("4x Speed", 1500);
-        turbo.classList.remove("turbo-normal");
         turbo.classList.remove("turbo-medium");
         turbo.classList.add("turbo-fast");
-        await Main.setFastForwardMultiplier(3);
+        Main.setFastForwardMultiplier(4);
     }
 }
 /* --------------- DOMContentLoaded ---------- */
@@ -194,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(() => {
             if (clickTurbo === 2) {
-                turboState = (turboState % 4) + 1;
+                turboState = (turboState % 3) + 1;
                 turboF(turboState);
                 localStorage.setItem("turboState", turboState);
             }
