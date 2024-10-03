@@ -47,12 +47,6 @@ async function statusShow() {
     await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
-// Game Name
-function reName(gameName, fileExtension) {
-    localStorage.setItem("gameName", gameName);
-    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, fileExtension);
-    return stateName;
-}
 // Auto Save Every 1m
 async function saveStatePeriodically() {
     await ledSave("#20A5A6");
@@ -112,7 +106,7 @@ export async function uploadGame(gameName) {
     });
 }
 export async function loadGame(gameName) {
-    const stateName = reName(gameName, ".ss0")
+    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, ".ss0");
     const statesList = Module.listStates();
     intro.classList.add("disable");
     ingame.classList.remove("disable");
@@ -129,9 +123,12 @@ export async function loadGame(gameName) {
         await Module.loadGame(`/data/games/${gameName}`);
         if (confirm("Do you want to load save state?")) {
             await Module.loadState(0);
+            localStorage.setItem("gameName", gameName);
+            console.log(gameName);
         }
     } else {
         await Module.loadGame(`/data/games/${gameName}`);
+        localStorage.setItem("gameName", gameName);
     }
     // show status ingame
     await statusShow();
@@ -246,7 +243,7 @@ export async function buttonUnpress(key) {
 }
 export async function screenShot(saveSlot) {
     const gameName = localStorage.getItem("gameName");
-    const screenshotName = reName(gameName, "_")
+    const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, "_");
     await Module.screenshot(`${screenshotName}${saveSlot}.png`);
     await Module.FSSync();
     const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`))
