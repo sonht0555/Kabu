@@ -1,9 +1,7 @@
 var mGBA = (() => {
   var _scriptDir = import.meta.url;
-
   return (
       function(moduleArg = {}) {
-
           var Module = moduleArg;
           var readyPromiseResolve, readyPromiseReject;
           Module["ready"] = new Promise((resolve, reject) => {
@@ -22,21 +20,21 @@ var mGBA = (() => {
               }
               return false
           };
-          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-          Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
-          Module.domToPng = () => Promise.resolve('dataurl')
-          Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
-          Module.deleteFile = (filepath) => FS.unlink(filepath);
-          Module.fileSize = (filepath) => FS.stat(filepath).size;
-          Module.downloadFile = (filepath) => FS.readFile(filepath);
-          Module.getSave = () => FS.readFile(Module.saveName);
-          Module.listGames = () => FS.readdir("/data/games/").filter((file) => file !== "." && file !== "..");
-          Module.listSaves = () => FS.readdir("/data/saves/").filter((file) => file !== "." && file !== "..");
-          Module.listStates = () => FS.readdir("/data/states/").filter((file) => file !== "." && file !== "..");
-          Module.listCheats = () => FS.readdir("/data/cheats/").filter((file) => file !== "." && file !== "..");
-          Module.listScreenshots = () => FS.readdir("/data/screenshots/").filter((file) => file !== "." && file !== "..");
-          // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-            Module.FSInit = () => new Promise((resolve, reject) => {
+            // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+            Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
+            Module.domToPng = () => Promise.resolve('dataurl')
+            Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
+            Module.deleteFile = (filepath) => FS.unlink(filepath);
+            Module.fileSize = (filepath) => FS.stat(filepath).size;
+            Module.downloadFile = (filepath) => FS.readFile(filepath);
+            Module.getSave = () => FS.readFile(Module.saveName);
+            Module.listGames = () => FS.readdir("/data/games/").filter((file) => file !== "." && file !== "..");
+            Module.listSaves = () => FS.readdir("/data/saves/").filter((file) => file !== "." && file !== "..");
+            Module.listStates = () => FS.readdir("/data/states/").filter((file) => file !== "." && file !== "..");
+            Module.listCheats = () => FS.readdir("/data/cheats/").filter((file) => file !== "." && file !== "..");
+            Module.listScreenshots = () => FS.readdir("/data/screenshots/").filter((file) => file !== "." && file !== "..");
+            // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
+             Module.FSInit = () => new Promise((resolve, reject) => {
               FS.mkdir("/data");
               FS.mount(FS.filesystems.IDBFS, {}, "/data");
               FS.syncfs(true, err => {
@@ -102,7 +100,7 @@ var mGBA = (() => {
               };
               reader.readAsArrayBuffer(file)
           };
-          Module.uploadRom = (file, callback) => {
+          Module.uploadGame = (file, callback) => {
               const split = file.name.split(".");
               if (split.length < 2) {
                   console.warn("unrecognized file extension: " + file.name);
@@ -259,27 +257,6 @@ var mGBA = (() => {
           Module.getFastForwardMultiplier = () => {
               const getFastForwardMultiplier = cwrap("getFastForwardMultiplier", "number", []);
               return getFastForwardMultiplier()
-          };
-          const coreCallbackStore = {
-              alarmCallbackPtr: null,
-              coreCrashedCallbackPtr: null,
-              keysReadCallbackPtr: null,
-              saveDataUpdatedCallbackPtr: null,
-              videoFrameEndedCallbackPtr: null,
-              videoFrameStartedCallbackPtr: null
-          };
-          Module.addCoreCallbacks = callbacks => {
-              const addCoreCallbacks = cwrap("addCoreCallbacks", null, ["number"]);
-              Object.keys(coreCallbackStore).forEach(callbackKey => {
-                  const callbackName = callbackKey.replace("CallbackPtr", "Callback");
-                  const callback = callbacks[callbackName];
-                  if (callback !== undefined && !!coreCallbackStore[callbackKey]) {
-                      removeFunction(coreCallbackStore[callbackKey]);
-                      coreCallbackStore[callbackKey] = null
-                  }
-                  if (!!callback) coreCallbackStore[callbackKey] = addFunction(callback, "vi")
-              });
-              addCoreCallbacks(coreCallbackStore.alarmCallbackPtr, coreCallbackStore.coreCrashedCallbackPtr, coreCallbackStore.keysReadCallbackPtr, coreCallbackStore.saveDataUpdatedCallbackPtr, coreCallbackStore.videoFrameEndedCallbackPtr, coreCallbackStore.videoFrameStartedCallbackPtr)
           };
           var moduleOverrides = Object.assign({}, Module);
           var arguments_ = [];
@@ -536,7 +513,7 @@ var mGBA = (() => {
                   wasmExports = instance.exports;
                   wasmMemory = wasmExports["_d"];
                   updateMemoryViews();
-                  wasmTable = wasmExports["Ae"];
+                  wasmTable = wasmExports["ze"];
                   addOnInit(wasmExports["$d"]);
                   removeRunDependency("wasm-instantiate");
                   return wasmExports
@@ -560,11 +537,11 @@ var mGBA = (() => {
           var tempDouble;
           var tempI64;
           var ASM_CONSTS = {
-              272368: ($0, $1) => {
+              272336: ($0, $1) => {
                   Module.canvas.width = $0;
                   Module.canvas.height = $1
               },
-              272425: ($0, $1, $2, $3, $4, $5, $6) => {
+              272393: ($0, $1, $2, $3, $4, $5, $6) => {
                   Module.version = {
                       gitCommit: UTF8ToString($0),
                       gitShort: UTF8ToString($1),
@@ -575,12 +552,12 @@ var mGBA = (() => {
                       projectVersion: UTF8ToString($6)
                   }
               },
-              272657: () => {
+              272618: () => {
                   FS.syncfs(function(err) {
                       assert(!err)
                   })
               },
-              272701: () => {
+              272662: () => {
                   if (typeof AudioContext !== "undefined") {
                       return true
                   } else if (typeof webkitAudioContext !== "undefined") {
@@ -588,7 +565,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              272848: () => {
+              272809: () => {
                   if (typeof navigator.mediaDevices !== "undefined" && typeof navigator.mediaDevices.getUserMedia !== "undefined") {
                       return true
                   } else if (typeof navigator.webkitGetUserMedia !== "undefined") {
@@ -596,7 +573,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              273082: $0 => {
+              273043: $0 => {
                   if (typeof Module["SDL2"] === "undefined") {
                       Module["SDL2"] = {}
                   }
@@ -618,11 +595,11 @@ var mGBA = (() => {
                   }
                   return SDL2.audioContext === undefined ? -1 : 0
               },
-              273575: () => {
+              273536: () => {
                   var SDL2 = Module["SDL2"];
                   return SDL2.audioContext.sampleRate
               },
-              273643: ($0, $1, $2, $3) => {
+              273604: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   var have_microphone = function(stream) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -663,7 +640,7 @@ var mGBA = (() => {
                       }, have_microphone, no_microphone)
                   }
               },
-              275295: ($0, $1, $2, $3) => {
+              275256: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   SDL2.audio.scriptProcessorNode = SDL2.audioContext["createScriptProcessor"]($1, 0, $0);
                   SDL2.audio.scriptProcessorNode["onaudioprocess"] = function(e) {
@@ -675,7 +652,7 @@ var mGBA = (() => {
                   };
                   SDL2.audio.scriptProcessorNode["connect"](SDL2.audioContext["destination"])
               },
-              275705: ($0, $1) => {
+              275666: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
                   for (var c = 0; c < numChannels; ++c) {
@@ -694,7 +671,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276310: ($0, $1) => {
+              276271: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
                   for (var c = 0; c < numChannels; ++c) {
@@ -707,7 +684,7 @@ var mGBA = (() => {
                       }
                   }
               },
-              276790: $0 => {
+              276751: $0 => {
                   var SDL2 = Module["SDL2"];
                   if ($0) {
                       if (SDL2.capture.silenceTimer !== undefined) {
@@ -745,7 +722,7 @@ var mGBA = (() => {
                       SDL2.audioContext = undefined
                   }
               },
-              277962: ($0, $1, $2) => {
+              277923: ($0, $1, $2) => {
                   var w = $0;
                   var h = $1;
                   var pixels = $2;
@@ -816,7 +793,7 @@ var mGBA = (() => {
                   }
                   SDL2.ctx.putImageData(SDL2.image, 0, 0)
               },
-              279431: ($0, $1, $2, $3, $4) => {
+              279392: ($0, $1, $2, $3, $4) => {
                   var w = $0;
                   var h = $1;
                   var hot_x = $2;
@@ -853,18 +830,18 @@ var mGBA = (() => {
                   stringToUTF8(url, urlBuf, url.length + 1);
                   return urlBuf
               },
-              280420: $0 => {
+              280381: $0 => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = UTF8ToString($0)
                   }
               },
-              280503: () => {
+              280464: () => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = "none"
                   }
               },
-              280572: () => window.innerWidth,
-              280602: () => window.innerHeight
+              280533: () => window.innerWidth,
+              280563: () => window.innerHeight
           };
 
           function ExitStatus(status) {
@@ -7581,132 +7558,6 @@ var mGBA = (() => {
                   return ccall(ident, returnType, argTypes, arguments, opts)
               }
           };
-          var uleb128Encode = (n, target) => {
-              if (n < 128) {
-                  target.push(n)
-              } else {
-                  target.push(n % 128 | 128, n >> 7)
-              }
-          };
-          var sigToWasmTypes = sig => {
-              var typeNames = {
-                  "i": "i32",
-                  "j": "i64",
-                  "f": "f32",
-                  "d": "f64",
-                  "e": "externref",
-                  "p": "i32"
-              };
-              var type = {
-                  parameters: [],
-                  results: sig[0] == "v" ? [] : [typeNames[sig[0]]]
-              };
-              for (var i = 1; i < sig.length; ++i) {
-                  type.parameters.push(typeNames[sig[i]])
-              }
-              return type
-          };
-          var generateFuncType = (sig, target) => {
-              var sigRet = sig.slice(0, 1);
-              var sigParam = sig.slice(1);
-              var typeCodes = {
-                  "i": 127,
-                  "p": 127,
-                  "j": 126,
-                  "f": 125,
-                  "d": 124,
-                  "e": 111
-              };
-              target.push(96);
-              uleb128Encode(sigParam.length, target);
-              for (var i = 0; i < sigParam.length; ++i) {
-                  target.push(typeCodes[sigParam[i]])
-              }
-              if (sigRet == "v") {
-                  target.push(0)
-              } else {
-                  target.push(1, typeCodes[sigRet])
-              }
-          };
-          var convertJsFunctionToWasm = (func, sig) => {
-              if (typeof WebAssembly.Function == "function") {
-                  return new WebAssembly.Function(sigToWasmTypes(sig), func)
-              }
-              var typeSectionBody = [1];
-              generateFuncType(sig, typeSectionBody);
-              var bytes = [0, 97, 115, 109, 1, 0, 0, 0, 1];
-              uleb128Encode(typeSectionBody.length, bytes);
-              bytes.push.apply(bytes, typeSectionBody);
-              bytes.push(2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0);
-              var module = new WebAssembly.Module(new Uint8Array(bytes));
-              var instance = new WebAssembly.Instance(module, {
-                  "e": {
-                      "f": func
-                  }
-              });
-              var wrappedFunc = instance.exports["f"];
-              return wrappedFunc
-          };
-          var updateTableMap = (offset, count) => {
-              if (functionsInTableMap) {
-                  for (var i = offset; i < offset + count; i++) {
-                      var item = getWasmTableEntry(i);
-                      if (item) {
-                          functionsInTableMap.set(item, i)
-                      }
-                  }
-              }
-          };
-          var functionsInTableMap;
-          var getFunctionAddress = func => {
-              if (!functionsInTableMap) {
-                  functionsInTableMap = new WeakMap;
-                  updateTableMap(0, wasmTable.length)
-              }
-              return functionsInTableMap.get(func) || 0
-          };
-          var freeTableIndexes = [];
-          var getEmptyTableSlot = () => {
-              if (freeTableIndexes.length) {
-                  return freeTableIndexes.pop()
-              }
-              try {
-                  wasmTable.grow(1)
-              } catch (err) {
-                  if (!(err instanceof RangeError)) {
-                      throw err
-                  }
-                  throw "Unable to grow wasm table. Set ALLOW_TABLE_GROWTH."
-              }
-              return wasmTable.length - 1
-          };
-          var setWasmTableEntry = (idx, func) => {
-              wasmTable.set(idx, func);
-              wasmTableMirror[idx] = wasmTable.get(idx)
-          };
-          var addFunction = (func, sig) => {
-              var rtn = getFunctionAddress(func);
-              if (rtn) {
-                  return rtn
-              }
-              var ret = getEmptyTableSlot();
-              try {
-                  setWasmTableEntry(ret, func)
-              } catch (err) {
-                  if (!(err instanceof TypeError)) {
-                      throw err
-                  }
-                  var wrapped = convertJsFunctionToWasm(func, sig);
-                  setWasmTableEntry(ret, wrapped)
-              }
-              functionsInTableMap.set(func, ret);
-              return ret
-          };
-          var removeFunction = index => {
-              functionsInTableMap.delete(getWasmTableEntry(index));
-              setWasmTableEntry(index, null);
-              freeTableIndexes.push(index)
-          };
           var FSNode = function(parent, name, mode, rdev) {
               if (!parent) {
                   parent = this
@@ -8068,20 +7919,19 @@ var mGBA = (() => {
           var _loadGame = Module["_loadGame"] = a0 => (_loadGame = Module["_loadGame"] = wasmExports["ue"])(a0);
           var _saveStateSlot = Module["_saveStateSlot"] = (a0, a1) => (_saveStateSlot = Module["_saveStateSlot"] = wasmExports["ve"])(a0, a1);
           var _loadStateSlot = Module["_loadStateSlot"] = (a0, a1) => (_loadStateSlot = Module["_loadStateSlot"] = wasmExports["we"])(a0, a1);
-          var _addCoreCallbacks = Module["_addCoreCallbacks"] = (a0, a1, a2, a3, a4, a5) => (_addCoreCallbacks = Module["_addCoreCallbacks"] = wasmExports["xe"])(a0, a1, a2, a3, a4, a5);
-          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["ye"])();
-          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["ze"])(a0, a1);
-          var _malloc = a0 => (_malloc = wasmExports["Be"])(a0);
-          var setTempRet0 = a0 => (setTempRet0 = wasmExports["Ce"])(a0);
-          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["De"])(a0, a1);
-          var _setThrew = (a0, a1) => (_setThrew = wasmExports["Ee"])(a0, a1);
-          var stackSave = () => (stackSave = wasmExports["Fe"])();
-          var stackRestore = a0 => (stackRestore = wasmExports["Ge"])(a0);
-          var stackAlloc = a0 => (stackAlloc = wasmExports["He"])(a0);
-          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["Ie"])(a0, a1);
-          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Je"])(a0, a1, a2, a3, a4);
-          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Ke"])(a0, a1, a2, a3, a4, a5);
-          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Le"])(a0, a1, a2);
+          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["xe"])();
+          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["ye"])(a0, a1);
+          var _malloc = a0 => (_malloc = wasmExports["Ae"])(a0);
+          var setTempRet0 = a0 => (setTempRet0 = wasmExports["Be"])(a0);
+          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["Ce"])(a0, a1);
+          var _setThrew = (a0, a1) => (_setThrew = wasmExports["De"])(a0, a1);
+          var stackSave = () => (stackSave = wasmExports["Ee"])();
+          var stackRestore = a0 => (stackRestore = wasmExports["Fe"])(a0);
+          var stackAlloc = a0 => (stackAlloc = wasmExports["Ge"])(a0);
+          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["He"])(a0, a1);
+          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Ie"])(a0, a1, a2, a3, a4);
+          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Je"])(a0, a1, a2, a3, a4, a5);
+          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Ke"])(a0, a1, a2);
           var _GBAInputInfo = Module["_GBAInputInfo"] = 109920;
           var _binaryName = Module["_binaryName"] = 186992;
           var _projectName = Module["_projectName"] = 186996;
@@ -8208,8 +8058,6 @@ var mGBA = (() => {
               }
           }
           Module["cwrap"] = cwrap;
-          Module["addFunction"] = addFunction;
-          Module["removeFunction"] = removeFunction;
           Module["FS"] = FS;
           var calledRun;
           dependenciesFulfilled = function runCaller() {

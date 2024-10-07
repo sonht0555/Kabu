@@ -65,6 +65,8 @@ mkdir -p $Docs_DIR/src/font/
 cp ./src/font/* $Docs_DIR/src/font/
 mkdir -p $Docs_DIR/src/core/
 cp ./src/core/* $Docs_DIR/src/core/
+mkdir -p $Docs_DIR/src/backup/
+cp ./src/core/* $Docs_DIR/src/backup/
 mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 

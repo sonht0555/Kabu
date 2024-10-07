@@ -1,4 +1,4 @@
-let revision = 'V2.08';
+let revision = 'V2.04';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
