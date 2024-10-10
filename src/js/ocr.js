@@ -35,6 +35,7 @@ async function getImage() {
         img.onload = () => {
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
+            const resolutionFactor = 4;
             let generalRatio;
             if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
                 generalRatio = Math.round(160 / (window.innerWidth - 230));
@@ -45,10 +46,20 @@ async function getImage() {
             }
             const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
-            canvas.width = cropWidth * generalRatio;
-            canvas.height = cropHeight * generalRatio;
-            ctx.drawImage(img, cropX * generalRatio, cropY * generalRatio, cropWidth * generalRatio, cropHeight * generalRatio, 0, 0, cropWidth * generalRatio, cropHeight * generalRatio);
-            console.log(canvas.toDataURL("image/png"))
+            canvas.width = cropWidth * generalRatio * resolutionFactor;
+            canvas.height = cropHeight * generalRatio * resolutionFactor;
+            ctx.drawImage(
+                img,
+                cropX * generalRatio,                               // Vị trí x bắt đầu cắt từ ảnh gốc
+                cropY * generalRatio,                               // Vị trí y bắt đầu cắt từ ảnh gốc
+                cropWidth * generalRatio,                           // Chiều rộng vùng cắt từ ảnh gốc
+                cropHeight * generalRatio,                          // Chiều cao vùng cắt từ ảnh gốc
+                0,                                                  // Vị trí x vẽ lên canvas
+                0,                                                  // Vị trí y vẽ lên canvas
+                cropWidth * generalRatio * resolutionFactor,        // Chiều rộng trên canvas (nhân với resolutionFactor)
+                cropHeight * generalRatio * resolutionFactor        // Chiều cao trên canvas (nhân với resolutionFactor)
+            );
+            console.log(canvas.toDataURL("image/png"));
             const base64data = canvas.toDataURL("image/png").split(',')[1];
             const ApiAzure = localStorage.getItem("ApiAzure");
             if (ApiAzure) {
