@@ -17,7 +17,7 @@ async function getImage() {
     turbo.classList.add('turbo-ocr');
     try {
         const gameName = localStorage.getItem("gameName");
-        const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, ".png");
+        const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".png");
         const file = await Main.captureOCR(screenshotName);
         console.log(file);
         const blob = new Blob([file], {
