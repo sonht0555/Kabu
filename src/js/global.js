@@ -109,7 +109,7 @@ interact('#resizable-draggable')
             interact.modifiers.restrictSize({
                 min: {
                     width: 50,
-                    height: 50
+                    height: 20
                 }
             })
         ],
@@ -160,7 +160,7 @@ async function notiMessage(messageContent, second) {
     message.style.opacity = "0.4";
     messageTimeout = setTimeout(() => {
         message.textContent = `[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
-        message.style.opacity = "0.2";
+        message.style.opacity = "0.4";
     }, second);
 }
 // Led Save
@@ -169,11 +169,11 @@ async function ledSave(color) {
     const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
         }
         await delay(1000);
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
         }
         document.getElementById(ledId).style.fill = color;
     } catch (error) {
@@ -184,14 +184,14 @@ async function ledSave(color) {
 async function led(slotStateNumbers) {
     try {
         const ledInfo = [
-            { id: "led00", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led01", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led02", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led03", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led04", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led05", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led06", color: "rgba(245, 232, 209, 0.2)" },
-            { id: "led07", color: "rgba(245, 232, 209, 0.2)" }
+            { id: "led00", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led01", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led02", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led03", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led04", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led05", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led06", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led07", color: "rgba(245, 232, 209, 0.4)" }
         ];
 
         if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {

@@ -36,16 +36,16 @@
             <div class="flex-1 bc dpad-l" id="L"></div>
             <div class="flex-1 column" >
                 <div class="notification-container bc">
-                    <svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect id ="led00" x="04" y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led01" x="07" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led02" x="10" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led03" x="13" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led04" x="04" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led05" x="07" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led06" x="10" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                        <rect id ="led07" x="13" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.2)"/>
-                    </svg>    
+                    <svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led01"  y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led02"  x="3" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led03"  x="3" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led04"  x="6" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led05"  x="6" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led06"  x="9" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led07"  x="9" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                        </svg>  
                     <span id="noti-mess"></span>
                     <div class="flex-1"></div>
                     <span class="timer" id="timer"></span>
@@ -57,14 +57,6 @@
                     <div class="column message-container" id="">
                         <div class="flex-1" id="areaSet"></div>
                         <div class="flex-1" id=""></div>
-                        <div>
-                            <div id="input-container" class="input-container flex-1">
-                                <div id="logoOcr" class="logoOcr"></div>
-                                <div class="flex-1" style="height:18px;">
-                                    <div id="inputText" class="inputText"></div>
-                                </div> 
-                            </div>
-                        </div>
                     </div>
                     <div class="message-container visible" id="control-setting">
                         <div class="flex-1 column control-setting">
@@ -220,8 +212,14 @@
                             <div class="resizer top-left"></div> 
                           </div>
                     </div>
-                    <div class="shader Sega" id="img-shader" style=" pointer-events: none"></div>
                 </div>
+                <div id="input-container" class="input-container flex-1">
+                    <div id="logoOcr" class="logoOcr"></div>
+                    <div class="flex-1" style="height:18px;">
+                        <div id="inputText" class="inputText"></div>
+                    </div> 
+                </div>
+                <div class="shader Sega" id="img-shader" style=" pointer-events: none"></div>
             </div>
             <div class="flex-1 bc dpad-r" id="R"></div>
             <div class="save-state" id="saveStateButton"></div>
@@ -354,7 +352,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V2.04';</script>
+    <script>let gameVer = 'V2.05';</script>
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
     <script type="module" src="./src/js/gamepad.js"></script> 

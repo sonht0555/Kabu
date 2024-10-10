@@ -259,11 +259,9 @@ document.addEventListener("DOMContentLoaded", function() {
             controlSetting.classList.toggle("visible");
             if (controlSetting.classList.contains("visible")) {
                 Main.resumeGame();
-                canvas.style.borderRadius = "0px 0px 2px 2px";
                 notiMessage("Resumed!", 2000);
             } else {
                 Main.pauseGame();
-                canvas.style.borderRadius = "0px 0px 2px 2.4px";
                 notiMessage("Paused!", 2000);
             }
         })

@@ -260,11 +260,9 @@ label {
   z-index: 12;
 }
 .canvas-container {
-  border-radius: 0px 0px 2px 2px;
   background-color: #111111;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
-  overflow: hidden;
 }
 .canvas {
   border-radius: 0px 0px 0px 0px;
@@ -272,14 +270,20 @@ label {
   /* transition: opacity 0.3s ease-in-out; /*
   /* filter: brightness(1) contrast(1.1) saturate(1.4) hue-rotate(4deg) sepia(0.4) */
 }
-.shader,
 .message-container {
   position: absolute;
   width: calc(100vw - 150px);
   height: calc((100vw - 150px) * 2 / 3);
   overflow: hidden;
-  border-radius: 0px 0px 2px 2px;
   transition: opacity 1s ease-in-out;
+}
+.shader {
+  position: absolute;
+  width: calc(100vw - 150px);
+  height: calc((100vw - 150px) * 193 / 240);
+  overflow: hidden;
+  transition: opacity 1s ease-in-out;
+  border-radius: 2px 2px;
 }
 .gbc1 {
   width: calc(100vw - 230px);
@@ -682,20 +686,20 @@ dialog .rom-item {
 /*Vba-open*/
 .input-container {
   display: flex;
-  padding: 1px 6px 3px 6px;
+  padding: 0px 4px 0px 4px;
   font-family: "tuson";
   font-size: 8px;
   color: #f5e8d1;
   border-radius: 0px;
-  background: rgba(15, 27, 38, 1);
-  opacity: 0;
   appearance: none;
   box-shadow: none;
   outline: none;
   caret-color: #f5e8d1;
   border-radius: 0px;
   overflow: hidden;
-  gap: 6px;
+  gap: 4px;
+  background-color: #252525;
+  border-radius: 0px 0px 2px 2px;
 }
 .inputText {
   padding-right: 1px;
@@ -703,11 +707,12 @@ dialog .rom-item {
   overflow: auto;
   text-overflow: ellipsis;
   max-width: calc(100vw - 184px);
-  border-radius: 0px 0px 2px 2px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scrollbar-width: none;
   height: 30px;
+  position: relative;
+  bottom: 1px;
 }
 .no-inputText::-webkit-scrollbar {
   display: none;
@@ -797,6 +802,8 @@ dialog .rom-item {
   font-size: 8px;
   color: rgba(245, 232, 209, 1);
   transition: color 0.4s ease-in-out;
+  padding-left: 4px;
+  gap:4px;
 }
 .notification-container span {
   padding-top: 5px;
@@ -853,7 +860,7 @@ rect {
 .timer {
   padding-top: 5px !important;
   padding-right: 3px !important;
-  opacity: 0.2;
+  opacity: 0.4;
   font-family: "04bf" !important;
 }
 .stateDiv {
@@ -938,7 +945,7 @@ rect {
 .logoOcr {
   width: 15px;
   height: 18px;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='18' viewBox='0 0 60 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M30 7H15V15H30V7ZM24 8H16V9H24V8ZM16 14V10H20V14H16ZM19 11H18V13H19V11ZM21 14H24V13H23V11H24V10H21V14ZM27 13H28V14H29V13H28V12H29V10H25V14H27V13ZM28 11V12H27V11H28ZM25 8H29V9H25V8Z' fill='%23F5E8D1'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M45 7H30V15H45V7ZM39 8H31V9H39V8ZM31 14V10H35V14H31ZM34 11H33V13H34V11ZM36 14H39V13H38V11H39V10H36V14ZM42 13H43V14H44V13H43V12H44V10H40V14H42V13ZM43 11V12H42V11H43ZM40 8H44V9H40V8Z' fill='%2320A5A6'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M60 7H45V15H60V7ZM54 8H46V9H54V8ZM46 14V10H50V14H46ZM49 11H48V13H49V11ZM51 14H54V13H53V11H54V10H51V14ZM57 13H58V14H59V13H58V12H59V10H55V14H57V13ZM58 11V12H57V11H58ZM55 8H59V9H55V8Z' fill='%23DD5639'/%3E%3C/svg%3E%0A");
+  background: url("data:image/svg+xml,%3Csvg width='60' height='18' viewBox='0 0 60 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M30 6H15V14H30V6ZM24 7H16V8H24V7ZM16 13V9H20V13H16ZM19 10H18V12H19V10ZM21 13H24V12H23V10H24V9H21V13ZM27 12H28V13H29V12H28V11H29V9H25V13H27V12ZM28 10V11H27V10H28ZM25 7H29V8H25V7Z' fill='%23F5E8D1'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M45 6H30V14H45V6ZM39 7H31V8H39V7ZM31 13V9H35V13H31ZM34 10H33V12H34V10ZM36 13H39V12H38V10H39V9H36V13ZM42 12H43V13H44V12H43V11H44V9H40V13H42V12ZM43 10V11H42V10H43ZM40 7H44V8H40V7Z' fill='%2320A5A6'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M60 6H45V14H60V6ZM54 7H46V8H54V7ZM46 13V9H50V13H46ZM49 10H48V12H49V10ZM51 13H54V12H53V10H54V9H51V13ZM57 12H58V13H59V12H58V11H59V9H55V13H57V12ZM58 10V11H57V10H58ZM55 7H59V8H55V7Z' fill='%23DD5639'/%3E%3C/svg%3E%0A");  
   background-repeat: no-repeat;
 }
 #container {

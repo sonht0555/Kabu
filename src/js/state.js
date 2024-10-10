@@ -76,10 +76,8 @@ document.addEventListener("DOMContentLoaded", function() {
             stateList.classList.toggle("visible");
             statePageButton.classList.toggle("active");
             if (stateList.classList.contains("visible")) {
-                canvas.style.borderRadius = "0px 0px 2px 2px";
                 Main.resumeGame();
             } else {
-                canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
                 Main.pauseGame();
             }
         });

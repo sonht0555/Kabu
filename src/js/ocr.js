@@ -15,7 +15,6 @@ const ID = ['A', 'B', 'R', 'L'];
 async function getImage() {
     input.classList.add('cs22');
     turbo.classList.add('turbo-ocr');
-    canvas.style.borderRadius = "0px 0px 2.4px 2.4px";
     try {
         const gameName = localStorage.getItem("gameName");
         const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, ".png");
@@ -261,7 +260,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (!isFunctionARunning) {
                     input.classList.remove("cs22");
                     turbo.classList.remove('turbo-ocr');
-                    canvas.style.borderRadius = "0px 0px 2px 2px";
                 }
             });
         }
