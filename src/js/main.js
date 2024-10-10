@@ -101,12 +101,12 @@ function startTimer() {
 /* --------------- Export Function --------------- */
 export async function uploadGame(gameName) {
     const file = gameName.files[0];
-    Module.uploadGame(file, () => {
+    Module.uploadRom(file, () => {
         Module.FSSync();
     });
 }
 export async function loadGame(gameName) {
-    const stateName = gameName.replace(/\.(gba|gbc|gb)$/, ".ss0");
+    const stateName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
     const statesList = Module.listStates();
     intro.classList.add("disable");
     ingame.classList.remove("disable");
@@ -243,7 +243,7 @@ export async function buttonUnpress(key) {
 }
 export async function screenShot(saveSlot) {
     const gameName = localStorage.getItem("gameName");
-    const screenshotName = gameName.replace(/\.(gba|gbc|gb)$/, "_");
+    const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, "_");
     await Module.screenshot(`${screenshotName}${saveSlot}.png`);
     await Module.FSSync();
     const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`))
