@@ -4,6 +4,7 @@ var messageTimeout;
 let stateAdj = 1;
 var lockNotiTime;
 let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
+const errorLogElements = document.getElementsByClassName('errorLog');
 const ingame = document.getElementById("in-game");
 const input = document.getElementById("inputText");
 const setAdjustment = document.getElementById("setAdjustment");
@@ -241,6 +242,21 @@ async function fileToBase64(data) {
         lockNoti.classList.add("visible");
     }, second);
 }
+// lOG err
+function logError(message) {
+    if (errorLogElements.length > 0) {
+        const errorLogElement = errorLogElements[0]; 
+        errorLogElement.innerText += message + `\n---\n`;
+        errorLogElement.scrollTop = errorLogElement.scrollHeight; 
+    }
+}
+window.onerror = function (message, source, lineno) {
+    const fileName = source ? source.split('/').pop() : 'unknown source';
+    const cleanMessage = message.replace(/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i, '');
+    const errorMessage = `[Err] [${lineno}] ../${fileName} | ${cleanMessage}.`;
+    logError(errorMessage);
+    return false;
+};
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     if (savedStateAdj !== null) {

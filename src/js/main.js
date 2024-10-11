@@ -109,6 +109,7 @@ export async function loadGame(gameName) {
     const stateName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
     const statesList = Module.listStates();
     intro.classList.add("disable");
+    errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
     // check file extension
     if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
