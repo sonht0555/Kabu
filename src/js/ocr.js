@@ -13,7 +13,6 @@ const turbo = document.getElementById("turbo");
 const ID = ['A', 'B', 'R', 'L'];
 /* --------------- Function ------------------ */
 async function getImage() {
-    input.classList.add('cs22');
     turbo.classList.add('turbo-ocr');
     try {
         const gameName = localStorage.getItem("gameName");
@@ -168,7 +167,7 @@ async function azureServer(base64data) {
     }
 }
 async function translateText(textContent, sourceLang, targetLang) {
-    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').trim();
+    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').replace(/"/g, "''").trim();
     console.log(cleanData);
     var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=` + encodeURIComponent(cleanData);
     try {
@@ -269,7 +268,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (button) {
             button.addEventListener("touchstart", function() {
                 if (!isFunctionARunning) {
-                    input.classList.remove("cs22");
                     turbo.classList.remove('turbo-ocr');
                 }
             });
