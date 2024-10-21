@@ -20,7 +20,7 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     currentValue = Math.min(limit, currentValue + increment);
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
-        imgShader.style.opacity = box.textContent;
+        imgShader.style.setProperty('--before-opacity', box.textContent);
         localStorage.setItem(localStorageKey, box.textContent);
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
@@ -28,7 +28,6 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
         const brightnessX = localStorage.getItem("brightness") || 1;
         const contrastX = localStorage.getItem("contrast") || 1;
         const saturateX = localStorage.getItem("saturate") || 1;
-        const hueRotateX = localStorage.getItem("hueRotate") || 0;
         const sepiaX = localStorage.getItem("sepia") || 0;
         canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     }
@@ -40,7 +39,7 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     currentValue = Math.max(limit, currentValue - decrement);
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
-        imgShader.style.opacity = box.textContent;
+        imgShader.style.setProperty('--before-opacity', box.textContent);
         localStorage.setItem(localStorageKey, box.textContent);
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
@@ -48,7 +47,6 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
         const brightnessX = localStorage.getItem("brightness") || 1;
         const contrastX = localStorage.getItem("contrast") || 1;
         const saturateX = localStorage.getItem("saturate") || 1;
-        const hueRotateX = localStorage.getItem("hueRotate") || 0;
         const sepiaX = localStorage.getItem("sepia") || 0;
         canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     }
@@ -97,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function() {
     box8.textContent = localStorage.getItem("sepia") || 0.0;
     // Box3-8 Content
     imgShader.classList.add(localStorage.getItem("selectedShader"))
-    imgShader.style.opacity = localStorage.getItem("opacity") || 0.5;
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     // inputContainer.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     let currentShaderClass = sdValues[0];
