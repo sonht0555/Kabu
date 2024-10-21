@@ -1,4 +1,4 @@
-let revision = 'V2.14';
+let revision = 'V2.13';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -28,25 +28,9 @@ workbox.precaching.precacheAndRoute([
 ]);
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  async ({ event }) => {
-    try {
-      const staleWhileRevalidate = new workbox.strategies.StaleWhileRevalidate({
-        cacheName: 'static-resources',
-      });
-      return await staleWhileRevalidate.handle({ event });
-    } catch (error) {
-      const networkFirst = new workbox.strategies.NetworkFirst({
-        cacheName: 'network-resources',
-        networkTimeoutSeconds: 3,
-        plugins: [
-          new workbox.expiration.ExpirationPlugin({
-            maxEntries: 50,
-          }),
-        ],
-      });
-      return networkFirst.handle({ event });
-    }
-  }
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'static-resources',
+  })
 );
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
