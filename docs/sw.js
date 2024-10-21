@@ -1,4 +1,4 @@
-let revision = 'V2.08';
+let revision = 'V2.09';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -27,13 +27,13 @@ workbox.precaching.precacheAndRoute([
 ]);
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  new workbox.strategies.StaleWhileRevalidate({
+  new workbox.strategies.CacheFirst({
     cacheName: 'static-resources',
   })
 );
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
-    if (navigator.onLine) {
+    if (navigator.onLine && navigator.connection.effectiveType !== 'none') {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {

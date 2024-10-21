@@ -18,7 +18,7 @@ done
 # Increment revision in sw.js
 revision=$(grep "let revision =" ./sw.js | sed "s/.*'V//;s/'.*//")
 major_version=$(echo $revision | cut -d'.' -f1)
-minor_version=$(echo $revision | cut -d'.' -f2)
+minor_version=$(echo $revision | cut -d'.' -f2 | sed 's/^0*//')
 minor_version=$((minor_version + 1))
 
 # Handle overflow of minor version
@@ -39,7 +39,7 @@ fi
 # Increment version in index.html
 game_version=$(grep "let gameVer =" ./index.html | sed "s/.*'V//;s/';.*//")
 major_version=$(echo $game_version | cut -d'.' -f1)
-minor_version=$(echo $game_version | cut -d'.' -f2)
+minor_version=$(echo $game_version | cut -d'.' -f2 | sed 's/^0*//') 
 minor_version=$((minor_version + 1))
 
 # Handle overflow of minor version
