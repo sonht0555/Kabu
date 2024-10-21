@@ -1,4 +1,4 @@
-let revision = 'V2.12';
+let revision = 'V2.13';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -21,15 +21,32 @@ workbox.precaching.precacheAndRoute([
   { url: './src/core/mgba.js', revision: revision },
   { url: './src/core/mgba.wasm', revision: revision },
   { url: './src/library/nip.js', revision: revision },
+  { url: './src/library/interact.js', revision: revision },
   { url: './sw.js', revision: revision },
   { url: './index.html', revision: revision },
   { url: './manifest.json', revision: revision },
 ]);
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'static-resources',
-  })
+  async ({ event }) => {
+    try {
+      const staleWhileRevalidate = new workbox.strategies.StaleWhileRevalidate({
+        cacheName: 'static-resources',
+      });
+      return await staleWhileRevalidate.handle({ event });
+    } catch (error) {
+      const networkFirst = new workbox.strategies.NetworkFirst({
+        cacheName: 'network-resources',
+        networkTimeoutSeconds: 3,
+        plugins: [
+          new workbox.expiration.ExpirationPlugin({
+            maxEntries: 50,
+          }),
+        ],
+      });
+      return networkFirst.handle({ event });
+    }
+  }
 );
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
