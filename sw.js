@@ -1,4 +1,4 @@
-let revision = 'V2.22';
+let revision = 'V2.21';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -34,7 +34,7 @@ workbox.routing.registerRoute(
 );
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
-    if (navigator.onLine && navigator.connection.effectiveType !== 'none') {
+    if (navigator.onLine) {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
