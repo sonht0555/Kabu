@@ -47,7 +47,6 @@ if [ $minor_version -ge 100 ]; then
   minor_version=0
   major_version=$((major_version + 1))
 fi
-
 new_game_version="V${major_version}.$(printf "%02d" $minor_version)"
 
 # Update version in index.html
