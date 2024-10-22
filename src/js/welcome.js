@@ -10,7 +10,7 @@ async function romList() {
         const index = gameList.indexOf(lastOpenedGame);
         if (index > -1) {
             gameList.splice(index, 1); 
-            gameList.unshift(lastOpenedGame);
+            gameList.unshift(`¥ ${lastOpenedGame}`);
         }
     }
     for (const gameName of gameList) {
