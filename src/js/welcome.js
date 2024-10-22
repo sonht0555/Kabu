@@ -4,7 +4,16 @@ const romlist = document.getElementById("rom-list");
 const romInput = document.getElementById("fileInput");
 /* --------------- Function ------------------ */
 async function romList() { 
-    await Main.listGame().forEach(gameName => {
+    const lastOpenedGame = localStorage.getItem("gameName");
+    const gameList = await Main.listGame();
+    if (lastOpenedGame) {
+        const index = gameList.indexOf(lastOpenedGame);
+        if (index > -1) {
+            gameList.splice(index, 1); 
+            gameList.unshift(lastOpenedGame);
+        }
+    }
+    for (const gameName of gameList) {
         const div = Object.assign(document.createElement("div"), {
             className: "flex-1",
             textContent: gameName,
@@ -13,8 +22,8 @@ async function romList() {
                 localStorage.setItem("gameName", gameName);
             }
         });
-        romlist.insertBefore(div, romlist.firstChild);
-    });
+        romlist.appendChild(div);
+    }
 }
 async function inputGame(InputFile) {
     const gameName = InputFile.files[0].name;
