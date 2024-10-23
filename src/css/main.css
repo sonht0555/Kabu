@@ -875,6 +875,14 @@ rect {
   border-radius: 0px;
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.4);
 }
+.stateDiv.stated {
+  color: rgb(32, 165, 166);
+  background: rgba(32, 165, 166, 0.06);
+}
+.stateDiv.selected {
+  color: rgb(221, 86, 57);
+  background: rgba(221, 86, 57, 0.06);
+}
 .stateImg,
 .stateInfo {
   font-size: 8px;

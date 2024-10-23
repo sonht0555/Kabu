@@ -56,12 +56,6 @@ SDL2ID.forEach(function(id) {
     const button = document.getElementById(id);
     if (button) {
         button.addEventListener("touchstart", function() {
-            if (!stateList.classList.contains("visible")) {
-                statePageButton.classList.remove("active");
-                canvas.classList.remove("visible");
-                stateList.classList.add("visible");
-                Main.resumeGame();
-            }
             if (!areaTrans.classList.contains("visible")) {
                 areaTrans.classList.toggle("visible");
             }
