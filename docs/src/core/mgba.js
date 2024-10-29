@@ -1,15 +1,18 @@
 var mGBA = (() => {
-  var _scriptDir = import.meta.url;
+  var _scriptName = import.meta.url;
 
   return (
       function(moduleArg = {}) {
+          var moduleRtn;
 
           var Module = moduleArg;
           var readyPromiseResolve, readyPromiseReject;
-          Module["ready"] = new Promise((resolve, reject) => {
+          var readyPromise = new Promise((resolve, reject) => {
               readyPromiseResolve = resolve;
               readyPromiseReject = reject
           });
+          var ENVIRONMENT_IS_WEB = true;
+          var ENVIRONMENT_IS_WORKER = false;
           Module.loadGame = name => {
               const loadGame = cwrap("loadGame", "number", ["string"]);
               if (loadGame(name)) {
@@ -36,7 +39,7 @@ var mGBA = (() => {
           Module.listCheats = () => FS.readdir("/data/cheats/").filter((file) => file !== "." && file !== "..");
           Module.listScreenshots = () => FS.readdir("/data/screenshots/").filter((file) => file !== "." && file !== "..");
           // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-            Module.FSInit = () => new Promise((resolve, reject) => {
+          Module.FSInit = () => new Promise((resolve, reject) => {
               FS.mkdir("/data");
               FS.mount(FS.filesystems.IDBFS, {}, "/data");
               FS.syncfs(true, err => {
@@ -287,8 +290,6 @@ var mGBA = (() => {
           var quit_ = (status, toThrow) => {
               throw toThrow
           };
-          var ENVIRONMENT_IS_WEB = true;
-          var ENVIRONMENT_IS_WORKER = false;
           var scriptDirectory = "";
 
           function locateFile(path) {
@@ -297,50 +298,29 @@ var mGBA = (() => {
               }
               return scriptDirectory + path
           }
-          var read_, readAsync, readBinary;
+          var readAsync, readBinary;
           if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
               if (ENVIRONMENT_IS_WORKER) {
                   scriptDirectory = self.location.href
               } else if (typeof document != "undefined" && document.currentScript) {
                   scriptDirectory = document.currentScript.src
               }
-              if (_scriptDir) {
-                  scriptDirectory = _scriptDir
+              if (_scriptName) {
+                  scriptDirectory = _scriptName
               }
               if (scriptDirectory.startsWith("blob:")) {
                   scriptDirectory = ""
               } else {
                   scriptDirectory = scriptDirectory.substr(0, scriptDirectory.replace(/[?#].*/, "").lastIndexOf("/") + 1)
               } {
-                  read_ = url => {
-                      var xhr = new XMLHttpRequest;
-                      xhr.open("GET", url, false);
-                      xhr.send(null);
-                      return xhr.responseText
-                  };
-                  if (ENVIRONMENT_IS_WORKER) {
-                      readBinary = url => {
-                          var xhr = new XMLHttpRequest;
-                          xhr.open("GET", url, false);
-                          xhr.responseType = "arraybuffer";
-                          xhr.send(null);
-                          return new Uint8Array(xhr.response)
+                  readAsync = url => fetch(url, {
+                      credentials: "same-origin"
+                  }).then(response => {
+                      if (response.ok) {
+                          return response.arrayBuffer()
                       }
-                  }
-                  readAsync = (url, onload, onerror) => {
-                      var xhr = new XMLHttpRequest;
-                      xhr.open("GET", url, true);
-                      xhr.responseType = "arraybuffer";
-                      xhr.onload = () => {
-                          if (xhr.status == 200 || xhr.status == 0 && xhr.response) {
-                              onload(xhr.response);
-                              return
-                          }
-                          onerror()
-                      };
-                      xhr.onerror = onerror;
-                      xhr.send(null)
-                  }
+                      return Promise.reject(new Error(response.status + " : " + response.url))
+                  })
               }
           } else {}
           var out = Module["print"] || console.log.bind(console);
@@ -349,12 +329,7 @@ var mGBA = (() => {
           moduleOverrides = null;
           if (Module["arguments"]) arguments_ = Module["arguments"];
           if (Module["thisProgram"]) thisProgram = Module["thisProgram"];
-          if (Module["quit"]) quit_ = Module["quit"];
-          var wasmBinary;
-          if (Module["wasmBinary"]) wasmBinary = Module["wasmBinary"];
-          if (typeof WebAssembly != "object") {
-              abort("no native wasm support detected")
-          }
+          var wasmBinary = Module["wasmBinary"];
           var wasmMemory;
           var ABORT = false;
           var EXITSTATUS;
@@ -384,18 +359,17 @@ var mGBA = (() => {
           var runtimeInitialized = false;
 
           function preRun() {
-              if (Module["preRun"]) {
-                  if (typeof Module["preRun"] == "function") Module["preRun"] = [Module["preRun"]];
-                  while (Module["preRun"].length) {
-                      addOnPreRun(Module["preRun"].shift())
-                  }
+              var preRuns = Module["preRun"];
+              if (preRuns) {
+                  if (typeof preRuns == "function") preRuns = [preRuns];
+                  preRuns.forEach(addOnPreRun)
               }
               callRuntimeCallbacks(__ATPRERUN__)
           }
 
           function initRuntime() {
               runtimeInitialized = true;
-              if (!Module["noFSInit"] && !FS.init.initialized) FS.init();
+              if (!Module["noFSInit"] && !FS.initialized) FS.init();
               FS.ignorePermissions = false;
               TTY.init();
               callRuntimeCallbacks(__ATINIT__)
@@ -406,11 +380,10 @@ var mGBA = (() => {
           }
 
           function postRun() {
-              if (Module["postRun"]) {
-                  if (typeof Module["postRun"] == "function") Module["postRun"] = [Module["postRun"]];
-                  while (Module["postRun"].length) {
-                      addOnPostRun(Module["postRun"].shift())
-                  }
+              var postRuns = Module["postRun"];
+              if (postRuns) {
+                  if (typeof postRuns == "function") postRuns = [postRuns];
+                  postRuns.forEach(addOnPostRun)
               }
               callRuntimeCallbacks(__ATPOSTRUN__)
           }
@@ -460,7 +433,6 @@ var mGBA = (() => {
               what = "Aborted(" + what + ")";
               err(what);
               ABORT = true;
-              EXITSTATUS = 1;
               what += ". Build with -sASSERTIONS for more info.";
               var e = new WebAssembly.RuntimeError(what);
               readyPromiseReject(e);
@@ -468,15 +440,18 @@ var mGBA = (() => {
           }
           var dataURIPrefix = "data:application/octet-stream;base64,";
           var isDataURI = filename => filename.startsWith(dataURIPrefix);
-          var wasmBinaryFile;
-          if (Module["locateFile"]) {
-              wasmBinaryFile = "mgba.wasm";
-              if (!isDataURI(wasmBinaryFile)) {
-                  wasmBinaryFile = locateFile(wasmBinaryFile)
+
+          function findWasmBinary() {
+              if (Module["locateFile"]) {
+                  var f = "mgba.wasm";
+                  if (!isDataURI(f)) {
+                      return locateFile(f)
+                  }
+                  return f
               }
-          } else {
-              wasmBinaryFile = new URL("mgba.wasm", import.meta.url).href
+              return new URL("mgba.wasm", import.meta.url).href
           }
+          var wasmBinaryFile;
 
           function getBinarySync(file) {
               if (file == wasmBinaryFile && wasmBinary) {
@@ -489,23 +464,14 @@ var mGBA = (() => {
           }
 
           function getBinaryPromise(binaryFile) {
-              if (!wasmBinary && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER)) {
-                  if (typeof fetch == "function") {
-                      return fetch(binaryFile, {
-                          credentials: "same-origin"
-                      }).then(response => {
-                          if (!response["ok"]) {
-                              throw `failed to load wasm binary file at '${binaryFile}'`
-                          }
-                          return response["arrayBuffer"]()
-                      }).catch(() => getBinarySync(binaryFile))
-                  }
+              if (!wasmBinary) {
+                  return readAsync(binaryFile).then(response => new Uint8Array(response), () => getBinarySync(binaryFile))
               }
               return Promise.resolve().then(() => getBinarySync(binaryFile))
           }
 
           function instantiateArrayBuffer(binaryFile, imports, receiver) {
-              return getBinaryPromise(binaryFile).then(binary => WebAssembly.instantiate(binary, imports)).then(instance => instance).then(receiver, reason => {
+              return getBinaryPromise(binaryFile).then(binary => WebAssembly.instantiate(binary, imports)).then(receiver, reason => {
                   err(`failed to asynchronously prepare wasm: ${reason}`);
                   abort(reason)
               })
@@ -527,17 +493,21 @@ var mGBA = (() => {
               return instantiateArrayBuffer(binaryFile, imports, callback)
           }
 
+          function getWasmImports() {
+              return {
+                  a: wasmImports
+              }
+          }
+
           function createWasm() {
-              var info = {
-                  "a": wasmImports
-              };
+              var info = getWasmImports();
 
               function receiveInstance(instance, module) {
                   wasmExports = instance.exports;
-                  wasmMemory = wasmExports["_d"];
+                  wasmMemory = wasmExports["ee"];
                   updateMemoryViews();
-                  wasmTable = wasmExports["Ae"];
-                  addOnInit(wasmExports["$d"]);
+                  wasmTable = wasmExports["ge"];
+                  addOnInit(wasmExports["fe"]);
                   removeRunDependency("wasm-instantiate");
                   return wasmExports
               }
@@ -554,17 +524,18 @@ var mGBA = (() => {
                       readyPromiseReject(e)
                   }
               }
+              wasmBinaryFile ??= findWasmBinary();
               instantiateAsync(wasmBinary, wasmBinaryFile, info, receiveInstantiationResult).catch(readyPromiseReject);
               return {}
           }
           var tempDouble;
           var tempI64;
           var ASM_CONSTS = {
-              272368: ($0, $1) => {
+              279880: ($0, $1) => {
                   Module.canvas.width = $0;
                   Module.canvas.height = $1
               },
-              272425: ($0, $1, $2, $3, $4, $5, $6) => {
+              279937: ($0, $1, $2, $3, $4, $5, $6) => {
                   Module.version = {
                       gitCommit: UTF8ToString($0),
                       gitShort: UTF8ToString($1),
@@ -575,12 +546,20 @@ var mGBA = (() => {
                       projectVersion: UTF8ToString($6)
                   }
               },
-              272657: () => {
+              280169: () => {
                   FS.syncfs(function(err) {
                       assert(!err)
                   })
               },
-              272701: () => {
+              280213: $0 => {
+                  var str = UTF8ToString($0) + "\n\n" + "Abort/Retry/Ignore/AlwaysIgnore? [ariA] :";
+                  var reply = window.prompt(str, "i");
+                  if (reply === null) {
+                      reply = "i"
+                  }
+                  return allocate(intArrayFromString(reply), "i8", ALLOC_NORMAL)
+              },
+              280438: () => {
                   if (typeof AudioContext !== "undefined") {
                       return true
                   } else if (typeof webkitAudioContext !== "undefined") {
@@ -588,7 +567,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              272848: () => {
+              280585: () => {
                   if (typeof navigator.mediaDevices !== "undefined" && typeof navigator.mediaDevices.getUserMedia !== "undefined") {
                       return true
                   } else if (typeof navigator.webkitGetUserMedia !== "undefined") {
@@ -596,7 +575,7 @@ var mGBA = (() => {
                   }
                   return false
               },
-              273082: $0 => {
+              280819: $0 => {
                   if (typeof Module["SDL2"] === "undefined") {
                       Module["SDL2"] = {}
                   }
@@ -613,21 +592,24 @@ var mGBA = (() => {
                           SDL2.audioContext = new webkitAudioContext
                       }
                       if (SDL2.audioContext) {
-                          autoResumeAudioContext(SDL2.audioContext)
+                          if (typeof navigator.userActivation === "undefined") {
+                              autoResumeAudioContext(SDL2.audioContext)
+                          }
                       }
                   }
                   return SDL2.audioContext === undefined ? -1 : 0
               },
-              273575: () => {
+              281371: () => {
                   var SDL2 = Module["SDL2"];
                   return SDL2.audioContext.sampleRate
               },
-              273643: ($0, $1, $2, $3) => {
+              281439: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   var have_microphone = function(stream) {
                       if (SDL2.capture.silenceTimer !== undefined) {
-                          clearTimeout(SDL2.capture.silenceTimer);
-                          SDL2.capture.silenceTimer = undefined
+                          clearInterval(SDL2.capture.silenceTimer);
+                          SDL2.capture.silenceTimer = undefined;
+                          SDL2.capture.silenceBuffer = undefined
                       }
                       SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream);
                       SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1);
@@ -650,7 +632,7 @@ var mGBA = (() => {
                       SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer;
                       dynCall("vi", $2, [$3])
                   };
-                  SDL2.capture.silenceTimer = setTimeout(silence_callback, $1 / SDL2.audioContext.sampleRate * 1e3);
+                  SDL2.capture.silenceTimer = setInterval(silence_callback, $1 / SDL2.audioContext.sampleRate * 1e3);
                   if (navigator.mediaDevices !== undefined && navigator.mediaDevices.getUserMedia !== undefined) {
                       navigator.mediaDevices.getUserMedia({
                           audio: true,
@@ -663,19 +645,39 @@ var mGBA = (() => {
                       }, have_microphone, no_microphone)
                   }
               },
-              275295: ($0, $1, $2, $3) => {
+              283132: ($0, $1, $2, $3) => {
                   var SDL2 = Module["SDL2"];
                   SDL2.audio.scriptProcessorNode = SDL2.audioContext["createScriptProcessor"]($1, 0, $0);
                   SDL2.audio.scriptProcessorNode["onaudioprocess"] = function(e) {
                       if (SDL2 === undefined || SDL2.audio === undefined) {
                           return
                       }
+                      if (SDL2.audio.silenceTimer !== undefined) {
+                          clearInterval(SDL2.audio.silenceTimer);
+                          SDL2.audio.silenceTimer = undefined;
+                          SDL2.audio.silenceBuffer = undefined
+                      }
                       SDL2.audio.currentOutputBuffer = e["outputBuffer"];
                       dynCall("vi", $2, [$3])
                   };
-                  SDL2.audio.scriptProcessorNode["connect"](SDL2.audioContext["destination"])
+                  SDL2.audio.scriptProcessorNode["connect"](SDL2.audioContext["destination"]);
+                  if (SDL2.audioContext.state === "suspended") {
+                      SDL2.audio.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate);
+                      SDL2.audio.silenceBuffer.getChannelData(0).fill(0);
+                      var silence_callback = function() {
+                          if (typeof navigator.userActivation !== "undefined") {
+                              if (navigator.userActivation.hasBeenActive) {
+                                  SDL2.audioContext.resume()
+                              }
+                          }
+                          SDL2.audio.currentOutputBuffer = SDL2.audio.silenceBuffer;
+                          dynCall("vi", $2, [$3]);
+                          SDL2.audio.currentOutputBuffer = undefined
+                      };
+                      SDL2.audio.silenceTimer = setInterval(silence_callback, $1 / SDL2.audioContext.sampleRate * 1e3)
+                  }
               },
-              275705: ($0, $1) => {
+              284307: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
                   var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
                   for (var c = 0; c < numChannels; ++c) {
@@ -694,8 +696,9 @@ var mGBA = (() => {
                       }
                   }
               },
-              276310: ($0, $1) => {
+              284912: ($0, $1) => {
                   var SDL2 = Module["SDL2"];
+                  var buf = $0 >>> 2;
                   var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
                   for (var c = 0; c < numChannels; ++c) {
                       var channelData = SDL2.audio.currentOutputBuffer["getChannelData"](c);
@@ -703,40 +706,36 @@ var mGBA = (() => {
                           throw "Web Audio output buffer length mismatch! Destination size: " + channelData.length + " samples vs expected " + $1 + " samples!"
                       }
                       for (var j = 0; j < $1; ++j) {
-                          channelData[j] = HEAPF32[$0 + (j * numChannels + c << 2) >> 2]
+                          channelData[j] = HEAPF32[buf + (j * numChannels + c)]
                       }
                   }
               },
-              276790: $0 => {
+              285401: $0 => {
                   var SDL2 = Module["SDL2"];
                   if ($0) {
                       if (SDL2.capture.silenceTimer !== undefined) {
-                          clearTimeout(SDL2.capture.silenceTimer)
+                          clearInterval(SDL2.capture.silenceTimer)
                       }
                       if (SDL2.capture.stream !== undefined) {
                           var tracks = SDL2.capture.stream.getAudioTracks();
                           for (var i = 0; i < tracks.length; i++) {
                               SDL2.capture.stream.removeTrack(tracks[i])
                           }
-                          SDL2.capture.stream = undefined
                       }
                       if (SDL2.capture.scriptProcessorNode !== undefined) {
                           SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {};
-                          SDL2.capture.scriptProcessorNode.disconnect();
-                          SDL2.capture.scriptProcessorNode = undefined
+                          SDL2.capture.scriptProcessorNode.disconnect()
                       }
                       if (SDL2.capture.mediaStreamNode !== undefined) {
-                          SDL2.capture.mediaStreamNode.disconnect();
-                          SDL2.capture.mediaStreamNode = undefined
-                      }
-                      if (SDL2.capture.silenceBuffer !== undefined) {
-                          SDL2.capture.silenceBuffer = undefined
+                          SDL2.capture.mediaStreamNode.disconnect()
                       }
                       SDL2.capture = undefined
                   } else {
                       if (SDL2.audio.scriptProcessorNode != undefined) {
-                          SDL2.audio.scriptProcessorNode.disconnect();
-                          SDL2.audio.scriptProcessorNode = undefined
+                          SDL2.audio.scriptProcessorNode.disconnect()
+                      }
+                      if (SDL2.audio.silenceTimer !== undefined) {
+                          clearInterval(SDL2.audio.silenceTimer)
                       }
                       SDL2.audio = undefined
                   }
@@ -745,7 +744,7 @@ var mGBA = (() => {
                       SDL2.audioContext = undefined
                   }
               },
-              277962: ($0, $1, $2) => {
+              286407: ($0, $1, $2) => {
                   var w = $0;
                   var h = $1;
                   var pixels = $2;
@@ -762,7 +761,7 @@ var mGBA = (() => {
                       SDL2.imageCtx = SDL2.ctx
                   }
                   var data = SDL2.image.data;
-                  var src = pixels >> 2;
+                  var src = pixels / 4;
                   var dst = 0;
                   var num;
                   if (typeof CanvasPixelArray !== "undefined" && data instanceof CanvasPixelArray) {
@@ -816,7 +815,7 @@ var mGBA = (() => {
                   }
                   SDL2.ctx.putImageData(SDL2.image, 0, 0)
               },
-              279431: ($0, $1, $2, $3, $4) => {
+              287875: ($0, $1, $2, $3, $4) => {
                   var w = $0;
                   var h = $1;
                   var hot_x = $2;
@@ -828,7 +827,7 @@ var mGBA = (() => {
                   var ctx = canvas.getContext("2d");
                   var image = ctx.createImageData(w, h);
                   var data = image.data;
-                  var src = pixels >> 2;
+                  var src = pixels / 4;
                   var dst = 0;
                   var num;
                   if (typeof CanvasPixelArray !== "undefined" && data instanceof CanvasPixelArray) {
@@ -853,18 +852,18 @@ var mGBA = (() => {
                   stringToUTF8(url, urlBuf, url.length + 1);
                   return urlBuf
               },
-              280420: $0 => {
+              288863: $0 => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = UTF8ToString($0)
                   }
               },
-              280503: () => {
+              288946: () => {
                   if (Module["canvas"]) {
                       Module["canvas"].style["cursor"] = "none"
                   }
               },
-              280572: () => window.innerWidth,
-              280602: () => window.innerHeight
+              289015: () => window.innerWidth,
+              289045: () => window.innerHeight
           };
 
           function ExitStatus(status) {
@@ -872,49 +871,8 @@ var mGBA = (() => {
               this.message = `Program terminated with exit(${status})`;
               this.status = status
           }
-          var listenOnce = (object, event, func) => {
-              object.addEventListener(event, func, {
-                  "once": true
-              })
-          };
-          var autoResumeAudioContext = (ctx, elements) => {
-              if (!elements) {
-                  elements = [document, document.getElementById("canvas")]
-              } ["keydown", "mousedown", "touchstart"].forEach(event => {
-                  elements.forEach(element => {
-                      if (element) {
-                          listenOnce(element, event, () => {
-                              if (ctx.state === "suspended") ctx.resume()
-                          })
-                      }
-                  })
-              })
-          };
           var callRuntimeCallbacks = callbacks => {
-              while (callbacks.length > 0) {
-                  callbacks.shift()(Module)
-              }
-          };
-          var dynCallLegacy = (sig, ptr, args) => {
-              var f = Module["dynCall_" + sig];
-              return args && args.length ? f.apply(null, [ptr].concat(args)) : f.call(null, ptr)
-          };
-          var wasmTableMirror = [];
-          var wasmTable;
-          var getWasmTableEntry = funcPtr => {
-              var func = wasmTableMirror[funcPtr];
-              if (!func) {
-                  if (funcPtr >= wasmTableMirror.length) wasmTableMirror.length = funcPtr + 1;
-                  wasmTableMirror[funcPtr] = func = wasmTable.get(funcPtr)
-              }
-              return func
-          };
-          var dynCall = (sig, ptr, args) => {
-              if (sig.includes("j")) {
-                  return dynCallLegacy(sig, ptr, args)
-              }
-              var rtn = getWasmTableEntry(ptr).apply(null, args);
-              return rtn
+              callbacks.forEach(f => f(Module))
           };
           var noExitRuntime = Module["noExitRuntime"] || true;
 
@@ -922,10 +880,10 @@ var mGBA = (() => {
               if (type.endsWith("*")) type = "*";
               switch (type) {
                   case "i1":
-                      HEAP8[ptr >> 0] = value;
+                      HEAP8[ptr] = value;
                       break;
                   case "i8":
-                      HEAP8[ptr >> 0] = value;
+                      HEAP8[ptr] = value;
                       break;
                   case "i16":
                       HEAP16[ptr >> 1] = value;
@@ -948,6 +906,15 @@ var mGBA = (() => {
                       abort(`invalid type for setValue: ${type}`)
               }
           }
+          var stackRestore = val => __emscripten_stack_restore(val);
+          var stackSave = () => _emscripten_stack_get_current();
+
+          function syscallGetVarargI() {
+              var ret = HEAP32[+SYSCALLS.varargs >> 2];
+              SYSCALLS.varargs += 4;
+              return ret
+          }
+          var syscallGetVarargP = syscallGetVarargI;
           var PATH = {
               isAbs: path => path.charAt(0) === "/",
               splitPath: filename => {
@@ -1007,10 +974,7 @@ var mGBA = (() => {
                   if (lastSlash === -1) return path;
                   return path.substr(lastSlash + 1)
               },
-              join: function() {
-                  var paths = Array.prototype.slice.call(arguments);
-                  return PATH.normalize(paths.join("/"))
-              },
+              join: (...paths) => PATH.normalize(paths.join("/")),
               join2: (l, r) => PATH.normalize(l + "/" + r)
           };
           var initRandomFill = () => {
@@ -1020,11 +984,11 @@ var mGBA = (() => {
           };
           var randomFill = view => (randomFill = initRandomFill())(view);
           var PATH_FS = {
-              resolve: function() {
+              resolve: (...args) => {
                   var resolvedPath = "",
                       resolvedAbsolute = false;
-                  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-                      var path = i >= 0 ? arguments[i] : FS.cwd();
+                  for (var i = args.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+                      var path = i >= 0 ? args[i] : FS.cwd();
                       if (typeof path != "string") {
                           throw new TypeError("Arguments to path.resolve must be strings")
                       } else if (!path) {
@@ -1070,8 +1034,8 @@ var mGBA = (() => {
                   return outputParts.join("/")
               }
           };
-          var UTF8Decoder = typeof TextDecoder != "undefined" ? new TextDecoder("utf8") : undefined;
-          var UTF8ArrayToString = (heapOrArray, idx, maxBytesToRead) => {
+          var UTF8Decoder = typeof TextDecoder != "undefined" ? new TextDecoder : undefined;
+          var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
               var endIdx = idx + maxBytesToRead;
               var endPtr = idx;
               while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
@@ -1172,12 +1136,7 @@ var mGBA = (() => {
                       if (result !== null) {
                           result += "\n"
                       }
-                  } else if (typeof readline == "function") {
-                      result = readline();
-                      if (result !== null) {
-                          result += "\n"
-                      }
-                  }
+                  } else {}
                   if (!result) {
                       return null
                   }
@@ -1193,7 +1152,7 @@ var mGBA = (() => {
                   TTY.ttys[dev] = {
                       input: [],
                       output: [],
-                      ops: ops
+                      ops
                   };
                   FS.registerDevice(dev, TTY.stream_ops)
               },
@@ -1259,7 +1218,7 @@ var mGBA = (() => {
                   },
                   put_char(tty, val) {
                       if (val === null || val === 10) {
-                          out(UTF8ArrayToString(tty.output, 0));
+                          out(UTF8ArrayToString(tty.output));
                           tty.output = []
                       } else {
                           if (val != 0) tty.output.push(val)
@@ -1267,7 +1226,7 @@ var mGBA = (() => {
                   },
                   fsync(tty) {
                       if (tty.output && tty.output.length > 0) {
-                          out(UTF8ArrayToString(tty.output, 0));
+                          out(UTF8ArrayToString(tty.output));
                           tty.output = []
                       }
                   },
@@ -1290,7 +1249,7 @@ var mGBA = (() => {
               default_tty1_ops: {
                   put_char(tty, val) {
                       if (val === null || val === 10) {
-                          err(UTF8ArrayToString(tty.output, 0));
+                          err(UTF8ArrayToString(tty.output));
                           tty.output = []
                       } else {
                           if (val != 0) tty.output.push(val)
@@ -1298,22 +1257,21 @@ var mGBA = (() => {
                   },
                   fsync(tty) {
                       if (tty.output && tty.output.length > 0) {
-                          err(UTF8ArrayToString(tty.output, 0));
+                          err(UTF8ArrayToString(tty.output));
                           tty.output = []
                       }
                   }
               }
           };
           var zeroMemory = (address, size) => {
-              HEAPU8.fill(0, address, address + size);
-              return address
+              HEAPU8.fill(0, address, address + size)
           };
           var alignMemory = (size, alignment) => Math.ceil(size / alignment) * alignment;
           var mmapAlloc = size => {
               size = alignMemory(size, 65536);
               var ptr = _emscripten_builtin_memalign(65536, size);
-              if (!ptr) return 0;
-              return zeroMemory(ptr, size)
+              if (ptr) zeroMemory(ptr, size);
+              return ptr
           };
           var MEMFS = {
               ops_table: null,
@@ -1483,8 +1441,7 @@ var mGBA = (() => {
                       old_node.parent.timestamp = Date.now();
                       old_node.name = new_name;
                       new_dir.contents[new_name] = old_node;
-                      new_dir.timestamp = old_node.parent.timestamp;
-                      old_node.parent = new_dir
+                      new_dir.timestamp = old_node.parent.timestamp
                   },
                   unlink(parent, name) {
                       delete parent.contents[name];
@@ -1586,27 +1543,29 @@ var mGBA = (() => {
                       var ptr;
                       var allocated;
                       var contents = stream.node.contents;
-                      if (!(flags & 2) && contents.buffer === HEAP8.buffer) {
+                      if (!(flags & 2) && contents && contents.buffer === HEAP8.buffer) {
                           allocated = false;
                           ptr = contents.byteOffset
                       } else {
-                          if (position > 0 || position + length < contents.length) {
-                              if (contents.subarray) {
-                                  contents = contents.subarray(position, position + length)
-                              } else {
-                                  contents = Array.prototype.slice.call(contents, position, position + length)
-                              }
-                          }
                           allocated = true;
                           ptr = mmapAlloc(length);
                           if (!ptr) {
                               throw new FS.ErrnoError(48)
                           }
-                          HEAP8.set(contents, ptr)
+                          if (contents) {
+                              if (position > 0 || position + length < contents.length) {
+                                  if (contents.subarray) {
+                                      contents = contents.subarray(position, position + length)
+                                  } else {
+                                      contents = Array.prototype.slice.call(contents, position, position + length)
+                                  }
+                              }
+                              HEAP8.set(contents, ptr)
+                          }
                       }
                       return {
-                          ptr: ptr,
-                          allocated: allocated
+                          ptr,
+                          allocated
                       }
                   },
                   msync(stream, buffer, offset, length, mmapFlags) {
@@ -1617,10 +1576,10 @@ var mGBA = (() => {
           };
           var asyncLoad = (url, onload, onerror, noRunDep) => {
               var dep = !noRunDep ? getUniqueRunDependency(`al ${url}`) : "";
-              readAsync(url, arrayBuffer => {
+              readAsync(url).then(arrayBuffer => {
                   onload(new Uint8Array(arrayBuffer));
                   if (dep) removeRunDependency(dep)
-              }, event => {
+              }, err => {
                   if (onerror) {
                       onerror()
                   } else {
@@ -1675,11 +1634,11 @@ var mGBA = (() => {
           };
           var FS_modeStringToFlags = str => {
               var flagModes = {
-                  "r": 0,
+                  r: 0,
                   "r+": 2,
-                  "w": 512 | 64 | 1,
+                  w: 512 | 64 | 1,
                   "w+": 512 | 64 | 2,
-                  "a": 1024 | 64 | 1,
+                  a: 1024 | 64 | 1,
                   "a+": 1024 | 64 | 2
               };
               var flags = flagModes[str];
@@ -1700,13 +1659,59 @@ var mGBA = (() => {
                   if (typeof indexedDB != "undefined") return indexedDB;
                   var ret = null;
                   if (typeof window == "object") ret = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-                  assert(ret, "IDBFS used, but indexedDB not supported");
                   return ret
               },
               DB_VERSION: 21,
               DB_STORE_NAME: "FILE_DATA",
-              mount: function(mount) {
-                  return MEMFS.mount.apply(null, arguments)
+              queuePersist: mount => {
+                  function onPersistComplete() {
+                      if (mount.idbPersistState === "again") startPersist();
+                      else mount.idbPersistState = 0
+                  }
+
+                  function startPersist() {
+                      mount.idbPersistState = "idb";
+                      IDBFS.syncfs(mount, false, onPersistComplete)
+                  }
+                  if (!mount.idbPersistState) {
+                      mount.idbPersistState = setTimeout(startPersist, 0)
+                  } else if (mount.idbPersistState === "idb") {
+                      mount.idbPersistState = "again"
+                  }
+              },
+              mount: mount => {
+                  var mnt = MEMFS.mount(mount);
+                  if (mount?.opts?.autoPersist) {
+                      mnt.idbPersistState = 0;
+                      var memfs_node_ops = mnt.node_ops;
+                      mnt.node_ops = Object.assign({}, mnt.node_ops);
+                      mnt.node_ops.mknod = (parent, name, mode, dev) => {
+                          var node = memfs_node_ops.mknod(parent, name, mode, dev);
+                          node.node_ops = mnt.node_ops;
+                          node.idbfs_mount = mnt.mount;
+                          node.memfs_stream_ops = node.stream_ops;
+                          node.stream_ops = Object.assign({}, node.stream_ops);
+                          node.stream_ops.write = (stream, buffer, offset, length, position, canOwn) => {
+                              stream.node.isModified = true;
+                              return node.memfs_stream_ops.write(stream, buffer, offset, length, position, canOwn)
+                          };
+                          node.stream_ops.close = stream => {
+                              var n = stream.node;
+                              if (n.isModified) {
+                                  IDBFS.queuePersist(n.idbfs_mount);
+                                  n.isModified = false
+                              }
+                              if (n.memfs_stream_ops.close) return n.memfs_stream_ops.close(stream)
+                          };
+                          return node
+                      };
+                      mnt.node_ops.mkdir = (...args) => (IDBFS.queuePersist(mnt.mount), memfs_node_ops.mkdir(...args));
+                      mnt.node_ops.rmdir = (...args) => (IDBFS.queuePersist(mnt.mount), memfs_node_ops.rmdir(...args));
+                      mnt.node_ops.symlink = (...args) => (IDBFS.queuePersist(mnt.mount), memfs_node_ops.symlink(...args));
+                      mnt.node_ops.unlink = (...args) => (IDBFS.queuePersist(mnt.mount), memfs_node_ops.unlink(...args));
+                      mnt.node_ops.rename = (...args) => (IDBFS.queuePersist(mnt.mount), memfs_node_ops.rename(...args))
+                  }
+                  return mnt
               },
               syncfs: (mount, populate, callback) => {
                   IDBFS.getLocalSet(mount, (err, local) => {
@@ -1782,15 +1787,15 @@ var mGBA = (() => {
                           return callback(e)
                       }
                       if (FS.isDir(stat.mode)) {
-                          check.push.apply(check, FS.readdir(path).filter(isRealDir).map(toAbsolute(path)))
+                          check.push(...FS.readdir(path).filter(isRealDir).map(toAbsolute(path)))
                       }
                       entries[path] = {
-                          "timestamp": stat.mtime
+                          timestamp: stat.mtime
                       }
                   }
                   return callback(null, {
                       type: "local",
-                      entries: entries
+                      entries
                   })
               },
               getRemoteSet: (mount, callback) => {
@@ -1810,12 +1815,12 @@ var mGBA = (() => {
                               if (!cursor) {
                                   return callback(null, {
                                       type: "remote",
-                                      db: db,
-                                      entries: entries
+                                      db,
+                                      entries
                                   })
                               }
                               entries[cursor.primaryKey] = {
-                                  "timestamp": cursor.key
+                                  timestamp: cursor.key
                               };
                               cursor.continue()
                           }
@@ -1835,15 +1840,15 @@ var mGBA = (() => {
                   }
                   if (FS.isDir(stat.mode)) {
                       return callback(null, {
-                          "timestamp": stat.mtime,
-                          "mode": stat.mode
+                          timestamp: stat.mtime,
+                          mode: stat.mode
                       })
                   } else if (FS.isFile(stat.mode)) {
                       node.contents = MEMFS.getFileDataAsTypedArray(node);
                       return callback(null, {
-                          "timestamp": stat.mtime,
-                          "mode": stat.mode,
-                          "contents": node.contents
+                          timestamp: stat.mtime,
+                          mode: stat.mode,
+                          contents: node.contents
                       })
                   } else {
                       return callback(new Error("node type not supported"))
@@ -1912,7 +1917,7 @@ var mGBA = (() => {
               reconcile: (src, dst, callback) => {
                   var total = 0;
                   var create = [];
-                  Object.keys(src.entries).forEach(function(key) {
+                  Object.keys(src.entries).forEach(key => {
                       var e = src.entries[key];
                       var e2 = dst.entries[key];
                       if (!e2 || e["timestamp"].getTime() != e2["timestamp"].getTime()) {
@@ -1921,7 +1926,7 @@ var mGBA = (() => {
                       }
                   });
                   var remove = [];
-                  Object.keys(dst.entries).forEach(function(key) {
+                  Object.keys(dst.entries).forEach(key => {
                       if (!src.entries[key]) {
                           remove.push(key);
                           total++
@@ -1941,8 +1946,8 @@ var mGBA = (() => {
                           return callback(err)
                       }
                   }
-                  transaction.onerror = e => {
-                      done(this.error);
+                  transaction.onerror = transaction.onabort = e => {
+                      done(e.target.error);
                       e.preventDefault()
                   };
                   transaction.oncomplete = e => {
@@ -1991,6 +1996,75 @@ var mGBA = (() => {
               genericErrors: {},
               filesystems: null,
               syncFSRequests: 0,
+              readFiles: {},
+              FSStream: class {
+                  constructor() {
+                      this.shared = {}
+                  }
+                  get object() {
+                      return this.node
+                  }
+                  set object(val) {
+                      this.node = val
+                  }
+                  get isRead() {
+                      return (this.flags & 2097155) !== 1
+                  }
+                  get isWrite() {
+                      return (this.flags & 2097155) !== 0
+                  }
+                  get isAppend() {
+                      return this.flags & 1024
+                  }
+                  get flags() {
+                      return this.shared.flags
+                  }
+                  set flags(val) {
+                      this.shared.flags = val
+                  }
+                  get position() {
+                      return this.shared.position
+                  }
+                  set position(val) {
+                      this.shared.position = val
+                  }
+              },
+              FSNode: class {
+                  constructor(parent, name, mode, rdev) {
+                      if (!parent) {
+                          parent = this
+                      }
+                      this.parent = parent;
+                      this.mount = parent.mount;
+                      this.mounted = null;
+                      this.id = FS.nextInode++;
+                      this.name = name;
+                      this.mode = mode;
+                      this.node_ops = {};
+                      this.stream_ops = {};
+                      this.rdev = rdev;
+                      this.readMode = 292 | 73;
+                      this.writeMode = 146
+                  }
+                  get read() {
+                      return (this.mode & this.readMode) === this.readMode
+                  }
+                  set read(val) {
+                      val ? this.mode |= this.readMode : this.mode &= ~this.readMode
+                  }
+                  get write() {
+                      return (this.mode & this.writeMode) === this.writeMode
+                  }
+                  set write(val) {
+                      val ? this.mode |= this.writeMode : this.mode &= ~this.writeMode
+                  }
+                  get isFolder() {
+                      return FS.isDir(this.mode)
+                  }
+                  get isDevice() {
+                      return FS.isChrdev(this.mode)
+                  }
+              },
               lookupPath(path, opts = {}) {
                   path = PATH_FS.resolve(path);
                   if (!path) return {
@@ -2218,53 +2292,6 @@ var mGBA = (() => {
               },
               getStream: fd => FS.streams[fd],
               createStream(stream, fd = -1) {
-                  if (!FS.FSStream) {
-                      FS.FSStream = function() {
-                          this.shared = {}
-                      };
-                      FS.FSStream.prototype = {};
-                      Object.defineProperties(FS.FSStream.prototype, {
-                          object: {
-                              get() {
-                                  return this.node
-                              },
-                              set(val) {
-                                  this.node = val
-                              }
-                          },
-                          isRead: {
-                              get() {
-                                  return (this.flags & 2097155) !== 1
-                              }
-                          },
-                          isWrite: {
-                              get() {
-                                  return (this.flags & 2097155) !== 0
-                              }
-                          },
-                          isAppend: {
-                              get() {
-                                  return this.flags & 1024
-                              }
-                          },
-                          flags: {
-                              get() {
-                                  return this.shared.flags
-                              },
-                              set(val) {
-                                  this.shared.flags = val
-                              }
-                          },
-                          position: {
-                              get() {
-                                  return this.shared.position
-                              },
-                              set(val) {
-                                  this.shared.position = val
-                              }
-                          }
-                      })
-                  }
                   stream = Object.assign(new FS.FSStream, stream);
                   if (fd == -1) {
                       fd = FS.nextfd()
@@ -2275,6 +2302,11 @@ var mGBA = (() => {
               },
               closeStream(fd) {
                   FS.streams[fd] = null
+              },
+              dupStream(origStream, fd = -1) {
+                  var stream = FS.createStream(origStream, fd);
+                  stream.stream_ops?.dup?.(stream);
+                  return stream
               },
               chrdev_stream_ops: {
                   open(stream) {
@@ -2301,7 +2333,7 @@ var mGBA = (() => {
                   while (check.length) {
                       var m = check.pop();
                       mounts.push(m);
-                      check.push.apply(check, m.mounts)
+                      check.push(...m.mounts)
                   }
                   return mounts
               },
@@ -2361,9 +2393,9 @@ var mGBA = (() => {
                       }
                   }
                   var mount = {
-                      type: type,
-                      opts: opts,
-                      mountpoint: mountpoint,
+                      type,
+                      opts,
+                      mountpoint,
                       mounts: []
                   };
                   var mountRoot = type.mount(mount);
@@ -2535,7 +2567,8 @@ var mGBA = (() => {
                   }
                   FS.hashRemoveNode(old_node);
                   try {
-                      old_dir.node_ops.rename(old_node, new_dir, new_name)
+                      old_dir.node_ops.rename(old_node, new_dir, new_name);
+                      old_node.parent = new_dir
                   } catch (e) {
                       throw e
                   } finally {
@@ -2723,8 +2756,8 @@ var mGBA = (() => {
                       throw new FS.ErrnoError(44)
                   }
                   flags = typeof flags == "string" ? FS_modeStringToFlags(flags) : flags;
-                  mode = typeof mode == "undefined" ? 438 : mode;
                   if (flags & 64) {
+                      mode = typeof mode == "undefined" ? 438 : mode;
                       mode = mode & 4095 | 32768
                   } else {
                       mode = 0
@@ -2772,9 +2805,9 @@ var mGBA = (() => {
                   }
                   flags &= ~(128 | 512 | 131072);
                   var stream = FS.createStream({
-                      node: node,
+                      node,
                       path: FS.getPath(node),
-                      flags: flags,
+                      flags,
                       seekable: true,
                       position: 0,
                       stream_ops: node.stream_ops,
@@ -2785,7 +2818,6 @@ var mGBA = (() => {
                       stream.stream_ops.open(stream)
                   }
                   if (Module["logReadFiles"] && !(flags & 1)) {
-                      if (!FS.readFiles) FS.readFiles = {};
                       if (!(path in FS.readFiles)) {
                           FS.readFiles[path] = 1
                       }
@@ -2908,6 +2940,9 @@ var mGBA = (() => {
                   if (!stream.stream_ops.mmap) {
                       throw new FS.ErrnoError(43)
                   }
+                  if (!length) {
+                      throw new FS.ErrnoError(28)
+                  }
                   return stream.stream_ops.mmap(stream, length, position, prot, flags)
               },
               msync(stream, buffer, offset, length, mmapFlags) {
@@ -2916,7 +2951,6 @@ var mGBA = (() => {
                   }
                   return stream.stream_ops.msync(stream, buffer, offset, length, mmapFlags)
               },
-              munmap: stream => 0,
               ioctl(stream, cmd, arg) {
                   if (!stream.stream_ops.ioctl) {
                       throw new FS.ErrnoError(59)
@@ -2936,7 +2970,7 @@ var mGBA = (() => {
                   var buf = new Uint8Array(length);
                   FS.read(stream, buf, 0, length, 0);
                   if (opts.encoding === "utf8") {
-                      ret = UTF8ArrayToString(buf, 0)
+                      ret = UTF8ArrayToString(buf)
                   } else if (opts.encoding === "binary") {
                       ret = buf
                   }
@@ -3031,19 +3065,19 @@ var mGBA = (() => {
                       }
                   }, {}, "/proc/self/fd")
               },
-              createStandardStreams() {
-                  if (Module["stdin"]) {
-                      FS.createDevice("/dev", "stdin", Module["stdin"])
+              createStandardStreams(input, output, error) {
+                  if (input) {
+                      FS.createDevice("/dev", "stdin", input)
                   } else {
                       FS.symlink("/dev/tty", "/dev/stdin")
                   }
-                  if (Module["stdout"]) {
-                      FS.createDevice("/dev", "stdout", null, Module["stdout"])
+                  if (output) {
+                      FS.createDevice("/dev", "stdout", null, output)
                   } else {
                       FS.symlink("/dev/tty", "/dev/stdout")
                   }
-                  if (Module["stderr"]) {
-                      FS.createDevice("/dev", "stderr", null, Module["stderr"])
+                  if (error) {
+                      FS.createDevice("/dev", "stderr", null, error)
                   } else {
                       FS.symlink("/dev/tty1", "/dev/stderr")
                   }
@@ -3062,19 +3096,19 @@ var mGBA = (() => {
                   FS.createDefaultDevices();
                   FS.createSpecialDirectories();
                   FS.filesystems = {
-                      "MEMFS": MEMFS,
-                      "IDBFS": IDBFS
+                      MEMFS,
+                      IDBFS
                   }
               },
               init(input, output, error) {
-                  FS.init.initialized = true;
-                  Module["stdin"] = input || Module["stdin"];
-                  Module["stdout"] = output || Module["stdout"];
-                  Module["stderr"] = error || Module["stderr"];
-                  FS.createStandardStreams()
+                  FS.initialized = true;
+                  input ??= Module["stdin"];
+                  output ??= Module["stdout"];
+                  error ??= Module["stderr"];
+                  FS.createStandardStreams(input, output, error)
               },
               quit() {
-                  FS.init.initialized = false;
+                  FS.initialized = false;
                   for (var i = 0; i < FS.streams.length; i++) {
                       var stream = FS.streams[i];
                       if (!stream) {
@@ -3172,7 +3206,7 @@ var mGBA = (() => {
               createDevice(parent, name, input, output) {
                   var path = PATH.join2(typeof parent == "string" ? parent : FS.getPath(parent), name);
                   var mode = FS_getMode(!!input, !!output);
-                  if (!FS.createDevice.major) FS.createDevice.major = 64;
+                  FS.createDevice.major ??= 64;
                   var dev = FS.makedev(FS.createDevice.major++, 0);
                   FS.registerDevice(dev, {
                       open(stream) {
@@ -3224,103 +3258,97 @@ var mGBA = (() => {
                   if (obj.isDevice || obj.isFolder || obj.link || obj.contents) return true;
                   if (typeof XMLHttpRequest != "undefined") {
                       throw new Error("Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.")
-                  } else if (read_) {
+                  } else {
                       try {
-                          obj.contents = intArrayFromString(read_(obj.url), true);
+                          obj.contents = readBinary(obj.url);
                           obj.usedBytes = obj.contents.length
                       } catch (e) {
                           throw new FS.ErrnoError(29)
                       }
-                  } else {
-                      throw new Error("Cannot load without read() or XMLHttpRequest.")
                   }
               },
               createLazyFile(parent, name, url, canRead, canWrite) {
-                  function LazyUint8Array() {
-                      this.lengthKnown = false;
-                      this.chunks = []
-                  }
-                  LazyUint8Array.prototype.get = function LazyUint8Array_get(idx) {
-                      if (idx > this.length - 1 || idx < 0) {
-                          return undefined
+                  class LazyUint8Array {
+                      constructor() {
+                          this.lengthKnown = false;
+                          this.chunks = []
                       }
-                      var chunkOffset = idx % this.chunkSize;
-                      var chunkNum = idx / this.chunkSize | 0;
-                      return this.getter(chunkNum)[chunkOffset]
-                  };
-                  LazyUint8Array.prototype.setDataGetter = function LazyUint8Array_setDataGetter(getter) {
-                      this.getter = getter
-                  };
-                  LazyUint8Array.prototype.cacheLength = function LazyUint8Array_cacheLength() {
-                      var xhr = new XMLHttpRequest;
-                      xhr.open("HEAD", url, false);
-                      xhr.send(null);
-                      if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
-                      var datalength = Number(xhr.getResponseHeader("Content-length"));
-                      var header;
-                      var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
-                      var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
-                      var chunkSize = 1024 * 1024;
-                      if (!hasByteServing) chunkSize = datalength;
-                      var doXHR = (from, to) => {
-                          if (from > to) throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
-                          if (to > datalength - 1) throw new Error("only " + datalength + " bytes available! programmer error!");
-                          var xhr = new XMLHttpRequest;
-                          xhr.open("GET", url, false);
-                          if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to);
-                          xhr.responseType = "arraybuffer";
-                          if (xhr.overrideMimeType) {
-                              xhr.overrideMimeType("text/plain; charset=x-user-defined")
+                      get(idx) {
+                          if (idx > this.length - 1 || idx < 0) {
+                              return undefined
                           }
+                          var chunkOffset = idx % this.chunkSize;
+                          var chunkNum = idx / this.chunkSize | 0;
+                          return this.getter(chunkNum)[chunkOffset]
+                      }
+                      setDataGetter(getter) {
+                          this.getter = getter
+                      }
+                      cacheLength() {
+                          var xhr = new XMLHttpRequest;
+                          xhr.open("HEAD", url, false);
                           xhr.send(null);
                           if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
-                          if (xhr.response !== undefined) {
-                              return new Uint8Array(xhr.response || [])
+                          var datalength = Number(xhr.getResponseHeader("Content-length"));
+                          var header;
+                          var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
+                          var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
+                          var chunkSize = 1024 * 1024;
+                          if (!hasByteServing) chunkSize = datalength;
+                          var doXHR = (from, to) => {
+                              if (from > to) throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
+                              if (to > datalength - 1) throw new Error("only " + datalength + " bytes available! programmer error!");
+                              var xhr = new XMLHttpRequest;
+                              xhr.open("GET", url, false);
+                              if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to);
+                              xhr.responseType = "arraybuffer";
+                              if (xhr.overrideMimeType) {
+                                  xhr.overrideMimeType("text/plain; charset=x-user-defined")
+                              }
+                              xhr.send(null);
+                              if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
+                              if (xhr.response !== undefined) {
+                                  return new Uint8Array(xhr.response || [])
+                              }
+                              return intArrayFromString(xhr.responseText || "", true)
+                          };
+                          var lazyArray = this;
+                          lazyArray.setDataGetter(chunkNum => {
+                              var start = chunkNum * chunkSize;
+                              var end = (chunkNum + 1) * chunkSize - 1;
+                              end = Math.min(end, datalength - 1);
+                              if (typeof lazyArray.chunks[chunkNum] == "undefined") {
+                                  lazyArray.chunks[chunkNum] = doXHR(start, end)
+                              }
+                              if (typeof lazyArray.chunks[chunkNum] == "undefined") throw new Error("doXHR failed!");
+                              return lazyArray.chunks[chunkNum]
+                          });
+                          if (usesGzip || !datalength) {
+                              chunkSize = datalength = 1;
+                              datalength = this.getter(0).length;
+                              chunkSize = datalength;
+                              out("LazyFiles on gzip forces download of the whole file when length is accessed")
                           }
-                          return intArrayFromString(xhr.responseText || "", true)
-                      };
-                      var lazyArray = this;
-                      lazyArray.setDataGetter(chunkNum => {
-                          var start = chunkNum * chunkSize;
-                          var end = (chunkNum + 1) * chunkSize - 1;
-                          end = Math.min(end, datalength - 1);
-                          if (typeof lazyArray.chunks[chunkNum] == "undefined") {
-                              lazyArray.chunks[chunkNum] = doXHR(start, end)
-                          }
-                          if (typeof lazyArray.chunks[chunkNum] == "undefined") throw new Error("doXHR failed!");
-                          return lazyArray.chunks[chunkNum]
-                      });
-                      if (usesGzip || !datalength) {
-                          chunkSize = datalength = 1;
-                          datalength = this.getter(0).length;
-                          chunkSize = datalength;
-                          out("LazyFiles on gzip forces download of the whole file when length is accessed")
+                          this._length = datalength;
+                          this._chunkSize = chunkSize;
+                          this.lengthKnown = true
                       }
-                      this._length = datalength;
-                      this._chunkSize = chunkSize;
-                      this.lengthKnown = true
-                  };
+                      get length() {
+                          if (!this.lengthKnown) {
+                              this.cacheLength()
+                          }
+                          return this._length
+                      }
+                      get chunkSize() {
+                          if (!this.lengthKnown) {
+                              this.cacheLength()
+                          }
+                          return this._chunkSize
+                      }
+                  }
                   if (typeof XMLHttpRequest != "undefined") {
                       if (!ENVIRONMENT_IS_WORKER) throw "Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc";
                       var lazyArray = new LazyUint8Array;
-                      Object.defineProperties(lazyArray, {
-                          length: {
-                              get: function() {
-                                  if (!this.lengthKnown) {
-                                      this.cacheLength()
-                                  }
-                                  return this._length
-                              }
-                          },
-                          chunkSize: {
-                              get: function() {
-                                  if (!this.lengthKnown) {
-                                      this.cacheLength()
-                                  }
-                                  return this._chunkSize
-                              }
-                          }
-                      });
                       var properties = {
                           isDevice: false,
                           contents: lazyArray
@@ -3328,7 +3356,7 @@ var mGBA = (() => {
                   } else {
                       var properties = {
                           isDevice: false,
-                          url: url
+                          url
                       }
                   }
                   var node = FS.createFile(parent, name, properties, canRead, canWrite);
@@ -3349,9 +3377,9 @@ var mGBA = (() => {
                   var keys = Object.keys(node.stream_ops);
                   keys.forEach(key => {
                       var fn = node.stream_ops[key];
-                      stream_ops[key] = function forceLoadLazyFile() {
+                      stream_ops[key] = (...args) => {
                           FS.forceLoadFile(node);
-                          return fn.apply(null, arguments)
+                          return fn(...args)
                       }
                   });
 
@@ -3382,7 +3410,7 @@ var mGBA = (() => {
                       }
                       writeChunks(stream, HEAP8, ptr, length, position);
                       return {
-                          ptr: ptr,
+                          ptr,
                           allocated: true
                       }
                   };
@@ -3427,11 +3455,11 @@ var mGBA = (() => {
                   var mtime = stat.mtime.getTime();
                   var ctime = stat.ctime.getTime();
                   tempI64 = [Math.floor(atime / 1e3) >>> 0, (tempDouble = Math.floor(atime / 1e3), +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[buf + 40 >> 2] = tempI64[0], HEAP32[buf + 44 >> 2] = tempI64[1];
-                  HEAPU32[buf + 48 >> 2] = atime % 1e3 * 1e3;
+                  HEAPU32[buf + 48 >> 2] = atime % 1e3 * 1e3 * 1e3;
                   tempI64 = [Math.floor(mtime / 1e3) >>> 0, (tempDouble = Math.floor(mtime / 1e3), +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[buf + 56 >> 2] = tempI64[0], HEAP32[buf + 60 >> 2] = tempI64[1];
-                  HEAPU32[buf + 64 >> 2] = mtime % 1e3 * 1e3;
+                  HEAPU32[buf + 64 >> 2] = mtime % 1e3 * 1e3 * 1e3;
                   tempI64 = [Math.floor(ctime / 1e3) >>> 0, (tempDouble = Math.floor(ctime / 1e3), +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[buf + 72 >> 2] = tempI64[0], HEAP32[buf + 76 >> 2] = tempI64[1];
-                  HEAPU32[buf + 80 >> 2] = ctime % 1e3 * 1e3;
+                  HEAPU32[buf + 80 >> 2] = ctime % 1e3 * 1e3 * 1e3;
                   tempI64 = [stat.ino >>> 0, (tempDouble = stat.ino, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[buf + 88 >> 2] = tempI64[0], HEAP32[buf + 92 >> 2] = tempI64[1];
                   return 0
               },
@@ -3445,22 +3473,14 @@ var mGBA = (() => {
                   var buffer = HEAPU8.slice(addr, addr + len);
                   FS.msync(stream, buffer, offset, len, flags)
               },
-              varargs: undefined,
-              get() {
-                  var ret = HEAP32[+SYSCALLS.varargs >> 2];
-                  SYSCALLS.varargs += 4;
-                  return ret
-              },
-              getp() {
-                  return SYSCALLS.get()
-              },
-              getStr(ptr) {
-                  var ret = UTF8ToString(ptr);
-                  return ret
-              },
               getStreamFromFD(fd) {
                   var stream = FS.getStreamChecked(fd);
                   return stream
+              },
+              varargs: undefined,
+              getStr(ptr) {
+                  var ret = UTF8ToString(ptr);
+                  return ret
               }
           };
 
@@ -3470,7 +3490,7 @@ var mGBA = (() => {
                   var stream = SYSCALLS.getStreamFromFD(fd);
                   switch (cmd) {
                       case 0: {
-                          var arg = SYSCALLS.get();
+                          var arg = syscallGetVarargI();
                           if (arg < 0) {
                               return -28
                           }
@@ -3478,7 +3498,7 @@ var mGBA = (() => {
                               arg++
                           }
                           var newStream;
-                          newStream = FS.createStream(stream, arg);
+                          newStream = FS.dupStream(stream, arg);
                           return newStream.fd
                       }
                       case 1:
@@ -3487,12 +3507,12 @@ var mGBA = (() => {
                       case 3:
                           return stream.flags;
                       case 4: {
-                          var arg = SYSCALLS.get();
+                          var arg = syscallGetVarargI();
                           stream.flags |= arg;
                           return 0
                       }
                       case 12: {
-                          var arg = SYSCALLS.getp();
+                          var arg = syscallGetVarargP();
                           var offset = 0;
                           HEAP16[arg + offset >> 1] = 2;
                           return 0
@@ -3575,7 +3595,7 @@ var mGBA = (() => {
                       tempI64 = [id >>> 0, (tempDouble = id, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[dirp + pos >> 2] = tempI64[0], HEAP32[dirp + pos + 4 >> 2] = tempI64[1];
                       tempI64 = [(idx + 1) * struct_size >>> 0, (tempDouble = (idx + 1) * struct_size, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[dirp + pos + 8 >> 2] = tempI64[0], HEAP32[dirp + pos + 12 >> 2] = tempI64[1];
                       HEAP16[dirp + pos + 16 >> 1] = 280;
-                      HEAP8[dirp + pos + 18 >> 0] = type;
+                      HEAP8[dirp + pos + 18] = type;
                       stringToUTF8(name, dirp + pos + 19, 256);
                       pos += struct_size;
                       idx += 1
@@ -3601,13 +3621,13 @@ var mGBA = (() => {
                           if (!stream.tty) return -59;
                           if (stream.tty.ops.ioctl_tcgets) {
                               var termios = stream.tty.ops.ioctl_tcgets(stream);
-                              var argp = SYSCALLS.getp();
+                              var argp = syscallGetVarargP();
                               HEAP32[argp >> 2] = termios.c_iflag || 0;
                               HEAP32[argp + 4 >> 2] = termios.c_oflag || 0;
                               HEAP32[argp + 8 >> 2] = termios.c_cflag || 0;
                               HEAP32[argp + 12 >> 2] = termios.c_lflag || 0;
                               for (var i = 0; i < 32; i++) {
-                                  HEAP8[argp + i + 17 >> 0] = termios.c_cc[i] || 0
+                                  HEAP8[argp + i + 17] = termios.c_cc[i] || 0
                               }
                               return 0
                           }
@@ -3624,28 +3644,28 @@ var mGBA = (() => {
                       case 21508: {
                           if (!stream.tty) return -59;
                           if (stream.tty.ops.ioctl_tcsets) {
-                              var argp = SYSCALLS.getp();
+                              var argp = syscallGetVarargP();
                               var c_iflag = HEAP32[argp >> 2];
                               var c_oflag = HEAP32[argp + 4 >> 2];
                               var c_cflag = HEAP32[argp + 8 >> 2];
                               var c_lflag = HEAP32[argp + 12 >> 2];
                               var c_cc = [];
                               for (var i = 0; i < 32; i++) {
-                                  c_cc.push(HEAP8[argp + i + 17 >> 0])
+                                  c_cc.push(HEAP8[argp + i + 17])
                               }
                               return stream.tty.ops.ioctl_tcsets(stream.tty, op, {
-                                  c_iflag: c_iflag,
-                                  c_oflag: c_oflag,
-                                  c_cflag: c_cflag,
-                                  c_lflag: c_lflag,
-                                  c_cc: c_cc
+                                  c_iflag,
+                                  c_oflag,
+                                  c_cflag,
+                                  c_lflag,
+                                  c_cc
                               })
                           }
                           return 0
                       }
                       case 21519: {
                           if (!stream.tty) return -59;
-                          var argp = SYSCALLS.getp();
+                          var argp = syscallGetVarargP();
                           HEAP32[argp >> 2] = 0;
                           return 0
                       }
@@ -3654,14 +3674,14 @@ var mGBA = (() => {
                           return -28
                       }
                       case 21531: {
-                          var argp = SYSCALLS.getp();
+                          var argp = syscallGetVarargP();
                           return FS.ioctl(stream, op, argp)
                       }
                       case 21523: {
                           if (!stream.tty) return -59;
                           if (stream.tty.ops.ioctl_tiocgwinsz) {
                               var winsize = stream.tty.ops.ioctl_tiocgwinsz(stream.tty);
-                              var argp = SYSCALLS.getp();
+                              var argp = syscallGetVarargP();
                               HEAP16[argp >> 1] = winsize[0];
                               HEAP16[argp + 2 >> 1] = winsize[1]
                           }
@@ -3727,7 +3747,7 @@ var mGBA = (() => {
               try {
                   path = SYSCALLS.getStr(path);
                   path = SYSCALLS.calculateAt(dirfd, path);
-                  var mode = varargs ? SYSCALLS.get() : 0;
+                  var mode = varargs ? syscallGetVarargI() : 0;
                   return FS.open(path, flags, mode).fd
               } catch (e) {
                   if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e;
@@ -3796,27 +3816,47 @@ var mGBA = (() => {
               try {
                   path = SYSCALLS.getStr(path);
                   path = SYSCALLS.calculateAt(dirfd, path, true);
+                  var now = Date.now(),
+                      atime, mtime;
                   if (!times) {
-                      var atime = Date.now();
-                      var mtime = atime
+                      atime = now;
+                      mtime = now
                   } else {
                       var seconds = readI53FromI64(times);
                       var nanoseconds = HEAP32[times + 8 >> 2];
-                      atime = seconds * 1e3 + nanoseconds / (1e3 * 1e3);
+                      if (nanoseconds == 1073741823) {
+                          atime = now
+                      } else if (nanoseconds == 1073741822) {
+                          atime = -1
+                      } else {
+                          atime = seconds * 1e3 + nanoseconds / (1e3 * 1e3)
+                      }
                       times += 16;
                       seconds = readI53FromI64(times);
                       nanoseconds = HEAP32[times + 8 >> 2];
-                      mtime = seconds * 1e3 + nanoseconds / (1e3 * 1e3)
+                      if (nanoseconds == 1073741823) {
+                          mtime = now
+                      } else if (nanoseconds == 1073741822) {
+                          mtime = -1
+                      } else {
+                          mtime = seconds * 1e3 + nanoseconds / (1e3 * 1e3)
+                      }
                   }
-                  FS.utime(path, atime, mtime);
+                  if (mtime != -1 || atime != -1) {
+                      FS.utime(path, atime, mtime)
+                  }
                   return 0
               } catch (e) {
                   if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e;
                   return -e.errno
               }
           }
+          var __abort_js = () => {
+              abort("")
+          };
           var nowIsMonotonic = 1;
           var __emscripten_get_now_is_monotonic = () => nowIsMonotonic;
+          var __emscripten_memcpy_js = (dest, src, num) => HEAPU8.copyWithin(dest, src, src + num);
           var __emscripten_throw_longjmp = () => {
               throw Infinity
           };
@@ -3849,6 +3889,7 @@ var mGBA = (() => {
               var dst = (summerOffset != winterOffset && date.getTimezoneOffset() == Math.min(winterOffset, summerOffset)) | 0;
               HEAP32[tmPtr + 32 >> 2] = dst
           }
+          var setTempRet0 = val => __emscripten_tempret_set(val);
           var __mktime_js = function(tmPtr) {
               var ret = (() => {
                   var date = new Date(HEAP32[tmPtr + 20 >> 2] + 1900, HEAP32[tmPtr + 16 >> 2], HEAP32[tmPtr + 12 >> 2], HEAP32[tmPtr + 8 >> 2], HEAP32[tmPtr + 4 >> 2], HEAP32[tmPtr >> 2], 0);
@@ -3914,24 +3955,16 @@ var mGBA = (() => {
           function __munmap_js(addr, len, prot, flags, fd, offset_low, offset_high) {
               var offset = convertI32PairToI53Checked(offset_low, offset_high);
               try {
-                  if (isNaN(offset)) return 61;
                   var stream = SYSCALLS.getStreamFromFD(fd);
                   if (prot & 2) {
                       SYSCALLS.doMsync(addr, stream, len, flags, offset)
                   }
-                  FS.munmap(stream)
               } catch (e) {
                   if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e;
                   return -e.errno
               }
           }
-          var stringToNewUTF8 = str => {
-              var size = lengthBytesUTF8(str) + 1;
-              var ret = _malloc(size);
-              if (ret) stringToUTF8(str, ret, size);
-              return ret
-          };
-          var __tzset_js = (timezone, daylight, tzname) => {
+          var __tzset_js = (timezone, daylight, std_name, dst_name) => {
               var currentYear = (new Date).getFullYear();
               var winter = new Date(currentYear, 0, 1);
               var summer = new Date(currentYear, 6, 1);
@@ -3940,138 +3973,21 @@ var mGBA = (() => {
               var stdTimezoneOffset = Math.max(winterOffset, summerOffset);
               HEAPU32[timezone >> 2] = stdTimezoneOffset * 60;
               HEAP32[daylight >> 2] = Number(winterOffset != summerOffset);
-
-              function extractZone(date) {
-                  var match = date.toTimeString().match(/\(([A-Za-z ]+)\)$/);
-                  return match ? match[1] : "GMT"
-              }
-              var winterName = extractZone(winter);
-              var summerName = extractZone(summer);
-              var winterNamePtr = stringToNewUTF8(winterName);
-              var summerNamePtr = stringToNewUTF8(summerName);
-              if (summerOffset < winterOffset) {
-                  HEAPU32[tzname >> 2] = winterNamePtr;
-                  HEAPU32[tzname + 4 >> 2] = summerNamePtr
-              } else {
-                  HEAPU32[tzname >> 2] = summerNamePtr;
-                  HEAPU32[tzname + 4 >> 2] = winterNamePtr
-              }
-          };
-          var _abort = () => {
-              abort("")
-          };
-          var _emscripten_set_main_loop_timing = (mode, value) => {
-              Browser.mainLoop.timingMode = mode;
-              Browser.mainLoop.timingValue = value;
-              if (!Browser.mainLoop.func) {
-                  return 1
-              }
-              if (!Browser.mainLoop.running) {
-                  Browser.mainLoop.running = true
-              }
-              if (mode == 0) {
-                  Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setTimeout() {
-                      var timeUntilNextTick = Math.max(0, Browser.mainLoop.tickStartTime + value - _emscripten_get_now()) | 0;
-                      setTimeout(Browser.mainLoop.runner, timeUntilNextTick)
-                  };
-                  Browser.mainLoop.method = "timeout"
-              } else if (mode == 1) {
-                  Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_rAF() {
-                      Browser.requestAnimationFrame(Browser.mainLoop.runner)
-                  };
-                  Browser.mainLoop.method = "rAF"
-              } else if (mode == 2) {
-                  if (typeof Browser.setImmediate == "undefined") {
-                      if (typeof setImmediate == "undefined") {
-                          var setImmediates = [];
-                          var emscriptenMainLoopMessageId = "setimmediate";
-                          var Browser_setImmediate_messageHandler = event => {
-                              if (event.data === emscriptenMainLoopMessageId || event.data.target === emscriptenMainLoopMessageId) {
-                                  event.stopPropagation();
-                                  setImmediates.shift()()
-                              }
-                          };
-                          addEventListener("message", Browser_setImmediate_messageHandler, true);
-                          Browser.setImmediate = function Browser_emulated_setImmediate(func) {
-                              setImmediates.push(func);
-                              if (ENVIRONMENT_IS_WORKER) {
-                                  if (Module["setImmediates"] === undefined) Module["setImmediates"] = [];
-                                  Module["setImmediates"].push(func);
-                                  postMessage({
-                                      target: emscriptenMainLoopMessageId
-                                  })
-                              } else postMessage(emscriptenMainLoopMessageId, "*")
-                          }
-                      } else {
-                          Browser.setImmediate = setImmediate
-                      }
-                  }
-                  Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setImmediate() {
-                      Browser.setImmediate(Browser.mainLoop.runner)
-                  };
-                  Browser.mainLoop.method = "immediate"
-              }
-              return 0
-          };
-          var _emscripten_get_now;
-          _emscripten_get_now = () => performance.now();
-          var setMainLoop = (browserIterationFunc, fps, simulateInfiniteLoop, arg, noSetTiming) => {
-              assert(!Browser.mainLoop.func, "emscripten_set_main_loop: there can only be one main loop function at once: call emscripten_cancel_main_loop to cancel the previous one before setting a new one with different parameters.");
-              Browser.mainLoop.func = browserIterationFunc;
-              Browser.mainLoop.arg = arg;
-              var thisMainLoopId = Browser.mainLoop.currentlyRunningMainloop;
-
-              function checkIsRunning() {
-                  if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) {
-                      return false
-                  }
-                  return true
-              }
-              Browser.mainLoop.running = false;
-              Browser.mainLoop.runner = function Browser_mainLoop_runner() {
-                  if (ABORT) return;
-                  if (Browser.mainLoop.queue.length > 0) {
-                      var start = Date.now();
-                      var blocker = Browser.mainLoop.queue.shift();
-                      blocker.func(blocker.arg);
-                      if (Browser.mainLoop.remainingBlockers) {
-                          var remaining = Browser.mainLoop.remainingBlockers;
-                          var next = remaining % 1 == 0 ? remaining - 1 : Math.floor(remaining);
-                          if (blocker.counted) {
-                              Browser.mainLoop.remainingBlockers = next
-                          } else {
-                              next = next + .5;
-                              Browser.mainLoop.remainingBlockers = (8 * remaining + next) / 9
-                          }
-                      }
-                      Browser.mainLoop.updateStatus();
-                      if (!checkIsRunning()) return;
-                      setTimeout(Browser.mainLoop.runner, 0);
-                      return
-                  }
-                  if (!checkIsRunning()) return;
-                  Browser.mainLoop.currentFrameNumber = Browser.mainLoop.currentFrameNumber + 1 | 0;
-                  if (Browser.mainLoop.timingMode == 1 && Browser.mainLoop.timingValue > 1 && Browser.mainLoop.currentFrameNumber % Browser.mainLoop.timingValue != 0) {
-                      Browser.mainLoop.scheduler();
-                      return
-                  } else if (Browser.mainLoop.timingMode == 0) {
-                      Browser.mainLoop.tickStartTime = _emscripten_get_now()
-                  }
-                  Browser.mainLoop.runIter(browserIterationFunc);
-                  if (!checkIsRunning()) return;
-                  if (typeof SDL == "object") SDL.audio?.queueNewAudioData?.();
-                  Browser.mainLoop.scheduler()
+              var extractZone = timezoneOffset => {
+                  var sign = timezoneOffset >= 0 ? "-" : "+";
+                  var absOffset = Math.abs(timezoneOffset);
+                  var hours = String(Math.floor(absOffset / 60)).padStart(2, "0");
+                  var minutes = String(absOffset % 60).padStart(2, "0");
+                  return `UTC${sign}${hours}${minutes}`
               };
-              if (!noSetTiming) {
-                  if (fps && fps > 0) {
-                      _emscripten_set_main_loop_timing(0, 1e3 / fps)
-                  } else {
-                      _emscripten_set_main_loop_timing(1, 1)
-                  }
-                  Browser.mainLoop.scheduler()
-              }
-              if (simulateInfiniteLoop) {
-                  throw "unwind"
+              var winterName = extractZone(winterOffset);
+              var summerName = extractZone(summerOffset);
+              if (summerOffset < winterOffset) {
+                  stringToUTF8(winterName, std_name, 17);
+                  stringToUTF8(summerName, dst_name, 17)
+              } else {
+                  stringToUTF8(winterName, dst_name, 17);
+                  stringToUTF8(summerName, std_name, 17)
               }
           };
           var handleException = e => {
@@ -4126,59 +4042,7 @@ var mGBA = (() => {
               }
           };
           var Browser = {
-              mainLoop: {
-                  running: false,
-                  scheduler: null,
-                  method: "",
-                  currentlyRunningMainloop: 0,
-                  func: null,
-                  arg: 0,
-                  timingMode: 0,
-                  timingValue: 0,
-                  currentFrameNumber: 0,
-                  queue: [],
-                  pause() {
-                      Browser.mainLoop.scheduler = null;
-                      Browser.mainLoop.currentlyRunningMainloop++
-                  },
-                  resume() {
-                      Browser.mainLoop.currentlyRunningMainloop++;
-                      var timingMode = Browser.mainLoop.timingMode;
-                      var timingValue = Browser.mainLoop.timingValue;
-                      var func = Browser.mainLoop.func;
-                      Browser.mainLoop.func = null;
-                      setMainLoop(func, 0, false, Browser.mainLoop.arg, true);
-                      _emscripten_set_main_loop_timing(timingMode, timingValue);
-                      Browser.mainLoop.scheduler()
-                  },
-                  updateStatus() {
-                      if (Module["setStatus"]) {
-                          var message = Module["statusMessage"] || "Please wait...";
-                          var remaining = Browser.mainLoop.remainingBlockers;
-                          var expected = Browser.mainLoop.expectedBlockers;
-                          if (remaining) {
-                              if (remaining < expected) {
-                                  Module["setStatus"](message + " (" + (expected - remaining) + "/" + expected + ")")
-                              } else {
-                                  Module["setStatus"](message)
-                              }
-                          } else {
-                              Module["setStatus"]("")
-                          }
-                      }
-                  },
-                  runIter(func) {
-                      if (ABORT) return;
-                      if (Module["preMainLoop"]) {
-                          var preRet = Module["preMainLoop"]();
-                          if (preRet === false) {
-                              return
-                          }
-                      }
-                      callUserCallback(func);
-                      Module["postMainLoop"]?.()
-                  }
-              },
+              useWebGL: false,
               isFullscreen: false,
               pointerLock: false,
               moduleContextCreatedCallbacks: [],
@@ -4188,7 +4052,7 @@ var mGBA = (() => {
                   Browser.initted = true;
                   var imagePlugin = {};
                   imagePlugin["canHandle"] = function imagePlugin_canHandle(name) {
-                      return !Module.noImageDecoding && /\.(jpg|jpeg|png|bmp)$/i.test(name)
+                      return !Module["noImageDecoding"] && /\.(jpg|jpeg|png|bmp|webp)$/i.test(name)
                   };
                   imagePlugin["handle"] = function imagePlugin_handle(byteArray, name, onload, onerror) {
                       var b = new Blob([byteArray], {
@@ -4202,7 +4066,6 @@ var mGBA = (() => {
                       var url = URL.createObjectURL(b);
                       var img = new Image;
                       img.onload = () => {
-                          assert(img.complete, `Image ${name} could not be decoded`);
                           var canvas = document.createElement("canvas");
                           canvas.width = img.width;
                           canvas.height = img.height;
@@ -4221,7 +4084,7 @@ var mGBA = (() => {
                   preloadPlugins.push(imagePlugin);
                   var audioPlugin = {};
                   audioPlugin["canHandle"] = function audioPlugin_canHandle(name) {
-                      return !Module.noAudioDecoding && name.substr(-4) in {
+                      return !Module["noAudioDecoding"] && name.substr(-4) in {
                           ".ogg": 1,
                           ".wav": 1,
                           ".mp3": 1
@@ -4328,16 +4191,14 @@ var mGBA = (() => {
                   }
                   if (!ctx) return null;
                   if (setInModule) {
-                      if (!useWebGL) assert(typeof GLctx == "undefined", "cannot set in module if GLctx is used, but we are a non-GL context that would replace it");
                       Module.ctx = ctx;
                       if (useWebGL) GL.makeContextCurrent(contextHandle);
-                      Module.useWebGL = useWebGL;
+                      Browser.useWebGL = useWebGL;
                       Browser.moduleContextCreatedCallbacks.forEach(callback => callback());
                       Browser.init()
                   }
                   return ctx
               },
-              destroyContext(canvas, useWebGL, setInModule) {},
               fullscreenHandlersInstalled: false,
               lockPointer: undefined,
               resizeCanvas: undefined,
@@ -4393,44 +4254,18 @@ var mGBA = (() => {
                   CFS.apply(document, []);
                   return true
               },
-              nextRAF: 0,
-              fakeRequestAnimationFrame(func) {
-                  var now = Date.now();
-                  if (Browser.nextRAF === 0) {
-                      Browser.nextRAF = now + 1e3 / 60
-                  } else {
-                      while (now + 2 >= Browser.nextRAF) {
-                          Browser.nextRAF += 1e3 / 60
-                      }
-                  }
-                  var delay = Math.max(Browser.nextRAF - now, 0);
-                  setTimeout(func, delay)
-              },
-              requestAnimationFrame(func) {
-                  if (typeof requestAnimationFrame == "function") {
-                      requestAnimationFrame(func);
-                      return
-                  }
-                  var RAF = Browser.fakeRequestAnimationFrame;
-                  RAF(func)
-              },
               safeSetTimeout(func, timeout) {
                   return safeSetTimeout(func, timeout)
               },
-              safeRequestAnimationFrame(func) {
-                  return Browser.requestAnimationFrame(() => {
-                      callUserCallback(func)
-                  })
-              },
               getMimetype(name) {
                   return {
-                      "jpg": "image/jpeg",
-                      "jpeg": "image/jpeg",
-                      "png": "image/png",
-                      "bmp": "image/bmp",
-                      "ogg": "audio/ogg",
-                      "wav": "audio/wav",
-                      "mp3": "audio/mpeg"
+                      jpg: "image/jpeg",
+                      jpeg: "image/jpeg",
+                      png: "image/png",
+                      bmp: "image/bmp",
+                      ogg: "audio/ogg",
+                      wav: "audio/wav",
+                      mp3: "audio/mpeg"
                   } [name.substr(name.lastIndexOf(".") + 1)]
               },
               getUserMedia(func) {
@@ -4496,8 +4331,8 @@ var mGBA = (() => {
               },
               setMouseCoords(pageX, pageY) {
                   const {
-                      x: x,
-                      y: y
+                      x,
+                      y
                   } = Browser.calculateMouseCoords(pageX, pageY);
                   Browser.mouseMovementX = x - Browser.mouseX;
                   Browser.mouseMovementY = y - Browser.mouseY;
@@ -4512,13 +4347,8 @@ var mGBA = (() => {
                           Browser.mouseMovementX = Browser.getMovementX(event);
                           Browser.mouseMovementY = Browser.getMovementY(event)
                       }
-                      if (typeof SDL != "undefined") {
-                          Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
-                          Browser.mouseY = SDL.mouseY + Browser.mouseMovementY
-                      } else {
-                          Browser.mouseX += Browser.mouseMovementX;
-                          Browser.mouseY += Browser.mouseMovementY
-                      }
+                      Browser.mouseX += Browser.mouseMovementX;
+                      Browser.mouseY += Browser.mouseMovementY
                   } else {
                       if (event.type === "touchstart" || event.type === "touchend" || event.type === "touchmove") {
                           var touch = event.touch;
@@ -4685,6 +4515,7 @@ var mGBA = (() => {
               return 0
           };
           var _eglChooseConfig = (display, attrib_list, configs, config_size, numConfigs) => EGL.chooseConfig(display, attrib_list, configs, config_size, numConfigs);
+          var GLctx;
           var webgl_enable_ANGLE_instanced_arrays = ctx => {
               var ext = ctx.getExtension("ANGLE_instanced_arrays");
               if (ext) {
@@ -4711,9 +4542,12 @@ var mGBA = (() => {
                   return 1
               }
           };
+          var webgl_enable_EXT_polygon_offset_clamp = ctx => !!(ctx.extPolygonOffsetClamp = ctx.getExtension("EXT_polygon_offset_clamp"));
+          var webgl_enable_EXT_clip_control = ctx => !!(ctx.extClipControl = ctx.getExtension("EXT_clip_control"));
+          var webgl_enable_WEBGL_polygon_mode = ctx => !!(ctx.webglPolygonMode = ctx.getExtension("WEBGL_polygon_mode"));
           var webgl_enable_WEBGL_multi_draw = ctx => !!(ctx.multiDrawWebgl = ctx.getExtension("WEBGL_multi_draw"));
-          var getEmscriptenSupportedExtensions = function(ctx) {
-              var supportedExtensions = ["ANGLE_instanced_arrays", "EXT_blend_minmax", "EXT_disjoint_timer_query", "EXT_frag_depth", "EXT_shader_texture_lod", "EXT_sRGB", "OES_element_index_uint", "OES_fbo_render_mipmap", "OES_standard_derivatives", "OES_texture_float", "OES_texture_half_float", "OES_texture_half_float_linear", "OES_vertex_array_object", "WEBGL_color_buffer_float", "WEBGL_depth_texture", "WEBGL_draw_buffers", "EXT_color_buffer_half_float", "EXT_float_blend", "EXT_texture_compression_bptc", "EXT_texture_compression_rgtc", "EXT_texture_filter_anisotropic", "KHR_parallel_shader_compile", "OES_texture_float_linear", "WEBGL_compressed_texture_s3tc", "WEBGL_compressed_texture_s3tc_srgb", "WEBGL_debug_renderer_info", "WEBGL_debug_shaders", "WEBGL_lose_context", "WEBGL_multi_draw"];
+          var getEmscriptenSupportedExtensions = ctx => {
+              var supportedExtensions = ["ANGLE_instanced_arrays", "EXT_blend_minmax", "EXT_disjoint_timer_query", "EXT_frag_depth", "EXT_shader_texture_lod", "EXT_sRGB", "OES_element_index_uint", "OES_fbo_render_mipmap", "OES_standard_derivatives", "OES_texture_float", "OES_texture_half_float", "OES_texture_half_float_linear", "OES_vertex_array_object", "WEBGL_color_buffer_float", "WEBGL_depth_texture", "WEBGL_draw_buffers", "EXT_clip_control", "EXT_color_buffer_half_float", "EXT_depth_clamp", "EXT_float_blend", "EXT_polygon_offset_clamp", "EXT_texture_compression_bptc", "EXT_texture_compression_rgtc", "EXT_texture_filter_anisotropic", "KHR_parallel_shader_compile", "OES_texture_float_linear", "WEBGL_blend_func_extended", "WEBGL_compressed_texture_astc", "WEBGL_compressed_texture_etc", "WEBGL_compressed_texture_etc1", "WEBGL_compressed_texture_s3tc", "WEBGL_compressed_texture_s3tc_srgb", "WEBGL_debug_renderer_info", "WEBGL_debug_shaders", "WEBGL_lose_context", "WEBGL_multi_draw", "WEBGL_polygon_mode"];
               return (ctx.getSupportedExtensions() || []).filter(ext => supportedExtensions.includes(ext))
           };
           var GL = {
@@ -4730,7 +4564,8 @@ var mGBA = (() => {
               queries: [],
               stringCache: {},
               unpackAlignment: 4,
-              recordError: function recordError(errorCode) {
+              unpackRowLength: 0,
+              recordError: errorCode => {
                   if (!GL.lastError) {
                       GL.lastError = errorCode
                   }
@@ -4741,6 +4576,19 @@ var mGBA = (() => {
                       table[i] = null
                   }
                   return ret
+              },
+              genObject: (n, buffers, createFunction, objectTable) => {
+                  for (var i = 0; i < n; i++) {
+                      var buffer = GLctx[createFunction]();
+                      var id = buffer && GL.getNewId(objectTable);
+                      if (buffer) {
+                          buffer.name = id;
+                          objectTable[id] = buffer
+                      } else {
+                          GL.recordError(1282)
+                      }
+                      HEAP32[buffers + i * 4 >> 2] = id
+                  }
               },
               getSource: (shader, count, string, length) => {
                   var source = "";
@@ -4768,7 +4616,7 @@ var mGBA = (() => {
               registerContext: (ctx, webGLContextAttributes) => {
                   var handle = GL.getNewId(GL.contexts);
                   var context = {
-                      handle: handle,
+                      handle,
                       attributes: webGLContextAttributes,
                       version: webGLContextAttributes.majorVersion,
                       GLctx: ctx
@@ -4803,13 +4651,16 @@ var mGBA = (() => {
                   if (context.initExtensionsDone) return;
                   context.initExtensionsDone = true;
                   var GLctx = context.GLctx;
+                  webgl_enable_WEBGL_multi_draw(GLctx);
+                  webgl_enable_EXT_polygon_offset_clamp(GLctx);
+                  webgl_enable_EXT_clip_control(GLctx);
+                  webgl_enable_WEBGL_polygon_mode(GLctx);
                   webgl_enable_ANGLE_instanced_arrays(GLctx);
                   webgl_enable_OES_vertex_array_object(GLctx);
                   webgl_enable_WEBGL_draw_buffers(GLctx);
                   {
                       GLctx.disjointTimerQueryExt = GLctx.getExtension("EXT_disjoint_timer_query")
                   }
-                  webgl_enable_WEBGL_multi_draw(GLctx);
                   getEmscriptenSupportedExtensions(GLctx).forEach(ext => {
                       if (!ext.includes("lose_context") && !ext.includes("debug")) {
                           GLctx.getExtension(ext)
@@ -4845,10 +4696,8 @@ var mGBA = (() => {
               if (EGL.context != 0) {
                   EGL.setErrorCode(12288);
                   GL.makeContextCurrent(EGL.context);
-                  Module.useWebGL = true;
-                  Browser.moduleContextCreatedCallbacks.forEach(function(callback) {
-                      callback()
-                  });
+                  Browser.useWebGL = true;
+                  Browser.moduleContextCreatedCallbacks.forEach(callback => callback());
                   GL.makeContextCurrent(null);
                   return 62004
               } else {
@@ -5053,6 +4902,12 @@ var mGBA = (() => {
               EGL.setErrorCode(12288);
               return 1
           };
+          var stringToNewUTF8 = str => {
+              var size = lengthBytesUTF8(str) + 1;
+              var ret = _malloc(size);
+              if (ret) stringToUTF8(str, ret, size);
+              return ret
+          };
           var _eglQueryString = (display, name) => {
               if (display != 62e3) {
                   EGL.setErrorCode(12296);
@@ -5091,6 +4946,199 @@ var mGBA = (() => {
               } else {
                   EGL.setErrorCode(12288);
                   return 1
+              }
+              return 0
+          };
+          var _emscripten_get_now = () => performance.now();
+          var setMainLoop = (iterFunc, fps, simulateInfiniteLoop, arg, noSetTiming) => {
+              MainLoop.func = iterFunc;
+              MainLoop.arg = arg;
+              var thisMainLoopId = MainLoop.currentlyRunningMainloop;
+
+              function checkIsRunning() {
+                  if (thisMainLoopId < MainLoop.currentlyRunningMainloop) {
+                      maybeExit();
+                      return false
+                  }
+                  return true
+              }
+              MainLoop.running = false;
+              MainLoop.runner = function MainLoop_runner() {
+                  if (ABORT) return;
+                  if (MainLoop.queue.length > 0) {
+                      var start = Date.now();
+                      var blocker = MainLoop.queue.shift();
+                      blocker.func(blocker.arg);
+                      if (MainLoop.remainingBlockers) {
+                          var remaining = MainLoop.remainingBlockers;
+                          var next = remaining % 1 == 0 ? remaining - 1 : Math.floor(remaining);
+                          if (blocker.counted) {
+                              MainLoop.remainingBlockers = next
+                          } else {
+                              next = next + .5;
+                              MainLoop.remainingBlockers = (8 * remaining + next) / 9
+                          }
+                      }
+                      MainLoop.updateStatus();
+                      if (!checkIsRunning()) return;
+                      setTimeout(MainLoop.runner, 0);
+                      return
+                  }
+                  if (!checkIsRunning()) return;
+                  MainLoop.currentFrameNumber = MainLoop.currentFrameNumber + 1 | 0;
+                  if (MainLoop.timingMode == 1 && MainLoop.timingValue > 1 && MainLoop.currentFrameNumber % MainLoop.timingValue != 0) {
+                      MainLoop.scheduler();
+                      return
+                  } else if (MainLoop.timingMode == 0) {
+                      MainLoop.tickStartTime = _emscripten_get_now()
+                  }
+                  MainLoop.runIter(iterFunc);
+                  if (!checkIsRunning()) return;
+                  MainLoop.scheduler()
+              };
+              if (!noSetTiming) {
+                  if (fps && fps > 0) {
+                      _emscripten_set_main_loop_timing(0, 1e3 / fps)
+                  } else {
+                      _emscripten_set_main_loop_timing(1, 1)
+                  }
+                  MainLoop.scheduler()
+              }
+              if (simulateInfiniteLoop) {
+                  throw "unwind"
+              }
+          };
+          var MainLoop = {
+              running: false,
+              scheduler: null,
+              method: "",
+              currentlyRunningMainloop: 0,
+              func: null,
+              arg: 0,
+              timingMode: 0,
+              timingValue: 0,
+              currentFrameNumber: 0,
+              queue: [],
+              preMainLoop: [],
+              postMainLoop: [],
+              pause() {
+                  MainLoop.scheduler = null;
+                  MainLoop.currentlyRunningMainloop++
+              },
+              resume() {
+                  MainLoop.currentlyRunningMainloop++;
+                  var timingMode = MainLoop.timingMode;
+                  var timingValue = MainLoop.timingValue;
+                  var func = MainLoop.func;
+                  MainLoop.func = null;
+                  setMainLoop(func, 0, false, MainLoop.arg, true);
+                  _emscripten_set_main_loop_timing(timingMode, timingValue);
+                  MainLoop.scheduler()
+              },
+              updateStatus() {
+                  if (Module["setStatus"]) {
+                      var message = Module["statusMessage"] || "Please wait...";
+                      var remaining = MainLoop.remainingBlockers ?? 0;
+                      var expected = MainLoop.expectedBlockers ?? 0;
+                      if (remaining) {
+                          if (remaining < expected) {
+                              Module["setStatus"](`{message} ({expected - remaining}/{expected})`)
+                          } else {
+                              Module["setStatus"](message)
+                          }
+                      } else {
+                          Module["setStatus"]("")
+                      }
+                  }
+              },
+              init() {
+                  Module["preMainLoop"] && MainLoop.preMainLoop.push(Module["preMainLoop"]);
+                  Module["postMainLoop"] && MainLoop.postMainLoop.push(Module["postMainLoop"])
+              },
+              runIter(func) {
+                  if (ABORT) return;
+                  for (var pre of MainLoop.preMainLoop) {
+                      if (pre() === false) {
+                          return
+                      }
+                  }
+                  callUserCallback(func);
+                  for (var post of MainLoop.postMainLoop) {
+                      post()
+                  }
+              },
+              nextRAF: 0,
+              fakeRequestAnimationFrame(func) {
+                  var now = Date.now();
+                  if (MainLoop.nextRAF === 0) {
+                      MainLoop.nextRAF = now + 1e3 / 60
+                  } else {
+                      while (now + 2 >= MainLoop.nextRAF) {
+                          MainLoop.nextRAF += 1e3 / 60
+                      }
+                  }
+                  var delay = Math.max(MainLoop.nextRAF - now, 0);
+                  setTimeout(func, delay)
+              },
+              requestAnimationFrame(func) {
+                  if (typeof requestAnimationFrame == "function") {
+                      requestAnimationFrame(func);
+                      return
+                  }
+                  var RAF = MainLoop.fakeRequestAnimationFrame;
+                  RAF(func)
+              }
+          };
+          var _emscripten_set_main_loop_timing = (mode, value) => {
+              MainLoop.timingMode = mode;
+              MainLoop.timingValue = value;
+              if (!MainLoop.func) {
+                  return 1
+              }
+              if (!MainLoop.running) {
+                  MainLoop.running = true
+              }
+              if (mode == 0) {
+                  MainLoop.scheduler = function MainLoop_scheduler_setTimeout() {
+                      var timeUntilNextTick = Math.max(0, MainLoop.tickStartTime + value - _emscripten_get_now()) | 0;
+                      setTimeout(MainLoop.runner, timeUntilNextTick)
+                  };
+                  MainLoop.method = "timeout"
+              } else if (mode == 1) {
+                  MainLoop.scheduler = function MainLoop_scheduler_rAF() {
+                      MainLoop.requestAnimationFrame(MainLoop.runner)
+                  };
+                  MainLoop.method = "rAF"
+              } else if (mode == 2) {
+                  if (typeof MainLoop.setImmediate == "undefined") {
+                      if (typeof setImmediate == "undefined") {
+                          var setImmediates = [];
+                          var emscriptenMainLoopMessageId = "setimmediate";
+                          var MainLoop_setImmediate_messageHandler = event => {
+                              if (event.data === emscriptenMainLoopMessageId || event.data.target === emscriptenMainLoopMessageId) {
+                                  event.stopPropagation();
+                                  setImmediates.shift()()
+                              }
+                          };
+                          addEventListener("message", MainLoop_setImmediate_messageHandler, true);
+                          MainLoop.setImmediate = func => {
+                              setImmediates.push(func);
+                              if (ENVIRONMENT_IS_WORKER) {
+                                  Module["setImmediates"] ??= [];
+                                  Module["setImmediates"].push(func);
+                                  postMessage({
+                                      target: emscriptenMainLoopMessageId
+                                  })
+                              } else postMessage(emscriptenMainLoopMessageId, "*")
+                          }
+                      } else {
+                          MainLoop.setImmediate = setImmediate
+                      }
+                  }
+                  MainLoop.scheduler = function MainLoop_scheduler_setImmediate() {
+                      MainLoop.setImmediate(MainLoop.runner)
+                  };
+                  MainLoop.method = "immediate"
               }
               return 0
           };
@@ -5140,21 +5188,20 @@ var mGBA = (() => {
           };
           var runEmAsmFunction = (code, sigPtr, argbuf) => {
               var args = readEmAsmArgs(sigPtr, argbuf);
-              return ASM_CONSTS[code].apply(null, args)
+              return ASM_CONSTS[code](...args)
           };
           var _emscripten_asm_const_int = (code, sigPtr, argbuf) => runEmAsmFunction(code, sigPtr, argbuf);
-          var runMainThreadEmAsm = (code, sigPtr, argbuf, sync) => {
+          var runMainThreadEmAsm = (emAsmAddr, sigPtr, argbuf, sync) => {
               var args = readEmAsmArgs(sigPtr, argbuf);
-              return ASM_CONSTS[code].apply(null, args)
+              return ASM_CONSTS[emAsmAddr](...args)
           };
-          var _emscripten_asm_const_int_sync_on_main_thread = (code, sigPtr, argbuf) => runMainThreadEmAsm(code, sigPtr, argbuf, 1);
+          var _emscripten_asm_const_int_sync_on_main_thread = (emAsmAddr, sigPtr, argbuf) => runMainThreadEmAsm(emAsmAddr, sigPtr, argbuf, 1);
+          var _emscripten_asm_const_ptr_sync_on_main_thread = (emAsmAddr, sigPtr, argbuf) => runMainThreadEmAsm(emAsmAddr, sigPtr, argbuf, 1);
+          var _emscripten_cancel_main_loop = () => {
+              MainLoop.pause();
+              MainLoop.func = null
+          };
           var _emscripten_date_now = () => Date.now();
-          var withStackSave = f => {
-              var stack = stackSave();
-              var ret = f();
-              stackRestore(stack);
-              return ret
-          };
           var JSEvents = {
               removeAllEventListeners() {
                   while (JSEvents.eventHandlers.length) {
@@ -5172,26 +5219,20 @@ var mGBA = (() => {
                       }
                       return true
                   }
-                  for (var i in JSEvents.deferredCalls) {
-                      var call = JSEvents.deferredCalls[i];
+                  for (var call of JSEvents.deferredCalls) {
                       if (call.targetFunction == targetFunction && arraysHaveEqualContent(call.argsList, argsList)) {
                           return
                       }
                   }
                   JSEvents.deferredCalls.push({
-                      targetFunction: targetFunction,
-                      precedence: precedence,
-                      argsList: argsList
+                      targetFunction,
+                      precedence,
+                      argsList
                   });
                   JSEvents.deferredCalls.sort((x, y) => x.precedence < y.precedence)
               },
               removeDeferredCalls(targetFunction) {
-                  for (var i = 0; i < JSEvents.deferredCalls.length; ++i) {
-                      if (JSEvents.deferredCalls[i].targetFunction == targetFunction) {
-                          JSEvents.deferredCalls.splice(i, 1);
-                          --i
-                      }
-                  }
+                  JSEvents.deferredCalls = JSEvents.deferredCalls.filter(call => call.targetFunction != targetFunction)
               },
               canPerformEventHandlerRequests() {
                   if (navigator.userActivation) {
@@ -5203,11 +5244,10 @@ var mGBA = (() => {
                   if (!JSEvents.canPerformEventHandlerRequests()) {
                       return
                   }
-                  for (var i = 0; i < JSEvents.deferredCalls.length; ++i) {
-                      var call = JSEvents.deferredCalls[i];
-                      JSEvents.deferredCalls.splice(i, 1);
-                      --i;
-                      call.targetFunction.apply(null, call.argsList)
+                  var deferredCalls = JSEvents.deferredCalls;
+                  JSEvents.deferredCalls = [];
+                  for (var call of deferredCalls) {
+                      call.targetFunction(...call.argsList)
                   }
               },
               eventHandlers: [],
@@ -5272,20 +5312,23 @@ var mGBA = (() => {
               HEAP32[width >> 2] = canvas.width;
               HEAP32[height >> 2] = canvas.height
           };
+          var stackAlloc = sz => __emscripten_stack_alloc(sz);
           var stringToUTF8OnStack = str => {
               var size = lengthBytesUTF8(str) + 1;
               var ret = stackAlloc(size);
               stringToUTF8(str, ret, size);
               return ret
           };
-          var getCanvasElementSize = target => withStackSave(() => {
+          var getCanvasElementSize = target => {
+              var sp = stackSave();
               var w = stackAlloc(8);
               var h = w + 4;
               var targetInt = stringToUTF8OnStack(target.id);
               var ret = _emscripten_get_canvas_element_size(targetInt, w, h);
               var size = [HEAP32[w >> 2], HEAP32[h >> 2]];
+              stackRestore(sp);
               return size
-          });
+          };
           var _emscripten_set_canvas_element_size = (target, width, height) => {
               var canvas = findCanvasEventTarget(target);
               if (!canvas) return -4;
@@ -5298,11 +5341,21 @@ var mGBA = (() => {
                   target.width = width;
                   target.height = height
               } else {
-                  withStackSave(() => {
-                      var targetInt = stringToUTF8OnStack(target.id);
-                      _emscripten_set_canvas_element_size(targetInt, width, height)
-                  })
+                  var sp = stackSave();
+                  var targetInt = stringToUTF8OnStack(target.id);
+                  _emscripten_set_canvas_element_size(targetInt, width, height);
+                  stackRestore(sp)
               }
+          };
+          var wasmTableMirror = [];
+          var wasmTable;
+          var getWasmTableEntry = funcPtr => {
+              var func = wasmTableMirror[funcPtr];
+              if (!func) {
+                  if (funcPtr >= wasmTableMirror.length) wasmTableMirror.length = funcPtr + 1;
+                  wasmTableMirror[funcPtr] = func = wasmTable.get(funcPtr)
+              }
+              return func
           };
           var registerRestoreOldStyle = canvas => {
               var canvasSize = getCanvasElementSize(canvas);
@@ -5363,8 +5416,8 @@ var mGBA = (() => {
               element.style.paddingTop = element.style.paddingBottom = topBottom + "px"
           };
           var getBoundingClientRect = e => specialHTMLTargets.indexOf(e) < 0 ? e.getBoundingClientRect() : {
-              "left": 0,
-              "top": 0
+              left: 0,
+              top: 0
           };
           var JSEvents_resizeCanvasForFullscreen = (target, strategy) => {
               var restoreOldStyle = registerRestoreOldStyle(target);
@@ -5391,8 +5444,8 @@ var mGBA = (() => {
                       cssWidth = desiredCssWidth
                   }
               }
-              if (!target.style.backgroundColor) target.style.backgroundColor = "black";
-              if (!document.body.style.backgroundColor) document.body.style.backgroundColor = "black";
+              target.style.backgroundColor ||= "black";
+              document.body.style.backgroundColor ||= "black";
               target.style.width = cssWidth + "px";
               target.style.height = cssHeight + "px";
               if (strategy.filteringMode == 1) {
@@ -5463,6 +5516,14 @@ var mGBA = (() => {
               }
               return 0
           };
+          var __emscripten_runtime_keepalive_clear = () => {
+              noExitRuntime = false;
+              runtimeKeepaliveCounter = 0
+          };
+          var _emscripten_force_exit = status => {
+              __emscripten_runtime_keepalive_clear();
+              _exit(status)
+          };
           var _emscripten_get_device_pixel_ratio = () => devicePixelRatio;
           var _emscripten_get_element_css_size = (target, width, height) => {
               target = findEventTarget(target);
@@ -5486,17 +5547,17 @@ var mGBA = (() => {
               }
               for (var i = 0; i < e.buttons.length; ++i) {
                   if (typeof e.buttons[i] == "object") {
-                      HEAP32[eventStruct + i * 4 + 1040 >> 2] = e.buttons[i].pressed
+                      HEAP8[eventStruct + i + 1040] = e.buttons[i].pressed
                   } else {
-                      HEAP32[eventStruct + i * 4 + 1040 >> 2] = e.buttons[i] == 1
+                      HEAP8[eventStruct + i + 1040] = e.buttons[i] == 1
                   }
               }
-              HEAP32[eventStruct + 1296 >> 2] = e.connected;
-              HEAP32[eventStruct + 1300 >> 2] = e.index;
+              HEAP8[eventStruct + 1104] = e.connected;
+              HEAP32[eventStruct + 1108 >> 2] = e.index;
               HEAP32[eventStruct + 8 >> 2] = e.axes.length;
               HEAP32[eventStruct + 12 >> 2] = e.buttons.length;
-              stringToUTF8(e.id, eventStruct + 1304, 64);
-              stringToUTF8(e.mapping, eventStruct + 1368, 64)
+              stringToUTF8(e.id, eventStruct + 1112, 64);
+              stringToUTF8(e.mapping, eventStruct + 1176, 64)
           };
           var _emscripten_get_gamepad_status = (index, gamepadState) => {
               if (index < 0 || index >= JSEvents.lastGamepadState.length) return -5;
@@ -5505,18 +5566,15 @@ var mGBA = (() => {
               return 0
           };
           var _emscripten_get_main_loop_timing = (mode, value) => {
-              if (mode) HEAP32[mode >> 2] = Browser.mainLoop.timingMode;
-              if (value) HEAP32[value >> 2] = Browser.mainLoop.timingValue
+              if (mode) HEAP32[mode >> 2] = MainLoop.timingMode;
+              if (value) HEAP32[value >> 2] = MainLoop.timingValue
           };
           var _emscripten_get_num_gamepads = () => JSEvents.lastGamepadState.length;
           var _emscripten_get_screen_size = (width, height) => {
               HEAP32[width >> 2] = screen.width;
               HEAP32[height >> 2] = screen.height
           };
-
-          function _glActiveTexture(x0) {
-              GLctx.activeTexture(x0)
-          }
+          var _glActiveTexture = x0 => GLctx.activeTexture(x0);
           var _emscripten_glActiveTexture = _glActiveTexture;
           var _glAttachShader = (program, shader) => {
               GLctx.attachShader(GL.programs[program], GL.shaders[shader])
@@ -5551,30 +5609,15 @@ var mGBA = (() => {
           };
           var _glBindVertexArrayOES = _glBindVertexArray;
           var _emscripten_glBindVertexArrayOES = _glBindVertexArrayOES;
-
-          function _glBlendColor(x0, x1, x2, x3) {
-              GLctx.blendColor(x0, x1, x2, x3)
-          }
+          var _glBlendColor = (x0, x1, x2, x3) => GLctx.blendColor(x0, x1, x2, x3);
           var _emscripten_glBlendColor = _glBlendColor;
-
-          function _glBlendEquation(x0) {
-              GLctx.blendEquation(x0)
-          }
+          var _glBlendEquation = x0 => GLctx.blendEquation(x0);
           var _emscripten_glBlendEquation = _glBlendEquation;
-
-          function _glBlendEquationSeparate(x0, x1) {
-              GLctx.blendEquationSeparate(x0, x1)
-          }
+          var _glBlendEquationSeparate = (x0, x1) => GLctx.blendEquationSeparate(x0, x1);
           var _emscripten_glBlendEquationSeparate = _glBlendEquationSeparate;
-
-          function _glBlendFunc(x0, x1) {
-              GLctx.blendFunc(x0, x1)
-          }
+          var _glBlendFunc = (x0, x1) => GLctx.blendFunc(x0, x1);
           var _emscripten_glBlendFunc = _glBlendFunc;
-
-          function _glBlendFuncSeparate(x0, x1, x2, x3) {
-              GLctx.blendFuncSeparate(x0, x1, x2, x3)
-          }
+          var _glBlendFuncSeparate = (x0, x1, x2, x3) => GLctx.blendFuncSeparate(x0, x1, x2, x3);
           var _emscripten_glBlendFuncSeparate = _glBlendFuncSeparate;
           var _glBufferData = (target, size, data, usage) => {
               GLctx.bufferData(target, data ? HEAPU8.subarray(data, data + size) : size, usage)
@@ -5584,31 +5627,20 @@ var mGBA = (() => {
               GLctx.bufferSubData(target, offset, HEAPU8.subarray(data, data + size))
           };
           var _emscripten_glBufferSubData = _glBufferSubData;
-
-          function _glCheckFramebufferStatus(x0) {
-              return GLctx.checkFramebufferStatus(x0)
-          }
+          var _glCheckFramebufferStatus = x0 => GLctx.checkFramebufferStatus(x0);
           var _emscripten_glCheckFramebufferStatus = _glCheckFramebufferStatus;
-
-          function _glClear(x0) {
-              GLctx.clear(x0)
-          }
+          var _glClear = x0 => GLctx.clear(x0);
           var _emscripten_glClear = _glClear;
-
-          function _glClearColor(x0, x1, x2, x3) {
-              GLctx.clearColor(x0, x1, x2, x3)
-          }
+          var _glClearColor = (x0, x1, x2, x3) => GLctx.clearColor(x0, x1, x2, x3);
           var _emscripten_glClearColor = _glClearColor;
-
-          function _glClearDepthf(x0) {
-              GLctx.clearDepth(x0)
-          }
+          var _glClearDepthf = x0 => GLctx.clearDepth(x0);
           var _emscripten_glClearDepthf = _glClearDepthf;
-
-          function _glClearStencil(x0) {
-              GLctx.clearStencil(x0)
-          }
+          var _glClearStencil = x0 => GLctx.clearStencil(x0);
           var _emscripten_glClearStencil = _glClearStencil;
+          var _glClipControlEXT = (origin, depth) => {
+              GLctx.extClipControl["clipControlEXT"](origin, depth)
+          };
+          var _emscripten_glClipControlEXT = _glClipControlEXT;
           var _glColorMask = (red, green, blue, alpha) => {
               GLctx.colorMask(!!red, !!green, !!blue, !!alpha)
           };
@@ -5618,22 +5650,16 @@ var mGBA = (() => {
           };
           var _emscripten_glCompileShader = _glCompileShader;
           var _glCompressedTexImage2D = (target, level, internalFormat, width, height, border, imageSize, data) => {
-              GLctx.compressedTexImage2D(target, level, internalFormat, width, height, border, data ? HEAPU8.subarray(data, data + imageSize) : null)
+              GLctx.compressedTexImage2D(target, level, internalFormat, width, height, border, HEAPU8.subarray(data, data + imageSize))
           };
           var _emscripten_glCompressedTexImage2D = _glCompressedTexImage2D;
           var _glCompressedTexSubImage2D = (target, level, xoffset, yoffset, width, height, format, imageSize, data) => {
-              GLctx.compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data ? HEAPU8.subarray(data, data + imageSize) : null)
+              GLctx.compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, HEAPU8.subarray(data, data + imageSize))
           };
           var _emscripten_glCompressedTexSubImage2D = _glCompressedTexSubImage2D;
-
-          function _glCopyTexImage2D(x0, x1, x2, x3, x4, x5, x6, x7) {
-              GLctx.copyTexImage2D(x0, x1, x2, x3, x4, x5, x6, x7)
-          }
+          var _glCopyTexImage2D = (x0, x1, x2, x3, x4, x5, x6, x7) => GLctx.copyTexImage2D(x0, x1, x2, x3, x4, x5, x6, x7);
           var _emscripten_glCopyTexImage2D = _glCopyTexImage2D;
-
-          function _glCopyTexSubImage2D(x0, x1, x2, x3, x4, x5, x6, x7) {
-              GLctx.copyTexSubImage2D(x0, x1, x2, x3, x4, x5, x6, x7)
-          }
+          var _glCopyTexSubImage2D = (x0, x1, x2, x3, x4, x5, x6, x7) => GLctx.copyTexSubImage2D(x0, x1, x2, x3, x4, x5, x6, x7);
           var _emscripten_glCopyTexSubImage2D = _glCopyTexSubImage2D;
           var _glCreateProgram = () => {
               var id = GL.getNewId(GL.programs);
@@ -5651,10 +5677,7 @@ var mGBA = (() => {
               return id
           };
           var _emscripten_glCreateShader = _glCreateShader;
-
-          function _glCullFace(x0) {
-              GLctx.cullFace(x0)
-          }
+          var _glCullFace = x0 => GLctx.cullFace(x0);
           var _emscripten_glCullFace = _glCullFace;
           var _glDeleteBuffers = (n, buffers) => {
               for (var i = 0; i < n; i++) {
@@ -5742,28 +5765,19 @@ var mGBA = (() => {
           };
           var _glDeleteVertexArraysOES = _glDeleteVertexArrays;
           var _emscripten_glDeleteVertexArraysOES = _glDeleteVertexArraysOES;
-
-          function _glDepthFunc(x0) {
-              GLctx.depthFunc(x0)
-          }
+          var _glDepthFunc = x0 => GLctx.depthFunc(x0);
           var _emscripten_glDepthFunc = _glDepthFunc;
           var _glDepthMask = flag => {
               GLctx.depthMask(!!flag)
           };
           var _emscripten_glDepthMask = _glDepthMask;
-
-          function _glDepthRangef(x0, x1) {
-              GLctx.depthRange(x0, x1)
-          }
+          var _glDepthRangef = (x0, x1) => GLctx.depthRange(x0, x1);
           var _emscripten_glDepthRangef = _glDepthRangef;
           var _glDetachShader = (program, shader) => {
               GLctx.detachShader(GL.programs[program], GL.shaders[shader])
           };
           var _emscripten_glDetachShader = _glDetachShader;
-
-          function _glDisable(x0) {
-              GLctx.disable(x0)
-          }
+          var _glDisable = x0 => GLctx.disable(x0);
           var _emscripten_glDisable = _glDisable;
           var _glDisableVertexAttribArray = index => {
               GLctx.disableVertexAttribArray(index)
@@ -5797,10 +5811,7 @@ var mGBA = (() => {
           };
           var _glDrawElementsInstancedANGLE = _glDrawElementsInstanced;
           var _emscripten_glDrawElementsInstancedANGLE = _glDrawElementsInstancedANGLE;
-
-          function _glEnable(x0) {
-              GLctx.enable(x0)
-          }
+          var _glEnable = x0 => GLctx.enable(x0);
           var _emscripten_glEnable = _glEnable;
           var _glEnableVertexAttribArray = index => {
               GLctx.enableVertexAttribArray(index)
@@ -5810,15 +5821,9 @@ var mGBA = (() => {
               GLctx.disjointTimerQueryExt["endQueryEXT"](target)
           };
           var _emscripten_glEndQueryEXT = _glEndQueryEXT;
-
-          function _glFinish() {
-              GLctx.finish()
-          }
+          var _glFinish = () => GLctx.finish();
           var _emscripten_glFinish = _glFinish;
-
-          function _glFlush() {
-              GLctx.flush()
-          }
+          var _glFlush = () => GLctx.flush();
           var _emscripten_glFlush = _glFlush;
           var _glFramebufferRenderbuffer = (target, attachment, renderbuffertarget, renderbuffer) => {
               GLctx.framebufferRenderbuffer(target, attachment, renderbuffertarget, GL.renderbuffers[renderbuffer])
@@ -5828,30 +5833,14 @@ var mGBA = (() => {
               GLctx.framebufferTexture2D(target, attachment, textarget, GL.textures[texture], level)
           };
           var _emscripten_glFramebufferTexture2D = _glFramebufferTexture2D;
-
-          function _glFrontFace(x0) {
-              GLctx.frontFace(x0)
-          }
+          var _glFrontFace = x0 => GLctx.frontFace(x0);
           var _emscripten_glFrontFace = _glFrontFace;
-          var __glGenObject = (n, buffers, createFunction, objectTable) => {
-              for (var i = 0; i < n; i++) {
-                  var buffer = GLctx[createFunction]();
-                  var id = buffer && GL.getNewId(objectTable);
-                  if (buffer) {
-                      buffer.name = id;
-                      objectTable[id] = buffer
-                  } else {
-                      GL.recordError(1282)
-                  }
-                  HEAP32[buffers + i * 4 >> 2] = id
-              }
-          };
           var _glGenBuffers = (n, buffers) => {
-              __glGenObject(n, buffers, "createBuffer", GL.buffers)
+              GL.genObject(n, buffers, "createBuffer", GL.buffers)
           };
           var _emscripten_glGenBuffers = _glGenBuffers;
           var _glGenFramebuffers = (n, ids) => {
-              __glGenObject(n, ids, "createFramebuffer", GL.framebuffers)
+              GL.genObject(n, ids, "createFramebuffer", GL.framebuffers)
           };
           var _emscripten_glGenFramebuffers = _glGenFramebuffers;
           var _glGenQueriesEXT = (n, ids) => {
@@ -5870,23 +5859,19 @@ var mGBA = (() => {
           };
           var _emscripten_glGenQueriesEXT = _glGenQueriesEXT;
           var _glGenRenderbuffers = (n, renderbuffers) => {
-              __glGenObject(n, renderbuffers, "createRenderbuffer", GL.renderbuffers)
+              GL.genObject(n, renderbuffers, "createRenderbuffer", GL.renderbuffers)
           };
           var _emscripten_glGenRenderbuffers = _glGenRenderbuffers;
           var _glGenTextures = (n, textures) => {
-              __glGenObject(n, textures, "createTexture", GL.textures)
+              GL.genObject(n, textures, "createTexture", GL.textures)
           };
           var _emscripten_glGenTextures = _glGenTextures;
-
-          function _glGenVertexArrays(n, arrays) {
-              __glGenObject(n, arrays, "createVertexArray", GL.vaos)
-          }
+          var _glGenVertexArrays = (n, arrays) => {
+              GL.genObject(n, arrays, "createVertexArray", GL.vaos)
+          };
           var _glGenVertexArraysOES = _glGenVertexArrays;
           var _emscripten_glGenVertexArraysOES = _glGenVertexArraysOES;
-
-          function _glGenerateMipmap(x0) {
-              GLctx.generateMipmap(x0)
-          }
+          var _glGenerateMipmap = x0 => GLctx.generateMipmap(x0);
           var _emscripten_glGenerateMipmap = _glGenerateMipmap;
           var __glGetActiveAttribOrUniform = (funcName, program, index, bufSize, length, size, type, name) => {
               program = GL.programs[program];
@@ -5990,7 +5975,7 @@ var mGBA = (() => {
                                           HEAPF32[p + i * 4 >> 2] = result[i];
                                           break;
                                       case 4:
-                                          HEAP8[p + i >> 0] = result[i] ? 1 : 0;
+                                          HEAP8[p + i] = result[i] ? 1 : 0;
                                           break
                                   }
                               }
@@ -6022,7 +6007,7 @@ var mGBA = (() => {
                       HEAPF32[p >> 2] = ret;
                       break;
                   case 4:
-                      HEAP8[p >> 0] = ret ? 1 : 0;
+                      HEAP8[p] = ret ? 1 : 0;
                       break
               }
           };
@@ -6077,21 +6062,24 @@ var mGBA = (() => {
                   HEAP32[p >> 2] = log.length + 1
               } else if (pname == 35719) {
                   if (!program.maxUniformLength) {
-                      for (var i = 0; i < GLctx.getProgramParameter(program, 35718); ++i) {
+                      var numActiveUniforms = GLctx.getProgramParameter(program, 35718);
+                      for (var i = 0; i < numActiveUniforms; ++i) {
                           program.maxUniformLength = Math.max(program.maxUniformLength, GLctx.getActiveUniform(program, i).name.length + 1)
                       }
                   }
                   HEAP32[p >> 2] = program.maxUniformLength
               } else if (pname == 35722) {
                   if (!program.maxAttributeLength) {
-                      for (var i = 0; i < GLctx.getProgramParameter(program, 35721); ++i) {
+                      var numActiveAttributes = GLctx.getProgramParameter(program, 35721);
+                      for (var i = 0; i < numActiveAttributes; ++i) {
                           program.maxAttributeLength = Math.max(program.maxAttributeLength, GLctx.getActiveAttrib(program, i).name.length + 1)
                       }
                   }
                   HEAP32[p >> 2] = program.maxAttributeLength
               } else if (pname == 35381) {
                   if (!program.maxUniformBlockNameLength) {
-                      for (var i = 0; i < GLctx.getProgramParameter(program, 35382); ++i) {
+                      var numActiveUniformBlocks = GLctx.getProgramParameter(program, 35382);
+                      for (var i = 0; i < numActiveUniformBlocks; ++i) {
                           program.maxUniformBlockNameLength = Math.max(program.maxUniformBlockNameLength, GLctx.getActiveUniformBlockName(program, i).length + 1)
                       }
                   }
@@ -6219,10 +6207,8 @@ var mGBA = (() => {
                           ret = s ? stringToNewUTF8(s) : 0;
                           break;
                       case 7938:
-                          var glVersion = GLctx.getParameter(7938);
-                          {
-                              glVersion = `OpenGL ES 2.0 (${glVersion})`
-                          }
+                          var webGLVersion = GLctx.getParameter(7938);
+                          var glVersion = `OpenGL ES 2.0 (${webGLVersion})`;
                           ret = stringToNewUTF8(glVersion);
                           break;
                       case 35724:
@@ -6268,7 +6254,8 @@ var mGBA = (() => {
               if (!uniformLocsById) {
                   program.uniformLocsById = uniformLocsById = {};
                   program.uniformArrayNamesById = {};
-                  for (i = 0; i < GLctx.getProgramParameter(program, 35718); ++i) {
+                  var numActiveUniforms = GLctx.getProgramParameter(program, 35718);
+                  for (i = 0; i < numActiveUniforms; ++i) {
                       var u = GLctx.getActiveUniform(program, i);
                       var nm = u.name;
                       var sz = u.size;
@@ -6411,10 +6398,7 @@ var mGBA = (() => {
               emscriptenWebGLGetVertexAttrib(index, pname, params, 5)
           };
           var _emscripten_glGetVertexAttribiv = _glGetVertexAttribiv;
-
-          function _glHint(x0, x1) {
-              GLctx.hint(x0, x1)
-          }
+          var _glHint = (x0, x1) => GLctx.hint(x0, x1);
           var _emscripten_glHint = _glHint;
           var _glIsBuffer = buffer => {
               var b = GL.buffers[buffer];
@@ -6422,10 +6406,7 @@ var mGBA = (() => {
               return GLctx.isBuffer(b)
           };
           var _emscripten_glIsBuffer = _glIsBuffer;
-
-          function _glIsEnabled(x0) {
-              return GLctx.isEnabled(x0)
-          }
+          var _glIsEnabled = x0 => GLctx.isEnabled(x0);
           var _emscripten_glIsEnabled = _glIsEnabled;
           var _glIsFramebuffer = framebuffer => {
               var fb = GL.framebuffers[framebuffer];
@@ -6470,10 +6451,7 @@ var mGBA = (() => {
           };
           var _glIsVertexArrayOES = _glIsVertexArray;
           var _emscripten_glIsVertexArrayOES = _glIsVertexArrayOES;
-
-          function _glLineWidth(x0) {
-              GLctx.lineWidth(x0)
-          }
+          var _glLineWidth = x0 => GLctx.lineWidth(x0);
           var _emscripten_glLineWidth = _glLineWidth;
           var _glLinkProgram = program => {
               program = GL.programs[program];
@@ -6485,25 +6463,32 @@ var mGBA = (() => {
           var _glPixelStorei = (pname, param) => {
               if (pname == 3317) {
                   GL.unpackAlignment = param
+              } else if (pname == 3314) {
+                  GL.unpackRowLength = param
               }
               GLctx.pixelStorei(pname, param)
           };
           var _emscripten_glPixelStorei = _glPixelStorei;
-
-          function _glPolygonOffset(x0, x1) {
-              GLctx.polygonOffset(x0, x1)
-          }
+          var _glPolygonModeWEBGL = (face, mode) => {
+              GLctx.webglPolygonMode["polygonModeWEBGL"](face, mode)
+          };
+          var _emscripten_glPolygonModeWEBGL = _glPolygonModeWEBGL;
+          var _glPolygonOffset = (x0, x1) => GLctx.polygonOffset(x0, x1);
           var _emscripten_glPolygonOffset = _glPolygonOffset;
+          var _glPolygonOffsetClampEXT = (factor, units, clamp) => {
+              GLctx.extPolygonOffsetClamp["polygonOffsetClampEXT"](factor, units, clamp)
+          };
+          var _emscripten_glPolygonOffsetClampEXT = _glPolygonOffsetClampEXT;
           var _glQueryCounterEXT = (id, target) => {
               GLctx.disjointTimerQueryExt["queryCounterEXT"](GL.queries[id], target)
           };
           var _emscripten_glQueryCounterEXT = _glQueryCounterEXT;
-          var computeUnpackAlignedImageSize = (width, height, sizePerPixel, alignment) => {
+          var computeUnpackAlignedImageSize = (width, height, sizePerPixel) => {
               function roundedToNextMultipleOf(x, y) {
                   return x + y - 1 & -y
               }
-              var plainRowSize = width * sizePerPixel;
-              var alignedRowSize = roundedToNextMultipleOf(plainRowSize, alignment);
+              var plainRowSize = (GL.unpackRowLength || width) * sizePerPixel;
+              var alignedRowSize = roundedToNextMultipleOf(plainRowSize, GL.unpackAlignment);
               return height * alignedRowSize
           };
           var colorChannelsInGlTextureFormat = format => {
@@ -6524,14 +6509,12 @@ var mGBA = (() => {
               if (type == 5 || type == 28922) return HEAPU32;
               return HEAPU16
           };
-          var heapAccessShiftForWebGLHeap = heap => 31 - Math.clz32(heap.BYTES_PER_ELEMENT);
+          var toTypedArrayIndex = (pointer, heap) => pointer >>> 31 - Math.clz32(heap.BYTES_PER_ELEMENT);
           var emscriptenWebGLGetTexPixelData = (type, format, width, height, pixels, internalFormat) => {
               var heap = heapObjectForWebGLType(type);
-              var shift = heapAccessShiftForWebGLHeap(heap);
-              var byteSize = 1 << shift;
-              var sizePerPixel = colorChannelsInGlTextureFormat(format) * byteSize;
-              var bytes = computeUnpackAlignedImageSize(width, height, sizePerPixel, GL.unpackAlignment);
-              return heap.subarray(pixels >> shift, pixels + bytes >> shift)
+              var sizePerPixel = colorChannelsInGlTextureFormat(format) * heap.BYTES_PER_ELEMENT;
+              var bytes = computeUnpackAlignedImageSize(width, height, sizePerPixel);
+              return heap.subarray(toTypedArrayIndex(pixels, heap), toTypedArrayIndex(pixels + bytes, heap))
           };
           var _glReadPixels = (x, y, width, height, format, type, pixels) => {
               var pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, format);
@@ -6544,19 +6527,13 @@ var mGBA = (() => {
           var _emscripten_glReadPixels = _glReadPixels;
           var _glReleaseShaderCompiler = () => {};
           var _emscripten_glReleaseShaderCompiler = _glReleaseShaderCompiler;
-
-          function _glRenderbufferStorage(x0, x1, x2, x3) {
-              GLctx.renderbufferStorage(x0, x1, x2, x3)
-          }
+          var _glRenderbufferStorage = (x0, x1, x2, x3) => GLctx.renderbufferStorage(x0, x1, x2, x3);
           var _emscripten_glRenderbufferStorage = _glRenderbufferStorage;
           var _glSampleCoverage = (value, invert) => {
               GLctx.sampleCoverage(value, !!invert)
           };
           var _emscripten_glSampleCoverage = _glSampleCoverage;
-
-          function _glScissor(x0, x1, x2, x3) {
-              GLctx.scissor(x0, x1, x2, x3)
-          }
+          var _glScissor = (x0, x1, x2, x3) => GLctx.scissor(x0, x1, x2, x3);
           var _emscripten_glScissor = _glScissor;
           var _glShaderBinary = (count, shaders, binaryformat, binary, length) => {
               GL.recordError(1280)
@@ -6567,54 +6544,31 @@ var mGBA = (() => {
               GLctx.shaderSource(GL.shaders[shader], source)
           };
           var _emscripten_glShaderSource = _glShaderSource;
-
-          function _glStencilFunc(x0, x1, x2) {
-              GLctx.stencilFunc(x0, x1, x2)
-          }
+          var _glStencilFunc = (x0, x1, x2) => GLctx.stencilFunc(x0, x1, x2);
           var _emscripten_glStencilFunc = _glStencilFunc;
-
-          function _glStencilFuncSeparate(x0, x1, x2, x3) {
-              GLctx.stencilFuncSeparate(x0, x1, x2, x3)
-          }
+          var _glStencilFuncSeparate = (x0, x1, x2, x3) => GLctx.stencilFuncSeparate(x0, x1, x2, x3);
           var _emscripten_glStencilFuncSeparate = _glStencilFuncSeparate;
-
-          function _glStencilMask(x0) {
-              GLctx.stencilMask(x0)
-          }
+          var _glStencilMask = x0 => GLctx.stencilMask(x0);
           var _emscripten_glStencilMask = _glStencilMask;
-
-          function _glStencilMaskSeparate(x0, x1) {
-              GLctx.stencilMaskSeparate(x0, x1)
-          }
+          var _glStencilMaskSeparate = (x0, x1) => GLctx.stencilMaskSeparate(x0, x1);
           var _emscripten_glStencilMaskSeparate = _glStencilMaskSeparate;
-
-          function _glStencilOp(x0, x1, x2) {
-              GLctx.stencilOp(x0, x1, x2)
-          }
+          var _glStencilOp = (x0, x1, x2) => GLctx.stencilOp(x0, x1, x2);
           var _emscripten_glStencilOp = _glStencilOp;
-
-          function _glStencilOpSeparate(x0, x1, x2, x3) {
-              GLctx.stencilOpSeparate(x0, x1, x2, x3)
-          }
+          var _glStencilOpSeparate = (x0, x1, x2, x3) => GLctx.stencilOpSeparate(x0, x1, x2, x3);
           var _emscripten_glStencilOpSeparate = _glStencilOpSeparate;
           var _glTexImage2D = (target, level, internalFormat, width, height, border, format, type, pixels) => {
-              GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) : null)
+              var pixelData = pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) : null;
+              GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixelData)
           };
           var _emscripten_glTexImage2D = _glTexImage2D;
-
-          function _glTexParameterf(x0, x1, x2) {
-              GLctx.texParameterf(x0, x1, x2)
-          }
+          var _glTexParameterf = (x0, x1, x2) => GLctx.texParameterf(x0, x1, x2);
           var _emscripten_glTexParameterf = _glTexParameterf;
           var _glTexParameterfv = (target, pname, params) => {
               var param = HEAPF32[params >> 2];
               GLctx.texParameterf(target, pname, param)
           };
           var _emscripten_glTexParameterfv = _glTexParameterfv;
-
-          function _glTexParameteri(x0, x1, x2) {
-              GLctx.texParameteri(x0, x1, x2)
-          }
+          var _glTexParameteri = (x0, x1, x2) => GLctx.texParameteri(x0, x1, x2);
           var _emscripten_glTexParameteri = _glTexParameteri;
           var _glTexParameteriv = (target, pname, params) => {
               var param = HEAP32[params >> 2];
@@ -6622,8 +6576,7 @@ var mGBA = (() => {
           };
           var _emscripten_glTexParameteriv = _glTexParameteriv;
           var _glTexSubImage2D = (target, level, xoffset, yoffset, width, height, format, type, pixels) => {
-              var pixelData = null;
-              if (pixels) pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, 0);
+              var pixelData = pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, 0) : null;
               GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixelData)
           };
           var _emscripten_glTexSubImage2D = _glTexSubImage2D;
@@ -6634,7 +6587,7 @@ var mGBA = (() => {
           var miniTempWebGLFloatBuffers = [];
           var _glUniform1fv = (location, count, value) => {
               if (count <= 288) {
-                  var view = miniTempWebGLFloatBuffers[count - 1];
+                  var view = miniTempWebGLFloatBuffers[count];
                   for (var i = 0; i < count; ++i) {
                       view[i] = HEAPF32[value + 4 * i >> 2]
                   }
@@ -6651,7 +6604,7 @@ var mGBA = (() => {
           var miniTempWebGLIntBuffers = [];
           var _glUniform1iv = (location, count, value) => {
               if (count <= 288) {
-                  var view = miniTempWebGLIntBuffers[count - 1];
+                  var view = miniTempWebGLIntBuffers[count];
                   for (var i = 0; i < count; ++i) {
                       view[i] = HEAP32[value + 4 * i >> 2]
                   }
@@ -6667,8 +6620,9 @@ var mGBA = (() => {
           var _emscripten_glUniform2f = _glUniform2f;
           var _glUniform2fv = (location, count, value) => {
               if (count <= 144) {
-                  var view = miniTempWebGLFloatBuffers[2 * count - 1];
-                  for (var i = 0; i < 2 * count; i += 2) {
+                  count *= 2;
+                  var view = miniTempWebGLFloatBuffers[count];
+                  for (var i = 0; i < count; i += 2) {
                       view[i] = HEAPF32[value + 4 * i >> 2];
                       view[i + 1] = HEAPF32[value + (4 * i + 4) >> 2]
                   }
@@ -6684,8 +6638,9 @@ var mGBA = (() => {
           var _emscripten_glUniform2i = _glUniform2i;
           var _glUniform2iv = (location, count, value) => {
               if (count <= 144) {
-                  var view = miniTempWebGLIntBuffers[2 * count - 1];
-                  for (var i = 0; i < 2 * count; i += 2) {
+                  count *= 2;
+                  var view = miniTempWebGLIntBuffers[count];
+                  for (var i = 0; i < count; i += 2) {
                       view[i] = HEAP32[value + 4 * i >> 2];
                       view[i + 1] = HEAP32[value + (4 * i + 4) >> 2]
                   }
@@ -6701,8 +6656,9 @@ var mGBA = (() => {
           var _emscripten_glUniform3f = _glUniform3f;
           var _glUniform3fv = (location, count, value) => {
               if (count <= 96) {
-                  var view = miniTempWebGLFloatBuffers[3 * count - 1];
-                  for (var i = 0; i < 3 * count; i += 3) {
+                  count *= 3;
+                  var view = miniTempWebGLFloatBuffers[count];
+                  for (var i = 0; i < count; i += 3) {
                       view[i] = HEAPF32[value + 4 * i >> 2];
                       view[i + 1] = HEAPF32[value + (4 * i + 4) >> 2];
                       view[i + 2] = HEAPF32[value + (4 * i + 8) >> 2]
@@ -6719,8 +6675,9 @@ var mGBA = (() => {
           var _emscripten_glUniform3i = _glUniform3i;
           var _glUniform3iv = (location, count, value) => {
               if (count <= 96) {
-                  var view = miniTempWebGLIntBuffers[3 * count - 1];
-                  for (var i = 0; i < 3 * count; i += 3) {
+                  count *= 3;
+                  var view = miniTempWebGLIntBuffers[count];
+                  for (var i = 0; i < count; i += 3) {
                       view[i] = HEAP32[value + 4 * i >> 2];
                       view[i + 1] = HEAP32[value + (4 * i + 4) >> 2];
                       view[i + 2] = HEAP32[value + (4 * i + 8) >> 2]
@@ -6737,10 +6694,11 @@ var mGBA = (() => {
           var _emscripten_glUniform4f = _glUniform4f;
           var _glUniform4fv = (location, count, value) => {
               if (count <= 72) {
-                  var view = miniTempWebGLFloatBuffers[4 * count - 1];
+                  var view = miniTempWebGLFloatBuffers[4 * count];
                   var heap = HEAPF32;
-                  value >>= 2;
-                  for (var i = 0; i < 4 * count; i += 4) {
+                  value = value >> 2;
+                  count *= 4;
+                  for (var i = 0; i < count; i += 4) {
                       var dst = value + i;
                       view[i] = heap[dst];
                       view[i + 1] = heap[dst + 1];
@@ -6759,8 +6717,9 @@ var mGBA = (() => {
           var _emscripten_glUniform4i = _glUniform4i;
           var _glUniform4iv = (location, count, value) => {
               if (count <= 72) {
-                  var view = miniTempWebGLIntBuffers[4 * count - 1];
-                  for (var i = 0; i < 4 * count; i += 4) {
+                  count *= 4;
+                  var view = miniTempWebGLIntBuffers[count];
+                  for (var i = 0; i < count; i += 4) {
                       view[i] = HEAP32[value + 4 * i >> 2];
                       view[i + 1] = HEAP32[value + (4 * i + 4) >> 2];
                       view[i + 2] = HEAP32[value + (4 * i + 8) >> 2];
@@ -6774,8 +6733,9 @@ var mGBA = (() => {
           var _emscripten_glUniform4iv = _glUniform4iv;
           var _glUniformMatrix2fv = (location, count, transpose, value) => {
               if (count <= 72) {
-                  var view = miniTempWebGLFloatBuffers[4 * count - 1];
-                  for (var i = 0; i < 4 * count; i += 4) {
+                  count *= 4;
+                  var view = miniTempWebGLFloatBuffers[count];
+                  for (var i = 0; i < count; i += 4) {
                       view[i] = HEAPF32[value + 4 * i >> 2];
                       view[i + 1] = HEAPF32[value + (4 * i + 4) >> 2];
                       view[i + 2] = HEAPF32[value + (4 * i + 8) >> 2];
@@ -6789,8 +6749,9 @@ var mGBA = (() => {
           var _emscripten_glUniformMatrix2fv = _glUniformMatrix2fv;
           var _glUniformMatrix3fv = (location, count, transpose, value) => {
               if (count <= 32) {
-                  var view = miniTempWebGLFloatBuffers[9 * count - 1];
-                  for (var i = 0; i < 9 * count; i += 9) {
+                  count *= 9;
+                  var view = miniTempWebGLFloatBuffers[count];
+                  for (var i = 0; i < count; i += 9) {
                       view[i] = HEAPF32[value + 4 * i >> 2];
                       view[i + 1] = HEAPF32[value + (4 * i + 4) >> 2];
                       view[i + 2] = HEAPF32[value + (4 * i + 8) >> 2];
@@ -6809,10 +6770,11 @@ var mGBA = (() => {
           var _emscripten_glUniformMatrix3fv = _glUniformMatrix3fv;
           var _glUniformMatrix4fv = (location, count, transpose, value) => {
               if (count <= 18) {
-                  var view = miniTempWebGLFloatBuffers[16 * count - 1];
+                  var view = miniTempWebGLFloatBuffers[16 * count];
                   var heap = HEAPF32;
-                  value >>= 2;
-                  for (var i = 0; i < 16 * count; i += 16) {
+                  value = value >> 2;
+                  count *= 16;
+                  for (var i = 0; i < count; i += 16) {
                       var dst = value + i;
                       view[i] = heap[dst];
                       view[i + 1] = heap[dst + 1];
@@ -6847,37 +6809,25 @@ var mGBA = (() => {
               GLctx.validateProgram(GL.programs[program])
           };
           var _emscripten_glValidateProgram = _glValidateProgram;
-
-          function _glVertexAttrib1f(x0, x1) {
-              GLctx.vertexAttrib1f(x0, x1)
-          }
+          var _glVertexAttrib1f = (x0, x1) => GLctx.vertexAttrib1f(x0, x1);
           var _emscripten_glVertexAttrib1f = _glVertexAttrib1f;
           var _glVertexAttrib1fv = (index, v) => {
               GLctx.vertexAttrib1f(index, HEAPF32[v >> 2])
           };
           var _emscripten_glVertexAttrib1fv = _glVertexAttrib1fv;
-
-          function _glVertexAttrib2f(x0, x1, x2) {
-              GLctx.vertexAttrib2f(x0, x1, x2)
-          }
+          var _glVertexAttrib2f = (x0, x1, x2) => GLctx.vertexAttrib2f(x0, x1, x2);
           var _emscripten_glVertexAttrib2f = _glVertexAttrib2f;
           var _glVertexAttrib2fv = (index, v) => {
               GLctx.vertexAttrib2f(index, HEAPF32[v >> 2], HEAPF32[v + 4 >> 2])
           };
           var _emscripten_glVertexAttrib2fv = _glVertexAttrib2fv;
-
-          function _glVertexAttrib3f(x0, x1, x2, x3) {
-              GLctx.vertexAttrib3f(x0, x1, x2, x3)
-          }
+          var _glVertexAttrib3f = (x0, x1, x2, x3) => GLctx.vertexAttrib3f(x0, x1, x2, x3);
           var _emscripten_glVertexAttrib3f = _glVertexAttrib3f;
           var _glVertexAttrib3fv = (index, v) => {
               GLctx.vertexAttrib3f(index, HEAPF32[v >> 2], HEAPF32[v + 4 >> 2], HEAPF32[v + 8 >> 2])
           };
           var _emscripten_glVertexAttrib3fv = _glVertexAttrib3fv;
-
-          function _glVertexAttrib4f(x0, x1, x2, x3, x4) {
-              GLctx.vertexAttrib4f(x0, x1, x2, x3, x4)
-          }
+          var _glVertexAttrib4f = (x0, x1, x2, x3, x4) => GLctx.vertexAttrib4f(x0, x1, x2, x3, x4);
           var _emscripten_glVertexAttrib4f = _glVertexAttrib4f;
           var _glVertexAttrib4fv = (index, v) => {
               GLctx.vertexAttrib4f(index, HEAPF32[v >> 2], HEAPF32[v + 4 >> 2], HEAPF32[v + 8 >> 2], HEAPF32[v + 12 >> 2])
@@ -6892,15 +6842,11 @@ var mGBA = (() => {
               GLctx.vertexAttribPointer(index, size, type, !!normalized, stride, ptr)
           };
           var _emscripten_glVertexAttribPointer = _glVertexAttribPointer;
-
-          function _glViewport(x0, x1, x2, x3) {
-              GLctx.viewport(x0, x1, x2, x3)
-          }
+          var _glViewport = (x0, x1, x2, x3) => GLctx.viewport(x0, x1, x2, x3);
           var _emscripten_glViewport = _glViewport;
           var _emscripten_has_asyncify = () => 0;
-          var _emscripten_memcpy_js = (dest, src, num) => HEAPU8.copyWithin(dest, src, src + num);
           var _emscripten_pause_main_loop = () => {
-              Browser.mainLoop.pause()
+              MainLoop.pause()
           };
           var doRequestFullscreen = (target, strategy) => {
               if (!JSEvents.fullscreenEnabled()) return -1;
@@ -6909,8 +6855,7 @@ var mGBA = (() => {
               if (!target.requestFullscreen && !target.webkitRequestFullscreen) {
                   return -3
               }
-              var canPerformRequests = JSEvents.canPerformEventHandlerRequests();
-              if (!canPerformRequests) {
+              if (!JSEvents.canPerformEventHandlerRequests()) {
                   if (strategy.deferUntilInEventHandler) {
                       JSEvents.deferCall(JSEvents_requestFullscreen, 1, [target, strategy]);
                       return 1
@@ -6924,7 +6869,7 @@ var mGBA = (() => {
                   scaleMode: HEAP32[fullscreenStrategy >> 2],
                   canvasResolutionScaleMode: HEAP32[fullscreenStrategy + 4 >> 2],
                   filteringMode: HEAP32[fullscreenStrategy + 8 >> 2],
-                  deferUntilInEventHandler: deferUntilInEventHandler,
+                  deferUntilInEventHandler,
                   canvasResizedCallback: HEAP32[fullscreenStrategy + 12 >> 2],
                   canvasResizedCallbackUserData: HEAP32[fullscreenStrategy + 16 >> 2]
               };
@@ -6936,8 +6881,7 @@ var mGBA = (() => {
               if (!target.requestPointerLock) {
                   return -1
               }
-              var canPerformRequests = JSEvents.canPerformEventHandlerRequests();
-              if (!canPerformRequests) {
+              if (!JSEvents.canPerformEventHandlerRequests()) {
                   if (deferUntilInEventHandler) {
                       JSEvents.deferCall(requestPointerLock, 2, [target]);
                       return 1
@@ -6949,7 +6893,7 @@ var mGBA = (() => {
           var getHeapMax = () => 2147483648;
           var growMemory = size => {
               var b = wasmMemory.buffer;
-              var pages = (size - b.byteLength + 65535) / 65536;
+              var pages = (size - b.byteLength + 65535) / 65536 | 0;
               try {
                   wasmMemory.grow(pages);
                   updateMemoryViews();
@@ -6963,11 +6907,10 @@ var mGBA = (() => {
               if (requestedSize > maxHeapSize) {
                   return false
               }
-              var alignUp = (x, multiple) => x + (multiple - x % multiple) % multiple;
               for (var cutDown = 1; cutDown <= 4; cutDown *= 2) {
                   var overGrownHeapSize = oldSize * (1 + .2 / cutDown);
                   overGrownHeapSize = Math.min(overGrownHeapSize, requestedSize + 100663296);
-                  var newSize = Math.min(maxHeapSize, alignUp(Math.max(requestedSize, overGrownHeapSize), 65536));
+                  var newSize = Math.min(maxHeapSize, alignMemory(Math.max(requestedSize, overGrownHeapSize), 65536));
                   var replacement = growMemory(newSize);
                   if (replacement) {
                       return true
@@ -6976,7 +6919,7 @@ var mGBA = (() => {
               return false
           };
           var _emscripten_resume_main_loop = () => {
-              Browser.mainLoop.resume()
+              MainLoop.resume()
           };
           var _emscripten_sample_gamepad_data = () => {
               try {
@@ -7000,10 +6943,10 @@ var mGBA = (() => {
               };
               var eventHandler = {
                   target: findEventTarget(target),
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: beforeUnloadEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7013,7 +6956,7 @@ var mGBA = (() => {
               return registerBeforeUnloadEventCallback(2, userData, true, callbackfunc, 28, "beforeunload")
           };
           var registerFocusEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.focusEvent) JSEvents.focusEvent = _malloc(256);
+              JSEvents.focusEvent ||= _malloc(256);
               var focusEventHandlerFunc = (e = event) => {
                   var nodeName = JSEvents.getNodeNameForTarget(e.target);
                   var id = e.target.id ? e.target.id : "";
@@ -7024,10 +6967,10 @@ var mGBA = (() => {
               };
               var eventHandler = {
                   target: findEventTarget(target),
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: focusEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7043,34 +6986,34 @@ var mGBA = (() => {
           var fillFullscreenChangeEventData = eventStruct => {
               var fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
               var isFullscreen = !!fullscreenElement;
-              HEAP32[eventStruct >> 2] = isFullscreen;
-              HEAP32[eventStruct + 4 >> 2] = JSEvents.fullscreenEnabled();
+              HEAP8[eventStruct] = isFullscreen;
+              HEAP8[eventStruct + 1] = JSEvents.fullscreenEnabled();
               var reportedElement = isFullscreen ? fullscreenElement : JSEvents.previousFullscreenElement;
               var nodeName = JSEvents.getNodeNameForTarget(reportedElement);
               var id = reportedElement?.id || "";
-              stringToUTF8(nodeName, eventStruct + 8, 128);
-              stringToUTF8(id, eventStruct + 136, 128);
-              HEAP32[eventStruct + 264 >> 2] = reportedElement ? reportedElement.clientWidth : 0;
-              HEAP32[eventStruct + 268 >> 2] = reportedElement ? reportedElement.clientHeight : 0;
-              HEAP32[eventStruct + 272 >> 2] = screen.width;
-              HEAP32[eventStruct + 276 >> 2] = screen.height;
+              stringToUTF8(nodeName, eventStruct + 2, 128);
+              stringToUTF8(id, eventStruct + 130, 128);
+              HEAP32[eventStruct + 260 >> 2] = reportedElement ? reportedElement.clientWidth : 0;
+              HEAP32[eventStruct + 264 >> 2] = reportedElement ? reportedElement.clientHeight : 0;
+              HEAP32[eventStruct + 268 >> 2] = screen.width;
+              HEAP32[eventStruct + 272 >> 2] = screen.height;
               if (isFullscreen) {
                   JSEvents.previousFullscreenElement = fullscreenElement
               }
           };
           var registerFullscreenChangeEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.fullscreenChangeEvent) JSEvents.fullscreenChangeEvent = _malloc(280);
+              JSEvents.fullscreenChangeEvent ||= _malloc(276);
               var fullscreenChangeEventhandlerFunc = (e = event) => {
                   var fullscreenChangeEvent = JSEvents.fullscreenChangeEvent;
                   fillFullscreenChangeEventData(fullscreenChangeEvent);
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, fullscreenChangeEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  target,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: fullscreenChangeEventhandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7082,7 +7025,7 @@ var mGBA = (() => {
               return registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "fullscreenchange", targetThread)
           };
           var registerGamepadEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.gamepadEvent) JSEvents.gamepadEvent = _malloc(1432);
+              JSEvents.gamepadEvent ||= _malloc(1240);
               var gamepadEventHandlerFunc = (e = event) => {
                   var gamepadEvent = JSEvents.gamepadEvent;
                   fillGamepadEventData(gamepadEvent, e["gamepad"]);
@@ -7091,10 +7034,10 @@ var mGBA = (() => {
               var eventHandler = {
                   target: findEventTarget(target),
                   allowsDeferredCalls: true,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: gamepadEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7107,41 +7050,41 @@ var mGBA = (() => {
               return registerGamepadEventCallback(2, userData, useCapture, callbackfunc, 27, "gamepaddisconnected", targetThread)
           };
           var registerKeyEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.keyEvent) JSEvents.keyEvent = _malloc(176);
+              JSEvents.keyEvent ||= _malloc(160);
               var keyEventHandlerFunc = e => {
                   var keyEventData = JSEvents.keyEvent;
                   HEAPF64[keyEventData >> 3] = e.timeStamp;
                   var idx = keyEventData >> 2;
                   HEAP32[idx + 2] = e.location;
-                  HEAP32[idx + 3] = e.ctrlKey;
-                  HEAP32[idx + 4] = e.shiftKey;
-                  HEAP32[idx + 5] = e.altKey;
-                  HEAP32[idx + 6] = e.metaKey;
-                  HEAP32[idx + 7] = e.repeat;
-                  HEAP32[idx + 8] = e.charCode;
-                  HEAP32[idx + 9] = e.keyCode;
-                  HEAP32[idx + 10] = e.which;
-                  stringToUTF8(e.key || "", keyEventData + 44, 32);
-                  stringToUTF8(e.code || "", keyEventData + 76, 32);
-                  stringToUTF8(e.char || "", keyEventData + 108, 32);
-                  stringToUTF8(e.locale || "", keyEventData + 140, 32);
+                  HEAP8[keyEventData + 12] = e.ctrlKey;
+                  HEAP8[keyEventData + 13] = e.shiftKey;
+                  HEAP8[keyEventData + 14] = e.altKey;
+                  HEAP8[keyEventData + 15] = e.metaKey;
+                  HEAP8[keyEventData + 16] = e.repeat;
+                  HEAP32[idx + 5] = e.charCode;
+                  HEAP32[idx + 6] = e.keyCode;
+                  HEAP32[idx + 7] = e.which;
+                  stringToUTF8(e.key || "", keyEventData + 32, 32);
+                  stringToUTF8(e.code || "", keyEventData + 64, 32);
+                  stringToUTF8(e.char || "", keyEventData + 96, 32);
+                  stringToUTF8(e.locale || "", keyEventData + 128, 32);
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, keyEventData, userData)) e.preventDefault()
               };
               var eventHandler = {
                   target: findEventTarget(target),
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: keyEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
-          var _emscripten_set_keydown_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 2, "", targetThread);
-          var _emscripten_set_keypress_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 1, "", targetThread);
-          var _emscripten_set_keyup_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 3, "", targetThread);
+          var _emscripten_set_keydown_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 2, "keydown", targetThread);
+          var _emscripten_set_keypress_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 1, "keypress", targetThread);
+          var _emscripten_set_keyup_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerKeyEventCallback(target, userData, useCapture, callbackfunc, 3, "keyup", targetThread);
           var _emscripten_set_main_loop = (func, fps, simulateInfiniteLoop) => {
-              var browserIterationFunc = getWasmTableEntry(func);
-              setMainLoop(browserIterationFunc, fps, simulateInfiniteLoop)
+              var iterFunc = getWasmTableEntry(func);
+              setMainLoop(iterFunc, fps, simulateInfiniteLoop)
           };
           var fillMouseEventData = (eventStruct, e, target) => {
               HEAPF64[eventStruct >> 3] = e.timeStamp;
@@ -7150,32 +7093,32 @@ var mGBA = (() => {
               HEAP32[idx + 3] = e.screenY;
               HEAP32[idx + 4] = e.clientX;
               HEAP32[idx + 5] = e.clientY;
-              HEAP32[idx + 6] = e.ctrlKey;
-              HEAP32[idx + 7] = e.shiftKey;
-              HEAP32[idx + 8] = e.altKey;
-              HEAP32[idx + 9] = e.metaKey;
-              HEAP16[idx * 2 + 20] = e.button;
-              HEAP16[idx * 2 + 21] = e.buttons;
-              HEAP32[idx + 11] = e["movementX"];
-              HEAP32[idx + 12] = e["movementY"];
+              HEAP8[eventStruct + 24] = e.ctrlKey;
+              HEAP8[eventStruct + 25] = e.shiftKey;
+              HEAP8[eventStruct + 26] = e.altKey;
+              HEAP8[eventStruct + 27] = e.metaKey;
+              HEAP16[idx * 2 + 14] = e.button;
+              HEAP16[idx * 2 + 15] = e.buttons;
+              HEAP32[idx + 8] = e["movementX"];
+              HEAP32[idx + 9] = e["movementY"];
               var rect = getBoundingClientRect(target);
-              HEAP32[idx + 13] = e.clientX - rect.left;
-              HEAP32[idx + 14] = e.clientY - rect.top
+              HEAP32[idx + 10] = e.clientX - (rect.left | 0);
+              HEAP32[idx + 11] = e.clientY - (rect.top | 0)
           };
           var registerMouseEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.mouseEvent) JSEvents.mouseEvent = _malloc(72);
+              JSEvents.mouseEvent ||= _malloc(64);
               target = findEventTarget(target);
               var mouseEventHandlerFunc = (e = event) => {
                   fillMouseEventData(JSEvents.mouseEvent, e, target);
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, JSEvents.mouseEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
+                  target,
                   allowsDeferredCalls: eventTypeString != "mousemove" && eventTypeString != "mouseenter" && eventTypeString != "mouseleave",
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: mouseEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7187,25 +7130,25 @@ var mGBA = (() => {
           var fillPointerlockChangeEventData = eventStruct => {
               var pointerLockElement = document.pointerLockElement || document.mozPointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement;
               var isPointerlocked = !!pointerLockElement;
-              HEAP32[eventStruct >> 2] = isPointerlocked;
+              HEAP8[eventStruct] = isPointerlocked;
               var nodeName = JSEvents.getNodeNameForTarget(pointerLockElement);
               var id = pointerLockElement?.id || "";
-              stringToUTF8(nodeName, eventStruct + 4, 128);
-              stringToUTF8(id, eventStruct + 132, 128)
+              stringToUTF8(nodeName, eventStruct + 1, 128);
+              stringToUTF8(id, eventStruct + 129, 128)
           };
           var registerPointerlockChangeEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.pointerlockChangeEvent) JSEvents.pointerlockChangeEvent = _malloc(260);
+              JSEvents.pointerlockChangeEvent ||= _malloc(257);
               var pointerlockChangeEventHandlerFunc = (e = event) => {
                   var pointerlockChangeEvent = JSEvents.pointerlockChangeEvent;
                   fillPointerlockChangeEventData(pointerlockChangeEvent);
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, pointerlockChangeEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  target,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: pointerlockChangeEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7221,7 +7164,7 @@ var mGBA = (() => {
               return registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "pointerlockchange", targetThread)
           };
           var registerUiEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.uiEvent) JSEvents.uiEvent = _malloc(36);
+              JSEvents.uiEvent ||= _malloc(36);
               target = findEventTarget(target);
               var uiEventHandlerFunc = (e = event) => {
                   if (e.target != target) {
@@ -7232,70 +7175,67 @@ var mGBA = (() => {
                       return
                   }
                   var uiEvent = JSEvents.uiEvent;
-                  HEAP32[uiEvent >> 2] = e.detail;
+                  HEAP32[uiEvent >> 2] = 0;
                   HEAP32[uiEvent + 4 >> 2] = b.clientWidth;
                   HEAP32[uiEvent + 8 >> 2] = b.clientHeight;
                   HEAP32[uiEvent + 12 >> 2] = innerWidth;
                   HEAP32[uiEvent + 16 >> 2] = innerHeight;
                   HEAP32[uiEvent + 20 >> 2] = outerWidth;
                   HEAP32[uiEvent + 24 >> 2] = outerHeight;
-                  HEAP32[uiEvent + 28 >> 2] = pageXOffset;
-                  HEAP32[uiEvent + 32 >> 2] = pageYOffset;
+                  HEAP32[uiEvent + 28 >> 2] = pageXOffset | 0;
+                  HEAP32[uiEvent + 32 >> 2] = pageYOffset | 0;
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, uiEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  target,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: uiEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
           var _emscripten_set_resize_callback_on_thread = (target, userData, useCapture, callbackfunc, targetThread) => registerUiEventCallback(target, userData, useCapture, callbackfunc, 10, "resize", targetThread);
           var registerTouchEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.touchEvent) JSEvents.touchEvent = _malloc(1696);
+              JSEvents.touchEvent ||= _malloc(1552);
               target = findEventTarget(target);
               var touchEventHandlerFunc = e => {
                   var t, touches = {},
                       et = e.touches;
-                  for (var i = 0; i < et.length; ++i) {
-                      t = et[i];
+                  for (let t of et) {
                       t.isChanged = t.onTarget = 0;
                       touches[t.identifier] = t
                   }
-                  for (var i = 0; i < e.changedTouches.length; ++i) {
-                      t = e.changedTouches[i];
+                  for (let t of e.changedTouches) {
                       t.isChanged = 1;
                       touches[t.identifier] = t
                   }
-                  for (var i = 0; i < e.targetTouches.length; ++i) {
-                      touches[e.targetTouches[i].identifier].onTarget = 1
+                  for (let t of e.targetTouches) {
+                      touches[t.identifier].onTarget = 1
                   }
                   var touchEvent = JSEvents.touchEvent;
                   HEAPF64[touchEvent >> 3] = e.timeStamp;
-                  var idx = touchEvent >> 2;
-                  HEAP32[idx + 3] = e.ctrlKey;
-                  HEAP32[idx + 4] = e.shiftKey;
-                  HEAP32[idx + 5] = e.altKey;
-                  HEAP32[idx + 6] = e.metaKey;
-                  idx += 7;
+                  HEAP8[touchEvent + 12] = e.ctrlKey;
+                  HEAP8[touchEvent + 13] = e.shiftKey;
+                  HEAP8[touchEvent + 14] = e.altKey;
+                  HEAP8[touchEvent + 15] = e.metaKey;
+                  var idx = touchEvent + 16;
                   var targetRect = getBoundingClientRect(target);
                   var numTouches = 0;
-                  for (var i in touches) {
-                      t = touches[i];
-                      HEAP32[idx + 0] = t.identifier;
-                      HEAP32[idx + 1] = t.screenX;
-                      HEAP32[idx + 2] = t.screenY;
-                      HEAP32[idx + 3] = t.clientX;
-                      HEAP32[idx + 4] = t.clientY;
-                      HEAP32[idx + 5] = t.pageX;
-                      HEAP32[idx + 6] = t.pageY;
-                      HEAP32[idx + 7] = t.isChanged;
-                      HEAP32[idx + 8] = t.onTarget;
-                      HEAP32[idx + 9] = t.clientX - targetRect.left;
-                      HEAP32[idx + 10] = t.clientY - targetRect.top;
-                      idx += 13;
+                  for (let t of Object.values(touches)) {
+                      var idx32 = idx >> 2;
+                      HEAP32[idx32 + 0] = t.identifier;
+                      HEAP32[idx32 + 1] = t.screenX;
+                      HEAP32[idx32 + 2] = t.screenY;
+                      HEAP32[idx32 + 3] = t.clientX;
+                      HEAP32[idx32 + 4] = t.clientY;
+                      HEAP32[idx32 + 5] = t.pageX;
+                      HEAP32[idx32 + 6] = t.pageY;
+                      HEAP8[idx + 28] = t.isChanged;
+                      HEAP8[idx + 29] = t.onTarget;
+                      HEAP32[idx32 + 8] = t.clientX - (targetRect.left | 0);
+                      HEAP32[idx32 + 9] = t.clientY - (targetRect.top | 0);
+                      idx += 48;
                       if (++numTouches > 31) {
                           break
                       }
@@ -7304,12 +7244,12 @@ var mGBA = (() => {
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, touchEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
+                  target,
                   allowsDeferredCalls: eventTypeString == "touchstart" || eventTypeString == "touchend",
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: touchEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7320,44 +7260,44 @@ var mGBA = (() => {
           var fillVisibilityChangeEventData = eventStruct => {
               var visibilityStates = ["hidden", "visible", "prerender", "unloaded"];
               var visibilityState = visibilityStates.indexOf(document.visibilityState);
-              HEAP32[eventStruct >> 2] = document.hidden;
+              HEAP8[eventStruct] = document.hidden;
               HEAP32[eventStruct + 4 >> 2] = visibilityState
           };
           var registerVisibilityChangeEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.visibilityChangeEvent) JSEvents.visibilityChangeEvent = _malloc(8);
+              JSEvents.visibilityChangeEvent ||= _malloc(8);
               var visibilityChangeEventHandlerFunc = (e = event) => {
                   var visibilityChangeEvent = JSEvents.visibilityChangeEvent;
                   fillVisibilityChangeEventData(visibilityChangeEvent);
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, visibilityChangeEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  target,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: visibilityChangeEventHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
           var _emscripten_set_visibilitychange_callback_on_thread = (userData, useCapture, callbackfunc, targetThread) => registerVisibilityChangeEventCallback(specialHTMLTargets[1], userData, useCapture, callbackfunc, 21, "visibilitychange", targetThread);
           var registerWheelEventCallback = (target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) => {
-              if (!JSEvents.wheelEvent) JSEvents.wheelEvent = _malloc(104);
+              JSEvents.wheelEvent ||= _malloc(96);
               var wheelHandlerFunc = (e = event) => {
                   var wheelEvent = JSEvents.wheelEvent;
                   fillMouseEventData(wheelEvent, e, target);
-                  HEAPF64[wheelEvent + 72 >> 3] = e["deltaX"];
-                  HEAPF64[wheelEvent + 80 >> 3] = e["deltaY"];
-                  HEAPF64[wheelEvent + 88 >> 3] = e["deltaZ"];
-                  HEAP32[wheelEvent + 96 >> 2] = e["deltaMode"];
+                  HEAPF64[wheelEvent + 64 >> 3] = e["deltaX"];
+                  HEAPF64[wheelEvent + 72 >> 3] = e["deltaY"];
+                  HEAPF64[wheelEvent + 80 >> 3] = e["deltaZ"];
+                  HEAP32[wheelEvent + 88 >> 2] = e["deltaMode"];
                   if (getWasmTableEntry(callbackfunc)(eventTypeId, wheelEvent, userData)) e.preventDefault()
               };
               var eventHandler = {
-                  target: target,
+                  target,
                   allowsDeferredCalls: true,
-                  eventTypeString: eventTypeString,
-                  callbackfunc: callbackfunc,
+                  eventTypeString,
+                  callbackfunc,
                   handlerFunc: wheelHandlerFunc,
-                  useCapture: useCapture
+                  useCapture
               };
               return JSEvents.registerOrRemoveHandler(eventHandler)
           };
@@ -7380,13 +7320,13 @@ var mGBA = (() => {
               if (!getEnvStrings.strings) {
                   var lang = (typeof navigator == "object" && navigator.languages && navigator.languages[0] || "C").replace("-", "_") + ".UTF-8";
                   var env = {
-                      "USER": "web_user",
-                      "LOGNAME": "web_user",
-                      "PATH": "/",
-                      "PWD": "/",
-                      "HOME": "/home/web_user",
-                      "LANG": lang,
-                      "_": getExecutableName()
+                      USER: "web_user",
+                      LOGNAME: "web_user",
+                      PATH: "/",
+                      PWD: "/",
+                      HOME: "/home/web_user",
+                      LANG: lang,
+                      _: getExecutableName()
                   };
                   for (var x in ENV) {
                       if (ENV[x] === undefined) delete env[x];
@@ -7402,9 +7342,9 @@ var mGBA = (() => {
           };
           var stringToAscii = (str, buffer) => {
               for (var i = 0; i < str.length; ++i) {
-                  HEAP8[buffer++ >> 0] = str.charCodeAt(i)
+                  HEAP8[buffer++] = str.charCodeAt(i)
               }
-              HEAP8[buffer >> 0] = 0
+              HEAP8[buffer] = 0
           };
           var _environ_get = (__environ, environ_buf) => {
               var bufSize = 0;
@@ -7445,7 +7385,7 @@ var mGBA = (() => {
                   if (curr < 0) return -1;
                   ret += curr;
                   if (curr < len) break;
-                  if (typeof offset !== "undefined") {
+                  if (typeof offset != "undefined") {
                       offset += curr
                   }
               }
@@ -7500,7 +7440,10 @@ var mGBA = (() => {
                   var curr = FS.write(stream, HEAP8, ptr, len, offset);
                   if (curr < 0) return -1;
                   ret += curr;
-                  if (typeof offset !== "undefined") {
+                  if (curr < len) {
+                      break
+                  }
+                  if (typeof offset != "undefined") {
                       offset += curr
                   }
               }
@@ -7518,6 +7461,36 @@ var mGBA = (() => {
                   return e.errno
               }
           }
+          var listenOnce = (object, event, func) => {
+              object.addEventListener(event, func, {
+                  once: true
+              })
+          };
+          var autoResumeAudioContext = (ctx, elements) => {
+              if (!elements) {
+                  elements = [document, document.getElementById("canvas")]
+              } ["keydown", "mousedown", "touchstart"].forEach(event => {
+                  elements.forEach(element => {
+                      if (element) {
+                          listenOnce(element, event, () => {
+                              if (ctx.state === "suspended") ctx.resume()
+                          })
+                      }
+                  })
+              })
+          };
+          var dynCallLegacy = (sig, ptr, args) => {
+              sig = sig.replace(/p/g, "i");
+              var f = Module["dynCall_" + sig];
+              return f(ptr, ...args)
+          };
+          var dynCall = (sig, ptr, args = []) => {
+              if (sig.includes("j")) {
+                  return dynCallLegacy(sig, ptr, args)
+              }
+              var rtn = getWasmTableEntry(ptr)(...args);
+              return rtn
+          };
           var getCFunc = ident => {
               var func = Module["_" + ident];
               return func
@@ -7527,14 +7500,14 @@ var mGBA = (() => {
           };
           var ccall = (ident, returnType, argTypes, args, opts) => {
               var toC = {
-                  "string": str => {
+                  string: str => {
                       var ret = 0;
                       if (str !== null && str !== undefined && str !== 0) {
                           ret = stringToUTF8OnStack(str)
                       }
                       return ret
                   },
-                  "array": arr => {
+                  array: arr => {
                       var ret = stackAlloc(arr.length);
                       writeArrayToMemory(arr, ret);
                       return ret
@@ -7562,7 +7535,7 @@ var mGBA = (() => {
                       }
                   }
               }
-              var ret = func.apply(null, cArgs);
+              var ret = func(...cArgs);
 
               function onDone(ret) {
                   if (stack !== 0) stackRestore(stack);
@@ -7577,9 +7550,7 @@ var mGBA = (() => {
               if (numericRet && numericArgs && !opts) {
                   return getCFunc(ident)
               }
-              return function() {
-                  return ccall(ident, returnType, argTypes, arguments, opts)
-              }
+              return (...args) => ccall(ident, returnType, argTypes, args, opts)
           };
           var uleb128Encode = (n, target) => {
               if (n < 128) {
@@ -7590,12 +7561,12 @@ var mGBA = (() => {
           };
           var sigToWasmTypes = sig => {
               var typeNames = {
-                  "i": "i32",
-                  "j": "i64",
-                  "f": "f32",
-                  "d": "f64",
-                  "e": "externref",
-                  "p": "i32"
+                  i: "i32",
+                  j: "i64",
+                  f: "f32",
+                  d: "f64",
+                  e: "externref",
+                  p: "i32"
               };
               var type = {
                   parameters: [],
@@ -7610,12 +7581,12 @@ var mGBA = (() => {
               var sigRet = sig.slice(0, 1);
               var sigParam = sig.slice(1);
               var typeCodes = {
-                  "i": 127,
-                  "p": 127,
-                  "j": 126,
-                  "f": 125,
-                  "d": 124,
-                  "e": 111
+                  i: 127,
+                  p: 127,
+                  j: 126,
+                  f: 125,
+                  d: 124,
+                  e: 111
               };
               target.push(96);
               uleb128Encode(sigParam.length, target);
@@ -7636,12 +7607,12 @@ var mGBA = (() => {
               generateFuncType(sig, typeSectionBody);
               var bytes = [0, 97, 115, 109, 1, 0, 0, 0, 1];
               uleb128Encode(typeSectionBody.length, bytes);
-              bytes.push.apply(bytes, typeSectionBody);
+              bytes.push(...typeSectionBody);
               bytes.push(2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0);
               var module = new WebAssembly.Module(new Uint8Array(bytes));
               var instance = new WebAssembly.Instance(module, {
-                  "e": {
-                      "f": func
+                  e: {
+                      f: func
                   }
               });
               var wrappedFunc = instance.exports["f"];
@@ -7707,396 +7678,357 @@ var mGBA = (() => {
               setWasmTableEntry(index, null);
               freeTableIndexes.push(index)
           };
-          var FSNode = function(parent, name, mode, rdev) {
-              if (!parent) {
-                  parent = this
-              }
-              this.parent = parent;
-              this.mount = parent.mount;
-              this.mounted = null;
-              this.id = FS.nextInode++;
-              this.name = name;
-              this.mode = mode;
-              this.node_ops = {};
-              this.stream_ops = {};
-              this.rdev = rdev
-          };
-          var readMode = 292 | 73;
-          var writeMode = 146;
-          Object.defineProperties(FSNode.prototype, {
-              read: {
-                  get: function() {
-                      return (this.mode & readMode) === readMode
-                  },
-                  set: function(val) {
-                      val ? this.mode |= readMode : this.mode &= ~readMode
-                  }
-              },
-              write: {
-                  get: function() {
-                      return (this.mode & writeMode) === writeMode
-                  },
-                  set: function(val) {
-                      val ? this.mode |= writeMode : this.mode &= ~writeMode
-                  }
-              },
-              isFolder: {
-                  get: function() {
-                      return FS.isDir(this.mode)
-                  }
-              },
-              isDevice: {
-                  get: function() {
-                      return FS.isChrdev(this.mode)
-                  }
-              }
-          });
-          FS.FSNode = FSNode;
           FS.createPreloadedFile = FS_createPreloadedFile;
           FS.staticInit();
           Module["requestFullscreen"] = Browser.requestFullscreen;
-          Module["requestAnimationFrame"] = Browser.requestAnimationFrame;
           Module["setCanvasSize"] = Browser.setCanvasSize;
-          Module["pauseMainLoop"] = Browser.mainLoop.pause;
-          Module["resumeMainLoop"] = Browser.mainLoop.resume;
           Module["getUserMedia"] = Browser.getUserMedia;
           Module["createContext"] = Browser.createContext;
           var preloadedImages = {};
           var preloadedAudios = {};
-          var GLctx;
+          Module["requestAnimationFrame"] = MainLoop.requestAnimationFrame;
+          Module["pauseMainLoop"] = MainLoop.pause;
+          Module["resumeMainLoop"] = MainLoop.resume;
+          MainLoop.init();
           for (var i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));
           var miniTempWebGLFloatBuffersStorage = new Float32Array(288);
-          for (var i = 0; i < 288; ++i) {
-              miniTempWebGLFloatBuffers[i] = miniTempWebGLFloatBuffersStorage.subarray(0, i + 1)
+          for (var i = 0; i <= 288; ++i) {
+              miniTempWebGLFloatBuffers[i] = miniTempWebGLFloatBuffersStorage.subarray(0, i)
           }
           var miniTempWebGLIntBuffersStorage = new Int32Array(288);
-          for (var i = 0; i < 288; ++i) {
-              miniTempWebGLIntBuffers[i] = miniTempWebGLIntBuffersStorage.subarray(0, i + 1)
+          for (var i = 0; i <= 288; ++i) {
+              miniTempWebGLIntBuffers[i] = miniTempWebGLIntBuffersStorage.subarray(0, i)
           }
           var wasmImports = {
-              Q: ___syscall_fcntl64,
-              rb: ___syscall_fstat64,
-              ab: ___syscall_ftruncate64,
-              mb: ___syscall_getcwd,
-              ib: ___syscall_getdents64,
-              sb: ___syscall_ioctl,
-              ob: ___syscall_lstat64,
-              jb: ___syscall_mkdirat,
-              pb: ___syscall_newfstatat,
+              R: ___syscall_fcntl64,
+              pb: ___syscall_fstat64,
+              _a: ___syscall_ftruncate64,
+              kb: ___syscall_getcwd,
+              fb: ___syscall_getdents64,
+              qb: ___syscall_ioctl,
+              mb: ___syscall_lstat64,
+              hb: ___syscall_mkdirat,
+              nb: ___syscall_newfstatat,
               S: ___syscall_openat,
-              hb: ___syscall_readlinkat,
-              fb: ___syscall_rmdir,
-              qb: ___syscall_stat64,
-              gb: ___syscall_unlinkat,
-              db: ___syscall_utimensat,
-              tb: __emscripten_get_now_is_monotonic,
-              bb: __emscripten_throw_longjmp,
-              Za: __localtime_js,
-              _a: __mktime_js,
-              Wa: __mmap_js,
-              Xa: __msync_js,
-              Ya: __munmap_js,
-              eb: __tzset_js,
-              a: _abort,
-              Qa: _eglBindAPI,
-              Ua: _eglChooseConfig,
-              Ga: _eglCreateContext,
-              Ja: _eglCreateWindowSurface,
-              Ha: _eglDestroyContext,
-              Ka: _eglDestroySurface,
-              Va: _eglGetConfigAttrib,
-              O: _eglGetDisplay,
-              Fa: _eglGetError,
-              Ra: _eglInitialize,
-              La: _eglMakeCurrent,
-              Ea: _eglQueryString,
-              Ma: _eglSwapBuffers,
-              Na: _eglSwapInterval,
-              Ta: _eglTerminate,
-              Pa: _eglWaitGL,
-              Oa: _eglWaitNative,
-              i: _emscripten_asm_const_int,
-              b: _emscripten_asm_const_int_sync_on_main_thread,
+              eb: ___syscall_readlinkat,
+              cb: ___syscall_rmdir,
+              ob: ___syscall_stat64,
+              db: ___syscall_unlinkat,
+              bb: ___syscall_utimensat,
+              tb: __abort_js,
+              rb: __emscripten_get_now_is_monotonic,
+              sb: __emscripten_memcpy_js,
+              $a: __emscripten_throw_longjmp,
+              Xa: __localtime_js,
+              Ya: __mktime_js,
+              Ua: __mmap_js,
+              Va: __msync_js,
+              Wa: __munmap_js,
+              gb: __tzset_js,
+              Oa: _eglBindAPI,
+              Ra: _eglChooseConfig,
+              Ea: _eglCreateContext,
+              Ga: _eglCreateWindowSurface,
+              Fa: _eglDestroyContext,
+              Ha: _eglDestroySurface,
+              Ta: _eglGetConfigAttrib,
+              N: _eglGetDisplay,
+              Da: _eglGetError,
+              Pa: _eglInitialize,
+              Ja: _eglMakeCurrent,
+              Ca: _eglQueryString,
+              Ka: _eglSwapBuffers,
+              La: _eglSwapInterval,
+              Qa: _eglTerminate,
+              Na: _eglWaitGL,
+              Ma: _eglWaitNative,
+              h: _emscripten_asm_const_int,
+              a: _emscripten_asm_const_int_sync_on_main_thread,
+              W: _emscripten_asm_const_ptr_sync_on_main_thread,
+              Cc: _emscripten_cancel_main_loop,
               T: _emscripten_date_now,
-              ya: _emscripten_exit_fullscreen,
-              Ca: _emscripten_exit_pointerlock,
-              h: _emscripten_get_device_pixel_ratio,
-              e: _emscripten_get_element_css_size,
-              V: _emscripten_get_gamepad_status,
+              wa: _emscripten_exit_fullscreen,
+              Aa: _emscripten_exit_pointerlock,
+              rc: _emscripten_force_exit,
+              g: _emscripten_get_device_pixel_ratio,
+              d: _emscripten_get_element_css_size,
+              U: _emscripten_get_gamepad_status,
               X: _emscripten_get_main_loop_timing,
-              l: _emscripten_get_now,
-              Ub: _emscripten_get_num_gamepads,
-              Da: _emscripten_get_screen_size,
-              ea: _emscripten_glActiveTexture,
-              da: _emscripten_glAttachShader,
-              ua: _emscripten_glBeginQueryEXT,
-              ca: _emscripten_glBindAttribLocation,
-              ba: _emscripten_glBindBuffer,
-              aa: _emscripten_glBindFramebuffer,
-              $: _emscripten_glBindRenderbuffer,
-              _: _emscripten_glBindTexture,
-              ma: _emscripten_glBindVertexArrayOES,
-              Zd: _emscripten_glBlendColor,
-              Yd: _emscripten_glBlendEquation,
-              Xd: _emscripten_glBlendEquationSeparate,
-              Wd: _emscripten_glBlendFunc,
-              Vd: _emscripten_glBlendFuncSeparate,
-              Ud: _emscripten_glBufferData,
-              Td: _emscripten_glBufferSubData,
-              Sd: _emscripten_glCheckFramebufferStatus,
-              Rd: _emscripten_glClear,
-              Qd: _emscripten_glClearColor,
-              Pd: _emscripten_glClearDepthf,
-              Od: _emscripten_glClearStencil,
-              Nd: _emscripten_glColorMask,
-              Md: _emscripten_glCompileShader,
-              Ld: _emscripten_glCompressedTexImage2D,
-              Kd: _emscripten_glCompressedTexSubImage2D,
-              Jd: _emscripten_glCopyTexImage2D,
-              Id: _emscripten_glCopyTexSubImage2D,
-              Hd: _emscripten_glCreateProgram,
-              Gd: _emscripten_glCreateShader,
-              Fd: _emscripten_glCullFace,
-              Ed: _emscripten_glDeleteBuffers,
-              Dd: _emscripten_glDeleteFramebuffers,
-              Cd: _emscripten_glDeleteProgram,
-              wa: _emscripten_glDeleteQueriesEXT,
-              Bd: _emscripten_glDeleteRenderbuffers,
-              Ad: _emscripten_glDeleteShader,
-              zd: _emscripten_glDeleteTextures,
-              la: _emscripten_glDeleteVertexArraysOES,
-              yd: _emscripten_glDepthFunc,
-              xd: _emscripten_glDepthMask,
-              wd: _emscripten_glDepthRangef,
-              vd: _emscripten_glDetachShader,
-              ud: _emscripten_glDisable,
-              td: _emscripten_glDisableVertexAttribArray,
-              sd: _emscripten_glDrawArrays,
-              ha: _emscripten_glDrawArraysInstancedANGLE,
-              ia: _emscripten_glDrawBuffersWEBGL,
-              rd: _emscripten_glDrawElements,
-              ga: _emscripten_glDrawElementsInstancedANGLE,
-              qd: _emscripten_glEnable,
-              pd: _emscripten_glEnableVertexAttribArray,
-              ta: _emscripten_glEndQueryEXT,
-              od: _emscripten_glFinish,
-              nd: _emscripten_glFlush,
-              md: _emscripten_glFramebufferRenderbuffer,
-              kd: _emscripten_glFramebufferTexture2D,
-              jd: _emscripten_glFrontFace,
-              id: _emscripten_glGenBuffers,
-              gd: _emscripten_glGenFramebuffers,
-              xa: _emscripten_glGenQueriesEXT,
-              fd: _emscripten_glGenRenderbuffers,
-              ed: _emscripten_glGenTextures,
-              ka: _emscripten_glGenVertexArraysOES,
-              hd: _emscripten_glGenerateMipmap,
-              dd: _emscripten_glGetActiveAttrib,
-              cd: _emscripten_glGetActiveUniform,
-              bd: _emscripten_glGetAttachedShaders,
-              ad: _emscripten_glGetAttribLocation,
-              $c: _emscripten_glGetBooleanv,
-              _c: _emscripten_glGetBufferParameteriv,
-              Zc: _emscripten_glGetError,
-              Yc: _emscripten_glGetFloatv,
-              Xc: _emscripten_glGetFramebufferAttachmentParameteriv,
-              Wc: _emscripten_glGetIntegerv,
-              Uc: _emscripten_glGetProgramInfoLog,
-              Vc: _emscripten_glGetProgramiv,
-              oa: _emscripten_glGetQueryObjecti64vEXT,
-              qa: _emscripten_glGetQueryObjectivEXT,
-              na: _emscripten_glGetQueryObjectui64vEXT,
-              pa: _emscripten_glGetQueryObjectuivEXT,
-              ra: _emscripten_glGetQueryivEXT,
-              Tc: _emscripten_glGetRenderbufferParameteriv,
-              Rc: _emscripten_glGetShaderInfoLog,
-              Qc: _emscripten_glGetShaderPrecisionFormat,
-              Pc: _emscripten_glGetShaderSource,
-              Sc: _emscripten_glGetShaderiv,
-              Oc: _emscripten_glGetString,
-              Nc: _emscripten_glGetTexParameterfv,
-              Mc: _emscripten_glGetTexParameteriv,
-              Jc: _emscripten_glGetUniformLocation,
-              Lc: _emscripten_glGetUniformfv,
-              Kc: _emscripten_glGetUniformiv,
-              Fc: _emscripten_glGetVertexAttribPointerv,
-              Hc: _emscripten_glGetVertexAttribfv,
-              Gc: _emscripten_glGetVertexAttribiv,
-              Ec: _emscripten_glHint,
-              Dc: _emscripten_glIsBuffer,
-              Cc: _emscripten_glIsEnabled,
-              Bc: _emscripten_glIsFramebuffer,
-              Ac: _emscripten_glIsProgram,
-              va: _emscripten_glIsQueryEXT,
-              zc: _emscripten_glIsRenderbuffer,
-              yc: _emscripten_glIsShader,
-              wc: _emscripten_glIsTexture,
-              ja: _emscripten_glIsVertexArrayOES,
-              vc: _emscripten_glLineWidth,
-              uc: _emscripten_glLinkProgram,
-              tc: _emscripten_glPixelStorei,
-              sc: _emscripten_glPolygonOffset,
-              sa: _emscripten_glQueryCounterEXT,
-              rc: _emscripten_glReadPixels,
-              qc: _emscripten_glReleaseShaderCompiler,
-              pc: _emscripten_glRenderbufferStorage,
-              oc: _emscripten_glSampleCoverage,
-              nc: _emscripten_glScissor,
-              mc: _emscripten_glShaderBinary,
-              lc: _emscripten_glShaderSource,
-              kc: _emscripten_glStencilFunc,
-              jc: _emscripten_glStencilFuncSeparate,
-              ic: _emscripten_glStencilMask,
-              hc: _emscripten_glStencilMaskSeparate,
-              gc: _emscripten_glStencilOp,
-              fc: _emscripten_glStencilOpSeparate,
-              ec: _emscripten_glTexImage2D,
-              dc: _emscripten_glTexParameterf,
-              cc: _emscripten_glTexParameterfv,
-              bc: _emscripten_glTexParameteri,
-              ac: _emscripten_glTexParameteriv,
-              $b: _emscripten_glTexSubImage2D,
-              _b: _emscripten_glUniform1f,
-              Zb: _emscripten_glUniform1fv,
-              Yb: _emscripten_glUniform1i,
-              Xb: _emscripten_glUniform1iv,
-              Wb: _emscripten_glUniform2f,
-              Vb: _emscripten_glUniform2fv,
-              Tb: _emscripten_glUniform2i,
-              Sb: _emscripten_glUniform2iv,
-              Rb: _emscripten_glUniform3f,
-              Qb: _emscripten_glUniform3fv,
-              Pb: _emscripten_glUniform3i,
-              Ob: _emscripten_glUniform3iv,
-              Nb: _emscripten_glUniform4f,
-              Mb: _emscripten_glUniform4fv,
-              Lb: _emscripten_glUniform4i,
-              Kb: _emscripten_glUniform4iv,
-              Jb: _emscripten_glUniformMatrix2fv,
-              Ib: _emscripten_glUniformMatrix3fv,
-              Hb: _emscripten_glUniformMatrix4fv,
-              Gb: _emscripten_glUseProgram,
-              Fb: _emscripten_glValidateProgram,
-              Eb: _emscripten_glVertexAttrib1f,
-              Db: _emscripten_glVertexAttrib1fv,
-              Cb: _emscripten_glVertexAttrib2f,
-              Bb: _emscripten_glVertexAttrib2fv,
-              Ab: _emscripten_glVertexAttrib3f,
-              zb: _emscripten_glVertexAttrib3fv,
-              yb: _emscripten_glVertexAttrib4f,
-              xb: _emscripten_glVertexAttrib4fv,
-              fa: _emscripten_glVertexAttribDivisorANGLE,
-              wb: _emscripten_glVertexAttribPointer,
-              vb: _emscripten_glViewport,
-              o: _emscripten_has_asyncify,
-              ub: _emscripten_memcpy_js,
-              q: _emscripten_pause_main_loop,
-              za: _emscripten_request_fullscreen_strategy,
-              N: _emscripten_request_pointerlock,
-              cb: _emscripten_resize_heap,
-              M: _emscripten_resume_main_loop,
-              W: _emscripten_sample_gamepad_data,
-              s: _emscripten_set_beforeunload_callback_on_thread,
-              E: _emscripten_set_blur_callback_on_thread,
-              g: _emscripten_set_canvas_element_size,
-              m: _emscripten_set_element_css_size,
-              F: _emscripten_set_focus_callback_on_thread,
-              v: _emscripten_set_fullscreenchange_callback_on_thread,
-              U: _emscripten_set_gamepadconnected_callback_on_thread,
-              R: _emscripten_set_gamepaddisconnected_callback_on_thread,
-              y: _emscripten_set_keydown_callback_on_thread,
-              w: _emscripten_set_keypress_callback_on_thread,
-              x: _emscripten_set_keyup_callback_on_thread,
-              Ba: _emscripten_set_main_loop,
+              k: _emscripten_get_now,
+              Eb: _emscripten_get_num_gamepads,
+              Ba: _emscripten_get_screen_size,
+              ca: _emscripten_glActiveTexture,
+              ba: _emscripten_glAttachShader,
+              sa: _emscripten_glBeginQueryEXT,
+              aa: _emscripten_glBindAttribLocation,
+              $: _emscripten_glBindBuffer,
+              _: _emscripten_glBindFramebuffer,
+              de: _emscripten_glBindRenderbuffer,
+              ce: _emscripten_glBindTexture,
+              ka: _emscripten_glBindVertexArrayOES,
+              be: _emscripten_glBlendColor,
+              ae: _emscripten_glBlendEquation,
+              $d: _emscripten_glBlendEquationSeparate,
+              _d: _emscripten_glBlendFunc,
+              Zd: _emscripten_glBlendFuncSeparate,
+              Yd: _emscripten_glBufferData,
+              Xd: _emscripten_glBufferSubData,
+              Wd: _emscripten_glCheckFramebufferStatus,
+              Vd: _emscripten_glClear,
+              Ud: _emscripten_glClearColor,
+              Td: _emscripten_glClearDepthf,
+              Sd: _emscripten_glClearStencil,
+              vb: _emscripten_glClipControlEXT,
+              Rd: _emscripten_glColorMask,
+              Qd: _emscripten_glCompileShader,
+              Pd: _emscripten_glCompressedTexImage2D,
+              Od: _emscripten_glCompressedTexSubImage2D,
+              Nd: _emscripten_glCopyTexImage2D,
+              Md: _emscripten_glCopyTexSubImage2D,
+              Ld: _emscripten_glCreateProgram,
+              Kd: _emscripten_glCreateShader,
+              Jd: _emscripten_glCullFace,
+              Id: _emscripten_glDeleteBuffers,
+              Hd: _emscripten_glDeleteFramebuffers,
+              Gd: _emscripten_glDeleteProgram,
+              ua: _emscripten_glDeleteQueriesEXT,
+              Fd: _emscripten_glDeleteRenderbuffers,
+              Ed: _emscripten_glDeleteShader,
+              Dd: _emscripten_glDeleteTextures,
+              ja: _emscripten_glDeleteVertexArraysOES,
+              Cd: _emscripten_glDepthFunc,
+              Ad: _emscripten_glDepthMask,
+              zd: _emscripten_glDepthRangef,
+              yd: _emscripten_glDetachShader,
+              xd: _emscripten_glDisable,
+              wd: _emscripten_glDisableVertexAttribArray,
+              vd: _emscripten_glDrawArrays,
+              fa: _emscripten_glDrawArraysInstancedANGLE,
+              ga: _emscripten_glDrawBuffersWEBGL,
+              ud: _emscripten_glDrawElements,
+              ea: _emscripten_glDrawElementsInstancedANGLE,
+              td: _emscripten_glEnable,
+              sd: _emscripten_glEnableVertexAttribArray,
+              ra: _emscripten_glEndQueryEXT,
+              rd: _emscripten_glFinish,
+              qd: _emscripten_glFlush,
+              pd: _emscripten_glFramebufferRenderbuffer,
+              od: _emscripten_glFramebufferTexture2D,
+              nd: _emscripten_glFrontFace,
+              md: _emscripten_glGenBuffers,
+              kd: _emscripten_glGenFramebuffers,
+              va: _emscripten_glGenQueriesEXT,
+              jd: _emscripten_glGenRenderbuffers,
+              id: _emscripten_glGenTextures,
+              ia: _emscripten_glGenVertexArraysOES,
+              ld: _emscripten_glGenerateMipmap,
+              hd: _emscripten_glGetActiveAttrib,
+              gd: _emscripten_glGetActiveUniform,
+              fd: _emscripten_glGetAttachedShaders,
+              ed: _emscripten_glGetAttribLocation,
+              dd: _emscripten_glGetBooleanv,
+              cd: _emscripten_glGetBufferParameteriv,
+              bd: _emscripten_glGetError,
+              ad: _emscripten_glGetFloatv,
+              $c: _emscripten_glGetFramebufferAttachmentParameteriv,
+              _c: _emscripten_glGetIntegerv,
+              Xc: _emscripten_glGetProgramInfoLog,
+              Zc: _emscripten_glGetProgramiv,
+              ma: _emscripten_glGetQueryObjecti64vEXT,
+              oa: _emscripten_glGetQueryObjectivEXT,
+              la: _emscripten_glGetQueryObjectui64vEXT,
+              na: _emscripten_glGetQueryObjectuivEXT,
+              pa: _emscripten_glGetQueryivEXT,
+              Wc: _emscripten_glGetRenderbufferParameteriv,
+              Uc: _emscripten_glGetShaderInfoLog,
+              Tc: _emscripten_glGetShaderPrecisionFormat,
+              Sc: _emscripten_glGetShaderSource,
+              Vc: _emscripten_glGetShaderiv,
+              Rc: _emscripten_glGetString,
+              Qc: _emscripten_glGetTexParameterfv,
+              Pc: _emscripten_glGetTexParameteriv,
+              Lc: _emscripten_glGetUniformLocation,
+              Oc: _emscripten_glGetUniformfv,
+              Mc: _emscripten_glGetUniformiv,
+              Ic: _emscripten_glGetVertexAttribPointerv,
+              Kc: _emscripten_glGetVertexAttribfv,
+              Jc: _emscripten_glGetVertexAttribiv,
+              Hc: _emscripten_glHint,
+              Gc: _emscripten_glIsBuffer,
+              Fc: _emscripten_glIsEnabled,
+              Ec: _emscripten_glIsFramebuffer,
+              Dc: _emscripten_glIsProgram,
+              ta: _emscripten_glIsQueryEXT,
+              Bc: _emscripten_glIsRenderbuffer,
+              Ac: _emscripten_glIsShader,
+              zc: _emscripten_glIsTexture,
+              ha: _emscripten_glIsVertexArrayOES,
+              yc: _emscripten_glLineWidth,
+              xc: _emscripten_glLinkProgram,
+              wc: _emscripten_glPixelStorei,
+              ub: _emscripten_glPolygonModeWEBGL,
+              vc: _emscripten_glPolygonOffset,
+              wb: _emscripten_glPolygonOffsetClampEXT,
+              qa: _emscripten_glQueryCounterEXT,
+              uc: _emscripten_glReadPixels,
+              tc: _emscripten_glReleaseShaderCompiler,
+              sc: _emscripten_glRenderbufferStorage,
+              qc: _emscripten_glSampleCoverage,
+              pc: _emscripten_glScissor,
+              oc: _emscripten_glShaderBinary,
+              nc: _emscripten_glShaderSource,
+              mc: _emscripten_glStencilFunc,
+              lc: _emscripten_glStencilFuncSeparate,
+              kc: _emscripten_glStencilMask,
+              jc: _emscripten_glStencilMaskSeparate,
+              ic: _emscripten_glStencilOp,
+              hc: _emscripten_glStencilOpSeparate,
+              gc: _emscripten_glTexImage2D,
+              fc: _emscripten_glTexParameterf,
+              ec: _emscripten_glTexParameterfv,
+              dc: _emscripten_glTexParameteri,
+              cc: _emscripten_glTexParameteriv,
+              bc: _emscripten_glTexSubImage2D,
+              ac: _emscripten_glUniform1f,
+              $b: _emscripten_glUniform1fv,
+              _b: _emscripten_glUniform1i,
+              Zb: _emscripten_glUniform1iv,
+              Yb: _emscripten_glUniform2f,
+              Xb: _emscripten_glUniform2fv,
+              Wb: _emscripten_glUniform2i,
+              Vb: _emscripten_glUniform2iv,
+              Ub: _emscripten_glUniform3f,
+              Tb: _emscripten_glUniform3fv,
+              Sb: _emscripten_glUniform3i,
+              Rb: _emscripten_glUniform3iv,
+              Qb: _emscripten_glUniform4f,
+              Pb: _emscripten_glUniform4fv,
+              Ob: _emscripten_glUniform4i,
+              Nb: _emscripten_glUniform4iv,
+              Mb: _emscripten_glUniformMatrix2fv,
+              Lb: _emscripten_glUniformMatrix3fv,
+              Kb: _emscripten_glUniformMatrix4fv,
+              Jb: _emscripten_glUseProgram,
+              Ib: _emscripten_glValidateProgram,
+              Hb: _emscripten_glVertexAttrib1f,
+              Gb: _emscripten_glVertexAttrib1fv,
+              Fb: _emscripten_glVertexAttrib2f,
+              Db: _emscripten_glVertexAttrib2fv,
+              Cb: _emscripten_glVertexAttrib3f,
+              Bb: _emscripten_glVertexAttrib3fv,
+              Ab: _emscripten_glVertexAttrib4f,
+              zb: _emscripten_glVertexAttrib4fv,
+              da: _emscripten_glVertexAttribDivisorANGLE,
+              yb: _emscripten_glVertexAttribPointer,
+              xb: _emscripten_glViewport,
+              n: _emscripten_has_asyncify,
+              p: _emscripten_pause_main_loop,
+              xa: _emscripten_request_fullscreen_strategy,
+              M: _emscripten_request_pointerlock,
+              ab: _emscripten_resize_heap,
+              L: _emscripten_resume_main_loop,
+              V: _emscripten_sample_gamepad_data,
+              r: _emscripten_set_beforeunload_callback_on_thread,
+              D: _emscripten_set_blur_callback_on_thread,
+              f: _emscripten_set_canvas_element_size,
+              l: _emscripten_set_element_css_size,
+              E: _emscripten_set_focus_callback_on_thread,
+              u: _emscripten_set_fullscreenchange_callback_on_thread,
+              P: _emscripten_set_gamepadconnected_callback_on_thread,
+              O: _emscripten_set_gamepaddisconnected_callback_on_thread,
+              x: _emscripten_set_keydown_callback_on_thread,
+              v: _emscripten_set_keypress_callback_on_thread,
+              w: _emscripten_set_keyup_callback_on_thread,
+              za: _emscripten_set_main_loop,
               Sa: _emscripten_set_main_loop_timing,
-              K: _emscripten_set_mousedown_callback_on_thread,
-              I: _emscripten_set_mouseenter_callback_on_thread,
-              H: _emscripten_set_mouseleave_callback_on_thread,
-              L: _emscripten_set_mousemove_callback_on_thread,
-              J: _emscripten_set_mouseup_callback_on_thread,
-              z: _emscripten_set_pointerlockchange_callback_on_thread,
-              u: _emscripten_set_resize_callback_on_thread,
-              A: _emscripten_set_touchcancel_callback_on_thread,
-              C: _emscripten_set_touchend_callback_on_thread,
-              B: _emscripten_set_touchmove_callback_on_thread,
-              D: _emscripten_set_touchstart_callback_on_thread,
-              t: _emscripten_set_visibilitychange_callback_on_thread,
-              G: _emscripten_set_wheel_callback_on_thread,
-              Aa: _emscripten_set_window_title,
-              n: _emscripten_sleep,
-              kb: _environ_get,
-              lb: _environ_sizes_get,
+              J: _emscripten_set_mousedown_callback_on_thread,
+              H: _emscripten_set_mouseenter_callback_on_thread,
+              G: _emscripten_set_mouseleave_callback_on_thread,
+              K: _emscripten_set_mousemove_callback_on_thread,
+              I: _emscripten_set_mouseup_callback_on_thread,
+              y: _emscripten_set_pointerlockchange_callback_on_thread,
+              t: _emscripten_set_resize_callback_on_thread,
+              z: _emscripten_set_touchcancel_callback_on_thread,
+              B: _emscripten_set_touchend_callback_on_thread,
+              A: _emscripten_set_touchmove_callback_on_thread,
+              C: _emscripten_set_touchstart_callback_on_thread,
+              s: _emscripten_set_visibilitychange_callback_on_thread,
+              F: _emscripten_set_wheel_callback_on_thread,
+              ya: _emscripten_set_window_title,
+              m: _emscripten_sleep,
+              ib: _environ_get,
+              jb: _environ_sizes_get,
               Ia: _exit,
-              j: _fd_close,
-              P: _fd_read,
-              $a: _fd_seek,
-              nb: _fd_sync,
-              p: _fd_write,
+              i: _fd_close,
+              Q: _fd_read,
+              Za: _fd_seek,
+              lb: _fd_sync,
+              o: _fd_write,
               Z: invoke_ii,
               Y: invoke_iii,
-              c: invoke_iiii,
-              r: invoke_iiiii,
-              Ic: invoke_vi,
-              d: invoke_vii,
-              k: invoke_viii,
-              f: invoke_viiii,
-              xc: invoke_viiiii,
-              ld: invoke_viiiiiiiii
+              b: invoke_iiii,
+              q: invoke_iiiii,
+              Yc: invoke_vi,
+              c: invoke_vii,
+              j: invoke_viii,
+              e: invoke_viiii,
+              Nc: invoke_viiiii,
+              Bd: invoke_viiiiiiiii
           };
           var wasmExports = createWasm();
-          var ___wasm_call_ctors = () => (___wasm_call_ctors = wasmExports["$d"])();
-          var _screenshot = Module["_screenshot"] = a0 => (_screenshot = Module["_screenshot"] = wasmExports["ae"])(a0);
-          var _buttonPress = Module["_buttonPress"] = a0 => (_buttonPress = Module["_buttonPress"] = wasmExports["be"])(a0);
-          var _buttonUnpress = Module["_buttonUnpress"] = a0 => (_buttonUnpress = Module["_buttonUnpress"] = wasmExports["ce"])(a0);
-          var _setVolume = Module["_setVolume"] = a0 => (_setVolume = Module["_setVolume"] = wasmExports["de"])(a0);
-          var _getVolume = Module["_getVolume"] = () => (_getVolume = Module["_getVolume"] = wasmExports["ee"])();
-          var _getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = () => (_getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = wasmExports["fe"])();
-          var _getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = () => (_getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = wasmExports["ge"])();
-          var _setMainLoopTiming = Module["_setMainLoopTiming"] = (a0, a1) => (_setMainLoopTiming = Module["_setMainLoopTiming"] = wasmExports["he"])(a0, a1);
-          var _setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = a0 => (_setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = wasmExports["ie"])(a0);
-          var _getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = () => (_getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = wasmExports["je"])();
-          var _quitGame = Module["_quitGame"] = () => (_quitGame = Module["_quitGame"] = wasmExports["ke"])();
-          var _quitMgba = Module["_quitMgba"] = () => (_quitMgba = Module["_quitMgba"] = wasmExports["le"])();
-          var _quickReload = Module["_quickReload"] = () => (_quickReload = Module["_quickReload"] = wasmExports["me"])();
-          var _pauseGame = Module["_pauseGame"] = () => (_pauseGame = Module["_pauseGame"] = wasmExports["ne"])();
-          var _resumeGame = Module["_resumeGame"] = () => (_resumeGame = Module["_resumeGame"] = wasmExports["oe"])();
-          var _setEventEnable = Module["_setEventEnable"] = a0 => (_setEventEnable = Module["_setEventEnable"] = wasmExports["pe"])(a0);
-          var _bindKey = Module["_bindKey"] = (a0, a1) => (_bindKey = Module["_bindKey"] = wasmExports["qe"])(a0, a1);
-          var _saveState = Module["_saveState"] = a0 => (_saveState = Module["_saveState"] = wasmExports["re"])(a0);
-          var _loadState = Module["_loadState"] = a0 => (_loadState = Module["_loadState"] = wasmExports["se"])(a0);
-          var _autoLoadCheats = Module["_autoLoadCheats"] = () => (_autoLoadCheats = Module["_autoLoadCheats"] = wasmExports["te"])();
-          var _loadGame = Module["_loadGame"] = a0 => (_loadGame = Module["_loadGame"] = wasmExports["ue"])(a0);
-          var _saveStateSlot = Module["_saveStateSlot"] = (a0, a1) => (_saveStateSlot = Module["_saveStateSlot"] = wasmExports["ve"])(a0, a1);
-          var _loadStateSlot = Module["_loadStateSlot"] = (a0, a1) => (_loadStateSlot = Module["_loadStateSlot"] = wasmExports["we"])(a0, a1);
-          var _addCoreCallbacks = Module["_addCoreCallbacks"] = (a0, a1, a2, a3, a4, a5) => (_addCoreCallbacks = Module["_addCoreCallbacks"] = wasmExports["xe"])(a0, a1, a2, a3, a4, a5);
-          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["ye"])();
-          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["ze"])(a0, a1);
-          var _malloc = a0 => (_malloc = wasmExports["Be"])(a0);
-          var setTempRet0 = a0 => (setTempRet0 = wasmExports["Ce"])(a0);
-          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["De"])(a0, a1);
-          var _setThrew = (a0, a1) => (_setThrew = wasmExports["Ee"])(a0, a1);
-          var stackSave = () => (stackSave = wasmExports["Fe"])();
-          var stackRestore = a0 => (stackRestore = wasmExports["Ge"])(a0);
-          var stackAlloc = a0 => (stackAlloc = wasmExports["He"])(a0);
-          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["Ie"])(a0, a1);
-          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Je"])(a0, a1, a2, a3, a4);
-          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Ke"])(a0, a1, a2, a3, a4, a5);
-          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Le"])(a0, a1, a2);
-          var _GBAInputInfo = Module["_GBAInputInfo"] = 109920;
-          var _binaryName = Module["_binaryName"] = 186992;
-          var _projectName = Module["_projectName"] = 186996;
-          var _projectVersion = Module["_projectVersion"] = 187e3;
-          var _gitCommit = Module["_gitCommit"] = 186976;
-          var _gitCommitShort = Module["_gitCommitShort"] = 186980;
-          var _gitBranch = Module["_gitBranch"] = 186984;
-          var _gitRevision = Module["_gitRevision"] = 186988;
-          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 49376;
-          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 64640;
-          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 64644;
-          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 93136;
-          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 138416;
-          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 138208;
-          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 138212;
+          var ___wasm_call_ctors = () => (___wasm_call_ctors = wasmExports["fe"])();
+          var _screenshot = Module["_screenshot"] = a0 => (_screenshot = Module["_screenshot"] = wasmExports["he"])(a0);
+          var _buttonPress = Module["_buttonPress"] = a0 => (_buttonPress = Module["_buttonPress"] = wasmExports["ie"])(a0);
+          var _buttonUnpress = Module["_buttonUnpress"] = a0 => (_buttonUnpress = Module["_buttonUnpress"] = wasmExports["je"])(a0);
+          var _setVolume = Module["_setVolume"] = a0 => (_setVolume = Module["_setVolume"] = wasmExports["ke"])(a0);
+          var _getVolume = Module["_getVolume"] = () => (_getVolume = Module["_getVolume"] = wasmExports["le"])();
+          var _getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = () => (_getMainLoopTimingMode = Module["_getMainLoopTimingMode"] = wasmExports["me"])();
+          var _getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = () => (_getMainLoopTimingValue = Module["_getMainLoopTimingValue"] = wasmExports["ne"])();
+          var _setMainLoopTiming = Module["_setMainLoopTiming"] = (a0, a1) => (_setMainLoopTiming = Module["_setMainLoopTiming"] = wasmExports["oe"])(a0, a1);
+          var _setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = a0 => (_setFastForwardMultiplier = Module["_setFastForwardMultiplier"] = wasmExports["pe"])(a0);
+          var _getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = () => (_getFastForwardMultiplier = Module["_getFastForwardMultiplier"] = wasmExports["qe"])();
+          var _quitGame = Module["_quitGame"] = () => (_quitGame = Module["_quitGame"] = wasmExports["re"])();
+          var _quitMgba = Module["_quitMgba"] = () => (_quitMgba = Module["_quitMgba"] = wasmExports["se"])();
+          var _quickReload = Module["_quickReload"] = () => (_quickReload = Module["_quickReload"] = wasmExports["te"])();
+          var _pauseGame = Module["_pauseGame"] = () => (_pauseGame = Module["_pauseGame"] = wasmExports["ue"])();
+          var _resumeGame = Module["_resumeGame"] = () => (_resumeGame = Module["_resumeGame"] = wasmExports["ve"])();
+          var _setEventEnable = Module["_setEventEnable"] = a0 => (_setEventEnable = Module["_setEventEnable"] = wasmExports["we"])(a0);
+          var _bindKey = Module["_bindKey"] = (a0, a1) => (_bindKey = Module["_bindKey"] = wasmExports["xe"])(a0, a1);
+          var _saveState = Module["_saveState"] = a0 => (_saveState = Module["_saveState"] = wasmExports["ye"])(a0);
+          var _loadState = Module["_loadState"] = a0 => (_loadState = Module["_loadState"] = wasmExports["ze"])(a0);
+          var _autoLoadCheats = Module["_autoLoadCheats"] = () => (_autoLoadCheats = Module["_autoLoadCheats"] = wasmExports["Ae"])();
+          var _loadGame = Module["_loadGame"] = a0 => (_loadGame = Module["_loadGame"] = wasmExports["Be"])(a0);
+          var _saveStateSlot = Module["_saveStateSlot"] = (a0, a1) => (_saveStateSlot = Module["_saveStateSlot"] = wasmExports["Ce"])(a0, a1);
+          var _loadStateSlot = Module["_loadStateSlot"] = (a0, a1) => (_loadStateSlot = Module["_loadStateSlot"] = wasmExports["De"])(a0, a1);
+          var _addCoreCallbacks = Module["_addCoreCallbacks"] = (a0, a1, a2, a3, a4, a5) => (_addCoreCallbacks = Module["_addCoreCallbacks"] = wasmExports["Ee"])(a0, a1, a2, a3, a4, a5);
+          var _setupConstants = Module["_setupConstants"] = () => (_setupConstants = Module["_setupConstants"] = wasmExports["Fe"])();
+          var _main = Module["_main"] = (a0, a1) => (_main = Module["_main"] = wasmExports["Ge"])(a0, a1);
+          var _malloc = a0 => (_malloc = wasmExports["He"])(a0);
+          var _emscripten_builtin_memalign = (a0, a1) => (_emscripten_builtin_memalign = wasmExports["Ie"])(a0, a1);
+          var _setThrew = (a0, a1) => (_setThrew = wasmExports["Je"])(a0, a1);
+          var __emscripten_tempret_set = a0 => (__emscripten_tempret_set = wasmExports["Ke"])(a0);
+          var __emscripten_stack_restore = a0 => (__emscripten_stack_restore = wasmExports["Le"])(a0);
+          var __emscripten_stack_alloc = a0 => (__emscripten_stack_alloc = wasmExports["Me"])(a0);
+          var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports["Ne"])();
+          var dynCall_ji = Module["dynCall_ji"] = (a0, a1) => (dynCall_ji = Module["dynCall_ji"] = wasmExports["Oe"])(a0, a1);
+          var dynCall_jiji = Module["dynCall_jiji"] = (a0, a1, a2, a3, a4) => (dynCall_jiji = Module["dynCall_jiji"] = wasmExports["Pe"])(a0, a1, a2, a3, a4);
+          var dynCall_iiiji = Module["dynCall_iiiji"] = (a0, a1, a2, a3, a4, a5) => (dynCall_iiiji = Module["dynCall_iiiji"] = wasmExports["Qe"])(a0, a1, a2, a3, a4, a5);
+          var dynCall_jii = Module["dynCall_jii"] = (a0, a1, a2) => (dynCall_jii = Module["dynCall_jii"] = wasmExports["Re"])(a0, a1, a2);
+          var _GBAInputInfo = Module["_GBAInputInfo"] = 112908;
+          var _binaryName = Module["_binaryName"] = 190032;
+          var _projectName = Module["_projectName"] = 190036;
+          var _projectVersion = Module["_projectVersion"] = 190040;
+          var _gitCommit = Module["_gitCommit"] = 190016;
+          var _gitCommitShort = Module["_gitCommitShort"] = 190020;
+          var _gitBranch = Module["_gitBranch"] = 190024;
+          var _gitRevision = Module["_gitRevision"] = 190028;
+          var _GBIORegisterNames = Module["_GBIORegisterNames"] = 52352;
+          var _GBSavestateMagic = Module["_GBSavestateMagic"] = 67616;
+          var _GBSavestateVersion = Module["_GBSavestateVersion"] = 67620;
+          var _GBA_LUX_LEVELS = Module["_GBA_LUX_LEVELS"] = 96128;
+          var _GBAVideoObjSizes = Module["_GBAVideoObjSizes"] = 141456;
+          var _GBASavestateMagic = Module["_GBASavestateMagic"] = 141240;
+          var _GBASavestateVersion = Module["_GBASavestateVersion"] = 141244;
 
           function invoke_iiiii(index, a1, a2, a3, a4) {
               var sp = stackSave();
@@ -8212,6 +8144,7 @@ var mGBA = (() => {
           Module["removeFunction"] = removeFunction;
           Module["FS"] = FS;
           var calledRun;
+          var calledPrerun;
           dependenciesFulfilled = function runCaller() {
               if (!calledRun) run();
               if (!calledRun) dependenciesFulfilled = runCaller
@@ -8234,29 +8167,30 @@ var mGBA = (() => {
               if (runDependencies > 0) {
                   return
               }
-              preRun();
-              if (runDependencies > 0) {
-                  return
+              if (!calledPrerun) {
+                  calledPrerun = 1;
+                  preRun();
+                  if (runDependencies > 0) {
+                      return
+                  }
               }
 
               function doRun() {
                   if (calledRun) return;
-                  calledRun = true;
-                  Module["calledRun"] = true;
+                  calledRun = 1;
+                  Module["calledRun"] = 1;
                   if (ABORT) return;
                   initRuntime();
                   preMain();
                   readyPromiseResolve(Module);
-                  if (Module["onRuntimeInitialized"]) Module["onRuntimeInitialized"]();
+                  Module["onRuntimeInitialized"]?.();
                   if (shouldRunNow) callMain();
                   postRun()
               }
               if (Module["setStatus"]) {
                   Module["setStatus"]("Running...");
-                  setTimeout(function() {
-                      setTimeout(function() {
-                          Module["setStatus"]("")
-                      }, 1);
+                  setTimeout(() => {
+                      setTimeout(() => Module["setStatus"](""), 1);
                       doRun()
                   }, 1)
               } else {
@@ -8272,7 +8206,10 @@ var mGBA = (() => {
           var shouldRunNow = true;
           if (Module["noInitialRun"]) shouldRunNow = false;
           run();
-          return moduleArg.ready
+          moduleRtn = readyPromise;
+
+
+          return moduleRtn;
       }
   );
 })();
