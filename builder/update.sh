@@ -8,3 +8,6 @@ sed -i '' '/Module.getSave = () => FS.readFile(Module.saveName);/{
     r ./builder/replacement.txt
     d
 }' ./src/core/mgba.js
+
+# chmod +x ./builder/build.sh
+# ./builder/build.sh

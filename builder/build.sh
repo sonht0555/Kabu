@@ -76,8 +76,7 @@ echo "------ Minify $new_game_version ------"
 # sudo npm install -g javascript-obfuscator
 # sudo npm install -g clean-css-cli
 # --- (add execute permission) ---
-# chmod +x build.sh
+# chmod +x ./builder/build.sh
 # --- (run build) ---
-# ./build.sh
+# ./builder/build.sh
 # cd /c/Users/hoang/OneDrive/Documents/GitHub/Kabu
-# npm install @thenick775/mgba-wasm@1.0.20 --prefix ./temp-mgba ; Copy-Item -Path .\temp-mgba\node_modules\@thenick775\mgba-wasm\dist\mgba.js -Destination .\ ; Copy-Item -Path .\temp-mgba\node_modules\@thenick775\mgba-wasm\dist\mgba.wasm -Destination .\ ; Remove-Item -Recurse -Force temp-mgba
