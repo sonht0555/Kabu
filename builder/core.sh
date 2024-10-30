@@ -9,5 +9,5 @@ sed -i '' '/Module.getSave = () => FS.readFile(Module.saveName);/{
     d
 }' ./src/core/mgba.js
 
-# chmod +x ./builder/build.sh
-# ./builder/build.sh
+# chmod +x ./builder/core.sh
+# ./builder/core.sh
