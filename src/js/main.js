@@ -107,7 +107,7 @@ export async function uploadGame(gameName) {
 }
 export async function loadGame(gameName) {
     const stateName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
-    const statesList = Module.listStates();
+    const statesList = Module.listStates().filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
@@ -173,23 +173,23 @@ export async function deleteFile(filepath) {
     await Module.FSSync()
 }
 export function listGame() {
-    const result = Module.listGames();
+    const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
     return result;
 }
 export function listSave() {
-    const result = Module.listSaves();
+    const result = Module.listSaves().filter((file) => file !== "." && file !== "..");
     return result;
 }
 export function listState() {
-    const result = Module.listStates();
+    const result = Module.listStates().filter((file) => file !== "." && file !== "..");
     return result;
 }
 export function listCheat() {
-    const result = Module.listCheats();
+    const result = Module.listCheats().filter((file) => file !== "." && file !== "..");
     return result;
 }
 export function listScreenshot() {
-    const result = Module.listScreenshots();
+    const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
     return result;
 }
 export function fileSize(filePart) {
