@@ -60,6 +60,9 @@ var mGBA = (() => {
           try {
             FS.mkdir("/data/screenshots");
           } catch (e) {}
+          try {
+            FS.mkdir("/data/patches");
+          } catch (e) {}
           resolve();
         });
       });
@@ -79,6 +82,7 @@ var mGBA = (() => {
       savePath: "/data/saves",
       saveStatePath: "/data/states",
       screenshotsPath: "/data/screenshots",
+      patchPath: "/data/patches",
     });
     Module.uploadSaveOrSaveState = (file, callback) => {
       const split = file.name.split(".");
@@ -138,6 +142,29 @@ var mGBA = (() => {
       let dir = null;
       if (extension == "cheats") {
         dir = "/data/cheats/";
+      } else {
+        console.warn("unrecognized file extension: " + extension);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        FS.writeFile(dir + file.name, new Uint8Array(e.target.result));
+        if (callback) {
+          callback();
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    Module.uploadPatch = (file, callback) => {
+      const split = file.name.split(".");
+      if (split.length < 2) {
+        console.warn("unrecognized file extension: " + file.name);
+        return;
+      }
+      const extension = split[split.length - 1].toLowerCase();
+      let dir = null;
+      if (["ips", "ups", "bps"].includes(extension)) {
+        dir = "/data/patches/";
       } else {
         console.warn("unrecognized file extension: " + extension);
         return;
@@ -558,11 +585,11 @@ var mGBA = (() => {
     var tempDouble;
     var tempI64;
     var ASM_CONSTS = {
-      279880: ($0, $1) => {
+      273912: ($0, $1) => {
         Module.canvas.width = $0;
         Module.canvas.height = $1;
       },
-      279937: ($0, $1, $2, $3, $4, $5, $6) => {
+      273969: ($0, $1, $2, $3, $4, $5, $6) => {
         Module.version = {
           gitCommit: UTF8ToString($0),
           gitShort: UTF8ToString($1),
@@ -573,12 +600,12 @@ var mGBA = (() => {
           projectVersion: UTF8ToString($6),
         };
       },
-      280169: () => {
+      274201: () => {
         FS.syncfs(function (err) {
           assert(!err);
         });
       },
-      280213: ($0) => {
+      274245: ($0) => {
         var str =
           UTF8ToString($0) +
           "\n\n" +
@@ -589,7 +616,7 @@ var mGBA = (() => {
         }
         return allocate(intArrayFromString(reply), "i8", ALLOC_NORMAL);
       },
-      280438: () => {
+      274470: () => {
         if (typeof AudioContext !== "undefined") {
           return true;
         } else if (typeof webkitAudioContext !== "undefined") {
@@ -597,7 +624,7 @@ var mGBA = (() => {
         }
         return false;
       },
-      280585: () => {
+      274617: () => {
         if (
           typeof navigator.mediaDevices !== "undefined" &&
           typeof navigator.mediaDevices.getUserMedia !== "undefined"
@@ -608,7 +635,7 @@ var mGBA = (() => {
         }
         return false;
       },
-      280819: ($0) => {
+      274851: ($0) => {
         if (typeof Module["SDL2"] === "undefined") {
           Module["SDL2"] = {};
         }
@@ -632,11 +659,11 @@ var mGBA = (() => {
         }
         return SDL2.audioContext === undefined ? -1 : 0;
       },
-      281371: () => {
+      275403: () => {
         var SDL2 = Module["SDL2"];
         return SDL2.audioContext.sampleRate;
       },
-      281439: ($0, $1, $2, $3) => {
+      275471: ($0, $1, $2, $3) => {
         var SDL2 = Module["SDL2"];
         var have_microphone = function (stream) {
           if (SDL2.capture.silenceTimer !== undefined) {
@@ -698,7 +725,7 @@ var mGBA = (() => {
           );
         }
       },
-      283132: ($0, $1, $2, $3) => {
+      277164: ($0, $1, $2, $3) => {
         var SDL2 = Module["SDL2"];
         SDL2.audio.scriptProcessorNode = SDL2.audioContext[
           "createScriptProcessor"
@@ -741,7 +768,7 @@ var mGBA = (() => {
           );
         }
       },
-      284307: ($0, $1) => {
+      278339: ($0, $1) => {
         var SDL2 = Module["SDL2"];
         var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
         for (var c = 0; c < numChannels; ++c) {
@@ -766,7 +793,7 @@ var mGBA = (() => {
           }
         }
       },
-      284912: ($0, $1) => {
+      278944: ($0, $1) => {
         var SDL2 = Module["SDL2"];
         var buf = $0 >>> 2;
         var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
@@ -786,7 +813,7 @@ var mGBA = (() => {
           }
         }
       },
-      285401: ($0) => {
+      279433: ($0) => {
         var SDL2 = Module["SDL2"];
         if ($0) {
           if (SDL2.capture.silenceTimer !== undefined) {
@@ -826,7 +853,7 @@ var mGBA = (() => {
           SDL2.audioContext = undefined;
         }
       },
-      286407: ($0, $1, $2) => {
+      280439: ($0, $1, $2) => {
         var w = $0;
         var h = $1;
         var pixels = $2;
@@ -900,7 +927,7 @@ var mGBA = (() => {
         }
         SDL2.ctx.putImageData(SDL2.image, 0, 0);
       },
-      287875: ($0, $1, $2, $3, $4) => {
+      281907: ($0, $1, $2, $3, $4) => {
         var w = $0;
         var h = $1;
         var hot_x = $2;
@@ -949,18 +976,18 @@ var mGBA = (() => {
         stringToUTF8(url, urlBuf, url.length + 1);
         return urlBuf;
       },
-      288863: ($0) => {
+      282895: ($0) => {
         if (Module["canvas"]) {
           Module["canvas"].style["cursor"] = UTF8ToString($0);
         }
       },
-      288946: () => {
+      282978: () => {
         if (Module["canvas"]) {
           Module["canvas"].style["cursor"] = "none";
         }
       },
-      289015: () => window.innerWidth,
-      289045: () => window.innerHeight,
+      283047: () => window.innerWidth,
+      283077: () => window.innerHeight,
     };
     function ExitStatus(status) {
       this.name = "ExitStatus";
@@ -9483,21 +9510,21 @@ var mGBA = (() => {
       ));
     var dynCall_jii = (Module["dynCall_jii"] = (a0, a1, a2) =>
       (dynCall_jii = Module["dynCall_jii"] = wasmExports["Re"])(a0, a1, a2));
-    var _GBAInputInfo = (Module["_GBAInputInfo"] = 112908);
-    var _binaryName = (Module["_binaryName"] = 190032);
-    var _projectName = (Module["_projectName"] = 190036);
-    var _projectVersion = (Module["_projectVersion"] = 190040);
-    var _gitCommit = (Module["_gitCommit"] = 190016);
-    var _gitCommitShort = (Module["_gitCommitShort"] = 190020);
-    var _gitBranch = (Module["_gitBranch"] = 190024);
-    var _gitRevision = (Module["_gitRevision"] = 190028);
-    var _GBIORegisterNames = (Module["_GBIORegisterNames"] = 52352);
-    var _GBSavestateMagic = (Module["_GBSavestateMagic"] = 67616);
-    var _GBSavestateVersion = (Module["_GBSavestateVersion"] = 67620);
-    var _GBA_LUX_LEVELS = (Module["_GBA_LUX_LEVELS"] = 96128);
-    var _GBAVideoObjSizes = (Module["_GBAVideoObjSizes"] = 141456);
-    var _GBASavestateMagic = (Module["_GBASavestateMagic"] = 141240);
-    var _GBASavestateVersion = (Module["_GBASavestateVersion"] = 141244);
+    var _GBAInputInfo = (Module["_GBAInputInfo"] = 111648);
+    var _binaryName = (Module["_binaryName"] = 187680);
+    var _projectName = (Module["_projectName"] = 187684);
+    var _projectVersion = (Module["_projectVersion"] = 187688);
+    var _gitCommit = (Module["_gitCommit"] = 187664);
+    var _gitCommitShort = (Module["_gitCommitShort"] = 187668);
+    var _gitBranch = (Module["_gitBranch"] = 187672);
+    var _gitRevision = (Module["_gitRevision"] = 187676);
+    var _GBIORegisterNames = (Module["_GBIORegisterNames"] = 50016);
+    var _GBSavestateMagic = (Module["_GBSavestateMagic"] = 65280);
+    var _GBSavestateVersion = (Module["_GBSavestateVersion"] = 65284);
+    var _GBA_LUX_LEVELS = (Module["_GBA_LUX_LEVELS"] = 94752);
+    var _GBAVideoObjSizes = (Module["_GBAVideoObjSizes"] = 139088);
+    var _GBASavestateMagic = (Module["_GBASavestateMagic"] = 138864);
+    var _GBASavestateVersion = (Module["_GBASavestateVersion"] = 138868);
     function invoke_iiiii(index, a1, a2, a3, a4) {
       var sp = stackSave();
       try {
