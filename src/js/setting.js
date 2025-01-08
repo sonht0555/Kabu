@@ -66,7 +66,9 @@ SDL2ID.forEach(function(id) {
 document.addEventListener("DOMContentLoaded", function() {
     // Box1
     const gameName = localStorage.getItem("gameName") || "xxxx xx";
-    box1.textContent = localStorage.getItem(`${gameName}_savedCheats`) || "xxxx xx"
+    let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
+    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'xxxx xx';
+    box1.textContent = lastCheatCode;
     // Box2
     if (localStorage.getItem("autoStateCheck") === "On") {
         box2.textContent = 'On'
@@ -121,20 +123,28 @@ document.addEventListener("DOMContentLoaded", function() {
                     let box1 = document.getElementById('box1');
                     const gameName = localStorage.getItem("gameName");
                     const cheatName = gameName.replace(".gba", ".cheats");
-                    const defaultCheatContent = "cheats = 1\n";
-                    let cheatEnable = false;
-                    let cheatsContent = defaultCheatContent;
-                    const newCheatCode = window.prompt("Edit cheat code", localStorage.getItem(`${gameName}_savedCheats`) || 'xxxx xx');
-                    if (newCheatCode !== null) {
-                        const enableCheat = confirm("CANCEL is disable a cheat / OK is enable a cheat");
-                        cheatEnable = enableCheat;
-                        cheatsContent += `cheat0_enable = ${cheatEnable}\ncheat0_code = "${newCheatCode}"`;
-                        const blob = new Blob([cheatsContent], {
-                            type: "text/plain"
-                        });
-                        const file = new File([blob], cheatName);
-                       Main.uploadCheats(file,gameName,newCheatCode,cheatEnable,box1)
+                    let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
+                    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'xxxx xx';
+                    const newCheatCode = window.prompt("Edit cheat code", lastCheatCode);
+                    if (newCheatCode === null || newCheatCode.trim() === "") {
+                        alert("Invalid cheat code!");
+                        return;
                     }
+                    cheats = cheats.map(cheat => ({ enable: false, code: cheat.code }));
+                    const newCheat = { enable: true, code: newCheatCode.trim() };
+                    cheats.push(newCheat);
+                    localStorage.setItem(`${gameName}_Cheats`, JSON.stringify(cheats));
+                    const display = 
+                        `cheats = ${cheats.length}\n` +
+                        cheats
+                            .map((cheat, index) => 
+                                `cheat${index}_enable = ${cheat.enable}\ncheat${index}_code = "${cheat.code}"`
+                            )
+                            .join("\n");
+                    const blob = new Blob([display], { type: "text/plain" });
+                    const file = new File([blob], cheatName);
+                    Main.uploadCheats(file, gameName, newCheatCode.trim(), true, box1);
+                    console.log(display);
                 }
             }
         });
