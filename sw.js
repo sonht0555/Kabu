@@ -1,4 +1,4 @@
-let revision = 'V2.40';
+let revision = 'V2.41';
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -34,14 +34,23 @@ workbox.routing.registerRoute(
 );
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
-    if (navigator.onLine) {
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            return caches.delete(cacheName);
+    fetch('/ping')
+      .then(() => {
+        caches.keys()
+          .then((cacheNames) => {
+            return Promise.all(
+              cacheNames.map((cacheName) => caches.delete(cacheName))
+            );
           })
-        );
+          .then(() => {
+            console.log('Cache deleted successfully.');
+          })
+          .catch((error) => {
+            console.error('Error deleting cache:', error);
+          });
       })
-    }
+      .catch(() => {
+        console.warn('Cannot delete cache: No internet connection.');
+      });
   }
 });

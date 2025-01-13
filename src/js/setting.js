@@ -65,9 +65,9 @@ SDL2ID.forEach(function(id) {
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     // Box1
-    const gameName = localStorage.getItem("gameName") || "xxxx xx";
+    const gameName = localStorage.getItem("gameName");
     let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
-    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'xxxx xx';
+    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'Off';
     box1.textContent = lastCheatCode;
     // Box2
     if (localStorage.getItem("autoStateCheck") === "On") {
@@ -124,11 +124,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     const gameName = localStorage.getItem("gameName");
                     const cheatName = gameName.replace(".gba", ".cheats");
                     let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
-                    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'xxxx xx';
-                    const newCheatCode = window.prompt("Edit cheat code", lastCheatCode);
+                    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'Off';
+                    let newCheatCode = window.prompt("Edit cheat code", lastCheatCode);
                     if (newCheatCode === null || newCheatCode.trim() === "") {
-                        alert("Invalid cheat code!");
-                        return;
+                        newCheatCode = "Off";
                     }
                     cheats = cheats.map(cheat => ({ enable: false, code: cheat.code }));
                     const newCheat = { enable: true, code: newCheatCode.trim() };
