@@ -39,12 +39,12 @@ async function statusShow() {
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
     startTimer();
+    await Module.SDL2();
     if (savedTurboState !== null) {
         turboState = parseInt(savedTurboState);
         await gamepPad.turboF(turboState);
     }
     await delay(1000);
-    await Module.SDL2();
     await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
