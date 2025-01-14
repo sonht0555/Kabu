@@ -44,6 +44,7 @@ async function statusShow() {
         await gamepPad.turboF(turboState);
     }
     await delay(1000);
+    await Module.SDL2();
     await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
@@ -124,17 +125,11 @@ export async function loadGame(gameName) {
         await Module.loadGame(`/data/games/${gameName}`);
         if (confirm("Do you want to load save state?")) {
             await Module.loadState(0);
-            await Module.pauseGame();
-            await Module.resumeGame();
-            await Module.SDL2();
             localStorage.setItem("gameName", gameName);
             console.log(gameName);
         }
     } else {
         await Module.loadGame(`/data/games/${gameName}`);
-        await Module.pauseGame();
-        await Module.resumeGame();
-        await Module.SDL2();
         localStorage.setItem("gameName", gameName);
     }
     // show status ingame
