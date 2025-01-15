@@ -1,5 +1,5 @@
-let revision = 'V2.45';
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.1.0/workbox-sw.js');
+let revision = 'V2.46';
+importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
 workbox.precaching.precacheAndRoute([
