@@ -43,8 +43,9 @@ async function statusShow() {
         turboState = parseInt(savedTurboState);
         await gamepPad.turboF(turboState);
     }
-    await delay(500);
+    await delay(200);
     await Module.SDL2();
+    await delay(800);
     await led(parseInt(localStorage.getItem("slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
