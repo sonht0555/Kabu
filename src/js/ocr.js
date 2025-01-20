@@ -70,6 +70,12 @@ async function getImage() {
     } catch (error) {
         inputText.textContent = error.message;
     }
+    if (clickTimeout) {
+        clearTimeout(clickTimeout);
+    }
+    clickTimeout = setTimeout(() => {
+        document.getElementById("inputText").textContent = "..."
+    }, 30000);
 }
 async function freeServer(base64data) {
     let response;

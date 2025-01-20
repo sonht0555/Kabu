@@ -97,7 +97,7 @@ function startTimer() {
         if (minutes === 60)[minutes, hours] = [0, hours + 1];
         document.getElementById("timer").textContent = `${hours}h${minutes.toString().padStart(2, '0')}.${seconds.toString().padStart(2, '0')}`;
         if (count1 === 60) {saveStatePeriodically();count1 = 0};
-        if (count1 === 3600) {saveStateInCloud(); count2=0};
+        if (count2 === 3600) {saveStateInCloud(); count2=0};
     }, 1000);
 }
 /* --------------- Export Function --------------- */
