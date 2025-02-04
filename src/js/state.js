@@ -2,7 +2,7 @@ import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
 const stateDivs = document.querySelectorAll('.stateDiv');
-const getNameRom = localStorage.getItem("gameName");
+let getNameRom = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
 const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg2MFY0MEgwVjBaIiBmaWxsPSIjMTYxNjE2Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNCAxNkgyNlYyNEgzNFYxNlpNMzMgMTdIMzJWMThIMzFWMTlIMzBWMjBIMjlWMjFIMjhWMjJIMjdWMjNIMzNWMTdaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
 /* --------------- Function ------------------ */
 // Load States
@@ -10,7 +10,7 @@ function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
     const localSlot = localStorage.getItem("slotStateSaved")
     const stateDiv = document.getElementById(stateDivs);
-    const getNameRom = localStorage.getItem("gameName");
+    let getNameRom = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
     const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || noneImage;
     const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
     imageStateDiv.style.cssText = `background-image: url('${data}');background-size: cover;background-repeat: no-repeat;background-position: center center`;

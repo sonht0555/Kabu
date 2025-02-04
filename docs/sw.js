@@ -1,4 +1,4 @@
-let revision = 'V2.47';
+let revision = 'V2.48';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
