@@ -245,7 +245,7 @@ export async function buttonUnpress(key) {
     Module.buttonUnpress(key)
 }
 export async function screenShot(saveSlot) {
-    const gameName = localStorage.getItem("gameName");
+    const gameName = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
     const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, "_");
     await Module.screenshot(`${screenshotName}${saveSlot}.png`);
     await Module.FSSync();
