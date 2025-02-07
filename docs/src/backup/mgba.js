@@ -96,6 +96,8 @@ var mGBA = (() => {
         dir = "/data/saves/";
       } else if (extension.startsWith("ss")) {
         dir = "/data/states/";
+      } else if (extension.startsWith("png")) {
+        dir = "/data/screenshots/";
       } else {
         console.warn("unrecognized file extension: " + extension);
         return;

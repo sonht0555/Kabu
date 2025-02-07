@@ -2,19 +2,17 @@ import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
 const stateDivs = document.querySelectorAll('.stateDiv');
-let getNameRom = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
 const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg2MFY0MEgwVjBaIiBmaWxsPSIjMTYxNjE2Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNCAxNkgyNlYyNEgzNFYxNlpNMzMgMTdIMzJWMThIMzFWMTlIMzBWMjBIMjlWMjFIMjhWMjJIMjdWMjNIMzNWMTdaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
 /* --------------- Function ------------------ */
 // Load States
-function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
+async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
     const localSlot = localStorage.getItem("slotStateSaved")
     const stateDiv = document.getElementById(stateDivs);
-    let getNameRom = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
-    const data = localStorage.getItem(`${getNameRom}_imageState${saveSlot}`) || noneImage;
-    const date = localStorage.getItem(`${getNameRom}_dateState${saveSlot}`);
-    imageStateDiv.style.cssText = `background-image: url('${data}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
-    document.getElementById(dateState).textContent = date || "__";
+    const getNameRom = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
+    const [imageData,timeData] = await Main.findScreenshot(getNameRom, saveSlot) || [noneImage,"__"];
+    imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
+    document.getElementById(dateState).textContent = timeData || "__";
     if (parseInt(localSlot) === parseInt(saveSlot)) {
         stateDiv.classList.add('stated');
     } else {
@@ -29,7 +27,7 @@ const updateSelectionState = () => {
             stateDiv.classList.remove('selected');
         }
     });
-};
+}
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     document.querySelectorAll('#Left').forEach(button => {
         button.addEventListener(eventType, () => {
@@ -69,13 +67,15 @@ const updateSelectionState = () => {
         if (statePageButton.classList.contains("active")) {
             if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
                 if (confirm(`Do you want to detelete state [${selectedIndex}]?`)) {
-                    const stateName = getNameRom.replace(".gba", `.ss${selectedIndex}`);
+                    const stateName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
+                    const screenShotName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
                     const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                     Main.deleteFile(`/data/states/${stateName}`);
-                    localStorage.removeItem(`${getNameRom}_dateState${selectedIndex}`);
-                    localStorage.removeItem(`${getNameRom}_imageState${selectedIndex}`);
+                    setTimeout(() => {
+                        Main.deleteScreenshot(screenShotName, selectedIndex);
+                    }, 500);
                     imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
-                    document.getElementById(`dateState0${selectedIndex}`).textContent = localStorage.getItem(`${getNameRom}_dateState${selectedIndex}`) || "__";
+                    document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
                     notiMessage("Deleted State!", 1500);
                 }
             }

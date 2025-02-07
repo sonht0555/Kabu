@@ -60,7 +60,7 @@ async function saveStatePeriodically() {
 // Auto Save In Cloud Every 1h
 async function saveStateInCloud() {
     const gameName = localStorage.getItem("gameName");
-    const stateName = gameName.replace(".gba", ".ss0");
+    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss0")
     const uId = localStorage.getItem("uId");
     const img = localStorage.getItem(`${gameName}_imageState0`);
     const date = localStorage.getItem(`${gameName}_dateState0`);
@@ -132,6 +132,7 @@ export async function loadGame(gameName) {
     } else {
         await Module.loadGame(`/data/games/${gameName}`);
         localStorage.setItem("gameName", gameName);
+        console.log(gameName);
     }
     // show status ingame
     await statusShow();
@@ -194,6 +195,38 @@ export function listScreenshot() {
     const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
     return result;
 }
+export async function findScreenshot(gameName, slot) {
+    try {
+        let screenshots = await listScreenshot();
+        for (const file of screenshots) {
+            if (typeof file !== "string") continue;
+            const parts = file.split("*").map(part => part.trim());
+            if (parts.length >= 3 && parts[0] === gameName.trim() && parseInt(parts[1], 10) === parseInt(slot, 10)) {
+                const filePath = `/data/screenshots/${file}`;
+                const base64Promise = Module.downloadFile(filePath);
+                const base64 = await fileToBase64(base64Promise);
+                const time = parts[2].replace(/\.png$/, "");
+                return [base64,time];
+            }
+        }
+        return null;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+export async function deleteScreenshot(screenshotName, saveSlot) {
+    const screenshots = await listScreenshot();
+    for (const file of screenshots) {
+        if (typeof file !== "string") continue;
+        const parts = file.split("*").map(part => part.trim());
+        if (parts.length >= 3 && parts[0] === screenshotName && parseInt(parts[1], 10) === parseInt(saveSlot, 10)) {
+            const filePathToDelete = `/data/screenshots/${file}`;
+            await Module.deleteFile(filePathToDelete);
+            await Module.FSSync();
+        }
+        }
+}
 export function fileSize(filePart) {
     const result = Module.fileSize(filePart)
     return result;
@@ -245,15 +278,21 @@ export async function buttonUnpress(key) {
     Module.buttonUnpress(key)
 }
 export async function screenShot(saveSlot) {
-    const gameName = localStorage.getItem("gameName")?.replace(/\.(zip|gb|gbc)$/, ".gba");
-    const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, "_");
-    await Module.screenshot(`${screenshotName}${saveSlot}.png`);
-    await Module.FSSync();
-    const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${screenshotName}${saveSlot}.png`))
+    const screenshotName = localStorage.getItem("gameName").replace(/\.(gba|gbc|gb|zip)$/, "");
     const currentTime = Date.now();
     const date = formatDateTime(currentTime);
-    localStorage.setItem(`${gameName}_dateState${saveSlot}`, date);
-    localStorage.setItem(`${gameName}_imageState${saveSlot}`, base64);
+    const screenshots = await listScreenshot();
+    for (const file of screenshots) {
+        if (typeof file !== "string") continue;
+        const parts = file.split("*").map(part => part.trim());
+        if (parts.length >= 3 && parts[0] === screenshotName && parseInt(parts[1], 10) === parseInt(saveSlot, 10)) {
+            const filePathToDelete = `/data/screenshots/${file}`;
+            await Module.deleteFile(filePathToDelete);
+            await Module.FSSync()
+        }
+    }
+    await Module.screenshot(`${screenshotName}*${saveSlot}*${date}.png`);
+    await Module.FSSync();
 }
 export async function captureOCR(name) {
     Module.screenshot(name);

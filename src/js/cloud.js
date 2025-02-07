@@ -48,6 +48,46 @@ function getAccessToken(authorizationCode) {
     };
     xhr.send('code=' + authorizationCode + '&grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret + '&redirect_uri=' + encodeURIComponent(redirectUri));
 }
+export async function dpCreateFolder(folderPath) {
+    const uId = localStorage.getItem("uId");
+    let accessToken = localStorage.getItem("accessToken");
+    const fullPath = `/${uId}/${folderPath}`;
+    const requestBody = JSON.stringify({
+        "path": fullPath,
+        "autorename": false
+    });
+    for (let retry = 0; retry < 2; retry++) {
+        try {
+            const resp = await fetch('https://api.dropboxapi.com/2/files/create_folder_v2', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: requestBody
+            });
+            if (resp.status === 401) { 
+                const ret = await dpRefreshToken();
+                if (!ret) throw new Error("Unable to refresh token");
+                accessToken = localStorage.getItem("accessToken");
+                continue;
+            }
+            if (resp.status === 409) {
+                return { message: "Folder already exists", path: folderPath };
+            }
+            if (!resp.ok) {
+                throw new Error(`Error creating folder ${folderPath}`);
+            }
+            const obj = await resp.json();
+            await lockNoti("Folder created", "", 3000);
+            return obj;
+        } catch (error) {
+            if (retry === 1) throw error;
+        }
+    }
+
+    return false;
+}
 export async function dpRefreshToken() {
 	if (!(localStorage.getItem("refreshToken"))) {
 		throw "No refresh token";
@@ -76,14 +116,14 @@ export async function dpRefreshToken() {
 
 	return false;
 }
-export async function dpUploadFile(fileName, fileData) {
+export async function dpUploadFile(fileName, fileData, folderDB) {
     const uId = localStorage.getItem("uId");
 	var uploadArg = JSON.stringify({
 		"autorename": true,
 		"mode": 'overwrite',
 		"mute": true,
 		"strict_conflict": false,
-		"path": '/' + uId + '/' + fileName,
+		"path": '/' + uId + '/' + folderDB +'/' + fileName,
 	})
 	var blob = new Blob([fileData], {
 		type: "application/octet-stream"
@@ -116,9 +156,9 @@ export async function dpUploadFile(fileName, fileData) {
 	}
 	return false
 }
-async function dpDownloadFile(fileName) {
+export async function dpDownloadFile(fileName, folderDB) {
     const uId = localStorage.getItem("uId");
-    var downloadArg = JSON.stringify({"path": '/' + uId + '/' + fileName});
+    var downloadArg = JSON.stringify({"path": '/' + uId + '/' + folderDB +  '/' + fileName});
     for (var retry = 0; retry < 2; retry++) {
         var resp = await fetch('https://content.dropboxapi.com/2/files/download', {
             method: 'POST',
@@ -138,129 +178,116 @@ async function dpDownloadFile(fileName) {
                 throw "Download failed, unknown http status:" + resp.status;
             }
         }
-
         const file = new File([await resp.blob()], fileName);
         console.log("Cloud ↦ Kabu storage ◆", file.name);
-        if (fileName.endsWith(".txt")) {
-            const textContent = await file.text();
-            const [img, date] = textContent.split("\n\n");
-            const gameName = fileName.substring(0, fileName.lastIndexOf("gba") + 3);
-            const slotNumber = fileName.charAt(fileName.length - 5);
-            localStorage.setItem(`${gameName}_dateState${slotNumber}`, date);
-            localStorage.setItem(`${gameName}_imageState${slotNumber}`, img);
-        } else {
-                Main.uploadSaveOrSaveState(file, () => {
+            Main.uploadSaveOrSaveState(file, () => {
                 localStorageFile();
                 Module.FSSync();
             });
-        }
         return file;
     }
     return false;
 }
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
-dropboxRestore.addEventListener("click", async function() {
-    const uId = localStorage.getItem("uId");
-    if (uId === null || uId === "") {
-        window.alert("Cloud login required!");
-    } else {
-        var requestData = {
-            path: '/' + uId
-        };
-        for (var retry = 0; retry < 2; retry++) {
-            var resp = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
-                method: 'POST',
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-                    "Content-Type": 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            });
-            console.log("status: ", resp.status);
-            if (resp.status != 200) {
-                if (resp.status == 401) {
-                    var ret = await dpRefreshToken();
-                    if (!ret) {
-                        throw "Unable to refresh token";
+    dropboxRestore.addEventListener("click", async function () {
+        await lockNoti("Wait a little bit...", "", 5000);
+        const uId = localStorage.getItem("uId");
+        const directories = ["state", "save", "screenshot"];
+        if (!uId) {
+            window.alert("Cloud login required!");
+            return;
+        }
+        let allFiles = []
+        for (const folderPath of directories) {
+            let requestData = {
+                path: '/' + uId + '/' + folderPath
+            };
+            for (let retry = 0; retry < 2; retry++) {
+                let resp = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+                    method: 'POST',
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                        "Content-Type": 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                if (resp.status === 200) {
+                    let data = await resp.json();
+                    let files = data.entries.filter(entry => entry[".tag"] === "file");
+    
+                    if (files.length > 0) {
+                        allFiles.push(...files.map(file => ({ name: file.name, folder: folderPath })));
                     }
-                    continue;
+                    break;
+                } else if (resp.status === 401) {
+                    let ret = await dpRefreshToken();
+                    if (!ret) throw "Unable to refresh token";
                 } else {
-                    throw "Download failed, unknown http status: " + resp.status;
+                    console.error(`Download failed for ${folderPath}, status: ${resp.status}`);
+                    break;
+                }
+            }
+        }
+        if (allFiles.length > 0) {
+            const confirmMessage = `Do you want to restore ${allFiles.length} files from Cloud?`;
+            if (window.confirm(confirmMessage)) {
+                for (const file of allFiles) {
+                    await lockNoti("Restoring...",file.name,3000);
+                    await dpDownloadFile(file.name, file.folder);
                 }
             } else {
-                const data = await resp.json();
-                const totalFiles = data.entries.filter(entry => entry[".tag"] === "file").length;
-                const confirmMessage = `Do you want to restore ${totalFiles} files in Cloud?`;
-                if (window.confirm(confirmMessage)) {
-                    for (const entry of data.entries) {
-                        if (entry[".tag"] === "file") {
-                            await lockNoti("Restoring...", entry.name, 3000)
-                            await dpDownloadFile(entry.name);
-                        }
-                    }
-                } else {
-                    console.log("Restore canceled by user.");
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-});
-dropboxBackup.addEventListener("click", async function() {
-    const uId = localStorage.getItem("uId");
-    if (uId === null || uId === "") {
-        window.alert("Cloud login required!");
-    } else {
-        const directories = ["state", "save"];
-        let totalFilesUploaded = 0;
-        for (const directory of directories) {
-            const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
-            totalFilesUploaded += fileList.length;
-        }
-        if (window.confirm(`Do you want to backup ${totalFilesUploaded} files in Kabu?`)) {
-            for (const directory of directories) {
-                const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
-                for (const fileName of fileList) {
-                    const fileData = await Main.downloadFileInCloud(`/data/${directory}s/${fileName}`);
-                    try {
-                        await lockNoti("Backing up...", fileName, 3000)
-                        await dpUploadFile(fileName, fileData);
-                        if (fileName.endsWith(".ss0") || fileName.endsWith(".ss1") || fileName.endsWith(".ss2") || fileName.endsWith(".ss3") || fileName.endsWith(".ss4") || fileName.endsWith(".ss5") || fileName.endsWith(".ss6") || fileName.endsWith(".ss7") ) {
-                            const gameName = fileName.substring(0, fileName.lastIndexOf('.'));
-                            const slotNumber = fileName.charAt(fileName.length - 1);
-                            const img = localStorage.getItem(`${gameName}.gba_imageState${slotNumber}`);
-                            const date = localStorage.getItem(`${gameName}.gba_dateState${slotNumber}`);
-                            if (img !== null) {
-                                const textContent = `${img}\n\n${date}`;
-                                const blob = new Blob([textContent], { type: "text/plain" });
-                                await lockNoti("Backing up...", `${gameName}.gba_slot${slotNumber}.txt`, 3000)
-                                await dpUploadFile(`${gameName}.gba_slot${slotNumber}.txt`, blob); 
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`Failed to upload file ${fileName}:`, error);
-                    }
-                }
+                console.log("Restore canceled by user.");
             }
         } else {
-            console.log("Restore canceled by user.");
+            console.log("No files found to restore.");
         }
-    }
-});
-dropboxCloud.addEventListener("click", function() {
-    const uId = localStorage.getItem("uId");
-    if (uId === null || uId === "") {
-        authorizeWithDropbox();
-    } else {
-        if (window.confirm(`Do you want to logout?`)) {
-            localStorage.setItem("uId", "");
-            dropboxRestore.classList.remove("active");
-            dropboxBackup.classList.remove("active");
-            dropboxCloud.classList.remove("active");
+    });
+    dropboxBackup.addEventListener("click", async function() {
+        await lockNoti("Wait a little bit...", "", 5000);
+        const uId = localStorage.getItem("uId");
+        if (uId === null || uId === "") {
+            window.alert("Cloud login required!");
+        } else {
+            const directories = ["state", "save", "screenshot"];
+            for (const directory of directories) {
+                await dpCreateFolder(directory);
+            }
+            let totalFilesUploaded = 0;
+            for (const directory of directories) {
+                const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
+                totalFilesUploaded += fileList.length;
+            }
+            if (window.confirm(`Do you want to backup ${totalFilesUploaded} files in Kabu?`)) {
+                for (const directory of directories) {
+                    const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
+                    for (const fileName of fileList) {
+                        const fileData = await Main.downloadFileInCloud(`/data/${directory}s/${fileName}`);
+                        try {
+                            await lockNoti("Backing up...", fileName, 3000)
+                            await dpUploadFile(fileName, fileData, directory);
+                        } catch (error) {
+                            console.error(`Failed to upload file ${fileName}:`, error);
+                        }
+                    }
+                }
+            } else {
+                console.log("Restore canceled by user.");
+            }
         }
-    }
-});
-handleDropboxCallback();
+    });
+    dropboxCloud.addEventListener("click", function() {
+        const uId = localStorage.getItem("uId");
+        if (uId === null || uId === "") {
+            authorizeWithDropbox();
+        } else {
+            if (window.confirm(`Do you want to logout?`)) {
+                localStorage.setItem("uId", "");
+                dropboxRestore.classList.remove("active");
+                dropboxBackup.classList.remove("active");
+                dropboxCloud.classList.remove("active");
+            }
+        }
+    });
+    handleDropboxCallback();
 });
