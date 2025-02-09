@@ -195,37 +195,34 @@ export function listScreenshot() {
     const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
     return result;
 }
-export async function findScreenshot(gameName, slot) {
-    try {
-        let screenshots = await listScreenshot();
-        for (const file of screenshots) {
-            if (typeof file !== "string") continue;
-            const parts = file.split("*").map(part => part.trim());
-            if (parts.length >= 3 && parts[0] === gameName.trim() && parseInt(parts[1], 10) === parseInt(slot, 10)) {
-                const filePath = `/data/screenshots/${file}`;
-                const base64Promise = Module.downloadFile(filePath);
-                const base64 = await fileToBase64(base64Promise);
-                const time = parts[2].replace(/\.png$/, "");
-                return [base64,time];
-            }
-        }
-        return null;
-    } catch (error) {
-        console.error(error);
-        return null;
+export function embedTextInPngFile(base64, text, fileName) {
+    let byteCharacters = atob(base64.split(',')[1]);
+    let byteArray = new Uint8Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteArray[i] = byteCharacters.charCodeAt(i);
     }
+
+    let textChunk = new TextEncoder().encode("tEXtComment\x00" + text);
+    
+    let newArray = new Uint8Array(byteArray.length + textChunk.length);
+    newArray.set(byteArray, 0);
+    newArray.set(textChunk, byteArray.length);
+
+    // Tạo Blob và File với đúng tên
+    let blob = new Blob([newArray], { type: "image/png" });
+    let file = new File([blob], fileName, { type: "image/png" });
+
+    return file;
 }
-export async function deleteScreenshot(screenshotName, saveSlot) {
-    const screenshots = await listScreenshot();
-    for (const file of screenshots) {
-        if (typeof file !== "string") continue;
-        const parts = file.split("*").map(part => part.trim());
-        if (parts.length >= 3 && parts[0] === screenshotName && parseInt(parts[1], 10) === parseInt(saveSlot, 10)) {
-            const filePathToDelete = `/data/screenshots/${file}`;
-            await Module.deleteFile(filePathToDelete);
-            await Module.FSSync();
-        }
-        }
+export function extractTextFromPngBase64(base64) {
+    let byteCharacters = atob(base64.split(',')[1]);
+    let textMarker = "tEXtComment\x00";
+    let textStart = byteCharacters.indexOf(textMarker);
+    if (textStart !== -1) {
+        return byteCharacters.substring(textStart + textMarker.length);
+    }
+    return null;
 }
 export function fileSize(filePart) {
     const result = Module.fileSize(filePart)
@@ -255,7 +252,7 @@ export async function uploadSavSta(SavStaFile) {
         console.error("Error uploadSavSta:", error);
     }  
 }
-export async function uploadSaveOrSaveState(file) {
+export async function uploadFileInCloud(file) {
     Module.uploadSaveOrSaveState(file, () => {
         localStorageFile();
         Module.FSSync();
@@ -278,21 +275,19 @@ export async function buttonUnpress(key) {
     Module.buttonUnpress(key)
 }
 export async function screenShot(saveSlot) {
-    const screenshotName = localStorage.getItem("gameName").replace(/\.(gba|gbc|gb|zip)$/, "");
-    const currentTime = Date.now();
-    const date = formatDateTime(currentTime);
-    const screenshots = await listScreenshot();
-    for (const file of screenshots) {
-        if (typeof file !== "string") continue;
-        const parts = file.split("*").map(part => part.trim());
-        if (parts.length >= 3 && parts[0] === screenshotName && parseInt(parts[1], 10) === parseInt(saveSlot, 10)) {
-            const filePathToDelete = `/data/screenshots/${file}`;
-            await Module.deleteFile(filePathToDelete);
-            await Module.FSSync()
-        }
-    }
-    await Module.screenshot(`${screenshotName}*${saveSlot}*${date}.png`);
+    const gameName = localStorage.getItem("gameName").replace(/\.(gba|gbc|gb|zip)$/, "");
+    const fileName = `${gameName}_${saveSlot}.png`;
+    await Module.screenshot(fileName);
     await Module.FSSync();
+    const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${fileName}`));
+    const embeddedFile = embedTextInPngFile(base64, formatDateTime(Date.now()), fileName);
+    await uploadSaveOrSaveState(embeddedFile);
+}
+export async function dowloadScreenShot(file) {
+    try {
+        const base64 = await fileToBase64(Module.downloadFile(file));
+        return base64;
+    } catch {}
 }
 export async function captureOCR(name) {
     Module.screenshot(name);

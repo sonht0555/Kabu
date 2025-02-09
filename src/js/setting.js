@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Box8
     box8.textContent = localStorage.getItem("sepia") || 0.0;
     // Box3-8 Content
-    imgShader.classList.add(localStorage.getItem("selectedShader"))
+    imgShader.classList.add(localStorage.getItem("selectedShader"));
+    imgShader.style.setProperty('--before-opacity', localStorage.getItem("opacity"));
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     // inputContainer.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     let currentShaderClass = sdValues[0];

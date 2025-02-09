@@ -10,7 +10,8 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const localSlot = localStorage.getItem("slotStateSaved")
     const stateDiv = document.getElementById(stateDivs);
     const getNameRom = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
-    const [imageData,timeData] = await Main.findScreenshot(getNameRom, saveSlot) || [noneImage,"__"];
+    const imageData = await Main.dowloadScreenShot(`/data/screenshots/${getNameRom}_${saveSlot}.png`) || noneImage;
+    const timeData = Main.extractTextFromPngBase64(imageData);
     imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
     document.getElementById(dateState).textContent = timeData || "__";
     if (parseInt(localSlot) === parseInt(saveSlot)) {
@@ -72,7 +73,7 @@ const updateSelectionState = () => {
                     const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                     Main.deleteFile(`/data/states/${stateName}`);
                     setTimeout(() => {
-                        Main.deleteScreenshot(screenShotName, selectedIndex);
+                        Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
                     }, 500);
                     imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                     document.getElementById(`dateState0${selectedIndex}`).textContent = "__";

@@ -180,7 +180,7 @@ export async function dpDownloadFile(fileName, folderDB) {
         }
         const file = new File([await resp.blob()], fileName);
         console.log("Cloud ↦ Kabu storage ◆", file.name);
-            Main.uploadSaveOrSaveState(file, () => {
+            Main.uploadFileInCloud(file, () => {
                 localStorageFile();
                 Module.FSSync();
             });
