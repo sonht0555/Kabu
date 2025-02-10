@@ -84,7 +84,7 @@ var mGBA = (() => {
       screenshotsPath: "/data/screenshots",
       patchPath: "/data/patches",
     });
-    Module.uploadSaveOrSaveState = (file, callback) => {
+    Module.uploadAll = (file, callback) => {
       const split = file.name.split(".");
       if (split.length < 2) {
         console.warn("unrecognized file extension: " + file.name);
@@ -98,6 +98,12 @@ var mGBA = (() => {
         dir = "/data/states/";
       } else if (extension.startsWith("png")) {
         dir = "/data/screenshots/";
+        } else if (extension.startsWith("cheats")) {
+        dir = "/data/cheats/";
+      } else if (["gba", "gbc", "gb", "zip", "7z"].includes(extension)) {
+        dir = "/data/games/";
+      } else if (["ips", "ups", "bps"].includes(extension)) {
+        dir = "/data/patches/";
       } else {
         console.warn("unrecognized file extension: " + extension);
         return;

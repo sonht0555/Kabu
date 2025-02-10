@@ -145,14 +145,7 @@ export function localStorageFile() {
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     upLoadFile.addEventListener("change", function() {
-        const fileName = upLoadFile.files[0].name;
-        if (fileName.endsWith(".cheats")) {
-            Main.uploadCheat(upLoadFile);
-        } else if (fileName.endsWith(".gba") || fileName.endsWith(".gbc") || fileName.endsWith(".bc")) {
-            Main.uploadGame(upLoadFile);
-        } else {
-            Main.uploadSavSta(upLoadFile);
-        }
+        Main.uploadFile(upLoadFile);
     })
     //Buton Open Local Storage
     openLocalStorage.addEventListener("click", function() {

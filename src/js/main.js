@@ -163,7 +163,8 @@ export function downloadFileInCloud(filepath) {
 }
 export async function uploadFile(fileName) {
     const file = fileName.files[0];
-    Module.uploadSaveOrSaveState(file, () => {
+    Module.uploadAll(file, () => {
+        localStorageFile();
         Module.FSSync();
     });
 }
@@ -228,36 +229,6 @@ export function fileSize(filePart) {
     const result = Module.fileSize(filePart)
     return result;
 }
-export async function uploadCheat(cheatFile) {
-    try {
-       const file = cheatFile.files[0];
-       await Module.uploadCheats(file, () => {
-            console.log("Cheat uploaded successfully:", file.name);
-            localStorageFile()
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadCheat:", error);
-    }  
-}
-export async function uploadSavSta(SavStaFile) {
-    try {
-        const file = SavStaFile.files[0];
-        await Module.uploadSaveOrSaveState(file, () => {
-            console.log("Save/State uploaded successfully:", file.name);
-            localStorageFile()
-            Module.FSSync();
-        });
-    } catch (error) {
-        console.error("Error uploadSavSta:", error);
-    }  
-}
-export async function uploadFileInCloud(file) {
-    Module.uploadSaveOrSaveState(file, () => {
-        localStorageFile();
-        Module.FSSync();
-    });
-}
 export async function resumeGame() {
     Module.resumeGame();
     Module.SDL2();
@@ -298,7 +269,7 @@ export async function setFastForwardMultiplier(number) {
     Module.setFastForwardMultiplier(number);
 }
 export function uploadCheats(file,gameName,newCheatCode,cheatEnable,box1) {
-    Module.uploadCheats(file, () => {
+    Module.uploadAll(file, () => {
         Module.autoLoadCheats();
         setTimeout(() => {
             Module.FSSync();
