@@ -199,18 +199,13 @@ export function listScreenshot() {
 export function embedTextInPngFile(base64, text, fileName) {
     let byteCharacters = atob(base64.split(',')[1]);
     let byteArray = new Uint8Array(byteCharacters.length);
-    
     for (let i = 0; i < byteCharacters.length; i++) {
         byteArray[i] = byteCharacters.charCodeAt(i);
     }
-
     let textChunk = new TextEncoder().encode("tEXtComment\x00" + text);
-    
     let newArray = new Uint8Array(byteArray.length + textChunk.length);
     newArray.set(byteArray, 0);
     newArray.set(textChunk, byteArray.length);
-
-    // Tạo Blob và File với đúng tên
     let blob = new Blob([newArray], { type: "image/png" });
     let file = new File([blob], fileName, { type: "image/png" });
 
@@ -252,7 +247,7 @@ export async function screenShot(saveSlot) {
     await Module.FSSync();
     const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${fileName}`));
     const embeddedFile = embedTextInPngFile(base64, formatDateTime(Date.now()), fileName);
-    await uploadSaveOrSaveState(embeddedFile);
+    Module.uploadAll(embeddedFile, () => {localStorageFile();Module.FSSync();});
 }
 export async function dowloadScreenShot(file) {
     try {
