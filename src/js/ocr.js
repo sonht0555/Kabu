@@ -18,7 +18,6 @@ async function getImage() {
         const gameName = localStorage.getItem("gameName");
         const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".png");
         const file = await Main.captureOCR(screenshotName);
-        console.log(file);
         const blob = new Blob([file], {
             type: 'image/png'
         });
@@ -29,7 +28,6 @@ async function getImage() {
             reader.readAsDataURL(blob);
         });
         const img = new Image();
-        console.log(base64);
         img.src = base64;
         img.onload = () => {
             const canvas = document.createElement("canvas");
@@ -38,10 +36,8 @@ async function getImage() {
             let generalRatio;
             if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
                 generalRatio = Math.round(160 / (window.innerWidth - 230));
-                console.log("gbc", generalRatio);
             } else {
                 generalRatio = Math.round(240 / (window.innerWidth - 150));
-                console.log("gba", generalRatio);
             }
             const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
@@ -49,16 +45,15 @@ async function getImage() {
             canvas.height = cropHeight * generalRatio * resolutionFactor;
             ctx.drawImage(
                 img,
-                cropX * generalRatio,                               // Vị trí x bắt đầu cắt từ ảnh gốc
-                cropY * generalRatio,                               // Vị trí y bắt đầu cắt từ ảnh gốc
-                cropWidth * generalRatio,                           // Chiều rộng vùng cắt từ ảnh gốc
-                cropHeight * generalRatio,                          // Chiều cao vùng cắt từ ảnh gốc
-                0,                                                  // Vị trí x vẽ lên canvas
-                0,                                                  // Vị trí y vẽ lên canvas
-                cropWidth * generalRatio * resolutionFactor,        // Chiều rộng trên canvas (nhân với resolutionFactor)
-                cropHeight * generalRatio * resolutionFactor        // Chiều cao trên canvas (nhân với resolutionFactor)
+                cropX * generalRatio,                               
+                cropY * generalRatio,                               
+                cropWidth * generalRatio,                           
+                cropHeight * generalRatio,                          
+                0,                                                  
+                0,                                                  
+                cropWidth * generalRatio * resolutionFactor,       
+                cropHeight * generalRatio * resolutionFactor        
             );
-            console.log(canvas.toDataURL("image/png"));
             const base64data = canvas.toDataURL("image/png").split(',')[1];
             const ApiAzure = localStorage.getItem("ApiAzure");
             if (ApiAzure) {
@@ -109,7 +104,6 @@ async function freeServer(base64data) {
             throw new Error(errorMessage);
         }
 
-        console.log(data.text);
         transLogic(data.text);
 
     } catch (error) {
@@ -174,7 +168,6 @@ async function azureServer(base64data) {
 }
 async function translateText(textContent, sourceLang, targetLang) {
     const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').trim();
-    console.log(cleanData);
     var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=` + encodeURIComponent(cleanData);
     try {
         const response = await fetch(apiUrl);
@@ -195,7 +188,6 @@ async function translateText(textContent, sourceLang, targetLang) {
             setTimeout(() => {
                 startAutoScroll();
             }, 2000);
-            console.log(translatedText.replace(/ {2,}/g, ' '));
             return translatedText.replace(/ {2,}/g, ' ');
         } else {
             inputText.textContent = result;
@@ -229,7 +221,6 @@ async function detectLanguage(textContent) {
         const response = await fetch(apiUrl);
         const result = await response.json();
         var detectedLanguage = result[8][0][0];
-        console.log("Language:", detectedLanguage);
         return detectedLanguage;
     } catch (error) {
         console.error("Error detecting language:", error);

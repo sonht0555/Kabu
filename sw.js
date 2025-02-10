@@ -1,4 +1,4 @@
-let revision = 'V2.52';
+let revision = 'V2.53';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -28,10 +28,20 @@ workbox.precaching.precacheAndRoute([
 ]);
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'static-resources',
-  })
+  async ({ request }) => {
+    const cache = await caches.open('static-resources');
+    try {
+      const response = await fetch(request, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Failed to fetch: ${request.url}`);
+      await cache.put(request, response.clone());
+      return response;
+    } catch (error) {
+      console.warn(`Không thể tải ${request.url}, dùng cache cũ.`);
+      return cache.match(request);
+    }
+  }
 );
+
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'DELETE_CACHE') {
     fetch('/ping')
