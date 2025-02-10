@@ -104,7 +104,7 @@ export async function dpRefreshToken() {
 		const data = await response.json();
 		if (!data.error) {
 			localStorage.setItem("accessToken", data.access_token);
-            await lockNoti("", "Refreshing token...", 3000)
+            await lockNoti("Refreshing token...", "", 3000)
             await delay(1000);
 			return true;
 		} else {

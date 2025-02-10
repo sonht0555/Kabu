@@ -1,4 +1,4 @@
-let revision = 'V2.55';
+let revision = 'V2.53';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -26,6 +26,7 @@ workbox.precaching.precacheAndRoute([
   { url: './index.html', revision: revision },
   { url: './manifest.json', revision: revision },
 ]);
+
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
   async ({ request }) => {
@@ -36,7 +37,6 @@ workbox.routing.registerRoute(
       await cache.put(request, response.clone());
       return response;
     } catch (error) {
-      console.warn(`Không thể tải ${request.url}, dùng cache cũ.`);
       return cache.match(request);
     }
   }
