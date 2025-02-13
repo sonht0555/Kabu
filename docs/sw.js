@@ -1,4 +1,4 @@
-let revision = 'V2.53';
+let revision = 'V2.54';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -29,29 +29,21 @@ workbox.precaching.precacheAndRoute([
 
 workbox.routing.registerRoute(
   /\.(?:css|ttf|png|js|wasm|html|json)$/,
-  async ({ request }) => {
-    const cache = await caches.open('static-resources');
-    try {
-      const response = await fetch(request, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`Failed to fetch: ${request.url}`);
-      await cache.put(request, response.clone());
-      return response;
-    } catch (error) {
-      return cache.match(request);
-    }
-  }
+  new workbox.strategies.CacheFirst({
+    cacheName: 'static-resources',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 1 * 24 * 60 * 60,
+      }),
+    ],
+  })
 );
 
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'DELETE_CACHE') {
-    if (navigator.onLine) {
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            return caches.delete(cacheName);
-          })
-        );
-      })
-    }
+  if (event.data && event.data.type === 'DELETE_CACHE' && navigator.onLine) {
+    caches.keys().then((cacheNames) => {
+      return Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+    });
   }
 });
