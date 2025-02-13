@@ -34,6 +34,26 @@ var mGBA = (() => {
     Module.listCheats = () => FS.readdir("/data/cheats/");
     Module.listScreenshots = () => FS.readdir("/data/screenshots/");
     Module.getSave = () => FS.readFile(Module.saveName);
+    Module.imageData = () => {
+      if (!Module.canvas) {
+          console.warn("⚠️ Canvas chưa được khởi tạo!");
+          return null;
+      }
+      const gl = Module.canvas.getContext("webgl") || Module.canvas.getContext("experimental-webgl");
+      if (!gl) {
+          console.warn("⚠️ Không thể lấy WebGL context!");
+          return null;
+      }
+      const width = Module.canvas.width;
+      const height = Module.canvas.height;
+      const pixels = new Uint8Array(width * height * 4); // RGBA pixel data
+      gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      return {
+          data: pixels,
+          width: width,
+          height: height
+      };
+  };  
     // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
     Module.listRoms = () => FS.readdir("/data/games/");
     Module.listSaves = () => FS.readdir("/data/saves/");
@@ -862,79 +882,33 @@ var mGBA = (() => {
         }
       },
       280439: ($0, $1, $2) => {
-        var w = $0;
-        var h = $1;
-        var pixels = $2;
+        var w = $0; // Chiều rộng gốc của game
+        var h = $1; // Chiều cao gốc của game
+        var pixels = $2; // Dữ liệu pixel từ WebAssembly
+    
         if (!Module["SDL2"]) Module["SDL2"] = {};
         var SDL2 = Module["SDL2"];
+    
         if (SDL2.ctxCanvas !== Module["canvas"]) {
-          SDL2.ctx = Module["createContext"](Module["canvas"], false, true);
-          SDL2.ctxCanvas = Module["canvas"];
+            SDL2.ctx = Module["createContext"](Module["canvas"], false, true);
+            SDL2.ctxCanvas = Module["canvas"];
         }
+    
         if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) {
-          SDL2.image = SDL2.ctx.createImageData(w, h);
-          SDL2.w = w;
-          SDL2.h = h;
-          SDL2.imageCtx = SDL2.ctx;
+            SDL2.image = SDL2.ctx.createImageData(w, h);
+            SDL2.w = w;
+            SDL2.h = h;
+            SDL2.imageCtx = SDL2.ctx;
         }
+    
         var data = SDL2.image.data;
         var src = pixels / 4;
-        var dst = 0;
-        var num;
-        if (
-          typeof CanvasPixelArray !== "undefined" &&
-          data instanceof CanvasPixelArray
-        ) {
-          num = data.length;
-          while (dst < num) {
-            var val = HEAP32[src];
-            data[dst] = val & 255;
-            data[dst + 1] = (val >> 8) & 255;
-            data[dst + 2] = (val >> 16) & 255;
-            data[dst + 3] = 255;
-            src++;
-            dst += 4;
-          }
-        } else {
-          if (SDL2.data32Data !== data) {
-            SDL2.data32 = new Int32Array(data.buffer);
-            SDL2.data8 = new Uint8Array(data.buffer);
-            SDL2.data32Data = data;
-          }
-          var data32 = SDL2.data32;
-          num = data32.length;
-          data32.set(HEAP32.subarray(src, src + num));
-          var data8 = SDL2.data8;
-          var i = 3;
-          var j = i + 4 * num;
-          if (num % 8 == 0) {
-            while (i < j) {
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-              data8[i] = 255;
-              i = (i + 4) | 0;
-            }
-          } else {
-            while (i < j) {
-              data8[i] = 255;
-              i = (i + 4) | 0;
-            }
-          }
-        }
+        var num = SDL2.data32.length;
+        SDL2.data32.set(HEAP32.subarray(src, src + num));
+    
         SDL2.ctx.putImageData(SDL2.image, 0, 0);
-      },
+    },
+    
       281907: ($0, $1, $2, $3, $4) => {
         var w = $0;
         var h = $1;

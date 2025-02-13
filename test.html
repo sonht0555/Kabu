@@ -1,0 +1,18 @@
+
+<canvas width="240" height="160" class="canvas" id="canvas" style="image-rendering: pixelated;"></canvas>
+<canvas id="outputCanvas"></canvas>
+<script type = "module">
+import mGBA from "./src/core/mgba.js";
+const Module = {canvas: document.getElementById("canvas")};
+function initializeCore(coreInitFunction, module) {
+    coreInitFunction(module).then(function(module) {
+        module.FSInit();
+    });
+}
+initializeCore(mGBA, Module);
+setTimeout(() => {
+    Module.loadGame(`/data/games/Mother_1.2.gba`)
+    console.log(Module.imageData())
+},2000);
+
+</script>
