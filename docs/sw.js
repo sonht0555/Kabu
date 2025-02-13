@@ -1,4 +1,4 @@
-let revision = 'V2.55';
+let revision = 'V2.56';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -33,8 +33,8 @@ workbox.routing.registerRoute(
     cacheName: 'static-resources',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 100,
-        maxAgeSeconds: 1 * 24 * 60 * 60,
+        maxEntries: 150,
+        purgeOnQuotaError: true,
       }),
     ],
   })

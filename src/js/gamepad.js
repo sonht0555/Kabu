@@ -155,6 +155,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     ledSave("#DD5639");
                     notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                 }
+            } else if (clickState === 3) {
+                Main.setVolume(0);
+                notiMessage(`Mute now!`, 2000);
             }
             clickState = 0;
         }, 300);

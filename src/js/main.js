@@ -276,3 +276,6 @@ export function uploadCheats(file,gameName,newCheatCode,cheatEnable,box1) {
         box1.textContent = localStorage.getItem(`${gameName}_savedCheats` || 'Off');
     });
 }
+export function setVolume(number) {
+    Module.setVolume(number);
+}
