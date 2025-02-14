@@ -1019,27 +1019,3 @@ rect {
   pointer-events: none;
   color:#B84B35;
 }
-.dpad-l{
-  position: absolute;
-  width: 44px;
-  z-index: 99;
-  height: calc((100vw - 70px)* 9 / 10);
-  margin-top: 15px;
-  opacity: 0;
-}
-.dpad-r{
-  position: absolute;
-  width: 44px;
-  z-index: 99;
-  height: calc((100vw - 70px)* 9 / 10);
-  margin-top: 15px;
-  right: 16px;
-  opacity: 0;
-}
-.gbc{
-margin: 0px;
-}
-.canvas-container,.message-container{
-  width: calc(100vw - 70px);
-  height: calc((100vw - 70px) * 9 / 10);
-}
