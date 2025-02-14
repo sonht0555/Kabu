@@ -4,6 +4,8 @@ let clickState = 0;
 let clickTimeout;
 let clickTurbo = 0
 let turboState = 1;
+let volumeLevels = [1, 0.75, 0.5, 0.25, 0];
+let volumeIndex = 0;
 const turboButton = document.getElementById("turbo");
 /* --------------- Function --------------- */
 function buttonPress(buttonName, isPress) {
@@ -156,9 +158,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                 }
             } else if (clickState === 3) {
-                Main.setVolume(0);
-                notiMessage(`Mute now!`, 2000);
-            }
+                volumeIndex = (volumeIndex + 1) % volumeLevels.length;
+                let newVolume = volumeLevels[volumeIndex];
+            
+                Main.setVolume(newVolume);
+                notiMessage(`Volume: ${newVolume * 100}%`, 2000);
+            }  
             clickState = 0;
         }, 300);
     });
