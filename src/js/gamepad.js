@@ -4,7 +4,7 @@ let clickState = 0;
 let clickTimeout;
 let clickTurbo = 0
 let turboState = 1;
-let volumeLevels = [1, 0.75, 0.5, 0.25, 0];
+let volumeLevels = [1, 0, 0.25, 0.5, 0.75];
 let volumeIndex = 0;
 const turboButton = document.getElementById("turbo");
 /* --------------- Function --------------- */

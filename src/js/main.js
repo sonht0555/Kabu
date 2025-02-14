@@ -161,8 +161,14 @@ export function downloadFileInCloud(filepath) {
     const data = Module.downloadFile(filepath);
     return data;
 }
-export async function uploadFile(fileName) {
-    const file = fileName.files[0];
+export async function uploadFileInCloud(filepath) {
+    Module.uploadAll(filepath, () => {
+        localStorageFile();
+        Module.FSSync();
+    });
+}
+export async function uploadFile(filepath) {
+    const file = filepath.files[0];
     Module.uploadAll(file, () => {
         localStorageFile();
         Module.FSSync();
