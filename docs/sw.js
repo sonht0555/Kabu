@@ -1,4 +1,4 @@
-let revision = 'V2.53';
+let revision = 'V2.54';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/7.3.0/workbox-sw.js');
 workbox.setConfig({ debug: false });
 revision = (parseInt(revision) + 1).toString();
@@ -40,10 +40,14 @@ workbox.routing.registerRoute(
   })
 );
 
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'DELETE_CACHE' && navigator.onLine) {
-    caches.keys().then((cacheNames) => {
-      return Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-    });
+self.addEventListener('message', async (event) => {
+  if (event.data && event.data.type === 'DELETE_CACHE') {
+    try {
+      const response = await fetch('https://kabu.io.vn', { method: 'HEAD', cache: 'no-store' });
+      if (response.ok) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+      }
+    } catch (error) {}
   }
 });
