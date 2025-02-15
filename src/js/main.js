@@ -62,28 +62,13 @@ async function saveStateInCloud() {
     const gameName = localStorage.getItem("gameName");
     const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss0")
     const uId = localStorage.getItem("uId");
-    const img = localStorage.getItem(`${gameName}_imageState0`);
-    const date = localStorage.getItem(`${gameName}_dateState0`);
     if (navigator.onLine) {
         if (uId) {
             await ledSave("#E0C068");
             await delay(1000);
-            await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`));
-            if (img !== null) {
-                const textContent = `${img}\n\n${date}`;
-                const blob = new Blob([textContent], {
-                    type: "text/plain"
-                });
-                await dpUploadFile(`${gameName}_slot0.txt`, blob);
-            } else {
-                console.log("No screenshot!");
-            }
+            await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`),"state");
             await lockNoti("", `Cloud upload ${++countUpload} time(s)`, 2000)
-        } else {
-            console.log("Unable to upload to Cloud!");
         }
-    } else {
-        console.log("Online!");
     }
 }
 // Time In-game
@@ -97,7 +82,7 @@ function startTimer() {
         if (minutes === 60)[minutes, hours] = [0, hours + 1];
         document.getElementById("timer").textContent = `${hours}h${minutes.toString().padStart(2, '0')}.${seconds.toString().padStart(2, '0')}`;
         if (count1 === 60) {saveStatePeriodically();count1 = 0};
-        if (count2 === 3600) {saveStateInCloud(); count2=0};
+        if (count2 === 1800) {saveStateInCloud(); count2=0};
     }, 1000);
 }
 /* --------------- Export Function --------------- */
