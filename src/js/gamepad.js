@@ -29,17 +29,17 @@ async function loadState(slot) {
 // Turbo
 export async function turboF(turboState) {
     if (turboState === 1) {
-        notiMessage("1x Speed", 1500);
+        notiMessage("1x Speed", 1500, true);
         turbo.classList.remove("turbo-medium");
         turbo.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(1);
     } else if (turboState === 2) {
-        notiMessage("2x Speed", 1500);
+        notiMessage("2x Speed", 1500, true);
         turbo.classList.add("turbo-medium");
         turbo.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(2);
     } else if (turboState === 3) {
-        notiMessage("4x Speed", 1500);
+        notiMessage("4x Speed", 1500, true);
         turbo.classList.remove("turbo-medium");
         turbo.classList.add("turbo-fast");
         Main.setFastForwardMultiplier(4);
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
-                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000, true);
                     console.log(localStorage.getItem("autoStateCheck"));
                 } else {
                     const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
@@ -155,14 +155,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
-                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
+                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000, true);
                 }
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
             
                 Main.setVolume(newVolume);
-                notiMessage(`Volume: ${newVolume * 100}%`, 2000);
+                notiMessage(`Volume: ${newVolume * 100}%`, 2000, true);
             }  
             clickState = 0;
         }, 300);
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (clickState === 2) {
                 const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
                 loadState(slotStateNumbers);
-                notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
+                notiMessage(`[${slotStateNumbers}] Loaded State`, 1500, true);
             } else if (clickState === 3) {
                 let setApiAzure = localStorage.getItem("ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);

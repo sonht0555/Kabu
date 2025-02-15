@@ -149,9 +149,9 @@ async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 // Notification Message
-async function notiMessage(messageContent, second) {
+async function notiMessage(messageContent, second, showCanvas = false) {
     var message = document.getElementById("noti-mess");
-    const slotState = parseInt(localStorage.getItem("slotStateSaved")) || "0";
+    const slotState = parseInt(localStorage.getItem("slotStateSaved")) || 0;
     const gameName = localStorage.getItem("gameName");
     if (message.style.opacity === "0.4") {
         clearTimeout(messageTimeout);
@@ -163,6 +163,12 @@ async function notiMessage(messageContent, second) {
         message.textContent = `[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
         message.style.opacity = "0.4";
     }, second);
+    if (showCanvas) {
+        canvas.classList.add("visible");
+        setTimeout(() => {
+            canvas.classList.remove("visible");
+        }, 600);
+    }
 }
 // Led Save
 async function ledSave(color) {

@@ -1,7 +1,7 @@
 import mGBA from "../core/mgba.js";
 import * as gamepPad from './gamepad.js';
-import { localStorageFile } from "./storage.js";
-import {dpUploadFile,dpRefreshToken} from "./cloud.js";
+import {localStorageFile} from "./storage.js";
+import {dpUploadFile} from "./cloud.js";
 /*/ --------------- Initialization ----------- */
 const Module = {canvas: document.getElementById("canvas")};
 function initializeCore(coreInitFunction, module) {
