@@ -23,6 +23,10 @@
                         console.log('Service Worker registration failed:', error);
                     });
             });
+            navigator.serviceWorker.addEventListener('message', function (event) {
+            console.log('Received message from Service Worker:', event.data);
+            appVer.textContent = event.data.msg
+            });
         }
       </script>
   </head>
@@ -351,7 +355,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V2.61';</script>
+    <script>let gameVer = 'V2.64';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

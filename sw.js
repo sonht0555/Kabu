@@ -1,4 +1,4 @@
-var CACHE_NAME = 'v17';
+let revision = 'V2.64';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -28,10 +28,10 @@ var urlsToCache = [
 self.addEventListener('install', function (event) {
     postMsg({msg:'Updating...'});
     var urlsAddVersion = urlsToCache.map(function (url) {
-        return url + '?ver=' + CACHE_NAME
+        return url + '?ver=' + revision
     });
     event.waitUntil(
-        caches.open(CACHE_NAME)
+        caches.open(revision)
             .then(function (cache) {
                 console.log('Opened cache');
                 return cache.addAll(urlsAddVersion);
@@ -58,7 +58,7 @@ self.addEventListener('fetch', function (event) {
 
 self.addEventListener('activate', function (event) {
     console.log('activated, remove unused cache...')
-    var cacheAllowlist = [CACHE_NAME];
+    var cacheAllowlist = [revision];
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
             return Promise.all(
@@ -71,7 +71,7 @@ self.addEventListener('activate', function (event) {
             );
         })
     );
-    postMsg({msg:'Updated!'})
+    postMsg({msg:'Updated'})
 });
 
 function postMsg(obj) {
