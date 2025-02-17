@@ -1,4 +1,4 @@
-var CACHE_NAME = 'v16';
+var CACHE_NAME = 'v17';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -55,7 +55,6 @@ self.addEventListener('fetch', function (event) {
         })
     );
 });
-
 
 self.addEventListener('activate', function (event) {
     console.log('activated, remove unused cache...')
