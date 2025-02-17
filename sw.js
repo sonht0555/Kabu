@@ -1,29 +1,28 @@
-var CACHE_NAME = 'v15';
+var CACHE_NAME = 'v16';
 var urlsToCache = [
     '/',
-    '/src/css/main.css',
-    '/src/font/04b.ttf',
-    '/src/font/04bf.ttf',
-    '/src/font/Tuson.ttf',
-    '/img/favi.png',
-    '/img/icon.png',
-    '/src/js/cloud.js',
-    '/src/js/gamepad.js',
-    '/src/js/global.js',
-    '/src/js/main.js',
-    '/src/js/main.js',
-    '/src/js/ocr.js',
-    '/src/js/setting.js',
-    '/src/js/state.js',
-    '/src/js/storage.js',
-    '/src/js/welcome.js',
-    '/src/core/mgba.js',
-    '/src/core/mgba.wasm',
-    '/src/library/nip.js',
-    '/src/library/interact.js',
-    '/sw.js',
-    '/index.html',
-    '/manifest.json',
+    './src/css/main.css',
+    './src/font/04b.ttf',
+    './src/font/04bf.woff',
+    './src/font/Tuson.ttf',
+    './img/favi.png',
+    './img/icon.png',
+    './src/js/cloud.js',
+    './src/js/gamepad.js',
+    './src/js/global.js',
+    './src/js/main.js',
+    './src/js/ocr.js',
+    './src/js/setting.js',
+    './src/js/state.js',
+    './src/js/storage.js',
+    './src/js/welcome.js',
+    './src/core/mgba.js',
+    './src/core/mgba.wasm',
+    './src/library/nip.js',
+    './src/library/interact.js',
+    './sw.js',
+    './index.html',
+    './manifest.json',
 ];
 
 self.addEventListener('install', function (event) {
@@ -42,7 +41,6 @@ self.addEventListener('install', function (event) {
             })
     );
 });
-
 
 self.addEventListener('fetch', function (event) {
     event.respondWith(
