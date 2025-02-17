@@ -1,4 +1,4 @@
-let revision = 'V2.58';
+let revision = 'V2.59';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -26,7 +26,7 @@ var urlsToCache = [
 ];
 
 self.addEventListener('install', function (event) {
-    postMsg({msg:'Updating...'});
+    postMsg({msg:'Updating'});
     var urlsAddVersion = urlsToCache.map(function (url) {
         return url + '?ver=' + revision
     });

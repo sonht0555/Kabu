@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
-                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000, true);
+                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                     console.log(localStorage.getItem("autoStateCheck"));
                 } else {
                     const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
@@ -155,14 +155,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
-                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000, true);
+                    notiMessage(`[${slotStateNumbers}] Saved State`, 2000);
                 }
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
             
                 Main.setVolume(newVolume);
-                notiMessage(`Volume: ${newVolume * 100}%`, 2000, true);
+                notiMessage(`Volume: ${newVolume * 100}%`, 2000);
             }  
             clickState = 0;
         }, 300);
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (clickState === 2) {
                 const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
                 loadState(slotStateNumbers);
-                notiMessage(`[${slotStateNumbers}] Loaded State`, 1500, true);
+                notiMessage(`[${slotStateNumbers}] Loaded State`, 1500);
             } else if (clickState === 3) {
                 let setApiAzure = localStorage.getItem("ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
