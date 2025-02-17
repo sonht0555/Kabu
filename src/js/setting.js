@@ -116,9 +116,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             window.location.href = window.location.href;
                         }
                     }, 50);
-                    navigator.serviceWorker.controller.postMessage({
-                        type: 'DELETE_CACHE'
-                    });
+                    // navigator.serviceWorker.controller.postMessage({
+                    //     type: 'DELETE_CACHE'
+                    // });
                 }
                 if (document.getElementById('box1').classList.contains('selected')) {
                     let box1 = document.getElementById('box1');
