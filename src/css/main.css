@@ -7,10 +7,6 @@
   src: url("../font/04b.ttf");
 }
 @font-face {
-  font-family: "04bf";
-  src: url("../font/04bf.ttf");
-}
-@font-face {
   font-family: "tuson";
   src: url("../font/Tuson.ttf");
 }
@@ -871,7 +867,7 @@ rect {
   padding-top: 5px !important;
   padding-right: 3px !important;
   opacity: 0.4;
-  font-family: "04bf" !important;
+  font-family: "04b" !important;
 }
 .stateDiv {
   flex-direction: column;
