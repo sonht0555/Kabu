@@ -1,4 +1,4 @@
-let revision = 'V2.59';
+let revision = 'V2.62';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -33,10 +33,8 @@ self.addEventListener('install', function (event) {
     event.waitUntil(
         caches.open(revision)
             .then(function (cache) {
-                console.log('Opened cache');
                 return cache.addAll(urlsAddVersion);
             }).then(() => {
-                console.log('Cache downloaded')
                 self.skipWaiting()
             })
     );
@@ -50,14 +48,12 @@ self.addEventListener('fetch', function (event) {
             if (response) {
                 return response;
             }
-            console.log('cache miss', event.request.url)
             return fetch(event.request);
         })
     );
 });
 
 self.addEventListener('activate', function (event) {
-    console.log('activated, remove unused cache...')
     var cacheAllowlist = [revision];
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
