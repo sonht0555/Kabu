@@ -71,7 +71,7 @@ mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 git add . && git commit -m "Auto commit" && git push origin main
 clear
-echo -e "\033[1;36m//--- (Version $new_game_version ---//\033[0m"
+echo -e "\033[33m//--- (version $new_game_version) ---//\033[0m"
 
 # --- (install minify) ---
 # sudo npm install -g javascript-obfuscator
