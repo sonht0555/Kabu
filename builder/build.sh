@@ -69,7 +69,7 @@ mkdir -p $Docs_DIR/src/backup/
 cp ./src/core/* $Docs_DIR/src/backup/
 mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
-git add . && git commit -m "Build --- $new_game_version ---" && git push origin main
+git add . && git commit -m "--- Build $new_game_version ---" && git push origin main
 clear
 echo "╔═════════════════════╗"
 echo "║ --- Build $new_game_version --- ║"
