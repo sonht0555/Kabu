@@ -30,18 +30,18 @@ async function loadState(slot) {
 export async function turboF(turboState) {
     if (turboState === 1) {
         notiMessage("1x Speed", 1500, true);
-        turbo.classList.remove("turbo-medium");
-        turbo.classList.remove("turbo-fast");
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(1);
     } else if (turboState === 2) {
         notiMessage("2x Speed", 1500, true);
-        turbo.classList.add("turbo-medium");
-        turbo.classList.remove("turbo-fast");
+        turboButton.classList.add("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(2);
     } else if (turboState === 3) {
         notiMessage("4x Speed", 1500, true);
-        turbo.classList.remove("turbo-medium");
-        turbo.classList.add("turbo-fast");
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.add("turbo-fast");
         Main.setFastForwardMultiplier(4);
     }
 }
