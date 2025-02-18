@@ -70,7 +70,14 @@ mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 
 echo "------ Minify $new_game_version ------"
-
+if [[ -n $(git status --porcelain) ]]; then
+  git add .
+  git commit -m "Auto commit: $(date +'%Y-%m-%d %H:%M:%S')"
+  git push origin main  # Nếu branch chính là main
+  echo "✅ Code đã được đẩy lên GitHub: https://github.com/sonht0555/Kabu.git"
+else
+  echo "✅ Không có thay đổi nào để đẩy lên Git."
+fi
 
 # --- (install minify) ---
 # sudo npm install -g javascript-obfuscator
