@@ -71,7 +71,9 @@ mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 git add . && git commit -m $new_game_version && git push origin main
 clear
-echo -e "\033[33m--- [$new_game_version] ---\033[0m"
+echo "╔═════════════════════╗"
+echo "║ --- Build $new_game_version --- ║"
+echo "╚═════════════════════╝"
 
 # --- (install minify) ---
 # sudo npm install -g javascript-obfuscator
@@ -79,5 +81,6 @@ echo -e "\033[33m--- [$new_game_version] ---\033[0m"
 # --- (add execute permission) ---
 # chmod +x ./builder/build.sh
 # --- (run build) ---
+# --- (V2.80) ---
 # ./builder/build.sh
 # cd /c/Users/hoang/OneDrive/Documents/GitHub/Kabu
