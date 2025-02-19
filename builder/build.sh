@@ -48,13 +48,13 @@ if [ $minor_version -ge 100 ]; then
   minor_version=0
   major_version=$((major_version + 1))
 fi
-new_game_version="V${major_version}.$(printf "%02d" $minor_version)"
+Vers="V${major_version}.$(printf "%02d" $minor_version)"
 
 # Update version in index.html
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "s/let gameVer = 'V[0-9]*\.[0-9]*';/let gameVer = '$new_game_version';/" ./index.html
+  sed -i '' "s/let gameVer = 'V[0-9]*\.[0-9]*';/let gameVer = '$Vers';/" ./index.html
 else
-  sed -i "s/let gameVer = 'V[0-9]*\.[0-9]*';/let gameVer = '$new_game_version';/" ./index.html
+  sed -i "s/let gameVer = 'V[0-9]*\.[0-9]*';/let gameVer = '$Vers';/" ./index.html
 fi
 
 # Copy static files
@@ -69,10 +69,10 @@ mkdir -p $Docs_DIR/src/backup/
 cp ./src/core/* $Docs_DIR/src/backup/
 mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
-git add . && git commit -m "--- Build $new_game_version ---" && git push origin main
+git add . && git commit -m "--- Build $Vers ---" && git push origin main
 clear
 echo "╔═════════════════════╗"
-echo "║ --- Build $new_game_version --- ║"
+echo "║ --- Build $Vers --- ║"
 echo "╚═════════════════════╝"
 
 # --- (install minify) ---

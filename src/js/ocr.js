@@ -88,7 +88,7 @@ async function freeServer(base64data) {
         formData.append("image", imageBlob, "image.png");
         formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
 
-        response = await fetch("https://seep.eu.org/http://158.160.66.115:40000/image_to_text", {
+        response = await fetch("https://alloworigin.com/http://158.160.66.115:40000/image_to_text", {
             method: "POST",
             body: formData,
             headers: {

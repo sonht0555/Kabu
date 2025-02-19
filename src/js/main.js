@@ -2,6 +2,7 @@ import mGBA from "../core/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
+import {shaderData} from "./setting.js"
 /*/ --------------- Initialization ----------- */
 const Module = {canvas: document.getElementById("canvas")};
 function initializeCore(coreInitFunction, module) {
@@ -112,11 +113,13 @@ export async function loadGame(gameName) {
         if (confirm("Do you want to load save state?")) {
             await Module.loadState(0);
             localStorage.setItem("gameName", gameName);
+            await shaderData();
             console.log(gameName);
         }
     } else {
         await Module.loadGame(`/data/games/${gameName}`);
         localStorage.setItem("gameName", gameName);
+        await shaderData();
         console.log(gameName);
     }
     // show status ingame

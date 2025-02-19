@@ -1,17 +1,36 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-const imgShader = document.getElementById('img-shader') || "Sega";
-const brightnessX = localStorage.getItem("brightness") || 1.0;
-const contrastX = localStorage.getItem("contrast") || 1.0;
-const saturateX = localStorage.getItem("saturate") || 1.0;
-const hueRotateX = localStorage.getItem("hueRotate") || 0.0;
-const sepiaX = localStorage.getItem("sepia") || 0.0;
+let gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX ;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Gt-7', 'Gt-8', 'Gt-9', 'Gt-10', 'Line'];
 const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
+const imgShader = document.getElementById('img-shader') || "Sega";
+export async function shaderData() {
+    gameName = localStorage.getItem("gameName") || null;
+    cheatX = JSON.parse(localStorage.getItem(`${gameName}_Cheats`) || "[]");
+    box1.textContent = cheatX.at(-1)?.code || "Off";
+    stateAutoX = localStorage.getItem(`${gameName}_stateAuto`) || "Off";
+    box2.textContent = stateAutoX;
+    shaderX = localStorage.getItem(`${gameName}_shader`) || "Sega"
+    box3.textContent = shaderX;
+    opacityX = localStorage.getItem(`${gameName}_opacity`) || 1.0;
+    box4.textContent = opacityX;
+    brightnessX = localStorage.getItem(`${gameName}_brightness`) || 1.0;
+    box5.textContent = brightnessX;
+    contrastX = localStorage.getItem(`${gameName}_contrast`) || 1.0;
+    box6.textContent = contrastX;
+    saturateX = localStorage.getItem(`${gameName}_saturate`) || 1.0;
+    box7.textContent = saturateX;
+    sepiaX = localStorage.getItem(`${gameName}_sepia`) || 0.0;
+    box8.textContent = sepiaX;
+    imgShader.classList.add(shaderX);
+    imgShader.style.setProperty('--before-opacity', opacityX);
+    canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
+    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX});
+}
 /* --------------- Function ------------------ */
 // Right
 async function Right(boxId, limit, increment, property, localStorageKey) {
@@ -22,14 +41,12 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
         localStorage.setItem(localStorageKey, box.textContent);
+        await delay(100);
+        await shaderData();
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
         await delay(100);
-        const brightnessX = localStorage.getItem("brightness") || 1;
-        const contrastX = localStorage.getItem("contrast") || 1;
-        const saturateX = localStorage.getItem("saturate") || 1;
-        const sepiaX = localStorage.getItem("sepia") || 0;
-        canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+        await shaderData();
     }
 }
 // Left
@@ -41,14 +58,12 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
         localStorage.setItem(localStorageKey, box.textContent);
+        await delay(100);
+        await shaderData();
     } else {
         localStorage.setItem(localStorageKey, box.textContent);
         await delay(100);
-        const brightnessX = localStorage.getItem("brightness") || 1;
-        const contrastX = localStorage.getItem("contrast") || 1;
-        const saturateX = localStorage.getItem("saturate") || 1;
-        const sepiaX = localStorage.getItem("sepia") || 0;
-        canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
+        await shaderData();
     }
 }
 // SDL2ID
@@ -64,36 +79,6 @@ SDL2ID.forEach(function(id) {
 })
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
-    // Box1
-    const gameName = localStorage.getItem("gameName");
-    let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
-    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'Off';
-    box1.textContent = lastCheatCode;
-    // Box2
-    if (localStorage.getItem("autoStateCheck") === "On") {
-        box2.textContent = 'On'
-    } else {
-        box2.textContent = 'Off'
-        const autoStateCheck = 'Off'
-        localStorage.setItem("autoStateCheck", autoStateCheck)
-    }
-    // Box3
-    box3.textContent = localStorage.getItem("selectedShader") || "Sega";
-    // Box4
-    box4.textContent = localStorage.getItem("opacity") || 1.0;
-    // Box5 
-    box5.textContent = localStorage.getItem("brightness") || 1.0;
-    // Box6
-    box6.textContent = localStorage.getItem("contrast") || 1.0;
-    // Box7
-    box7.textContent = localStorage.getItem("saturate") || 1.0;
-    // Box8
-    box8.textContent = localStorage.getItem("sepia") || 0.0;
-    // Box3-8 Content
-    imgShader.classList.add(localStorage.getItem("selectedShader"));
-    imgShader.style.setProperty('--before-opacity', localStorage.getItem("opacity"));
-    canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
-    // inputContainer.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) hue-rotate(${hueRotateX}deg) sepia(${sepiaX})`;
     let currentShaderClass = sdValues[0];
     const updateSelection = () => {
         boxes.forEach((box, index) => {
@@ -122,21 +107,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (document.getElementById('box1').classList.contains('selected')) {
                     let box1 = document.getElementById('box1');
-                    const gameName = localStorage.getItem("gameName");
-                    const cheatName = gameName.replace(".gba", ".cheats");
-                    let cheats = JSON.parse(localStorage.getItem(`${gameName}_Cheats`)) || [];
-                    const lastCheatCode = cheats.length > 0 ? cheats[cheats.length - 1].code : 'Off';
+                    const cheatName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".cheats");
+                    const lastCheatCode = cheatX.length > 0 ? cheatX[cheatX.length - 1].code : 'Off';
                     let newCheatCode = window.prompt("Edit cheat code", lastCheatCode);
                     if (newCheatCode === null || newCheatCode.trim() === "") {
                         newCheatCode = "Off";
                     }
-                    cheats = cheats.map(cheat => ({ enable: false, code: cheat.code }));
+                    cheatX = cheatX.map(cheat => ({ enable: false, code: cheat.code }));
                     const newCheat = { enable: true, code: newCheatCode.trim() };
-                    cheats.push(newCheat);
-                    localStorage.setItem(`${gameName}_Cheats`, JSON.stringify(cheats));
+                    cheatX.push(newCheat);
+                    localStorage.setItem(`${gameName}_Cheats`, JSON.stringify(cheatX));
+                    shaderData();
                     const display = 
-                        `cheats = ${cheats.length}\n` +
-                        cheats
+                        `cheats = ${cheatX.length}\n` +
+                        cheatX
                             .map((cheat, index) => 
                                 `cheat${index}_enable = ${cheat.enable}\ncheat${index}_code = "${cheat.code}"`
                             )
@@ -171,11 +155,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        localStorage.setItem("autoStateCheck", autoStateCheck)
+                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
+                        shaderData();
                         notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        localStorage.setItem("autoStateCheck", autoStateCheck)
+                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
+                        shaderData();
                         notiMessage("Manual Switches Slots", 1500);
                     }
                 }
@@ -187,26 +173,26 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         box3.textContent = sdValues[0];
                     }
-                    console.log(box3.textContent);
                     sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    localStorage.setItem("selectedShader", currentShaderClass);
+                    localStorage.setItem(`${gameName}_shader`, currentShaderClass);
+                    shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
-                    Right('box4', 1, 0.1, 'opacity', 'opacity');
+                    Right('box4', 1, 0.1, 'opacity', `${gameName}_opacity`);
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Right('box5', 2, 0.1, 'brightness', 'brightness');
+                    Right('box5', 2, 0.1, 'brightness', `${gameName}_brightness`);
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Right('box6', 2, 0.1, 'contrast', 'contrast');
+                    Right('box6', 2, 0.1, 'contrast', `${gameName}_contrast`);
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Right('box7', 4, 0.1, 'saturate', 'saturate');
+                    Right('box7', 4, 0.1, 'saturate', `${gameName}_saturate`);
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Right('box8', 1, 0.1, 'sepia', 'sepia');
+                    Right('box8', 1, 0.1, 'sepia', `${gameName}_sepia`);
                 }
             }
         });
@@ -217,11 +203,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        localStorage.setItem("autoStateCheck", autoStateCheck)
+                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
+                        shaderData();
                         notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        localStorage.setItem("autoStateCheck", autoStateCheck)
+                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
+                        shaderData();
                         notiMessage("Manual Switches Slots", 1500);
                     }
                 }
@@ -236,22 +224,23 @@ document.addEventListener("DOMContentLoaded", function() {
                     sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    localStorage.setItem("selectedShader", currentShaderClass);
+                    localStorage.setItem(`${gameName}_shader`, currentShaderClass);
+                    shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
-                    Left('box4', 0, 0.1, 'opacity', 'opacity');
+                    Left('box4', 0, 0.1, 'opacity', `${gameName}_opacity`);
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Left('box5', 0, 0.1, 'brightness', 'brightness');
+                    Left('box5', 0, 0.1, 'brightness', `${gameName}_brightness`);
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Left('box6', 0, 0.1, 'contrast', 'contrast');
+                    Left('box6', 0, 0.1, 'contrast', `${gameName}_contrast`);
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Left('box7', 0, 0.1, 'saturate', 'saturate');
+                    Left('box7', 0, 0.1, 'saturate', `${gameName}_saturate`);
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Left('box8', 0, 0.1, 'sepia', 'sepia');
+                    Left('box8', 0, 0.1, 'sepia', `${gameName}_sepia`);
                 }
             }
         });

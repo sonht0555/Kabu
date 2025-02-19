@@ -137,21 +137,22 @@ document.addEventListener("DOMContentLoaded", function() {
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     // Save State Button
     saveStateButton.addEventListener(eventType, () => {
+        const gameName = localStorage.getItem("gameName")
         clickState++;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(() => {
             if (clickState === 2) {
-                const autoStateCheck = localStorage.getItem("autoStateCheck") || localStorage.setItem("autoStateCheck", "On");
+                const autoStateCheck = localStorage.getItem(`${gameName}_stateAuto`) || localStorage.setItem(`${gameName}_stateAuto`, "On");
                 if (autoStateCheck === "On") {
                     const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
-                    notiMessage(`[?] Saved.`, 3000);
-                    console.log(localStorage.getItem("autoStateCheck"));
+                    notiMessage(`[${slotStateNumbers}] Saved.`, 3000);
+                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
                 } else {
                     const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
-                    console.log(localStorage.getItem("autoStateCheck"));
+                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
                     saveState(slotStateNumbers);
                     localStorage.setItem("slotStateSaved", slotStateNumbers);
                     ledSave("#DD5639");
