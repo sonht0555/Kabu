@@ -73,7 +73,6 @@ async function getImage() {
     }, 30000);
 }
 async function freeServer(base64data) {
-    let response;
     let progress = 0;
     const interval = setInterval(() => {
         progress += 1;
@@ -87,30 +86,35 @@ async function freeServer(base64data) {
         const formData = new FormData();
         formData.append("image", imageBlob, "image.png");
         formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
+        let response;
+        try {
+            response = await fetch("https://cors-anywhere.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Origin': window.location.origin,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'User-Agent': navigator.userAgent
+                }
+            });
 
-        response = await fetch("https://alloworigin.com/http://158.160.66.115:40000/image_to_text", {
-            method: "POST",
-            body: formData,
-            headers: {
-                'Origin': window.location.origin,
-                'X-Requested-With': 'XMLHttpRequest',
-                'User-Agent': navigator.userAgent
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
             }
-        });
 
-        const data = await response.json();
-        if (!response.ok || data.type === "error") {
-            const errorMessage = response.ok ? data.error.message : (response.status === 500 ? "Internal Server Error" : (await response.json()).error.message);
-            throw new Error(errorMessage);
+        } catch (fetchError) {
+            console.warn("CORS-Anywhere chưa được kích hoạt. Mở /corsdemo...");
+            window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
+            return;
         }
-
+        const data = await response.json();
+        if (data.type === "error") {
+            throw new Error(data.error.message);
+        }
         transLogic(data.text);
 
     } catch (error) {
         inputText.textContent = error.message;
-        // window.location.href = "https://kabuto-d8dc06f14db0.herokuapp.com/";
-        // window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
-        // window.location.href = "https://seep.eu.org/";
     } finally {
         clearInterval(interval);
         isFunctionARunning = false;
