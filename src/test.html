@@ -1,0 +1,80 @@
+<script>
+    // Ảnh PNG dạng base64 (1x1 pixel màu trắng)
+    let data = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/edUd9wAAAAASUVORK5CYII=";
+
+    // Hàm nhúng văn bản vào ảnh PNG dạng base64
+    async function embedTextInPngFile(base64, text, type) {
+        // Giải mã base64 thành dữ liệu nhị phân (mảng byte)
+        let byteCharacters = atob(base64.split(',')[1]);
+        let byteArray = new Uint8Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteArray[i] = byteCharacters.charCodeAt(i);
+        }
+        let saveSlot = type === "saveSlot" ? text : "...";
+        let saveState = type === "saveState" ? text : "...";
+        let saveText = type === "saveText" ? text : "...";
+
+        // Mã hóa văn bản thành một đoạn dữ liệu nhị phân
+        let textChunk = new TextEncoder().encode(`tEXtComment\x00 saveSlot : ${saveSlot} | saveText : ${saveText} | saveState : ${saveState} | Many files contain extra or even hidden data other than the visual data you see at first glance. E-books, photographs, movies, music and even documents can contain data that you dont see at first glance.`);
+
+        // Tạo một mảng byte mới chứa cả dữ liệu ảnh gốc và văn bản nhúng
+        let newArray = new Uint8Array(byteArray.length + textChunk.length);
+        newArray.set(byteArray, 0); // Chép dữ liệu ảnh gốc vào đầu mảng
+        newArray.set(textChunk, byteArray.length); // Chép văn bản vào cuối mảng
+
+        // Tạo một Blob từ dữ liệu mới
+        let blob = new Blob([newArray], { type: "image/png" });
+
+        // Chuyển Blob thành base64
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onloadend = function () {
+                resolve(reader.result); // Trả về ảnh mới ở dạng base64
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    // Hàm trích xuất văn bản từ ảnh PNG base64
+    function extractTextFromPngBase64(base64, type) {
+    // Giải mã base64 thành dữ liệu nhị phân
+    let byteCharacters = atob(base64.split(',')[1]);
+    // Xác định vị trí của đoạn văn bản nhúng
+    let textMarker = "tEXtComment\x00";
+    let textStart = byteCharacters.indexOf(textMarker);
+
+    if (textStart !== -1) {
+        let textData = byteCharacters.substring(textStart + textMarker.length);
+
+        let match = textData.match(/saveSlot\s*:\s*(.*?)\s*\|\s*saveText\s*:\s*(.*?)\s*\|\s*saveState\s*:\s*(.*)/);
+        
+        if (match) {
+            let extractedData = {
+                saveSlot: match[1].trim(),
+                saveText: match[2].trim(),
+                saveState: match[3].trim()
+            };
+
+            return extractedData[type]
+        }
+    }
+    return null;
+}
+
+function extractTextFromPngBase641(base64) {
+    let byteCharacters = atob(base64.split(',')[1]);
+    let textMarker = "tEXtComment\x00";
+    let textStart = byteCharacters.indexOf(textMarker);
+    if (textStart !== -1) {
+        return byteCharacters.substring(textStart + textMarker.length);
+    }
+    return null;
+}
+
+embedTextInPngFile(data, "love", "saveStates")
+    .then(dataS => 
+    console.log(extractTextFromPngBase641(dataS))) // Trích xuất và in ra console
+    .catch(error => console.error(error));
+
+</script>
