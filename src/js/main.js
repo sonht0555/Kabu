@@ -236,12 +236,13 @@ export async function buttonUnpress(key) {
 }
 export async function screenShot(saveSlot) {
     const gameName = localStorage.getItem("gameName").replace(/\.(gba|gbc|gb|zip)$/, "");
+    const backupText = await getData(gameName, saveSlot, "All") || "";
+    console.log("backupText",backupText)
     const fileName = `${gameName}_${saveSlot}.png`;
+    console.log(fileName)
     await Module.screenshot(fileName);
     await Module.FSSync();
-    const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${fileName}`));
-    const embeddedFile = embedTextInPngFile(base64, formatDateTime(Date.now()), fileName);
-    Module.uploadAll(embeddedFile, () => {localStorageFile();Module.FSSync();});
+    await setData(gameName, saveSlot, "saveTime", formatDateTime(Date.now()),backupText);
 }
 export async function dowloadScreenShot(file) {
     try {
@@ -272,4 +273,62 @@ export function uploadCheats(file,gameName,newCheatCode,cheatEnable,box1) {
 }
 export function setVolume(number) {
     Module.setVolume(number);
+}
+export async function setData(romName, slot, type, text, string = "") {
+    const gameName = romName.replace(/\.(gba|gbc|gb|zip|cheats)$/, "");
+    const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${gameName}_${slot}.png`));
+    let byteCharacters = atob(base64.split(',')[1]);
+    let textMarker = `tEXtComment\x00`;
+    let textStart = byteCharacters.indexOf(textMarker);
+    let saveData = {};
+    if (textStart !== -1 || string.trim() !== "") {
+        let textData = textStart !== -1 
+            ? byteCharacters.substring(textStart + textMarker.length) 
+            : string;
+        let regex = /(\w+)\s*:\s*([^|]*)/g;
+        let match;
+        while ((match = regex.exec(textData)) !== null) {
+            saveData[match[1].trim()] = match[2].trim();
+        }
+    
+        if (textStart !== -1) {
+            byteCharacters = byteCharacters.substring(0, textStart);
+        }
+    }
+    saveData[type] = text;
+    let saveString = Object.entries(saveData)
+        .map(([key, value]) => `${key} : ${value}`)
+        .join(" | ");
+    let textChunk = new TextEncoder().encode(`${textMarker} ${saveString}`);
+    let newArray = new Uint8Array([...byteCharacters].map(c => c.charCodeAt(0)).concat([...textChunk]));
+    let file = new File([new Blob([newArray], { type: "image/png" })], `${gameName}_${slot}.png`, { type: "image/png" });
+    Module.uploadAll(file, () => { 
+        localStorageFile(); 
+        Module.FSSync(); 
+    });
+}
+export async function getData(romName, slot, type) {
+    try {
+        const gameName = romName.replace(/\.(gba|gbc|gb|zip|cheats)$/, "");
+        const filePath = `/data/screenshots/${gameName}_${slot}.png`;
+        let base64;
+        try {
+            base64 = await fileToBase64(Module.downloadFile(filePath));
+        } catch (error) {
+            return null;
+        }
+        let byteCharacters = atob(base64.split(',')[1]);
+        let textMarker = "tEXtComment\x00";
+        let textStart = byteCharacters.indexOf(textMarker);
+        if (textStart !== -1) {
+            let textData = byteCharacters.substring(textStart + textMarker.length);
+            if (type === "All") return textData.trim();
+            let regex = new RegExp(`${type}\\s*:\\s*(.*?)\\s*(?=\\||$)`);
+            let match = textData.match(regex);
+            if (match) return match[1].trim();
+        }
+    } catch (error) {
+        return null;
+    }
+    return null;
 }

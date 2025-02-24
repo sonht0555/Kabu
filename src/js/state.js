@@ -9,9 +9,10 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
     const localSlot = localStorage.getItem("slotStateSaved")
     const stateDiv = document.getElementById(stateDivs);
-    const getNameRom = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
-    const imageData = await Main.dowloadScreenShot(`/data/screenshots/${getNameRom}_${saveSlot}.png`) || noneImage;
-    const timeData = Main.extractTextFromPngBase64(imageData);
+    const gameName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
+    const imageData = await Main.dowloadScreenShot(`/data/screenshots/${gameName}_${saveSlot}.png`) || noneImage;
+    const timeData = await Main.getData(gameName, saveSlot, "saveTime");
+    console.log (timeData);
     imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
     document.getElementById(dateState).textContent = timeData || "__";
     if (parseInt(localSlot) === parseInt(saveSlot)) {
@@ -67,7 +68,7 @@ const updateSelectionState = () => {
     document.getElementById('B').addEventListener(eventType, () => {
         if (statePageButton.classList.contains("active")) {
             if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
-                if (confirm(`Do you want to detelete state [${selectedIndex}]?`)) {
+                if (confirm(`Do you want to detelete [${selectedIndex}] state?`)) {
                     const stateName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
                     const screenShotName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
                     const imageStateDiv = document.getElementById(`state0${selectedIndex}`);

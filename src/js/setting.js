@@ -12,19 +12,19 @@ export async function shaderData() {
     gameName = localStorage.getItem("gameName") || null;
     cheatX = JSON.parse(localStorage.getItem(`${gameName}_Cheats`) || "[]");
     box1.textContent = cheatX.at(-1)?.code || "Off";
-    stateAutoX = localStorage.getItem(`${gameName}_stateAuto`) || "Off";
+    stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "Off";
     box2.textContent = stateAutoX;
-    shaderX = localStorage.getItem(`${gameName}_shader`) || "Sega"
+    shaderX = await Main.getData(gameName, "0", "shader") || "Sega"
     box3.textContent = shaderX;
-    opacityX = localStorage.getItem(`${gameName}_opacity`) || 1.0;
+    opacityX = await Main.getData(gameName, "0", "opacity") || 1.0;
     box4.textContent = opacityX;
-    brightnessX = localStorage.getItem(`${gameName}_brightness`) || 1.0;
+    brightnessX = await Main.getData(gameName, "0", "brightness") || 1.0;
     box5.textContent = brightnessX;
-    contrastX = localStorage.getItem(`${gameName}_contrast`) || 1.0;
+    contrastX = await Main.getData(gameName, "0", "contrast") || 1.0;
     box6.textContent = contrastX;
-    saturateX = localStorage.getItem(`${gameName}_saturate`) || 1.0;
+    saturateX = await Main.getData(gameName, "0", "saturate") || 1.0;
     box7.textContent = saturateX;
-    sepiaX = localStorage.getItem(`${gameName}_sepia`) || 0.0;
+    sepiaX = await Main.getData(gameName, "0", "sepia") || 0.0;
     box8.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
@@ -40,11 +40,11 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        localStorage.setItem(localStorageKey, box.textContent);
+        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
     } else {
-        localStorage.setItem(localStorageKey, box.textContent);
+        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
     }
@@ -57,11 +57,11 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        localStorage.setItem(localStorageKey, box.textContent);
+        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
     } else {
-        localStorage.setItem(localStorageKey, box.textContent);
+        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
     }
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
     updateSelection();
     ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
-        document.getElementById('A').addEventListener(eventType, () => {
+        document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {
                     setTimeout(() => {
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
         });
-        document.getElementById('Right').addEventListener(eventType, () => {
+        document.getElementById('Right').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box2').classList.contains('selected')) {
                     let box2 = document.getElementById('box2');
@@ -156,12 +156,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
                         localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
-                        shaderData();
+                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        document.getElementById("box2").textContent = autoStateCheck;
                         notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
                         localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
-                        shaderData();
+                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        document.getElementById("box2").textContent = autoStateCheck;
                         notiMessage("Manual Switches Slots", 1500);
                     }
                 }
@@ -176,27 +178,27 @@ document.addEventListener("DOMContentLoaded", function() {
                     sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    localStorage.setItem(`${gameName}_shader`, currentShaderClass);
-                    shaderData();
+                    await Main.setData(gameName, "0","shader" ,currentShaderClass);
+                    await shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
-                    Right('box4', 1, 0.1, 'opacity', `${gameName}_opacity`);
+                    Right('box4', 1, 0.1, 'opacity', 'opacity');
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Right('box5', 2, 0.1, 'brightness', `${gameName}_brightness`);
+                    Right('box5', 2, 0.1, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Right('box6', 2, 0.1, 'contrast', `${gameName}_contrast`);
+                    Right('box6', 2, 0.1, 'contrast', 'contrast');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Right('box7', 4, 0.1, 'saturate', `${gameName}_saturate`);
+                    Right('box7', 4, 0.1, 'saturate', 'saturate');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Right('box8', 1, 0.1, 'sepia', `${gameName}_sepia`);
+                    Right('box8', 1, 0.1, 'sepia', 'sepia');
                 }
             }
         });
-        document.getElementById('Left').addEventListener(eventType, () => {
+        document.getElementById('Left').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box2').classList.contains('selected')) {
                     let box2 = document.getElementById('box2');
@@ -204,12 +206,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
                         localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
-                        shaderData();
+                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        document.getElementById("box2").textContent = autoStateCheck;
                         notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
                         localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
-                        shaderData();
+                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        document.getElementById("box2").textContent = autoStateCheck;
                         notiMessage("Manual Switches Slots", 1500);
                     }
                 }
@@ -224,23 +228,23 @@ document.addEventListener("DOMContentLoaded", function() {
                     sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    localStorage.setItem(`${gameName}_shader`, currentShaderClass);
-                    shaderData();
+                    await Main.setData(gameName, "0","shader" ,currentShaderClass);
+                    await shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
-                    Left('box4', 0, 0.1, 'opacity', `${gameName}_opacity`);
+                    Left('box4', 0, 0.1, 'opacity', 'opacity');
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Left('box5', 0, 0.1, 'brightness', `${gameName}_brightness`);
+                    Left('box5', 0, 0.1, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Left('box6', 0, 0.1, 'contrast', `${gameName}_contrast`);
+                    Left('box6', 0, 0.1, 'contrast', 'contrast');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Left('box7', 0, 0.1, 'saturate', `${gameName}_saturate`);
+                    Left('box7', 0, 0.1, 'saturate', 'saturate');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Left('box8', 0, 0.1, 'sepia', `${gameName}_sepia`);
+                    Left('box8', 0, 0.1, 'sepia', 'sepia');
                 }
             }
         });
