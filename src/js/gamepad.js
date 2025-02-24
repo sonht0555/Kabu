@@ -136,25 +136,25 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     // Save State Button
-    saveStateButton.addEventListener(eventType, () => {
+    saveStateButton.addEventListener(eventType, async () => {
         const gameName = localStorage.getItem("gameName")
         clickState++;
         clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
+        clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const autoStateCheck = localStorage.getItem(`${gameName}_stateAuto`) || localStorage.setItem(`${gameName}_stateAuto`, "On");
+                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On")
                 if (autoStateCheck === "On") {
-                    const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
+                    const slotStateNumbers = parseInt((await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1;
                     saveState(slotStateNumbers);
-                    localStorage.setItem("slotStateSaved", slotStateNumbers);
+                    await delay(200);
+                    await Main.setData(gameName, "0", "slotStateSaved",  slotStateNumbers);
                     ledSave("#DD5639");
                     notiMessage(`[${slotStateNumbers}] Saved.`, 3000);
-                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
                 } else {
-                    const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
-                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
+                    const slotStateNumbers = parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
                     saveState(slotStateNumbers);
-                    localStorage.setItem("slotStateSaved", slotStateNumbers);
+                    await delay(200);
+                    await Main.setData(gameName, "0", "slotStateSaved",  slotStateNumbers);
                     ledSave("#DD5639");
                     notiMessage(`[?] Saved.`, 3000);
                 }
