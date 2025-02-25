@@ -20,7 +20,7 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.classList.remove('stated');
     }
 }
-//let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
+let selectedIndex = parseInt(localStorage.getItem(`${gameName}_selectedIndex`)) || 0;
 const updateSelectionState = async () =>  {
     stateDivs.forEach((stateDiv, index) => {
         if (index === selectedIndex) {
@@ -29,7 +29,7 @@ const updateSelectionState = async () =>  {
             stateDiv.classList.remove('selected');
         }
     });
-    //await Main.getData(gameName, "0", "selectedIndex", selectedIndex);
+    localStorage.setItem(`${gameName}_selectedIndex`, selectedIndex);
 }
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     document.querySelectorAll('#Left').forEach(button => {
