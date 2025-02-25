@@ -136,8 +136,12 @@ export async function downloadFile(filepath, filename) {
     a.remove();
 }
 export function downloadFileInCloud(filepath) {
-    const data = Module.downloadFile(filepath);
-    return data;
+    try {
+        const data = Module.downloadFile(filepath);
+        return data;
+    } catch (error) {
+        return null;
+    }
 }
 export async function uploadFileInCloud(filepath) {
     Module.uploadAll(filepath, () => {
@@ -246,17 +250,12 @@ export async function captureOCR(name) {
 export async function setFastForwardMultiplier(number) {
     Module.setFastForwardMultiplier(number);
 }
-export function uploadCheats(file,gameName,newCheatCode,cheatEnable,box1) {
+export function uploadCheats(file) {
     Module.uploadAll(file, () => {
         Module.autoLoadCheats();
         setTimeout(() => {
             Module.FSSync();
         }, 500);
-        if (cheatEnable) {
-            localStorage.setItem(`${gameName}_savedCheats`, newCheatCode);
-            notiMessage("Cheat Enabled!", 1500);
-        }
-        box1.textContent = localStorage.getItem(`${gameName}_savedCheats` || 'Off');
     });
 }
 export function setVolume(number) {
@@ -311,9 +310,7 @@ export async function getData(romName, slot, type) {
         try {
             base64 = await fileToBase64(Module.downloadFile(filePath));
         } catch (error) {
-            await Module.screenshot(`${gameName}_${slot}.png`);
-            await delay(100);
-            base64 = await fileToBase64(Module.downloadFile(filePath));
+            return null;
         }
         let byteCharacters = atob(base64.split(',')[1]);
         let textMarker = "tEXtComment\x00";

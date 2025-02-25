@@ -9,8 +9,8 @@ const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader') || "Sega";
 export async function shaderData() {
-    cheatX = JSON.parse(localStorage.getItem(`${gameName}_Cheats`) || "[]");
-    box1.textContent = cheatX.at(-1)?.code || "Off";
+    cheatX = await Main.getData(gameName, "0", "cheatCode") || "xx xxx";
+    box1.textContent = cheatX;
     stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "Off";
     box2.textContent = stateAutoX;
     shaderX = await Main.getData(gameName, "0", "shader") || "Sega"
@@ -103,32 +103,27 @@ document.addEventListener("DOMContentLoaded", function() {
                     // navigator.serviceWorker.controller.postMessage({
                     //     type: 'DELETE_CACHE'
                     // });
-                }
+                }              
                 if (document.getElementById('box1').classList.contains('selected')) {
                     let box1 = document.getElementById('box1');
                     const cheatName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".cheats");
-                    const lastCheatCode = cheatX.length > 0 ? cheatX[cheatX.length - 1].code : 'Off';
-                    let newCheatCode = window.prompt("Edit cheat code", lastCheatCode);
-                    if (newCheatCode === null || newCheatCode.trim() === "") {
-                        newCheatCode = "Off";
-                    }
+                    let data = await Main.downloadFileInCloud(`/data/cheats/${cheatName}`) ?? new TextEncoder().encode("");
+                    let textData = new TextDecoder().decode(data);
+                    let cheatX = textData.match(/cheat\d+_code = "(.*?)"/g)?.map(c => ({ enable: false, code: c.split('"')[1] })) || [];
+                    const lastCheatCode = cheatX.length > 0 ? cheatX.at(-1).code : 'Off';
+                    let newCheatCode = window.prompt("Edit cheat code", lastCheatCode) || "Off";
                     cheatX = cheatX.map(cheat => ({ enable: false, code: cheat.code }));
-                    const newCheat = { enable: true, code: newCheatCode.trim() };
-                    cheatX.push(newCheat);
-                    localStorage.setItem(`${gameName}_Cheats`, JSON.stringify(cheatX));
-                    shaderData();
-                    const display = 
-                        `cheats = ${cheatX.length}\n` +
-                        cheatX
-                            .map((cheat, index) => 
-                                `cheat${index}_enable = ${cheat.enable}\ncheat${index}_code = "${cheat.code}"`
-                            )
-                            .join("\n");
+                    cheatX.push({ enable: true, code: newCheatCode.trim() });
+                    const display = `cheats = ${cheatX.length}\n` + 
+                        cheatX.map((cheat, i) => `cheat${i}_enable = ${cheat.enable}\ncheat${i}_code = "${cheat.code}"`).join("\n");
                     const blob = new Blob([display], { type: "text/plain" });
                     const file = new File([blob], cheatName);
-                    Main.uploadCheats(file, gameName, newCheatCode.trim(), true, box1);
-                    console.log(display);
-                }
+                    Main.uploadCheats(file, gameName);
+                    await Main.setData(gameName, "0", "cheatCode", newCheatCode.trim());
+                    await delay(200)
+                    await shaderData();
+                    console.log( display);
+                }              
             }
         });
         document.getElementById('Up').addEventListener(eventType, () => {

@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
                     await delay(100);
                     await Main.ledSave("#DD5639");
-                    Main.notiMessage(`[${slotStateNumbers}] Saved.`, 3000);
+                    Main.notiMessage(`[${slotStateNumbers}] Saved.`, 2000);
                 } else {
                     const slotStateNumbers = parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
                     saveState(slotStateNumbers);
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
                     await delay(100);
                     await Main.ledSave("#DD5639");
-                    Main.notiMessage(`[?] Saved.`, 3000);
+                    Main.notiMessage(`[?] Saved.`, 2000);
                 }
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (clickState === 2) {
                 const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
-                Main.notiMessage(`[_] Loaded.`, 3000);
+                Main.notiMessage(`[_] Loaded.`, 2000);
             } else if (clickState === 3) {
                 let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);

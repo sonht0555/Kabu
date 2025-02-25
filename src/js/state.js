@@ -11,7 +11,6 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const pngName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `_${saveSlot}.png`);
     const imageData = await Main.dowloadScreenShot(`/data/screenshots/${pngName}`) || noneImage;
     const timeData = await Main.getData(gameName, saveSlot, "saveTime");
-    console.log (timeData);
     imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
     document.getElementById(dateState).textContent = timeData || "__";
     if (parseInt(localSlot) === parseInt(saveSlot)) {
@@ -20,78 +19,78 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.classList.remove('stated');
     }
 }
-let selectedIndex = parseInt(localStorage.getItem(`${gameName}_selectedIndex`)) || 0;
-const updateSelectionState = async () =>  {
-    stateDivs.forEach((stateDiv, index) => {
-        if (index === selectedIndex) {
-            stateDiv.classList.add('selected');
-        } else {
-            stateDiv.classList.remove('selected');
-        }
-    });
-    localStorage.setItem(`${gameName}_selectedIndex`, selectedIndex);
-}
-["mouseup", "touchend", "touchcancel"].forEach(eventType => {
-    document.querySelectorAll('#Left').forEach(button => {
-        button.addEventListener(eventType, () => {
-        if (statePageButton.classList.contains("active")) {
-            if (selectedIndex > 0) {
-                selectedIndex--;
-                updateSelectionState();
+async function selectedIndex() {
+    let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
+    const updateSelectionState = async () => {
+        stateDivs.forEach((stateDiv, index) => {
+            if (index === selectedIndex) {
+                stateDiv.classList.add('selected');
+            } else {
+                stateDiv.classList.remove('selected');
             }
-        }
-    });
-    });
-    document.querySelectorAll('#Right').forEach(button => {
-        button.addEventListener(eventType, () => {
-        if (statePageButton.classList.contains("active")) {
-            if (selectedIndex < stateDivs.length - 1) {
-                selectedIndex++;
-                updateSelectionState();
-            }
-        }
-    });
-    });
-    document.getElementById('A').addEventListener(eventType,async () => {
-        if (statePageButton.classList.contains("active")) {
-            if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
-                stateList.classList.toggle("visible");
-                statePageButton.classList.toggle("active");
-                led(selectedIndex);
-                Main.loadState(selectedIndex);
-                await Main.setData(gameName, "0", "slotStateSaved", selectedIndex)
-                Main.resumeGame();
-                Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
-            }
-            
-        };
-    });
-    document.getElementById('B').addEventListener(eventType, () => {
-        if (statePageButton.classList.contains("active")) {
-            if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
-                if (confirm(`Do you want to detelete [${selectedIndex}] state?`)) {
-                    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
-                    const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
-                    const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
-                    Main.deleteFile(`/data/states/${stateName}`);
-                    setTimeout(() => {
-                        Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
-                    }, 500);
-                    imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
-                    document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
-                    Main.notiMessage("Deleted State!", 1500);
+        });
+        await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
+    };
+    updateSelectionState(); 
+    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+        document.querySelectorAll('#Left').forEach(button => {
+            button.addEventListener(eventType, () => {
+                if (statePageButton.classList.contains("active") && selectedIndex > 0) {
+                    selectedIndex--;
+                    updateSelectionState();
+                }
+            });
+        });
+
+        document.querySelectorAll('#Right').forEach(button => {
+            button.addEventListener(eventType, () => {
+                if (statePageButton.classList.contains("active") && selectedIndex < stateDivs.length - 1) {
+                    selectedIndex++;
+                    updateSelectionState();
+                }
+            });
+        });
+
+        document.getElementById('A').addEventListener(eventType, async () => {
+            if (statePageButton.classList.contains("active")) {
+                if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
+                    stateList.classList.toggle("visible");
+                    statePageButton.classList.toggle("active");
+                    led(selectedIndex);
+                    Main.loadState(selectedIndex);
+                    await Main.setData(gameName, "0", "slotStateSaved", selectedIndex);
+                    Main.resumeGame();
+                    Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
                 }
             }
-            
-        };
+        });
+
+        document.getElementById('B').addEventListener(eventType, () => {
+            if (statePageButton.classList.contains("active")) {
+                if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
+                    if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
+                        const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
+                        const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
+                        const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
+                        Main.deleteFile(`/data/states/${stateName}`);
+                        setTimeout(() => {
+                            Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
+                        }, 500);
+                        imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
+                        document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
+                        Main.notiMessage("Deleted State!", 1500);
+                    }
+                }
+            }
+        });
     });
-})
+}
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
-    updateSelectionState();
     ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
         //Buton Open Save States Page
         statePageButton.addEventListener(eventType, () => {
+            selectedIndex();
             for (let i = 0; i <= 7; i++) {
                 LoadstateInPage(i, `state0${i}`, `dateState0${i}`, `stateDiv0${i}`);
             }
