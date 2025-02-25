@@ -274,7 +274,7 @@ export async function setData(romName, slot, type, text, string = "") {
     try {
         base64 = await fileToBase64(Module.downloadFile(filePath));
     } catch (error) {
-        await screenShot(`${gameName}_${slot}.png`);
+        await Module.screenshot(`${gameName}_${slot}.png`);
         await delay(100);
         base64 = await fileToBase64(Module.downloadFile(filePath));
     }
