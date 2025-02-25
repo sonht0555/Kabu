@@ -1,6 +1,5 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
-let selectedIndex = 0;
 const stateDivs = document.querySelectorAll('.stateDiv');
 const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg2MFY0MEgwVjBaIiBmaWxsPSIjMTYxNjE2Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNCAxNkgyNlYyNEgzNFYxNlpNMzMgMTdIMzJWMThIMzFWMTlIMzBWMjBIMjlWMjFIMjhWMjJIMjdWMjNIMzNWMTdaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
 /* --------------- Function ------------------ */
@@ -21,7 +20,8 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.classList.remove('stated');
     }
 }
-const updateSelectionState = () => {
+//let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
+const updateSelectionState = async () =>  {
     stateDivs.forEach((stateDiv, index) => {
         if (index === selectedIndex) {
             stateDiv.classList.add('selected');
@@ -29,6 +29,7 @@ const updateSelectionState = () => {
             stateDiv.classList.remove('selected');
         }
     });
+    //await Main.getData(gameName, "0", "selectedIndex", selectedIndex);
 }
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     document.querySelectorAll('#Left').forEach(button => {

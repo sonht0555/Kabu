@@ -13,10 +13,8 @@ function initializeCore(coreInitFunction, module) {
 initializeCore(mGBA, Module);
 /* --------------- Declaration --------------- */
 let countAutoSave = 0;
-let turboState = 1;
 let countUpload = 0;
 const canvas = document.getElementById("canvas");
-const savedTurboState = getData(gameName, "0", "turboState");
 const controlSetting = document.getElementById("control-setting");
 /* --------------- Function ------------------ */
 // System Tray
@@ -40,10 +38,7 @@ async function statusShow() {
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
     startTimer();
-    if (savedTurboState !== null) {
-        turboState = parseInt(savedTurboState);
-        await gamepPad.turboF(turboState);
-    }
+    await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
     await delay(200);
     await Module.SDL2();
     await delay(800);
@@ -316,7 +311,9 @@ export async function getData(romName, slot, type) {
         try {
             base64 = await fileToBase64(Module.downloadFile(filePath));
         } catch (error) {
-            return null;
+            await Module.screenshot(`${gameName}_${slot}.png`);
+            await delay(100);
+            base64 = await fileToBase64(Module.downloadFile(filePath));
         }
         let byteCharacters = atob(base64.split(',')[1]);
         let textMarker = "tEXtComment\x00";
@@ -329,9 +326,9 @@ export async function getData(romName, slot, type) {
             if (match) return match[1].trim();
         }
     } catch (error) {
+        console.error({romName, slot, type})
         return null;
     }
-    return null;
 }
 export async function ledSave(color) {
     const slotState = parseInt(await getData(gameName, "0", "slotStateSaved"));
