@@ -7,10 +7,10 @@ const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDA
 // Load States
 async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     const imageStateDiv = document.getElementById(divs);
-    const localSlot = localStorage.getItem("slotStateSaved")
+    const localSlot = await Main.getData(gameName, "0", "slotStateSaved");
     const stateDiv = document.getElementById(stateDivs);
-    const gameName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
-    const imageData = await Main.dowloadScreenShot(`/data/screenshots/${gameName}_${saveSlot}.png`) || noneImage;
+    const pngName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `_${saveSlot}.png`);
+    const imageData = await Main.dowloadScreenShot(`/data/screenshots/${pngName}`) || noneImage;
     const timeData = await Main.getData(gameName, saveSlot, "saveTime");
     console.log (timeData);
     imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
@@ -51,16 +51,16 @@ const updateSelectionState = () => {
         }
     });
     });
-    document.getElementById('A').addEventListener(eventType, () => {
+    document.getElementById('A').addEventListener(eventType,async () => {
         if (statePageButton.classList.contains("active")) {
             if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
                 stateList.classList.toggle("visible");
                 statePageButton.classList.toggle("active");
                 led(selectedIndex);
                 Main.loadState(selectedIndex);
-                localStorage.setItem("slotStateSaved", selectedIndex)
+                await Main.setData(gameName, "0", "slotStateSaved", selectedIndex)
                 Main.resumeGame();
-                notiMessage(`[${selectedIndex}] Loaded State`, 1500);
+                Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
             }
             
         };
@@ -69,8 +69,8 @@ const updateSelectionState = () => {
         if (statePageButton.classList.contains("active")) {
             if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
                 if (confirm(`Do you want to detelete [${selectedIndex}] state?`)) {
-                    const stateName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
-                    const screenShotName = localStorage.getItem("gameName").replace(/\.(zip|gb|gbc|gba)$/, "");
+                    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
+                    const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
                     const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                     Main.deleteFile(`/data/states/${stateName}`);
                     setTimeout(() => {
@@ -78,7 +78,7 @@ const updateSelectionState = () => {
                     }, 500);
                     imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                     document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
-                    notiMessage("Deleted State!", 1500);
+                    Main.notiMessage("Deleted State!", 1500);
                 }
             }
             

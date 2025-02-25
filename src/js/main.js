@@ -16,7 +16,7 @@ let countAutoSave = 0;
 let turboState = 1;
 let countUpload = 0;
 const canvas = document.getElementById("canvas");
-const savedTurboState = localStorage.getItem("turboState");
+const savedTurboState = getData(gameName, "0", "turboState");
 const controlSetting = document.getElementById("control-setting");
 /* --------------- Function ------------------ */
 // System Tray
@@ -47,7 +47,7 @@ async function statusShow() {
     await delay(200);
     await Module.SDL2();
     await delay(800);
-    await led(parseInt(localStorage.getItem("slotStateSaved")));
+    await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
     await notiMessage(gameVer, 1000);
 }
 // Auto Save Every 1m
@@ -60,7 +60,6 @@ async function saveStatePeriodically() {
 }
 // Auto Save In Cloud Every 1h
 async function saveStateInCloud() {
-    const gameName = localStorage.getItem("gameName");
     const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss0")
     const uId = localStorage.getItem("uId");
     if (navigator.onLine) {
@@ -87,20 +86,20 @@ function startTimer() {
     }, 1000);
 }
 /* --------------- Export Function --------------- */
-export async function uploadGame(gameName) {
-    const file = gameName.files[0];
+export async function uploadGame(romName) {
+    const file = romName.files[0];
     Module.uploadRom(file, () => {
         Module.FSSync();
     });
 }
-export async function loadGame(gameName) {
-    const stateName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
+export async function loadGame(romName) {
+    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
     const statesList = Module.listStates().filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
     // check file extension
-    if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
+    if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
         canvas.classList.add("gbc");
         areaTrans.classList.add("gbc1");
         localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
@@ -109,18 +108,14 @@ export async function loadGame(gameName) {
     }
     // check save state in local
     if (statesList.includes(stateName)) {
-        await Module.loadGame(`/data/games/${gameName}`);
+        await Module.loadGame(`/data/games/${romName}`);
         if (confirm("Do you want to load save state?")) {
             await Module.loadState(0);
-            localStorage.setItem("gameName", gameName);
             await shaderData();
-            console.log(gameName);
         }
     } else {
         await Module.loadGame(`/data/games/${gameName}`);
-        localStorage.setItem("gameName", gameName);
         await shaderData();
-        console.log(gameName);
     }
     // show status ingame
     await statusShow();
@@ -235,12 +230,10 @@ export async function buttonUnpress(key) {
     Module.buttonUnpress(key)
 }
 export async function screenShot(saveSlot) {
-    const gameName = localStorage.getItem("gameName").replace(/\.(gba|gbc|gb|zip)$/, "");
+    const pngName = gameName.replace(/\.(gba|gbc|gb|zip)$/, `_${saveSlot}.png`);
     const backupText = await getData(gameName, saveSlot, "All") || "";
-    console.log("backupText",backupText)
-    const fileName = `${gameName}_${saveSlot}.png`;
-    console.log(fileName)
-    await Module.screenshot(fileName);
+    console.log(backupText);
+    await Module.screenshot(pngName);
     await Module.FSSync();
     await setData(gameName, saveSlot, "saveTime", formatDateTime(Date.now()),backupText);
 }
@@ -276,7 +269,15 @@ export function setVolume(number) {
 }
 export async function setData(romName, slot, type, text, string = "") {
     const gameName = romName.replace(/\.(gba|gbc|gb|zip|cheats)$/, "");
-    const base64 = await fileToBase64(Module.downloadFile(`/data/screenshots/${gameName}_${slot}.png`));
+    const filePath = `/data/screenshots/${gameName}_${slot}.png`;
+    let base64;
+    try {
+        base64 = await fileToBase64(Module.downloadFile(filePath));
+    } catch (error) {
+        await screenShot(`${gameName}_${slot}.png`);
+        await delay(100);
+        base64 = await fileToBase64(Module.downloadFile(filePath));
+    }
     let byteCharacters = atob(base64.split(',')[1]);
     let textMarker = `tEXtComment\x00`;
     let textStart = byteCharacters.indexOf(textMarker);
@@ -331,4 +332,40 @@ export async function getData(romName, slot, type) {
         return null;
     }
     return null;
+}
+export async function ledSave(color) {
+    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved"));
+    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
+    try {
+        for (let i = 0; i <= 7; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+        }
+        await delay(1000);
+        for (let i = 0; i <= 7; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+        }
+        document.getElementById(ledId).style.fill = color;
+    } catch (error) {
+        console.error("Error ledSave:", error);
+    }
+};
+export async function notiMessage(messageContent, second, showCanvas = false) {
+    var message = document.getElementById("noti-mess");
+    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved")) || 0;
+    if (message.style.opacity === "0.4") {
+        clearTimeout(messageTimeout);
+        message.style.opacity = "0";
+    }
+    message.textContent = messageContent;
+    message.style.opacity = "0.4";
+    messageTimeout = setTimeout(() => {
+        message.textContent = `[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
+        message.style.opacity = "0.4";
+    }, second);
+    if (showCanvas) {
+        canvas.classList.add("visible");
+        setTimeout(() => {
+            canvas.classList.remove("visible");
+        }, 600);
+    }
 }

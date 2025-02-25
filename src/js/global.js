@@ -1,5 +1,6 @@
 /* --------------- Declaration --------------- */
 appVer.textContent = gameVer
+let gameName;
 var messageTimeout;
 let stateAdj = 1;
 var lockNotiTime;
@@ -7,6 +8,8 @@ let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
 const errorLogElements = document.getElementsByClassName('errorLog');
 const ingame = document.getElementById("in-game");
 const input = document.getElementById("inputText");
+const romList = document.getElementById("rom-list");
+const romInput = document.getElementById("fileInput");
 const setAdjustment = document.getElementById("setAdjustment");
 const savedStateAdj = localStorage.getItem("stateAdj");
 const ids = ['inputText', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07', ];
@@ -124,7 +127,6 @@ interact('#resizable-draggable')
                 target.style.transform = `translate(${x}px, ${y}px)`;
                 target.setAttribute('data-x', x);
                 target.setAttribute('data-y', y);
-                const gameName = localStorage.getItem("gameName");
                 localStorage.setItem(`${gameName}_setArea`, `${x.toFixed(0)},${y.toFixed(0)},${event.rect.width.toFixed(0)},${event.rect.height.toFixed(0)}`);
                 console.log(localStorage.getItem(`${gameName}_setArea`));
             }
@@ -132,7 +134,6 @@ interact('#resizable-draggable')
     });
 // Restore Area Translate
 function restoreArea() {
-    const gameName = localStorage.getItem("gameName");
     const savedState = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize")
     if (savedState) {
         const [x, y, width, height] = savedState.split(',').map(Number);
@@ -148,45 +149,6 @@ function restoreArea() {
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-// Notification Message
-async function notiMessage(messageContent, second, showCanvas = false) {
-    var message = document.getElementById("noti-mess");
-    const slotState = parseInt(localStorage.getItem("slotStateSaved")) || 0;
-    const gameName = localStorage.getItem("gameName");
-    if (message.style.opacity === "0.4") {
-        clearTimeout(messageTimeout);
-        message.style.opacity = "0";
-    }
-    message.textContent = messageContent;
-    message.style.opacity = "0.4";
-    messageTimeout = setTimeout(() => {
-        message.textContent = `[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
-        message.style.opacity = "0.4";
-    }, second);
-    if (showCanvas) {
-        canvas.classList.add("visible");
-        setTimeout(() => {
-            canvas.classList.remove("visible");
-        }, 600);
-    }
-}
-// Led Save
-async function ledSave(color) {
-    const slotState = parseInt(localStorage.getItem("slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
-    try {
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
-        }
-        await delay(1000);
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
-        }
-        document.getElementById(ledId).style.fill = color;
-    } catch (error) {
-        console.error("Error ledSave:", error);
-    }
-};
 // Led
 async function led(slotStateNumbers) {
     try {
@@ -269,4 +231,19 @@ document.addEventListener("DOMContentLoaded", function() {
         stateAdj = parseInt(savedStateAdj);
         positionAdjustment(stateAdj);
     }
+    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+        romInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                gameName = fileInput.files[0].name;
+                console.log(gameName);
+            }
+        })
+        romList.addEventListener(eventType, (event) => {
+            const clickedElement = event.target;
+            if (clickedElement.classList.contains("game-item")) {
+            gameName = clickedElement.textContent;
+            console.log(gameName);
+        }
+        })
+    });
 })

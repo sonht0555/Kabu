@@ -29,17 +29,17 @@ async function loadState(slot) {
 // Turbo
 export async function turboF(turboState) {
     if (turboState === 1) {
-        notiMessage("1x Speed", 1500, true);
+        Main.notiMessage("1x Speed", 1500, true);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(1);
     } else if (turboState === 2) {
-        notiMessage("2x Speed", 1500, true);
+        Main.notiMessage("2x Speed", 1500, true);
         turboButton.classList.add("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(2);
     } else if (turboState === 3) {
-        notiMessage("4x Speed", 1500, true);
+        Main.notiMessage("4x Speed", 1500, true);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.add("turbo-fast");
         Main.setFastForwardMultiplier(4);
@@ -136,66 +136,67 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
     // Save State Button
-    saveStateButton.addEventListener(eventType, () => {
-        const gameName = localStorage.getItem("gameName")
+    saveStateButton.addEventListener(eventType, async () => {
         clickState++;
         clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
+        clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const autoStateCheck = localStorage.getItem(`${gameName}_stateAuto`) || localStorage.setItem(`${gameName}_stateAuto`, "On");
+                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0" , "stateAuto", "On");
                 if (autoStateCheck === "On") {
-                    const slotStateNumbers = parseInt((localStorage.getItem("slotStateSaved") % 7) + 1) || 1;
+                    const slotStateNumbers = parseInt((await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1;
                     saveState(slotStateNumbers);
-                    localStorage.setItem("slotStateSaved", slotStateNumbers);
-                    ledSave("#DD5639");
-                    notiMessage(`[${slotStateNumbers}] Saved.`, 3000);
-                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
+                    await delay(100);
+                    await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                    await delay(100);
+                    await Main.ledSave("#DD5639");
+                    Main.notiMessage(`[${slotStateNumbers}] Saved.`, 3000);
                 } else {
-                    const slotStateNumbers = parseInt(localStorage.getItem("slotStateSaved")) || 1;
-                    console.log(localStorage.getItem(`${gameName}_stateAuto`));
+                    const slotStateNumbers = parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
                     saveState(slotStateNumbers);
-                    localStorage.setItem("slotStateSaved", slotStateNumbers);
-                    ledSave("#DD5639");
-                    notiMessage(`[?] Saved.`, 3000);
+                    await delay(100);
+                    await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                    await delay(100);
+                    await Main.ledSave("#DD5639");
+                    Main.notiMessage(`[?] Saved.`, 3000);
                 }
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
             
                 Main.setVolume(newVolume);
-                notiMessage(`Volume: ${newVolume * 100}%`, 2000);
+                Main.notiMessage(`Volume: ${newVolume * 100}%`, 2000);
             }  
             clickState = 0;
         }, 300);
     });
     // Load State Button
-    loadStateButton.addEventListener(eventType, () => {
+    loadStateButton.addEventListener(eventType, async () => {
         clickState++;
         clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
+        clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const slotStateNumbers = localStorage.getItem("slotStateSaved") || 1;
+                const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
-                notiMessage(`[_] Loaded.`, 3000);
+                Main.notiMessage(`[_] Loaded.`, 3000);
             } else if (clickState === 3) {
-                let setApiAzure = localStorage.getItem("ApiAzure");
+                let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
                 if (ApiAzure !== null && ApiAzure !== "") {
-                    localStorage.setItem("ApiAzure", ApiAzure);
+                    await Main.setData(gameName, "0", "ApiAzure", ApiAzure);
                 }
             }
             clickState = 0;
         }, 300);
     });
     // Turbo Button
-    turboButton.addEventListener(eventType, () => {
+    turboButton.addEventListener(eventType, async () => {
         clickTurbo++;
         clearTimeout(clickTimeout);
-        clickTimeout = setTimeout(() => {
+        clickTimeout = setTimeout(async () => {
             if (clickTurbo === 2) {
                 turboState = (turboState % 3) + 1;
                 turboF(turboState);
-                localStorage.setItem("turboState", turboState);
+                await Main.setData(gameName, "0", "turboState", turboState)
             }
             clickTurbo = 0;
         }, 300);

@@ -1,7 +1,7 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-let gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX ;
+let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX ;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Gt-7', 'Gt-8', 'Gt-9', 'Gt-10', 'Line'];
 const menuPad = document.getElementById("menu-pad");
@@ -9,7 +9,6 @@ const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader') || "Sega";
 export async function shaderData() {
-    gameName = localStorage.getItem("gameName") || null;
     cheatX = JSON.parse(localStorage.getItem(`${gameName}_Cheats`) || "[]");
     box1.textContent = cheatX.at(-1)?.code || "Off";
     stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "Off";
@@ -155,16 +154,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        notiMessage("Auto Switches Slots", 1500);
+                        Main.notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        notiMessage("Manual Switches Slots", 1500);
+                        Main.notiMessage("Manual Switches Slots", 1500);
                     }
                 }
                 if (document.getElementById('box3').classList.contains('selected')) {
@@ -205,16 +202,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        notiMessage("Auto Switches Slots", 1500);
+                        Main.notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        localStorage.setItem(`${gameName}_stateAuto`, autoStateCheck);
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        notiMessage("Manual Switches Slots", 1500);
+                        Main.notiMessage("Manual Switches Slots", 1500);
                     }
                 }
                 if (document.getElementById('box3').classList.contains('selected')) {
@@ -253,10 +248,10 @@ document.addEventListener("DOMContentLoaded", function() {
             controlSetting.classList.toggle("visible");
             if (controlSetting.classList.contains("visible")) {
                 Main.resumeGame();
-                notiMessage("Resumed!", 2000);
+                Main.notiMessage("Resumed!", 2000);
             } else {
                 Main.pauseGame();
-                notiMessage("Paused!", 2000);
+                Main.notiMessage("Paused!", 2000);
             }
         })
     });

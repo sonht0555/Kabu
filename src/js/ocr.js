@@ -15,7 +15,6 @@ const ID = ['A', 'B', 'R', 'L'];
 async function getImage() {
     turbo.classList.add('turbo-ocr');
     try {
-        const gameName = localStorage.getItem("gameName");
         const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".png");
         const file = await Main.captureOCR(screenshotName);
         const blob = new Blob([file], {
@@ -159,12 +158,12 @@ async function azureServer(base64data) {
     } catch (error) {
         inputText.textContent = error.message;
         const newTime = ++countTimes;
-        notiMessage(`[${newTime}] Times Azure`, 2000);
+        Main.notiMessage(`[${newTime}] Times Azure`, 2000);
         localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
         localStorage.setItem("lastSavedDate", currentDate.toISOString());
     } finally {
         const newTime = ++countTimes;
-        notiMessage(`[${newTime}] Times Azure`, 2000);
+        Main.notiMessage(`[${newTime}] Times Azure`, 2000);
         isFunctionARunning = false;
         localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
         localStorage.setItem("lastSavedDate", currentDate.toISOString());
@@ -232,11 +231,9 @@ async function detectLanguage(textContent) {
     }
 }
 async function transLogic(textContent) {
-    const gameName = localStorage.getItem("gameName");
-    const gameLang = localStorage.getItem(`${gameName}_gameLang`);
+    const gameLang = "en"
     if (gameLang === null) {
         const lang = await detectLanguage(textContent);
-        localStorage.setItem(`${gameName}_gameLang`, lang);
         const intermediateText = await translateText(textContent, lang, 'en');
         return translateText(intermediateText, 'en', 'vi');
     } else if (gameLang === "en") {
