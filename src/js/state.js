@@ -97,8 +97,10 @@ document.addEventListener("DOMContentLoaded", function() {
             stateList.classList.toggle("visible");
             statePageButton.classList.toggle("active");
             if (stateList.classList.contains("visible")) {
+                document.getElementById("menu-pad").style.removeProperty("pointer-events");
                 Main.resumeGame();
             } else {
+                document.getElementById("menu-pad").style.setProperty("pointer-events", "none", "important");
                 Main.pauseGame();
             }
         });

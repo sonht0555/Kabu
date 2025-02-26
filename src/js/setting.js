@@ -242,11 +242,11 @@ document.addEventListener("DOMContentLoaded", function() {
             menuPad.classList.toggle("active");
             controlSetting.classList.toggle("visible");
             if (controlSetting.classList.contains("visible")) {
+                statePageButton.style.removeProperty("pointer-events");
                 Main.resumeGame();
-                Main.notiMessage("Resumed!", 2000);
             } else {
+                statePageButton.style.setProperty("pointer-events", "none", "important");
                 Main.pauseGame();
-                Main.notiMessage("Paused!", 2000);
             }
         })
     });
