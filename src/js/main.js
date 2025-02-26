@@ -14,6 +14,7 @@ initializeCore(mGBA, Module);
 /* --------------- Declaration --------------- */
 let countAutoSave = 0;
 let countUpload = 0;
+let fsSyncTimeout;
 const canvas = document.getElementById("canvas");
 const controlSetting = document.getElementById("control-setting");
 /* --------------- Function ------------------ */
@@ -117,7 +118,7 @@ export async function loadGame(romName) {
 }
 export async function saveState(slot) {
     await Module.saveState(slot);
-    await Module.FSSync();
+    clearTimeout(fsSyncTimeout), fsSyncTimeout = setTimeout(Module.FSSync, 1000);
 }
 export async function loadState(slot) {
     await Module.loadState(slot);
@@ -163,10 +164,10 @@ export async function editFile(filepath, filename, newFilename) {
 export async function deleteFile(filepath) {
     try {
         await Module.deleteFile(filepath);
-        await delay(100);
-        await Module.FSSync();
+        clearTimeout(fsSyncTimeout), fsSyncTimeout = setTimeout(Module.FSSync, 1000);
         return true;
     } catch (error) {
+        console.error(filepath)
         return null;
     }
 }
