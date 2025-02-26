@@ -256,7 +256,7 @@ export async function setFastForwardMultiplier(number) {
     Module.setFastForwardMultiplier(number);
 }
 export async function uploadCheats(file) {
-        Module.autoLoadCheats(async);
+        Module.autoLoadCheats();
         Module.uploadAll(file, async () => {
            await Module.FSSync();
     });

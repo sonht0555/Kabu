@@ -34,7 +34,7 @@ async function abc () {
         await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
     };
     updateSelectionState(); 
-    ["touchend"].forEach(eventType => {
+    ["pointerup"].forEach(eventType => {
         document.querySelectorAll('#Left').forEach(button => {
             button.addEventListener(eventType, () => {
                 if (statePageButton.classList.contains("active") && selectedIndex > 0) {
