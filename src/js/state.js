@@ -20,7 +20,8 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     }
 }
 async function selectedIndex() {
-    let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
+    let selectedIndex = 0;
+    //let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
     const updateSelectionState = async () => {
         stateDivs.forEach((stateDiv, index) => {
             if (index === selectedIndex) {
@@ -29,7 +30,7 @@ async function selectedIndex() {
                 stateDiv.classList.remove('selected');
             }
         });
-        await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
+        //await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
     };
     updateSelectionState(); 
     ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
@@ -65,17 +66,16 @@ async function selectedIndex() {
             }
         });
 
-        document.getElementById('B').addEventListener(eventType, () => {
+        document.getElementById('B').addEventListener(eventType, async () => {
             if (statePageButton.classList.contains("active")) {
                 if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
                     if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
                         const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
                         const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
                         const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
-                        Main.deleteFile(`/data/states/${stateName}`);
-                        setTimeout(() => {
-                            Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
-                        }, 500);
+                        await Main.deleteFile(`/data/states/${stateName}`);
+                        await delay(100)
+                        await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
                         imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                         document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
                         Main.notiMessage("Deleted State!", 1500);

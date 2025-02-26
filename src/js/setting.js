@@ -11,7 +11,7 @@ const imgShader = document.getElementById('img-shader') || "Sega";
 export async function shaderData() {
     cheatX = await Main.getData(gameName, "0", "cheatCode") || "xx xxx";
     box1.textContent = cheatX;
-    stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "Off";
+    stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "On";
     box2.textContent = stateAutoX;
     shaderX = await Main.getData(gameName, "0", "shader") || "Sega"
     box3.textContent = shaderX;
