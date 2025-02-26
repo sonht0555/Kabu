@@ -211,19 +211,29 @@ async function fileToBase64(data) {
     }, second);
 }
 // lOG err
-function logError(message) {
+function logMessage(type, message) {
     if (errorLogElements.length > 0) {
-        const errorLogElement = errorLogElements[0]; 
-        errorLogElement.innerText += message + `\n---\n`;
-        errorLogElement.scrollTop = errorLogElement.scrollHeight; 
+        const errorLogElement = errorLogElements[0];
+        errorLogElement.innerText += `[${type}] ${message}\n---\n`;
+        errorLogElement.scrollTop = errorLogElement.scrollHeight;
     }
 }
 window.onerror = function (message, source, lineno) {
     const fileName = source ? source.split('/').pop() : 'unknown source';
     const cleanMessage = message.replace(/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i, '');
     const errorMessage = `[Err] [${lineno}] ../${fileName} | ${cleanMessage}.`;
-    logError(errorMessage);
+    logMessage("Error", errorMessage);
     return false;
+};
+const originalConsoleError = console.error;
+console.error = function (...args) {
+    originalConsoleError.apply(console, args);
+    logMessage("Error", args.join(" "));
+};
+const originalConsoleWarn = console.warn;
+console.warn = function (...args) {
+    originalConsoleWarn.apply(console, args);
+    logMessage("Warning", args.join(" "));
 };
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
