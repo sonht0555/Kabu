@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
         stateAdj = parseInt(savedStateAdj);
         positionAdjustment(stateAdj);
     }
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         romInput.addEventListener("change", () => {
             if (fileInput.files.length > 0) {
                 gameName = fileInput.files[0].name;

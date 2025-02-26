@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     });
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         turbo.addEventListener(eventType, () => {
             clickTurbo++;
             clearTimeout(clickTimeout);

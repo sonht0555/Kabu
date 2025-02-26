@@ -19,9 +19,9 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.classList.remove('stated');
     }
 }
-async function selectedIndex() {
-    let selectedIndex = 0;
-    //let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
+async function abc () {
+    //let selectedIndex = parseInt(localStorage.getItem(`${gameName}_selectedIndex`)) || 0;
+    let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
     const updateSelectionState = async () => {
         stateDivs.forEach((stateDiv, index) => {
             if (index === selectedIndex) {
@@ -30,10 +30,11 @@ async function selectedIndex() {
                 stateDiv.classList.remove('selected');
             }
         });
-        //await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
+        //localStorage.setItem(`${gameName}_selectedIndex`, selectedIndex);
+        await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
     };
     updateSelectionState(); 
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         document.querySelectorAll('#Left').forEach(button => {
             button.addEventListener(eventType, () => {
                 if (statePageButton.classList.contains("active") && selectedIndex > 0) {
@@ -74,11 +75,10 @@ async function selectedIndex() {
                         const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
                         const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                         await Main.deleteFile(`/data/states/${stateName}`);
-                        await delay(100)
+                        await delay(500)
                         await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
                         imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                         document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
-                        Main.notiMessage("Deleted State!", 1500);
                     }
                 }
             }
@@ -87,10 +87,9 @@ async function selectedIndex() {
 }
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         //Buton Open Save States Page
         statePageButton.addEventListener(eventType, () => {
-            selectedIndex();
             for (let i = 0; i <= 7; i++) {
                 LoadstateInPage(i, `state0${i}`, `dateState0${i}`, `stateDiv0${i}`);
             }
@@ -101,6 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Main.resumeGame();
             } else {
                 document.getElementById("menu-pad").style.setProperty("pointer-events", "none", "important");
+                abc();
                 Main.pauseGame();
             }
         });

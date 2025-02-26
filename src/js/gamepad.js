@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 element.classList.add('touched');
             });
         });
-        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
+        ["touchend"].forEach((endEventName) => {
             element.addEventListener(endEventName, () => {
                 if (currentButton) {
                     buttonPress(buttonId, false);
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     })
 });
-["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+["touchend"].forEach(eventType => {
     // Save State Button
     saveStateButton.addEventListener(eventType, async () => {
         clickState++;

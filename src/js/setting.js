@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     };
     updateSelection();
-    ["mouseup", "touchend", "touchcancel"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {

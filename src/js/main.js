@@ -144,16 +144,16 @@ export function downloadFileInCloud(filepath) {
     }
 }
 export async function uploadFileInCloud(filepath) {
-    Module.uploadAll(filepath, () => {
+    Module.uploadAll(filepath, async () => {
         localStorageFile();
-        Module.FSSync();
+        await Module.FSSync();
     });
 }
 export async function uploadFile(filepath) {
     const file = filepath.files[0];
-    Module.uploadAll(file, () => {
+    Module.uploadAll(file, async () => {
         localStorageFile();
-        Module.FSSync();
+        await Module.FSSync();
     });
 }
 export async function editFile(filepath, filename, newFilename) {
@@ -233,7 +233,6 @@ export async function screenShot(saveSlot) {
     const backupText = await getData(gameName, saveSlot, "All") || "";
     console.log(backupText);
     await Module.screenshot(pngName);
-    await Module.FSSync();
     await setData(gameName, saveSlot, "saveTime", formatDateTime(Date.now()),backupText);
 }
 export async function dowloadScreenShot(file) {
@@ -250,12 +249,10 @@ export async function captureOCR(name) {
 export async function setFastForwardMultiplier(number) {
     Module.setFastForwardMultiplier(number);
 }
-export function uploadCheats(file) {
-    Module.uploadAll(file, () => {
-        Module.autoLoadCheats();
-        setTimeout(() => {
-            Module.FSSync();
-        }, 500);
+export async function uploadCheats(file) {
+        Module.autoLoadCheats(async);
+        Module.uploadAll(file, async () => {
+           await Module.FSSync();
     });
 }
 export function setVolume(number) {
@@ -269,7 +266,7 @@ export async function setData(romName, slot, type, text, string = "") {
         base64 = await fileToBase64(Module.downloadFile(filePath));
     } catch (error) {
         await Module.screenshot(`${gameName}_${slot}.png`);
-        await delay(100);
+        await delay(200);
         base64 = await fileToBase64(Module.downloadFile(filePath));
     }
     let byteCharacters = atob(base64.split(',')[1]);
@@ -297,10 +294,7 @@ export async function setData(romName, slot, type, text, string = "") {
     let textChunk = new TextEncoder().encode(`${textMarker} ${saveString}`);
     let newArray = new Uint8Array([...byteCharacters].map(c => c.charCodeAt(0)).concat([...textChunk]));
     let file = new File([new Blob([newArray], { type: "image/png" })], `${gameName}_${slot}.png`, { type: "image/png" });
-    Module.uploadAll(file, () => { 
-        localStorageFile(); 
-        Module.FSSync(); 
-    });
+    Module.uploadAll(file, () => {});
 }
 export async function getData(romName, slot, type) {
     try {
