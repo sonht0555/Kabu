@@ -161,8 +161,14 @@ export async function editFile(filepath, filename, newFilename) {
     await Module.FSSync()
 }
 export async function deleteFile(filepath) {
-    await Module.deleteFile(filepath);
-    await Module.FSSync()
+    try {
+        await Module.deleteFile(filepath);
+        await delay(100);
+        await Module.FSSync();
+        return true;
+    } catch (error) {
+        return null;
+    }
 }
 export function listGame() {
     const result = Module.listRoms().filter((file) => file !== "." && file !== "..");

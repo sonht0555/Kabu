@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 element.classList.add('touched');
             });
         });
-        ["touchend"].forEach((endEventName) => {
+        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
             element.addEventListener(endEventName, () => {
                 if (currentButton) {
                     buttonPress(buttonId, false);
@@ -157,14 +157,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
                     await delay(100);
                     await Main.ledSave("#DD5639");
-                    Main.notiMessage(`[?] Saved.`, 2000);
+                    Main.notiMessage(`[?] Saved.`, 1000);
                 }
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
             
                 Main.setVolume(newVolume);
-                Main.notiMessage(`Volume: ${newVolume * 100}%`, 2000);
+                Main.notiMessage(`Volume: ${newVolume * 100}%`, 1000);
             }  
             clickState = 0;
         }, 300);
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (clickState === 2) {
                 const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
-                Main.notiMessage(`[_] Loaded.`, 2000);
+                Main.notiMessage(`[_] Loaded.`, 1000);
             } else if (clickState === 3) {
                 let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);

@@ -1,4 +1,4 @@
-let revision = 'V2.94';
+let revision = 'V2.95';
 var urlsToCache = [
     '/',
     './src/css/main.css',
