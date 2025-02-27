@@ -141,28 +141,22 @@ document.addEventListener("DOMContentLoaded", function() {
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0" , "stateAuto", "On");
-                if (autoStateCheck === "On") {
-                    const slotStateNumbers = parseInt((await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1;
-                    saveState(slotStateNumbers);
-                    await delay(100);
-                    await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
-                    await delay(100);
-                    await Main.ledSave("#DD5639");
-                    Main.notiMessage(`[${slotStateNumbers}] Saved.`, 2000);
-                } else {
-                    const slotStateNumbers = parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
-                    saveState(slotStateNumbers);
-                    await delay(100);
-                    await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
-                    await delay(100);
-                    await Main.ledSave("#DD5639");
-                    Main.notiMessage(`[?] Saved.`, 1000);
-                }
+                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
+                const slotStateNumbers = autoStateCheck === "On"
+                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
+                await delay(100);
+                await saveState(slotStateNumbers);
+                await delay(50);
+                await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                await delay(50);
+                await Main.ledSave("#DD5639");
+                await delay(50);
+                await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
+                
             } else if (clickState === 3) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
-            
                 Main.setVolume(newVolume);
                 Main.notiMessage(`Volume: ${newVolume * 100}%`, 1000);
             }  

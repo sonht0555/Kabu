@@ -19,8 +19,7 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
         stateDiv.classList.remove('stated');
     }
 }
-async function abc () {
-    //let selectedIndex = parseInt(localStorage.getItem(`${gameName}_selectedIndex`)) || 0;
+export async function wrapContent () {
     let selectedIndex = parseInt(await Main.getData(gameName, "0", "selectedIndex")) || 0;
     const updateSelectionState = async () => {
         stateDivs.forEach((stateDiv, index) => {
@@ -30,11 +29,10 @@ async function abc () {
                 stateDiv.classList.remove('selected');
             }
         });
-        //localStorage.setItem(`${gameName}_selectedIndex`, selectedIndex);
         await Main.setData(gameName, "0", "selectedIndex", selectedIndex);
     };
     updateSelectionState(); 
-    ["pointerup"].forEach(eventType => {
+    ["touchend"].forEach(eventType => {
         document.querySelectorAll('#Left').forEach(button => {
             button.addEventListener(eventType, () => {
                 if (statePageButton.classList.contains("active") && selectedIndex > 0) {
@@ -70,7 +68,7 @@ async function abc () {
         document.getElementById('B').addEventListener(eventType, async () => {
             if (statePageButton.classList.contains("active")) {
                 if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
-                    //if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
+                    if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
                         const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
                         const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
                         const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
@@ -79,7 +77,7 @@ async function abc () {
                         await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
                         imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                         document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
-                    //}
+                    }
                 }
             }
         });
@@ -100,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 Main.resumeGame();
             } else {
                 document.getElementById("menu-pad").style.setProperty("pointer-events", "none", "important");
-                abc();
                 Main.pauseGame();
             }
         });
