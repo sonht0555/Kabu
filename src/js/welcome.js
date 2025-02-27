@@ -5,23 +5,41 @@ const romInput = document.getElementById("fileInput");
 /* --------------- Function ------------------ */
 async function romList() {
     const gameList = await Main.listGame();
-    const lastGameName = localStorage.getItem("lastGameName");
+    const lastGameName = localStorage.getItem("lastGameName") || null;
+    let recentGames = JSON.parse(localStorage.getItem("recentGames")) || [];
+    let sortedGameList = [];
     if (lastGameName && gameList.includes(lastGameName)) {
-        gameList.splice(gameList.indexOf(lastGameName), 1);
-        gameList.unshift(lastGameName);
+        sortedGameList.push(lastGameName);
     }
+    recentGames.forEach(game => {
+        if (game !== lastGameName && gameList.includes(game)) {
+            sortedGameList.push(game);
+        }
+    });
+    gameList.forEach(game => {
+        if (!sortedGameList.includes(game)) {
+            sortedGameList.push(game);
+        }
+    });
     romlist.innerHTML = "";
-    for (const gameName of gameList) {
+    sortedGameList.forEach(gameName => {
         const div = document.createElement("div");
         div.classList.add("flex-1", "game-item");
         div.textContent = gameName;
         div.onclick = () => {
-            localStorage.setItem("lastGameName", gameName);
+            updateRecentGames(gameName);
             Main.loadGame(gameName);
             romList();
         };
         romlist.appendChild(div);
-    }
+    });
+}
+function updateRecentGames(gameName) {
+    let recentGames = JSON.parse(localStorage.getItem("recentGames")) || [];
+    recentGames = recentGames.filter(name => name !== gameName);
+    recentGames.unshift(gameName);
+    localStorage.setItem("recentGames", JSON.stringify(recentGames));
+    localStorage.setItem("lastGameName", gameName);
 }
 async function inputGame(InputFile) {
     const gameName = InputFile.files[0].name;
