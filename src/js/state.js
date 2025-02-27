@@ -56,6 +56,7 @@ export async function wrapContent () {
                 if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
                     stateList.classList.toggle("visible");
                     statePageButton.classList.toggle("active");
+                    document.getElementById("menu-pad").style.removeProperty("pointer-events");
                     led(selectedIndex);
                     await Main.loadState(selectedIndex);
                     await Main.setData(gameName, "0", "slotStateSaved", selectedIndex);
