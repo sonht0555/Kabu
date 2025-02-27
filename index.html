@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <meta name="apple-mobile-web-app-capable" content="none" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -32,7 +34,7 @@
   </head>
 <body>
     <!-- Layer Ingame -->
-    <div class="errorLog"></div>
+    <div class="errorLog column"></div>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-15 emu-display">
@@ -360,7 +362,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V3.08';</script>
+    <script>let gameVer = 'V3.09';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

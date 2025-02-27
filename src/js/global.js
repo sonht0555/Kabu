@@ -210,12 +210,19 @@ async function fileToBase64(data) {
         lockNoti.classList.add("visible");
     }, second);
 }
-// lOG err
+// log Message
 function logMessage(type, message) {
     if (errorLogElements.length > 0) {
         const errorLogElement = errorLogElements[0];
-        errorLogElement.innerText += `[${type}] ${message}\n---\n`;
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `[${type}] ${message}\n---\n`;
+        errorLogElement.appendChild(messageElement);
         errorLogElement.scrollTop = errorLogElement.scrollHeight;
+        setTimeout(() => {
+            if (messageElement && messageElement.parentNode) {
+                messageElement.parentNode.removeChild(messageElement);
+            }
+        }, 60000);
     }
 }
 window.onerror = function (message, source, lineno) {
@@ -228,12 +235,12 @@ window.onerror = function (message, source, lineno) {
 const originalConsoleError = console.error;
 console.error = function (...args) {
     originalConsoleError.apply(console, args);
-    logMessage("Error", args.join(" "));
+    logMessage("Err", args.join(" "));
 };
 const originalConsoleWarn = console.warn;
 console.warn = function (...args) {
     originalConsoleWarn.apply(console, args);
-    logMessage("Warning", args.join(" "));
+    logMessage("Warn", args.join(" "));
 };
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {

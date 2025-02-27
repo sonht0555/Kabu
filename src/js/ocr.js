@@ -102,7 +102,7 @@ async function freeServer(base64data) {
             }
 
         } catch (fetchError) {
-            console.warn("CORS-Anywhere chưa được kích hoạt. Mở /corsdemo...");
+            console.warn("Cors-controlers have not been activated.");
             window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
             return;
         }
