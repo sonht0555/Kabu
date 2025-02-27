@@ -246,6 +246,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (fileInput.files.length > 0) {
                 gameName = fileInput.files[0].name;
                 console.log(gameName);
+                localStorage.setItem("lastGameName",gameName)
             }
         })
         romList.addEventListener(eventType, (event) => {
@@ -253,6 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (clickedElement.classList.contains("game-item")) {
             gameName = clickedElement.textContent;
             console.log(gameName);
+            localStorage.setItem("lastGameName",gameName)
         }
         })
     });

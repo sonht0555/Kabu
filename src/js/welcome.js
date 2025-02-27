@@ -3,14 +3,22 @@ import * as Main from './main.js';
 const romlist = document.getElementById("rom-list");
 const romInput = document.getElementById("fileInput");
 /* --------------- Function ------------------ */
-async function romList() { 
+async function romList() {
     const gameList = await Main.listGame();
+    const lastGameName = localStorage.getItem("lastGameName");
+    if (lastGameName && gameList.includes(lastGameName)) {
+        gameList.splice(gameList.indexOf(lastGameName), 1);
+        gameList.unshift(lastGameName);
+    }
+    romlist.innerHTML = "";
     for (const gameName of gameList) {
         const div = document.createElement("div");
         div.classList.add("flex-1", "game-item");
         div.textContent = gameName;
         div.onclick = () => {
+            localStorage.setItem("lastGameName", gameName);
             Main.loadGame(gameName);
+            romList();
         };
         romlist.appendChild(div);
     }

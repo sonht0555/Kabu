@@ -302,7 +302,9 @@ export async function setData(romName, slot, type, text, string = "") {
     let textChunk = new TextEncoder().encode(`${textMarker} ${saveString}`);
     let newArray = new Uint8Array([...byteCharacters].map(c => c.charCodeAt(0)).concat([...textChunk]));
     let file = new File([new Blob([newArray], { type: "image/png" })], `${gameName}_${slot}.png`, { type: "image/png" });
-    Module.uploadAll(file, () => {});
+    Module.uploadAll(file, async () => {
+        await Module.FSSync();
+    });
 }
 export async function getData(romName, slot, type) {
     try {
