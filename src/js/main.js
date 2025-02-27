@@ -21,6 +21,7 @@ const controlSetting = document.getElementById("control-setting");
 // System Tray
 function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
+        Module.FSSync();
         pauseGame();
         canvas.classList.add("visible");
     } else {
@@ -119,7 +120,6 @@ export async function loadGame(romName) {
 }
 export async function saveState(slot) {
     await Module.saveState(slot);
-    await Module.FSSync();
 }
 export async function loadState(slot) {
     await Module.loadState(slot);
@@ -160,12 +160,10 @@ export async function uploadFile(filepath) {
 }
 export async function editFile(filepath, filename, newFilename) {
     await Module.editFileName(filepath, filename, newFilename);
-    await Module.FSSync()
 }
 export async function deleteFile(filepath) {
     try {
         await Module.deleteFile(filepath);
-        await Module.FSSync()
         return true;
     } catch (error) {
         console.error(filepath)
@@ -260,7 +258,6 @@ export async function setFastForwardMultiplier(number) {
 export async function uploadCheats(file) {
         Module.autoLoadCheats();
         Module.uploadAll(file, async () => {
-           await Module.FSSync();
     });
 }
 export function setVolume(number) {
@@ -303,7 +300,6 @@ export async function setData(romName, slot, type, text, string = "") {
     let newArray = new Uint8Array([...byteCharacters].map(c => c.charCodeAt(0)).concat([...textChunk]));
     let file = new File([new Blob([newArray], { type: "image/png" })], `${gameName}_${slot}.png`, { type: "image/png" });
     Module.uploadAll(file, async () => {
-        await Module.FSSync();
     });
 }
 export async function getData(romName, slot, type) {
@@ -366,4 +362,7 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
             canvas.classList.remove("visible");
         }, 600);
     }
+}
+export async function FSSync() {
+    Module.FSSync();
 }

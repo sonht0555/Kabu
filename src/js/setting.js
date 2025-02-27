@@ -93,13 +93,15 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {
+                    await lockNoti("", "Relaunch...", 1000)
+                    Main.FSSync();
                     setTimeout(() => {
                         if (navigator.onLine) {
                             window.location.reload(true);
                         } else {
                             window.location.href = window.location.href;
                         }
-                    }, 50);
+                    }, 1000);
                     // navigator.serviceWorker.controller.postMessage({
                     //     type: 'DELETE_CACHE'
                     // });
