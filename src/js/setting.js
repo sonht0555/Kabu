@@ -107,13 +107,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     // });
                 }              
                 if (document.getElementById('box1').classList.contains('selected')) {
-                    let box1 = document.getElementById('box1');
                     const cheatName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".cheats");
                     let data = await Main.downloadFileInCloud(`/data/cheats/${cheatName}`) ?? new TextEncoder().encode("");
                     let textData = new TextDecoder().decode(data);
                     let cheatX = textData.match(/cheat\d+_code = "(.*?)"/g)?.map(c => ({ enable: false, code: c.split('"')[1] })) || [];
-                    const lastCheatCode = cheatX.length > 0 ? cheatX.at(-1).code : 'Off';
-                    let newCheatCode = window.prompt("Edit cheat code", lastCheatCode) || "Off";
+                    const lastCheatCode = cheatX.length > 0 ? cheatX.at(-1).code : "xx xxx";
+                    let newCheatCode = window.prompt("Edit cheat code", lastCheatCode) || "xx xxx";
                     cheatX = cheatX.map(cheat => ({ enable: false, code: cheat.code }));
                     cheatX.push({ enable: true, code: newCheatCode.trim() });
                     const display = `cheats = ${cheatX.length}\n` + 

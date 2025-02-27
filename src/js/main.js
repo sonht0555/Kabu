@@ -190,30 +190,6 @@ export function listScreenshot() {
     const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
     return result;
 }
-export function embedTextInPngFile(base64, text, fileName) {
-    let byteCharacters = atob(base64.split(',')[1]);
-    let byteArray = new Uint8Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteArray[i] = byteCharacters.charCodeAt(i);
-    }
-    let textChunk = new TextEncoder().encode("tEXtComment\x00" + text);
-    let newArray = new Uint8Array(byteArray.length + textChunk.length);
-    newArray.set(byteArray, 0);
-    newArray.set(textChunk, byteArray.length);
-    let blob = new Blob([newArray], { type: "image/png" });
-    let file = new File([blob], fileName, { type: "image/png" });
-
-    return file;
-}
-export function extractTextFromPngBase64(base64) {
-    let byteCharacters = atob(base64.split(',')[1]);
-    let textMarker = "tEXtComment\x00";
-    let textStart = byteCharacters.indexOf(textMarker);
-    if (textStart !== -1) {
-        return byteCharacters.substring(textStart + textMarker.length);
-    }
-    return null;
-}
 export function fileSize(filePart) {
     const result = Module.fileSize(filePart)
     return result;

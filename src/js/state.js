@@ -57,10 +57,11 @@ export async function wrapContent () {
                     stateList.classList.toggle("visible");
                     statePageButton.classList.toggle("active");
                     led(selectedIndex);
-                    Main.loadState(selectedIndex);
+                    await Main.loadState(selectedIndex);
                     await Main.setData(gameName, "0", "slotStateSaved", selectedIndex);
-                    Main.resumeGame();
-                    Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
+                    await Main.resumeGame();
+                    await delay(100)
+                    await Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
                 }
             }
         });
@@ -73,7 +74,7 @@ export async function wrapContent () {
                         const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
                         const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                         await Main.deleteFile(`/data/states/${stateName}`);
-                        await delay(500)
+                        await delay(200)
                         await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
                         imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                         document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
