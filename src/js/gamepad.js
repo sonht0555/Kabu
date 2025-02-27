@@ -134,13 +134,17 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     })
 });
+let lastSaveTime = 0;
 ["touchend"].forEach(eventType => {
     // Save State Button
     saveStateButton.addEventListener(eventType, async () => {
+        const now = Date.now();
+        if (now - lastSaveTime < 1000) return;
         clickState++;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
+                lastSaveTime = Date.now();
                 const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
                 const slotStateNumbers = autoStateCheck === "On"
                     ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1
