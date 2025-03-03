@@ -171,6 +171,13 @@ label {
     rgba(54, 54, 54, 1) 100%
   );
 }
+.touched-2 {
+  background: linear-gradient(
+    90deg,
+    rgba(54, 54, 54, 0) 0%,
+    rgba(54, 54, 54, 1) 100%
+  );
+}
 .br0 {
   border-radius: 0px !important;
 }
@@ -1036,4 +1043,10 @@ rect {
   opacity: 0.86;
   pointer-events: none;
   color:#f5e8d1;
+}
+.rewind {
+  position: absolute;
+  height: 100%;
+  width: 35%;
+  right: 0;
 }

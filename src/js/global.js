@@ -12,8 +12,9 @@ const romList = document.getElementById("rom-list");
 const romInput = document.getElementById("fileInput");
 const setAdjustment = document.getElementById("setAdjustment");
 const savedStateAdj = localStorage.getItem("stateAdj");
+const rewind = document.getElementById("rewind")
 const ids = ['inputText', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07', ];
-const touchedID = ['saveStateButton', 'loadStateButton', 'openLocalStorage', 'upLoadFile', 'backToHome', ''];
+const touchedID = ['saveStateButton', 'loadStateButton', 'openLocalStorage', 'upLoadFile', 'backToHome', 'rewind'];
 /* --------------- Function ------------------ */
 // Joy Stick
 var dynamicZone = document.getElementById("dynamic");
@@ -86,6 +87,13 @@ touchedID.forEach(function(id) {
             });
             button.addEventListener("touchend", function() {
                 button.classList.remove("touched-1");
+            });
+        } else if (id === 'rewind') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-2");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-2");
             });
         } else {
             button.addEventListener("touchstart", function() {

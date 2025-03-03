@@ -346,3 +346,6 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
 export async function FSSync() {
     Module.FSSync();
 }
+export function rewind(type) {
+    Module.toggleRewind(type);
+}
