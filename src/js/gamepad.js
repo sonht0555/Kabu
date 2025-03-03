@@ -199,6 +199,6 @@ let lastSaveTime = 0;
             clickTurbo = 0;
         }, 300);
     });
-    rewind.addEventListener("pointerdown", () => Main.rewind(true));
-    rewind.addEventListener("pointerup", () => Main.rewind(false));
+    rewind.addEventListener("pointerdown", () => { Main.rewind(true); Main.notiMessage(`Rewind_..`, 20000);});
+    rewind.addEventListener("pointerup", () => { Main.rewind(false);  Main.notiMessage(`Resumed!`, 1000);});
 })
