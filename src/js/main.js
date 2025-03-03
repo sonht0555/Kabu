@@ -108,11 +108,12 @@ export async function loadGame(romName) {
     if (statesList.includes(stateName)) {
         await Module.loadGame(`/data/games/${romName}`);
         if (confirm("Do you want to load save state?")) {
+            await delay(100);
             await Module.loadState(0);
             await shaderData();
         }
     } else {
-        await Module.loadGame(`/data/games/${gameName}`);
+        await Module.loadGame(`/data/games/${romName}`);
         await shaderData();
     }
     // show status ingame
