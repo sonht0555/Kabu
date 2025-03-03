@@ -58,7 +58,7 @@ else
 fi
 
 # Copy static files
-cp ./index.html ./manifest.json ./sw.js $Docs_DIR/
+cp ./index.html ./manifest.json ./sw.js ./CNAME $Docs_DIR/
 mkdir -p $Docs_DIR/img
 cp ./img/* $Docs_DIR/img/
 mkdir -p $Docs_DIR/src/font/
