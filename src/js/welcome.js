@@ -4,7 +4,7 @@ const romlist = document.getElementById("rom-list");
 const romInput = document.getElementById("fileInput");
 /* --------------- Function ------------------ */
 async function romList() {
-    const gameList = await Main.listGame();
+    const gameList = await Main.listFiles("games");
     const lastGameName = localStorage.getItem("lastGameName") || null;
     let recentGames = JSON.parse(localStorage.getItem("recentGames")) || [];
     let sortedGameList = [];

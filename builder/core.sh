@@ -4,7 +4,7 @@ cp ./temp-mgba/node_modules/@thenick775/mgba-wasm/dist/mgba.js ./src/core/ && \
 cp ./temp-mgba/node_modules/@thenick775/mgba-wasm/dist/mgba.wasm ./src/core/ && \
 rm -rf temp-mgba && \
 prettier --write ./src/core/mgba.js && \
-sed -i '' -e '/Module.getSave = () => FS.readFile(Module.saveName);/{
+sed -i '' -e '/var Module = moduleArg;/{
     r ./builder/data/module-core.txt
     d
 }' -e "/dir = \"\/data\/states\/\";/{

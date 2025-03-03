@@ -98,11 +98,11 @@ function createElementStorage(parent, fileName, filePart) {
     Name.appendChild(mib);
 }
 export function localStorageFile() {
-    const listRoms = Main.listGame();
-    const listSaves = Main.listSave();
-    const listStates = Main.listState();
-    const listCheats = Main.listCheat();
-    const listScreenshots = Main.listScreenshot();
+    const listRoms = Main.listFiles("games");
+    const listSaves = Main.listFiles("saves");
+    const listStates = Main.listFiles("states");
+    const listCheats = Main.listFiles("cheats");
+    const listScreenshots = Main.listFiles("screenshots");
     const refreshList = [romsFile, savesFile, statesFile, cheatsFile, screenshotsFile];
     for (const refresh of refreshList) {
         while (refresh.firstChild) {

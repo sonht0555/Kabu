@@ -92,7 +92,7 @@ export async function uploadGame(romName) {
 }
 export async function loadGame(romName) {
     const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
-    const statesList = Module.listStates().filter((file) => file !== "." && file !== "..");
+    const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
@@ -169,6 +169,10 @@ export async function deleteFile(filepath) {
         console.error(filepath)
         return null;
     }
+}
+export function listFiles(name) {
+    const result = Module.listFiles(name).filter((file) => file !== "." && file !== "..");
+    return result;
 }
 export function listGame() {
     const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
