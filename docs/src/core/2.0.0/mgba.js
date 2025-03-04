@@ -14890,7 +14890,6 @@ var mGBA = (() => {
     var wasmExports = await createWasm();
     var ___wasm_call_ctors = () =>
       (___wasm_call_ctors = wasmExports["__wasm_call_ctors"])();
-    var _malloc = (a0) => (_malloc = wasmExports["malloc"])(a0);
     var _screenshot = (Module["_screenshot"] = (a0) =>
       (_screenshot = Module["_screenshot"] = wasmExports["screenshot"])(a0));
     var _buttonPress = (Module["_buttonPress"] = (a0) =>
@@ -14969,6 +14968,7 @@ var mGBA = (() => {
         wasmExports["setupConstants"])());
     var _main = (Module["_main"] = (a0, a1) =>
       (_main = Module["_main"] = wasmExports["main"])(a0, a1));
+    var _malloc = (a0) => (_malloc = wasmExports["malloc"])(a0);
     var _pthread_self = () => (_pthread_self = wasmExports["pthread_self"])();
     var __emscripten_tls_init = () =>
       (__emscripten_tls_init = wasmExports["_emscripten_tls_init"])();
