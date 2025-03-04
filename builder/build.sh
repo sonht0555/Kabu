@@ -64,7 +64,7 @@ cp ./img/* $Docs_DIR/img/
 mkdir -p $Docs_DIR/src/font/
 cp ./src/font/* $Docs_DIR/src/font/
 mkdir -p $Docs_DIR/src/core/
-cp ./src/core/* $Docs_DIR/src/core/
+cp -r ./src/core/* $Docs_DIR/src/core/
 mkdir -p $Docs_DIR/src/backup/
 cp ./src/core/* $Docs_DIR/src/backup/
 mkdir -p $Docs_DIR/src/library/
