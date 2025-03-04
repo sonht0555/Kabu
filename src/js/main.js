@@ -1,5 +1,5 @@
-import mGBA_v1 from "../core/1.1.0/mgba.js";
-import mGBA_v2 from "../core/2.0.0/mgba.js";
+import mGBA_v1 from "./core/1.1.0/mgba.js";
+import mGBA_v2 from "./core/2.0.0/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
