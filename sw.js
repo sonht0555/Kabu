@@ -1,4 +1,4 @@
-let revision = 'V3.24';
+let revision = 'V3.25';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -16,8 +16,10 @@ var urlsToCache = [
     './src/js/state.js',
     './src/js/storage.js',
     './src/js/welcome.js',
-    './src/core/mgba.js',
-    './src/core/mgba.wasm',
+    './src/core/1.1.0/mgba.js',
+    './src/core/1.1.0/mgba.wasm',
+    './src/core/2.0.0/mgba.js',
+    './src/core/2.0.0/mgba.wasm',
     './src/library/nip.js',
     './src/library/interact.js',
     './sw.js',

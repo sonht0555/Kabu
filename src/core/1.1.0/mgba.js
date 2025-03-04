@@ -30,13 +30,9 @@ var mGBA = (() => {
     Module.deleteFile = (filepath) => FS.unlink(filepath);
     Module.fileSize = (filepath) => FS.stat(filepath).size;
     Module.downloadFile = (filepath) => FS.readFile(filepath);
-    Module.listStates = () => FS.readdir("/data/states/");
-    Module.listCheats = () => FS.readdir("/data/cheats/");
-    Module.listScreenshots = () => FS.readdir("/data/screenshots/");
+    Module.listFiles = (name) => FS.readdir(`/data/${name}/`);
     Module.getSave = () => FS.readFile(Module.saveName);
     // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-    Module.listRoms = () => FS.readdir("/data/games/");
-    Module.listSaves = () => FS.readdir("/data/saves/");
     Module.FSInit = () =>
       new Promise((resolve, reject) => {
         FS.mkdir("/data");

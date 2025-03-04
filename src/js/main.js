@@ -1,9 +1,22 @@
-import mGBA from "../core/mgba.js";
+import mGBA_v1 from "../core/1.1.0/mgba.js";
+import mGBA_v2 from "../core/2.0.0/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
 import {wrapContent} from "./state.js"
+/*/ ----------------- Switch Ver ------------- */
+const versions = { "1.1.0": mGBA_v1, "2.0.0": mGBA_v2 };
+let currentVersion = localStorage.getItem("GBAver") || "1.1.0";
+let mGBA = versions[currentVersion]; 
+document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+document.getElementById("GBAver").addEventListener("click", () => {
+    const versionKeys = Object.keys(versions);
+    let index = versionKeys.indexOf(currentVersion);
+    currentVersion = versionKeys[(index + 1) % versionKeys.length];
+    localStorage.setItem("GBAver", currentVersion);
+    document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+});
 /*/ --------------- Initialization ----------- */
 const Module = {canvas: document.getElementById("canvas")};
 function initializeCore(coreInitFunction, module) {
@@ -41,6 +54,9 @@ async function statusShow() {
     restoreArea();
     startTimer();
     await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
+    await delay(200);
+    await Module.SDL2();
+    await delay(800);
     await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
     await notiMessage(gameVer, 1000);
     await wrapContent();
@@ -344,6 +360,4 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
 export async function FSSync() {
     Module.FSSync();
 }
-export function rewind(type) {
-    Module.toggleRewind(type);
-}
+export const rewind = (type) => Module.toggleRewind?.(type) || null;
