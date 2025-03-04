@@ -41,9 +41,6 @@ async function statusShow() {
     restoreArea();
     startTimer();
     await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
-    await delay(200);
-    await Module.SDL2();
-    await delay(800);
     await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
     await notiMessage(gameVer, 1000);
     await wrapContent();
