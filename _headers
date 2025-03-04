@@ -1,3 +1,6 @@
 /*
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
+  
+/core/*.js
+  Content-Type: application/javascript
