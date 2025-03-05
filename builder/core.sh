@@ -1,5 +1,5 @@
 
-npm install @thenick775/mgba-wasm@2.0.0-beta.4 --prefix ./temp-mgba && \
+npm install @thenick775/mgba-wasm@2.0.0-beta.5 --prefix ./temp-mgba && \
 cp ./temp-mgba/node_modules/@thenick775/mgba-wasm/dist/mgba.js ./src/core/2.0.0 && \
 cp ./temp-mgba/node_modules/@thenick775/mgba-wasm/dist/mgba.wasm ./src/core/2.0.0 && \
 rm -rf temp-mgba && \
