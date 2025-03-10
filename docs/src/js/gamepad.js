@@ -1,1 +1,204 @@
-const a0_0x3460f9=a0_0x4df9;(function(_0x88e067,_0x3c59f3){const _0x5a13b9=a0_0x4df9,_0x48d1fe=_0x88e067();while(!![]){try{const _0x5d2dbe=-parseInt(_0x5a13b9(0xb7))/0x1+-parseInt(_0x5a13b9(0xae))/0x2+parseInt(_0x5a13b9(0xbb))/0x3*(parseInt(_0x5a13b9(0xa9))/0x4)+-parseInt(_0x5a13b9(0xbe))/0x5+parseInt(_0x5a13b9(0x96))/0x6*(parseInt(_0x5a13b9(0xc0))/0x7)+-parseInt(_0x5a13b9(0x90))/0x8+parseInt(_0x5a13b9(0xbc))/0x9*(parseInt(_0x5a13b9(0x8c))/0xa);if(_0x5d2dbe===_0x3c59f3)break;else _0x48d1fe['push'](_0x48d1fe['shift']());}catch(_0x93cc2d){_0x48d1fe['push'](_0x48d1fe['shift']());}}}(a0_0x5b99,0x7f0fa));import*as a0_0x15bc0d from'./main.js';let clickState=0x0,clickTimeout,clickTurbo=0x0,turboState=0x1,volumeLevels=[0x1,0x0,0.25,0.5,0.75],volumeIndex=0x0;const turboButton=document[a0_0x3460f9(0xb3)](a0_0x3460f9(0xaa));function buttonPress(_0x50d584,_0x297d13){const _0x3b0836=a0_0x3460f9;if(_0x50d584[_0x3b0836(0xbd)]('-')){const [_0x1a39bf,_0x595eff]=_0x50d584['toLowerCase']()[_0x3b0836(0x88)]('-');_0x297d13?a0_0x15bc0d[_0x3b0836(0x87)](_0x1a39bf):a0_0x15bc0d[_0x3b0836(0xab)](_0x1a39bf),_0x297d13?a0_0x15bc0d[_0x3b0836(0x87)](_0x595eff):a0_0x15bc0d[_0x3b0836(0xab)](_0x595eff);}else _0x297d13?a0_0x15bc0d[_0x3b0836(0x87)](_0x50d584['toLowerCase']()):a0_0x15bc0d[_0x3b0836(0xab)](_0x50d584[_0x3b0836(0xc4)]());}async function saveState(_0x3dd5c4){const _0x351ee6=a0_0x3460f9;await a0_0x15bc0d[_0x351ee6(0x9a)](_0x3dd5c4),await a0_0x15bc0d[_0x351ee6(0xca)](_0x3dd5c4);}async function loadState(_0x34215a){await a0_0x15bc0d['loadState'](_0x34215a);}export async function turboF(_0x196037){const _0x3a4d7f=a0_0x3460f9;if(_0x196037===0x1)a0_0x15bc0d[_0x3a4d7f(0xa8)](_0x3a4d7f(0xa2),0x5dc,!![]),turboButton[_0x3a4d7f(0xa0)][_0x3a4d7f(0xba)](_0x3a4d7f(0xb9)),turboButton[_0x3a4d7f(0xa0)][_0x3a4d7f(0xba)](_0x3a4d7f(0xb5)),a0_0x15bc0d['setFastForwardMultiplier'](0x1);else{if(_0x196037===0x2)a0_0x15bc0d[_0x3a4d7f(0xa8)](_0x3a4d7f(0x91),0x5dc,!![]),turboButton['classList'][_0x3a4d7f(0x8b)](_0x3a4d7f(0xb9)),turboButton[_0x3a4d7f(0xa0)]['remove']('turbo-fast'),a0_0x15bc0d[_0x3a4d7f(0xb8)](0x2);else _0x196037===0x3&&(a0_0x15bc0d['notiMessage'](_0x3a4d7f(0xa5),0x5dc,!![]),turboButton[_0x3a4d7f(0xa0)][_0x3a4d7f(0xba)](_0x3a4d7f(0xb9)),turboButton[_0x3a4d7f(0xa0)][_0x3a4d7f(0x8b)](_0x3a4d7f(0xb5)),a0_0x15bc0d[_0x3a4d7f(0xb8)](0x4));}}function a0_0x5b99(){const _0x307f9a=['Resumed!','mousedown','getData','screenShot','touches','Rewind_..','length','buttonPress','split','move','#DD5639','add','10XCmhqu','Start','setData','[_]\x20Loaded.','6651456UzgpzC','2x\x20Speed','touchmove','ledSave','Select','stateAuto','2847378vwZJbN','touchstart','Volume:\x20','Right','saveState','end','touched','clientX','degree','Left','classList','setVolume','1x\x20Speed','Up-left','Down','4x\x20Speed','forEach','addEventListener','notiMessage','40jDzJGu','turbo','buttonUnpress','rewind','apiKey,endpoint','833992ShIprp','slotStateSaved','Down-right','Down-left','now','getElementById','pointerup','turbo-fast',']\x20Saved.','615206EWVeny','setFastForwardMultiplier','turbo-medium','remove','7419RlaMWH','17888796ULfEcW','includes','2887120uQUqpD','Up-right','14AUYuNA','touchend','dispatchEvent','elementFromPoint','toLowerCase','touchcancel','ApiAzure'];a0_0x5b99=function(){return _0x307f9a;};return a0_0x5b99();}document[a0_0x3460f9(0xa7)]('DOMContentLoaded',function(){const _0x587ee1=a0_0x3460f9;['A','B',_0x587ee1(0x8d),_0x587ee1(0x94),'L','R','Up',_0x587ee1(0xa4),_0x587ee1(0x9f),'Right',_0x587ee1(0xa3),_0x587ee1(0xbf),_0x587ee1(0xb1),_0x587ee1(0xb0)]['forEach'](_0x294bd2=>{const _0x20bd84=_0x587ee1,_0x303e9e=document[_0x20bd84(0xb3)](_0x294bd2);let _0x3b8c0e=null;[_0x20bd84(0xc8),_0x20bd84(0x97)][_0x20bd84(0xa6)](_0x5c0c44=>{const _0x50b661=_0x20bd84;_0x303e9e[_0x50b661(0xa7)](_0x5c0c44,()=>{const _0x47a8a9=_0x50b661;_0x3b8c0e=_0x303e9e,buttonPress(_0x294bd2,!![]),_0x303e9e['classList'][_0x47a8a9(0x8b)](_0x47a8a9(0x9c));});}),['mouseup','touchend',_0x20bd84(0xc5)]['forEach'](_0x37f1a7=>{const _0x4288c6=_0x20bd84;_0x303e9e[_0x4288c6(0xa7)](_0x37f1a7,()=>{const _0x583b20=_0x4288c6;_0x3b8c0e&&(buttonPress(_0x294bd2,![]),_0x3b8c0e=null,_0x303e9e[_0x583b20(0xa0)][_0x583b20(0xba)](_0x583b20(0x9c)));});}),_0x303e9e[_0x20bd84(0xa7)](_0x20bd84(0x92),_0x5fce2d=>{const _0x5cf2c9=_0x20bd84,_0x1ace49=_0x5fce2d[_0x5cf2c9(0xcb)][0x0],_0x23b568=document[_0x5cf2c9(0xc3)](_0x1ace49[_0x5cf2c9(0x9d)],_0x1ace49['clientY']);if(_0x23b568!==_0x3b8c0e&&_0x5fce2d[_0x5cf2c9(0xcb)]['length']===0x1){if(_0x3b8c0e){const _0x5ddef4=new Event(_0x5cf2c9(0xc1));_0x3b8c0e[_0x5cf2c9(0xc2)](_0x5ddef4);}if(_0x23b568){const _0x39664e=new Event('touchstart');_0x23b568['dispatchEvent'](_0x39664e);}_0x3b8c0e=_0x23b568;}}),document['addEventListener'](_0x20bd84(0xc1),_0x4cb3df=>{const _0x536bcb=_0x20bd84;if(_0x4cb3df[_0x536bcb(0xcb)][_0x536bcb(0xcd)]===0x0){if(_0x3b8c0e){const _0x2f5e97=new Event('touchend');_0x3b8c0e['dispatchEvent'](_0x2f5e97),_0x3b8c0e=null;}}});let _0x4158e='';const _0x15f604=(_0x1eccac,_0x4fb3bb)=>{const _0x5f5c86=_0x20bd84,_0x1eeb82=_0x1eccac[_0x5f5c86(0x88)]('-');_0x1eeb82['forEach'](_0x2482b7=>{const _0x1a0047=_0x5f5c86;_0x4fb3bb?a0_0x15bc0d[_0x1a0047(0x87)](_0x2482b7):a0_0x15bc0d['buttonUnpress'](_0x2482b7);});};dynamic['on'](_0x20bd84(0x89),(_0x64922b,_0x47a84e)=>{const _0xe330e0=_0x20bd84,_0x559907=_0x47a84e['angle'][_0xe330e0(0x9e)];let _0x8ce373='';if(_0x559907>=337.5||_0x559907<22.5)_0x8ce373=_0xe330e0(0x99);else{if(_0x559907>=22.5&&_0x559907<67.5)_0x8ce373=_0xe330e0(0xbf);else{if(_0x559907>=67.5&&_0x559907<112.5)_0x8ce373='Up';else{if(_0x559907>=112.5&&_0x559907<157.5)_0x8ce373=_0xe330e0(0xa3);else{if(_0x559907>=157.5&&_0x559907<202.5)_0x8ce373=_0xe330e0(0x9f);else{if(_0x559907>=202.5&&_0x559907<247.5)_0x8ce373='Down-left';else{if(_0x559907>=247.5&&_0x559907<292.5)_0x8ce373=_0xe330e0(0xa4);else _0x559907>=292.5&&_0x559907<337.5&&(_0x8ce373=_0xe330e0(0xb0));}}}}}}_0x8ce373!==_0x4158e&&(_0x15f604(_0x4158e,![]),_0x15f604(_0x8ce373,!![]),_0x4158e=_0x8ce373);}),dynamic['on'](_0x20bd84(0x9b),()=>{_0x15f604(_0x4158e,![]),_0x4158e='';});});});function a0_0x4df9(_0x441760,_0x522517){const _0x5b9912=a0_0x5b99();return a0_0x4df9=function(_0x4df9be,_0x7f69b){_0x4df9be=_0x4df9be-0x87;let _0x268b54=_0x5b9912[_0x4df9be];return _0x268b54;},a0_0x4df9(_0x441760,_0x522517);}let lastSaveTime=0x0;[a0_0x3460f9(0xc1)][a0_0x3460f9(0xa6)](_0x4f4e95=>{const _0xfe6f1d=a0_0x3460f9;saveStateButton[_0xfe6f1d(0xa7)](_0x4f4e95,async()=>{const _0x1652e5=_0xfe6f1d,_0xd3043c=Date[_0x1652e5(0xb2)]();if(_0xd3043c-lastSaveTime<0x3e8)return;clickState++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{const _0xb67a1=_0x1652e5;if(clickState===0x2){lastSaveTime=Date['now']();const _0x3060f4=await a0_0x15bc0d[_0xb67a1(0xc9)](gameName,'0',_0xb67a1(0x95))||await a0_0x15bc0d[_0xb67a1(0x8e)](gameName,'0',_0xb67a1(0x95),'On'),_0x1a8a41=_0x3060f4==='On'?parseInt(await a0_0x15bc0d[_0xb67a1(0xc9)](gameName,'0','slotStateSaved')%0x7)+0x1||0x1:parseInt(await a0_0x15bc0d['getData'](gameName,'0',_0xb67a1(0xaf)))||0x1;await delay(0x64),await saveState(_0x1a8a41),await delay(0x32),await a0_0x15bc0d[_0xb67a1(0x8e)](gameName,'0',_0xb67a1(0xaf),_0x1a8a41),await delay(0x32),await a0_0x15bc0d[_0xb67a1(0x93)](_0xb67a1(0x8a)),await delay(0x32),await a0_0x15bc0d[_0xb67a1(0xa8)]('['+(_0x3060f4==='On'?_0x1a8a41:'?')+_0xb67a1(0xb6),_0x3060f4==='On'?0x7d0:0x3e8);}else{if(clickState===0x3){volumeIndex=(volumeIndex+0x1)%volumeLevels[_0xb67a1(0xcd)];let _0x88816c=volumeLevels[volumeIndex];a0_0x15bc0d[_0xb67a1(0xa1)](_0x88816c),a0_0x15bc0d[_0xb67a1(0xa8)](_0xb67a1(0x98)+_0x88816c*0x64+'%',0x3e8);}}clickState=0x0;},0x12c);}),loadStateButton[_0xfe6f1d(0xa7)](_0x4f4e95,async()=>{clickState++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{const _0x5cf508=a0_0x4df9;if(clickState===0x2){const _0xc504a2=await a0_0x15bc0d[_0x5cf508(0xc9)](gameName,'0','slotStateSaved')||0x1;loadState(_0xc504a2),a0_0x15bc0d['notiMessage'](_0x5cf508(0x8f),0x3e8);}else{if(clickState===0x3){let _0x1edf10=await a0_0x15bc0d['getData'](gameName,'0',_0x5cf508(0xc6)),_0x16c647=prompt(_0x5cf508(0xad),_0x1edf10);_0x16c647!==null&&_0x16c647!==''&&await a0_0x15bc0d['setData'](gameName,'0',_0x5cf508(0xc6),_0x16c647);}}clickState=0x0;},0x12c);}),turboButton['addEventListener'](_0x4f4e95,async()=>{clickTurbo++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{clickTurbo===0x2&&(turboState=turboState%0x3+0x1,turboF(turboState),await a0_0x15bc0d['setData'](gameName,'0','turboState',turboState)),clickTurbo=0x0;},0x12c);}),rewind[_0xfe6f1d(0xa7)]('pointerdown',()=>{const _0x2f4f5c=_0xfe6f1d;a0_0x15bc0d[_0x2f4f5c(0xac)](!![]),a0_0x15bc0d['notiMessage'](_0x2f4f5c(0xcc),0x4e20);}),rewind[_0xfe6f1d(0xa7)](_0xfe6f1d(0xb4),()=>{const _0x5f5788=_0xfe6f1d;a0_0x15bc0d[_0x5f5788(0xac)](![]),a0_0x15bc0d[_0x5f5788(0xa8)](_0x5f5788(0xc7),0x3e8);});});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+let clickState = 0;
+let clickTimeout;
+let clickTurbo = 0
+let turboState = 1;
+let volumeLevels = [1, 0, 0.25, 0.5, 0.75];
+let volumeIndex = 0;
+const turboButton = document.getElementById("turbo");
+/* --------------- Function --------------- */
+function buttonPress(buttonName, isPress) {
+    if (buttonName.includes("-")) {
+        const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
+        isPress ? Main.buttonPress(primaryButton) : Main.buttonUnpress(primaryButton);
+        isPress ? Main.buttonPress(secondaryButton) : Main.buttonUnpress(secondaryButton);
+    } else {
+        isPress ? Main.buttonPress(buttonName.toLowerCase()) : Main.buttonUnpress(buttonName.toLowerCase());
+    }
+}
+// Save State
+async function saveState(slot) {
+    await Main.saveState(slot);
+    await Main.screenShot(slot);
+}
+// Load State
+async function loadState(slot) {
+    await Main.loadState(slot);
+}
+// Turbo
+export async function turboF(turboState) {
+    if (turboState === 1) {
+        Main.notiMessage("1x Speed", 1500, true);
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
+        Main.setFastForwardMultiplier(1);
+    } else if (turboState === 2) {
+        Main.notiMessage("2x Speed", 1500, true);
+        turboButton.classList.add("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
+        Main.setFastForwardMultiplier(2);
+    } else if (turboState === 3) {
+        Main.notiMessage("4x Speed", 1500, true);
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.add("turbo-fast");
+        Main.setFastForwardMultiplier(4);
+    }
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
+        const element = document.getElementById(buttonId);
+        let currentButton = null;
+        ["mousedown", "touchstart"].forEach((startEventName) => {
+            element.addEventListener(startEventName, () => {
+                currentButton = element;
+                buttonPress(buttonId, true);
+                element.classList.add('touched');
+            });
+        });
+        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
+            element.addEventListener(endEventName, () => {
+                if (currentButton) {
+                    buttonPress(buttonId, false);
+                    currentButton = null;
+                    element.classList.remove('touched');
+                }
+            });
+        });
+        element.addEventListener("touchmove", (event) => {
+            const touch = event.touches[0];
+            const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (newButton !== currentButton && event.touches.length === 1) {
+                if (currentButton) {
+                    const touchendEvent = new Event("touchend");
+                    currentButton.dispatchEvent(touchendEvent);
+                }
+                if (newButton) {
+                    const touchstartEvent = new Event("touchstart");
+                    newButton.dispatchEvent(touchstartEvent);
+                }
+                currentButton = newButton;
+            }
+        });
+        document.addEventListener("touchend", (event) => {
+            if (event.touches.length === 0) {
+                if (currentButton) {
+                    const touchendEvent = new Event("touchend");
+                    currentButton.dispatchEvent(touchendEvent);
+                    currentButton = null;
+                }
+            }
+        });
+        // Joy Stick
+        let currentDirection = '';
+        const updateButtonState = (direction, isPressed) => {
+            const directions = direction.split('-');
+            directions.forEach(dir => {
+                if (isPressed) {
+                    Main.buttonPress(dir);
+                } else {
+                    Main.buttonUnpress(dir);
+                }
+            });
+        };
+        dynamic.on('move', (evt, data) => {
+            const angle = data.angle.degree;
+            let dpadDirection = '';
+            if (angle >= 337.5 || angle < 22.5) {
+                dpadDirection = 'Right';
+            } else if (angle >= 22.5 && angle < 67.5) {
+                dpadDirection = 'Up-right';
+            } else if (angle >= 67.5 && angle < 112.5) {
+                dpadDirection = 'Up';
+            } else if (angle >= 112.5 && angle < 157.5) {
+                dpadDirection = 'Up-left';
+            } else if (angle >= 157.5 && angle < 202.5) {
+                dpadDirection = 'Left';
+            } else if (angle >= 202.5 && angle < 247.5) {
+                dpadDirection = 'Down-left';
+            } else if (angle >= 247.5 && angle < 292.5) {
+                dpadDirection = 'Down';
+            } else if (angle >= 292.5 && angle < 337.5) {
+                dpadDirection = 'Down-right';
+            }
+            if (dpadDirection !== currentDirection) {
+                updateButtonState(currentDirection, false);
+                updateButtonState(dpadDirection, true);
+                currentDirection = dpadDirection;
+            }
+        });
+        dynamic.on('end', () => {
+            updateButtonState(currentDirection, false);
+            currentDirection = '';
+        });
+    })
+});
+let lastSaveTime = 0;
+["touchend"].forEach(eventType => {
+    // Save State Button
+    saveStateButton.addEventListener(eventType, async () => {
+        const now = Date.now();
+        if (now - lastSaveTime < 1000) return;
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                lastSaveTime = Date.now();
+                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
+                const slotStateNumbers = autoStateCheck === "On"
+                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
+                await delay(100);
+                await saveState(slotStateNumbers);
+                await delay(50);
+                await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                await delay(50);
+                await Main.ledSave("#DD5639");
+                await delay(50);
+                await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
+                
+            } else if (clickState === 3) {
+                volumeIndex = (volumeIndex + 1) % volumeLevels.length;
+                let newVolume = volumeLevels[volumeIndex];
+                Main.setVolume(newVolume);
+                Main.notiMessage(`Volume: ${newVolume * 100}%`, 1000);
+            }  
+            clickState = 0;
+        }, 300);
+    });
+    // Load State Button
+    loadStateButton.addEventListener(eventType, async () => {
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
+                loadState(slotStateNumbers);
+                Main.notiMessage(`[_] Loaded.`, 1000);
+            } else if (clickState === 3) {
+                let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
+                let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
+                if (ApiAzure !== null && ApiAzure !== "") {
+                    await Main.setData(gameName, "0", "ApiAzure", ApiAzure);
+                }
+            }
+            clickState = 0;
+        }, 300);
+    });
+    // Turbo Button
+    turboButton.addEventListener(eventType, async () => {
+        clickTurbo++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickTurbo === 2) {
+                turboState = (turboState % 3) + 1;
+                turboF(turboState);
+                await Main.setData(gameName, "0", "turboState", turboState)
+            }
+            clickTurbo = 0;
+        }, 300);
+    });
+    rewind.addEventListener("pointerdown", () => { Main.rewind(true); Main.notiMessage(`Rewind_..`, 20000);});
+    rewind.addEventListener("pointerup", () => { Main.rewind(false);  Main.notiMessage(`Resumed!`, 1000);});
+})

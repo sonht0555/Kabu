@@ -1,1 +1,276 @@
-const a0_0x5c9ae3=a0_0x3644;(function(_0x273ff1,_0x1057de){const _0x326628=a0_0x3644,_0x17b35d=_0x273ff1();while(!![]){try{const _0x224a87=parseInt(_0x326628(0x202))/0x1+parseInt(_0x326628(0x230))/0x2+parseInt(_0x326628(0x21f))/0x3*(parseInt(_0x326628(0x1e7))/0x4)+-parseInt(_0x326628(0x234))/0x5*(parseInt(_0x326628(0x23c))/0x6)+parseInt(_0x326628(0x258))/0x7*(-parseInt(_0x326628(0x240))/0x8)+parseInt(_0x326628(0x223))/0x9*(parseInt(_0x326628(0x210))/0xa)+-parseInt(_0x326628(0x1e4))/0xb*(parseInt(_0x326628(0x23f))/0xc);if(_0x224a87===_0x1057de)break;else _0x17b35d['push'](_0x17b35d['shift']());}catch(_0x53cdfa){_0x17b35d['push'](_0x17b35d['shift']());}}}(a0_0x3424,0xe4a2e),appVer[a0_0x5c9ae3(0x1de)]=gameVer);let gameName;var messageTimeout;let stateAdj=0x1;function a0_0x3424(){const _0x578e72=['change','getElementsByClassName','saveStateButton','log','notiDetail','4017410WKZBZD','data-x','translate(','rect','stateDiv00','event.stopPropagation()','stateDiv06','rgba(245,\x20232,\x20209,\x200.4)','_setArea','addEventListener','div','rom-list','create','rectOpacity','stateDiv05','3ZVkQfO','apply','padding-top','restrictSize','9TkgQlr','\x20|\x20','errorLog','name','preventDefault','deltaRect','pop','px,\x20','led04','getMonth','map','getItem','rewind','88788RZVrdY','led07','lockNoti','ontouchstart','86630pNvHkz','modifiers','data-y','createElement','result','setItem','.target-boxes','classList','270DjvKaK','scrollHeight','loadStateButton','2758164VxVyxP','326280QBvkiN','forEach','resizable-draggable','replace','#resizable-draggable','inputText','onloadend','touched-1','paddingTop','stateAdj','setAdjustment','0px','toFixed','opacity','fill','setAttribute','px)','dynamic','remove','readAsDataURL','split','led01','rect1','transform','77iIdnVz','touched-2','led03','stateDiv04','scrollTop','length','120px','DOMContentLoaded','textContent','restrictEdges','onerror','unknown\x20source','color','touched','66PKAoPU','backToHome','#20A5A6','5992576coghDl','setProperty','GOpacity','openLocalStorage','parentNode','getAttribute','getElementById',']\x20../','target','led06','lastGameName','error','led02','Error','\x0a---\x0a','getDate','style','appendChild','add','touchstart','click','led05','180px','screenSize','notiTitle','warn','files','1599602piveUd','height','#2F2F2F','padStart','getMinutes','upLoadFile','touchend','querySelectorAll','width'];a0_0x3424=function(){return _0x578e72;};return a0_0x3424();}var lockNotiTime;let opacity=parseFloat(localStorage[a0_0x5c9ae3(0x22e)]('opacity'))||0.1;const errorLogElements=document[a0_0x5c9ae3(0x20c)](a0_0x5c9ae3(0x225)),ingame=document[a0_0x5c9ae3(0x1ed)]('in-game'),input=document[a0_0x5c9ae3(0x1ed)]('inputText'),romList=document['getElementById'](a0_0x5c9ae3(0x21b)),romInput=document[a0_0x5c9ae3(0x1ed)]('fileInput'),setAdjustment=document['getElementById'](a0_0x5c9ae3(0x24a)),savedStateAdj=localStorage[a0_0x5c9ae3(0x22e)]('stateAdj'),rewind=document['getElementById']('rewind'),ids=[a0_0x5c9ae3(0x245),a0_0x5c9ae3(0x214),'stateDiv01','stateDiv02','stateDiv03',a0_0x5c9ae3(0x25b),a0_0x5c9ae3(0x21e),a0_0x5c9ae3(0x216),'stateDiv07'],touchedID=[a0_0x5c9ae3(0x20d),a0_0x5c9ae3(0x23e),a0_0x5c9ae3(0x1ea),a0_0x5c9ae3(0x207),a0_0x5c9ae3(0x1e5),'rewind'];var dynamicZone=document['getElementById'](a0_0x5c9ae3(0x251)),nippleOptions={'zone':dynamicZone,'color':a0_0x5c9ae3(0x204),'size':0x78},dynamic=nipplejs[a0_0x5c9ae3(0x21c)](nippleOptions);function positionAdjustment(_0x18cf6c){const _0x5c1a88=a0_0x5c9ae3,_0x54f582=[{'paddingTop':_0x5c1a88(0x24b),'rectOpacity':[0x1,0x1,0x1],'GOpacity':[0x0,0x0,0x0,0x1]},{'paddingTop':'60px','rectOpacity':[0.4,0x1,0x1],'GOpacity':[0x0,0x0,0x1,0x0]},{'paddingTop':_0x5c1a88(0x1dc),'rectOpacity':[0.4,0.4,0x1],'GOpacity':[0x0,0x1,0x0,0x0]},{'paddingTop':_0x5c1a88(0x1fd),'rectOpacity':[0.4,0.4,0.4],'GOpacity':[0x1,0x0,0x0,0x0]}];if(_0x18cf6c>=0x1&&_0x18cf6c<=0x4){const _0x1e3d96=_0x54f582[_0x18cf6c-0x1];document[_0x5c1a88(0x209)](_0x5c1a88(0x23a))['forEach'](function(_0x2cd884,_0x5cf9e8){const _0x8daeb1=_0x5c1a88;_0x2cd884[_0x8daeb1(0x1f7)][_0x8daeb1(0x1e8)](_0x8daeb1(0x221),_0x1e3d96[_0x8daeb1(0x248)]);}),document[_0x5c1a88(0x1ed)](_0x5c1a88(0x256))[_0x5c1a88(0x1f7)]['setProperty'](_0x5c1a88(0x24d),_0x1e3d96['rectOpacity'][0x0]),document[_0x5c1a88(0x1ed)]('rect2')[_0x5c1a88(0x1f7)][_0x5c1a88(0x1e8)]('opacity',_0x1e3d96['rectOpacity'][0x1]),document[_0x5c1a88(0x1ed)]('rect3')[_0x5c1a88(0x1f7)][_0x5c1a88(0x1e8)](_0x5c1a88(0x24d),_0x1e3d96[_0x5c1a88(0x21d)][0x2]);for(let _0x1b8b2f=0x0;_0x1b8b2f<0x4;_0x1b8b2f++){document['getElementById']('G'+_0x1b8b2f)[_0x5c1a88(0x1f7)]['setProperty'](_0x5c1a88(0x24d),_0x1e3d96[_0x5c1a88(0x1e9)][_0x1b8b2f]);}}}ingame[a0_0x5c9ae3(0x233)]=_0x44161b=>{const _0x201d5e=a0_0x5c9ae3;_0x44161b[_0x201d5e(0x227)]();},setAdjustment['addEventListener'](a0_0x5c9ae3(0x1fb),function(){const _0x4bedff=a0_0x5c9ae3;stateAdj=stateAdj%0x4+0x1,positionAdjustment(stateAdj),localStorage['setItem'](_0x4bedff(0x249),stateAdj);}),ids[a0_0x5c9ae3(0x241)](function(_0x9b41ff){const _0x1f565c=a0_0x5c9ae3;var _0x5584d2=document['getElementById'](_0x9b41ff);_0x5584d2&&_0x5584d2[_0x1f565c(0x24f)]('ontouchstart',_0x1f565c(0x215));}),touchedID[a0_0x5c9ae3(0x241)](function(_0x32cabb){const _0x48fbab=a0_0x5c9ae3,_0x50a675=document[_0x48fbab(0x1ed)](_0x32cabb);if(_0x50a675){if(_0x32cabb===_0x48fbab(0x20d)||_0x32cabb===_0x48fbab(0x23e))_0x50a675[_0x48fbab(0x219)](_0x48fbab(0x1fa),function(){const _0x439499=_0x48fbab;_0x50a675['classList'][_0x439499(0x1f9)](_0x439499(0x247));}),_0x50a675[_0x48fbab(0x219)]('touchend',function(){const _0xd6eae1=_0x48fbab;_0x50a675['classList']['remove'](_0xd6eae1(0x247));});else _0x32cabb===_0x48fbab(0x22f)?(_0x50a675['addEventListener'](_0x48fbab(0x1fa),function(){const _0x233e60=_0x48fbab;_0x50a675[_0x233e60(0x23b)][_0x233e60(0x1f9)]('touched-2');}),_0x50a675[_0x48fbab(0x219)](_0x48fbab(0x208),function(){const _0x4acd4a=_0x48fbab;_0x50a675[_0x4acd4a(0x23b)][_0x4acd4a(0x252)](_0x4acd4a(0x259));})):(_0x50a675[_0x48fbab(0x219)](_0x48fbab(0x1fa),function(){const _0xe3c1f5=_0x48fbab;_0x50a675[_0xe3c1f5(0x23b)][_0xe3c1f5(0x1f9)](_0xe3c1f5(0x1e3));}),_0x50a675['addEventListener'](_0x48fbab(0x208),function(){const _0x4e0538=_0x48fbab;_0x50a675[_0x4e0538(0x23b)]['remove'](_0x4e0538(0x1e3));}));}}),interact(a0_0x5c9ae3(0x244))['resizable']({'edges':{'top':!![],'left':!![],'right':!![],'bottom':!![]},'modifiers':[interact[a0_0x5c9ae3(0x235)][a0_0x5c9ae3(0x1df)]({'outer':'parent'}),interact[a0_0x5c9ae3(0x235)][a0_0x5c9ae3(0x222)]({'min':{'width':0x32,'height':0x14}})],'listeners':{'move'(_0x2c7050){const _0x32ff46=a0_0x5c9ae3,_0x439e4c=_0x2c7050[_0x32ff46(0x1ef)],_0x15000c=(parseFloat(_0x439e4c[_0x32ff46(0x1ec)]('data-x'))||0x0)+_0x2c7050['deltaRect']['left'],_0x1fcc3c=(parseFloat(_0x439e4c[_0x32ff46(0x1ec)]('data-y'))||0x0)+_0x2c7050[_0x32ff46(0x228)]['top'];_0x439e4c[_0x32ff46(0x1f7)]['width']=_0x2c7050[_0x32ff46(0x213)]['width']+'px',_0x439e4c[_0x32ff46(0x1f7)]['height']=_0x2c7050[_0x32ff46(0x213)]['height']+'px',_0x439e4c[_0x32ff46(0x1f7)][_0x32ff46(0x257)]=_0x32ff46(0x212)+_0x15000c+_0x32ff46(0x22a)+_0x1fcc3c+'px)',_0x439e4c[_0x32ff46(0x24f)](_0x32ff46(0x211),_0x15000c),_0x439e4c['setAttribute'](_0x32ff46(0x236),_0x1fcc3c),localStorage[_0x32ff46(0x239)](gameName+'_setArea',_0x15000c[_0x32ff46(0x24c)](0x0)+','+_0x1fcc3c[_0x32ff46(0x24c)](0x0)+','+_0x2c7050[_0x32ff46(0x213)][_0x32ff46(0x20a)][_0x32ff46(0x24c)](0x0)+','+_0x2c7050[_0x32ff46(0x213)][_0x32ff46(0x203)][_0x32ff46(0x24c)](0x0)),console[_0x32ff46(0x20e)](localStorage[_0x32ff46(0x22e)](gameName+_0x32ff46(0x218)));}}});function restoreArea(){const _0x11a06f=a0_0x5c9ae3,_0x58a64d=localStorage[_0x11a06f(0x22e)](gameName+_0x11a06f(0x218))||localStorage[_0x11a06f(0x22e)](_0x11a06f(0x1fe));if(_0x58a64d){const [_0x513195,_0x2e7f0a,_0x230966,_0x154610]=_0x58a64d['split'](',')[_0x11a06f(0x22d)](Number),_0x2e49bd=document[_0x11a06f(0x1ed)](_0x11a06f(0x242));_0x2e49bd[_0x11a06f(0x1f7)]['width']=_0x230966+'px',_0x2e49bd[_0x11a06f(0x1f7)][_0x11a06f(0x203)]=_0x154610+'px',_0x2e49bd[_0x11a06f(0x1f7)][_0x11a06f(0x257)]=_0x11a06f(0x212)+_0x513195+_0x11a06f(0x22a)+_0x2e7f0a+_0x11a06f(0x250),_0x2e49bd[_0x11a06f(0x24f)](_0x11a06f(0x211),_0x513195),_0x2e49bd['setAttribute']('data-y',_0x2e7f0a);}}async function delay(_0x316e3b){return new Promise(_0x3fa4ef=>setTimeout(_0x3fa4ef,_0x316e3b));}async function led(_0x4e6919){const _0x20186a=a0_0x5c9ae3;try{const _0x512b30=[{'id':'led00','color':_0x20186a(0x217)},{'id':_0x20186a(0x255),'color':_0x20186a(0x217)},{'id':_0x20186a(0x1f3),'color':_0x20186a(0x217)},{'id':_0x20186a(0x25a),'color':_0x20186a(0x217)},{'id':_0x20186a(0x22b),'color':_0x20186a(0x217)},{'id':_0x20186a(0x1fc),'color':_0x20186a(0x217)},{'id':_0x20186a(0x1f0),'color':_0x20186a(0x217)},{'id':_0x20186a(0x231),'color':_0x20186a(0x217)}];if(_0x4e6919>=0x0&&_0x4e6919<_0x512b30[_0x20186a(0x1db)]){const _0x215c89=_0x20186a(0x1e6);_0x512b30['forEach']((_0xb4acdd,_0x3ac9d4)=>{const _0x1580ee=_0x20186a;document[_0x1580ee(0x1ed)](_0xb4acdd['id'])[_0x1580ee(0x1f7)][_0x1580ee(0x24e)]=_0x3ac9d4===_0x4e6919?_0x215c89:_0xb4acdd[_0x1580ee(0x1e2)];});}}catch(_0x473ad0){console[_0x20186a(0x1f2)]('Error\x20Led:',_0x473ad0);}}function formatDateTime(_0xca93a4){const _0x184559=a0_0x5c9ae3,_0x489337=new Date(_0xca93a4),_0x125c02=String(_0x489337['getHours']())[_0x184559(0x205)](0x2,'0'),_0x20739c=String(_0x489337[_0x184559(0x206)]())[_0x184559(0x205)](0x2,'0'),_0x34e4ee=_0x489337[_0x184559(0x1f6)](),_0x60b59c=_0x489337[_0x184559(0x22c)]()+0x1;return _0x125c02+':'+_0x20739c+'\x20'+_0x34e4ee+'.'+_0x60b59c;}async function fileToBase64(_0x598501){const _0x5cd3e4=new Blob([_0x598501],{'type':'image/png'}),_0x4f6276=await new Promise((_0xa37eb3,_0x31a9c0)=>{const _0x1448e6=a0_0x3644,_0x550181=new FileReader();_0x550181[_0x1448e6(0x246)]=()=>{const _0x3e5760=_0x1448e6;_0xa37eb3(_0x550181[_0x3e5760(0x238)]);},_0x550181[_0x1448e6(0x1e0)]=_0x31a9c0,_0x550181[_0x1448e6(0x253)](_0x5cd3e4);});return _0x4f6276;}async function lockNoti(_0x4a673d,_0x5ce7de,_0x3d0e5b){const _0x4c0f5f=a0_0x5c9ae3,_0x3baedf=document['getElementById'](_0x4c0f5f(0x232)),_0x2f669f=document['getElementById'](_0x4c0f5f(0x1ff)),_0x12982a=document[_0x4c0f5f(0x1ed)](_0x4c0f5f(0x20f));lockNotiTime&&clearTimeout(lockNotiTime),_0x2f669f[_0x4c0f5f(0x1de)]=_0x4a673d,_0x12982a[_0x4c0f5f(0x1de)]=_0x5ce7de,_0x3baedf[_0x4c0f5f(0x23b)][_0x4c0f5f(0x252)]('visible'),lockNotiTime=setTimeout(()=>{const _0x111c6d=_0x4c0f5f;_0x3baedf[_0x111c6d(0x23b)]['add']('visible');},_0x3d0e5b);}function a0_0x3644(_0x584f92,_0x2151ed){const _0x342485=a0_0x3424();return a0_0x3644=function(_0x3644ed,_0x38ebce){_0x3644ed=_0x3644ed-0x1db;let _0xb2b3f6=_0x342485[_0x3644ed];return _0xb2b3f6;},a0_0x3644(_0x584f92,_0x2151ed);}function logMessage(_0x7df22,_0x2309ca){const _0x53c0db=a0_0x5c9ae3;if(errorLogElements[_0x53c0db(0x1db)]>0x0){const _0x71070f=errorLogElements[0x0],_0x1c21a1=document[_0x53c0db(0x237)](_0x53c0db(0x21a));_0x1c21a1['innerText']='['+_0x7df22+']\x20'+_0x2309ca+_0x53c0db(0x1f5),_0x71070f[_0x53c0db(0x1f8)](_0x1c21a1),_0x71070f[_0x53c0db(0x25c)]=_0x71070f[_0x53c0db(0x23d)],setTimeout(()=>{const _0x236d04=_0x53c0db;_0x1c21a1&&_0x1c21a1['parentNode']&&_0x1c21a1[_0x236d04(0x1eb)]['removeChild'](_0x1c21a1);},0xea60);}}window[a0_0x5c9ae3(0x1e0)]=function(_0x47ec71,_0x14635a,_0x20d6d2){const _0x2d0669=a0_0x5c9ae3,_0x263f51=_0x14635a?_0x14635a[_0x2d0669(0x254)]('/')[_0x2d0669(0x229)]():_0x2d0669(0x1e1),_0x2958c7=_0x47ec71[_0x2d0669(0x243)](/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i,''),_0x2391ce='[Err]\x20['+_0x20d6d2+_0x2d0669(0x1ee)+_0x263f51+_0x2d0669(0x224)+_0x2958c7+'.';return logMessage(_0x2d0669(0x1f4),_0x2391ce),![];};const originalConsoleError=console['error'];console[a0_0x5c9ae3(0x1f2)]=function(..._0x4de168){originalConsoleError['apply'](console,_0x4de168),logMessage('Err',_0x4de168['join']('\x20'));};const originalConsoleWarn=console[a0_0x5c9ae3(0x200)];console[a0_0x5c9ae3(0x200)]=function(..._0x3613b7){const _0x386271=a0_0x5c9ae3;originalConsoleWarn[_0x386271(0x220)](console,_0x3613b7),logMessage('Warn',_0x3613b7['join']('\x20'));},document[a0_0x5c9ae3(0x219)](a0_0x5c9ae3(0x1dd),function(){const _0x5289b4=a0_0x5c9ae3;savedStateAdj!==null&&(stateAdj=parseInt(savedStateAdj),positionAdjustment(stateAdj)),[_0x5289b4(0x208)][_0x5289b4(0x241)](_0x3929f4=>{const _0x159073=_0x5289b4;romInput[_0x159073(0x219)](_0x159073(0x20b),()=>{const _0x5157fc=_0x159073;fileInput[_0x5157fc(0x201)][_0x5157fc(0x1db)]>0x0&&(gameName=fileInput[_0x5157fc(0x201)][0x0][_0x5157fc(0x226)],console[_0x5157fc(0x20e)](gameName),localStorage[_0x5157fc(0x239)](_0x5157fc(0x1f1),gameName));}),romList[_0x159073(0x219)](_0x3929f4,_0x462f02=>{const _0x3a8521=_0x159073,_0x28cea2=_0x462f02[_0x3a8521(0x1ef)];_0x28cea2[_0x3a8521(0x23b)]['contains']('game-item')&&(gameName=_0x28cea2[_0x3a8521(0x1de)],console[_0x3a8521(0x20e)](gameName),localStorage[_0x3a8521(0x239)](_0x3a8521(0x1f1),gameName));});});});
+/* --------------- Declaration --------------- */
+appVer.textContent = gameVer
+let gameName;
+var messageTimeout;
+let stateAdj = 1;
+var lockNotiTime;
+let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
+const errorLogElements = document.getElementsByClassName('errorLog');
+const ingame = document.getElementById("in-game");
+const input = document.getElementById("inputText");
+const romList = document.getElementById("rom-list");
+const romInput = document.getElementById("fileInput");
+const setAdjustment = document.getElementById("setAdjustment");
+const savedStateAdj = localStorage.getItem("stateAdj");
+const rewind = document.getElementById("rewind")
+const ids = ['inputText', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07', ];
+const touchedID = ['saveStateButton', 'loadStateButton', 'openLocalStorage', 'upLoadFile', 'backToHome', 'rewind'];
+/* --------------- Function ------------------ */
+// Joy Stick
+var dynamicZone = document.getElementById("dynamic");
+var nippleOptions = {
+    zone: dynamicZone,
+    color: "#2F2F2F",
+    size: 120
+};
+var dynamic = nipplejs.create(nippleOptions);
+// Position Adjustment
+function positionAdjustment(stateAdj) {
+    const states = [{
+            paddingTop: "0px",
+            rectOpacity: [1, 1, 1],
+            GOpacity: [0, 0, 0, 1]
+        },
+        {
+            paddingTop: "60px",
+            rectOpacity: [0.4, 1, 1],
+            GOpacity: [0, 0, 1, 0]
+        },
+        {
+            paddingTop: "120px",
+            rectOpacity: [0.4, 0.4, 1],
+            GOpacity: [0, 1, 0, 0]
+        },
+        {
+            paddingTop: "180px",
+            rectOpacity: [0.4, 0.4, 0.4],
+            GOpacity: [1, 0, 0, 0]
+        }
+    ];
+    if (stateAdj >= 1 && stateAdj <= 4) {
+        const state = states[stateAdj - 1];
+        document.querySelectorAll(".target-boxes").forEach(function(element, index) {
+            element.style.setProperty("padding-top", state.paddingTop);
+        });
+        document.getElementById("rect1").style.setProperty("opacity", state.rectOpacity[0]);
+        document.getElementById("rect2").style.setProperty("opacity", state.rectOpacity[1]);
+        document.getElementById("rect3").style.setProperty("opacity", state.rectOpacity[2]);
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`G${i}`).style.setProperty("opacity", state.GOpacity[i]);
+        }
+    }
+}
+// Disable Touched
+ingame.ontouchstart = (e) => {
+    e.preventDefault();
+}
+// Button Change Adjustment
+setAdjustment.addEventListener("click", function() {
+    stateAdj = (stateAdj % 4) + 1;
+    positionAdjustment(stateAdj);
+    localStorage.setItem("stateAdj", stateAdj);
+})
+// Enable Some Button stopPropagation
+ids.forEach(function(id) {
+    var element = document.getElementById(id);
+    if (element) {
+        element.setAttribute("ontouchstart", "event.stopPropagation()");
+    }
+})
+// Hover Style Enable
+touchedID.forEach(function(id) {
+    const button = document.getElementById(id);
+    if (button) {
+        if (id === 'saveStateButton' || id === 'loadStateButton') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-1");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-1");
+            });
+        } else if (id === 'rewind') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-2");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-2");
+            });
+        } else {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched");
+            });
+        }
+    }
+});
+// Resize Area Translate
+interact('#resizable-draggable')
+    .resizable({
+        edges: {
+            top: true,
+            left: true,
+            right: true,
+            bottom: true
+        },
+        modifiers: [
+            interact.modifiers.restrictEdges({
+                outer: 'parent'
+            }),
+            interact.modifiers.restrictSize({
+                min: {
+                    width: 50,
+                    height: 20
+                }
+            })
+        ],
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.deltaRect.left;
+                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
+                target.style.width = event.rect.width + 'px';
+                target.style.height = event.rect.height + 'px';
+                target.style.transform = `translate(${x}px, ${y}px)`;
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+                localStorage.setItem(`${gameName}_setArea`, `${x.toFixed(0)},${y.toFixed(0)},${event.rect.width.toFixed(0)},${event.rect.height.toFixed(0)}`);
+                console.log(localStorage.getItem(`${gameName}_setArea`));
+            }
+        }
+    });
+// Restore Area Translate
+function restoreArea() {
+    const savedState = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize")
+    if (savedState) {
+        const [x, y, width, height] = savedState.split(',').map(Number);
+        const target = document.getElementById('resizable-draggable');
+        target.style.width = width + 'px';
+        target.style.height = height + 'px';
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
+}
+// Delay Time
+async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+// Led
+async function led(slotStateNumbers) {
+    try {
+        const ledInfo = [
+            { id: "led00", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led01", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led02", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led03", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led04", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led05", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led06", color: "rgba(245, 232, 209, 0.4)" },
+            { id: "led07", color: "rgba(245, 232, 209, 0.4)" }
+        ];
+
+        if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {
+            const activeColor = "#20A5A6";
+            ledInfo.forEach((led, index) => {
+                document.getElementById(led.id).style.fill = (index === slotStateNumbers) ? activeColor : led.color;
+            });
+        }
+    } catch (error) {
+        console.error("Error Led:", error);
+    }
+}
+// Format Date Time
+function formatDateTime(milliseconds) {
+    const date = new Date(milliseconds);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    return `${hours}:${minutes} ${day}.${month}`;
+}
+// File to 64base 
+async function fileToBase64(data) {
+    const blob = new Blob([data], { type: 'image/png' });
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+    return base64;
+}
+// Lock Notification
+ async function lockNoti(title, detail, second) {
+    const lockNoti = document.getElementById("lockNoti");
+    const notiTitle = document.getElementById("notiTitle");
+    const notiDetail = document.getElementById("notiDetail");
+    if (lockNotiTime) {
+        clearTimeout(lockNotiTime);
+    }
+    notiTitle.textContent = title;
+    notiDetail.textContent = detail;
+    lockNoti.classList.remove("visible");
+    lockNotiTime = setTimeout(() => {
+        lockNoti.classList.add("visible");
+    }, second);
+}
+// log Message
+function logMessage(type, message) {
+    if (errorLogElements.length > 0) {
+        const errorLogElement = errorLogElements[0];
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `[${type}] ${message}\n---\n`;
+        errorLogElement.appendChild(messageElement);
+        errorLogElement.scrollTop = errorLogElement.scrollHeight;
+        setTimeout(() => {
+            if (messageElement && messageElement.parentNode) {
+                messageElement.parentNode.removeChild(messageElement);
+            }
+        }, 60000);
+    }
+}
+window.onerror = function (message, source, lineno) {
+    const fileName = source ? source.split('/').pop() : 'unknown source';
+    const cleanMessage = message.replace(/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i, '');
+    const errorMessage = `[Err] [${lineno}] ../${fileName} | ${cleanMessage}.`;
+    logMessage("Error", errorMessage);
+    return false;
+};
+const originalConsoleError = console.error;
+console.error = function (...args) {
+    originalConsoleError.apply(console, args);
+    logMessage("Err", args.join(" "));
+};
+const originalConsoleWarn = console.warn;
+console.warn = function (...args) {
+    originalConsoleWarn.apply(console, args);
+    logMessage("Warn", args.join(" "));
+};
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    if (savedStateAdj !== null) {
+        stateAdj = parseInt(savedStateAdj);
+        positionAdjustment(stateAdj);
+    }
+    ["touchend"].forEach(eventType => {
+        romInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                gameName = fileInput.files[0].name;
+                console.log(gameName);
+                localStorage.setItem("lastGameName",gameName)
+            }
+        })
+        romList.addEventListener(eventType, (event) => {
+            const clickedElement = event.target;
+            if (clickedElement.classList.contains("game-item")) {
+            gameName = clickedElement.textContent;
+            console.log(gameName);
+            localStorage.setItem("lastGameName",gameName)
+        }
+        })
+    });
+})
