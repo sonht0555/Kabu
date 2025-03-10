@@ -6,7 +6,10 @@ Js_DIR="./docs/src"
 
 # Obfuscate JavaScript and Minify CSS
 mkdir -p $Js_DIR/js $Js_DIR/css
-cp $SRC_DIR/js/*.js $Js_DIR/js/
+for file in $SRC_DIR/js/*.js; do
+  filename=$(basename $file)
+  javascript-obfuscator "$file" --output "$Js_DIR/js/$filename"
+done
 
 for file in $SRC_DIR/css/*.css; do
   filename=$(basename $file)

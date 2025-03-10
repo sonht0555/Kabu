@@ -252,16 +252,16 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             let totalFilesUploaded = 0;
             for (const directory of directories) {
-                const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
+                const fileList = Main.listFiles(`${directory}s`); // Gọi hàm mới
                 totalFilesUploaded += fileList.length;
             }
             if (window.confirm(`Do you want to backup ${totalFilesUploaded} files in Kabu?`)) {
                 for (const directory of directories) {
-                    const fileList = Main[`list${directory.charAt(0).toUpperCase() + directory.slice(1)}`]();
+                    const fileList = Main.listFiles(`${directory}s`); // Gọi hàm mới
                     for (const fileName of fileList) {
                         const fileData = await Main.downloadFileInCloud(`/data/${directory}s/${fileName}`);
                         try {
-                            await lockNoti("Backing up...", fileName, 3000)
+                            await lockNoti("Backing up...", fileName, 3000);
                             await dpUploadFile(fileName, fileData, directory);
                         } catch (error) {
                             console.error(`Failed to upload file ${fileName}:`, error);
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log("Restore canceled by user.");
             }
         }
-    });
+    });    
     dropboxCloud.addEventListener("click", function() {
         const uId = localStorage.getItem("uId");
         if (uId === null || uId === "") {
