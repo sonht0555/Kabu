@@ -10,3 +10,4 @@ PORT = 9000
 httpd = HTTPServer(("0.0.0.0", PORT), COIHandler)
 print(f"🚀 Server đang chạy tại: http://localhost:{PORT}")
 httpd.serve_forever()
+#python3 server.py
