@@ -59,7 +59,7 @@ async function statusShow() {
     await Module.SDL2();
     await delay(800);
     await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
-    await notiMessage(gameVer, 1000);
+    await notiMessage(`W_©${currentVersion}`, 1000);
     await wrapContent();
 }
 // Auto Save Every 1m
