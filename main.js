@@ -15,6 +15,6 @@ Module.loadGame(`/data/games/Goodboy Galaxy.zip`);
 setTimeout(() => {
     console.log(Module);
     console.log(Object.keys(Module)); // Xem các thuộc tính
-    console.log(Module.renderer); 
-    console.log(Module);
+    console.log(Module._GBIORegisterNames);
+    console.log(Module._GBA_LUX_LEVELS);
 }, 3000);
