@@ -856,15 +856,15 @@ rect {
   animation-delay: 0.5s;
 }
 #path-2 {
-  animation-delay: 1s;
+  animation-delay: 1.25s;
 }
 #path-3 {
-  animation-delay: 1.5s;
+  animation-delay: 2s;
 }
 .firstLoading {
   opacity: 1;
   animation: firstLoading 0.5s ease-in-out forwards;
-  animation-delay: 2s;
+  animation-delay: 3s;
 }
 @keyframes fadeInPath {
   from {

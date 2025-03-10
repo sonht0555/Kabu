@@ -27,9 +27,9 @@
             });
             navigator.serviceWorker.addEventListener('message', function (event) {
             console.log('Received message from Service Worker:', event.data);
-            appVer.textContent = event.data.msg
-            if (event.data.msg === "Updated") {
-                setTimeout(() => { window.location.reload(); }, 500);
+            if (event.data.msg === "Updating") {
+                appVer.textContent = event.data.msg
+                setTimeout(() => { window.location.reload(); }, 1000);
                 }
             });
         }
@@ -371,7 +371,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V3.33';</script>
+    <script>let gameVer = 'V3.34';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
