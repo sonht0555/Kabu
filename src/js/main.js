@@ -378,9 +378,9 @@ export function Dslay() {
     canvas.height = 160;
 
     // Scale bằng CSS thay vì vẽ trực tiếp
-    //canvas.style.transform = "scale(1.5)";
-    //canvas.style.transformOrigin = "top left";
-    //canvas.style.imageRendering = "pixelated";
+    canvas.style.transform = "scale(1.5)";
+    canvas.style.transformOrigin = "top left";
+    canvas.style.imageRendering = "pixelated";
     
     function updateFrame() {
         const pixelData = Module.getPixelData();
