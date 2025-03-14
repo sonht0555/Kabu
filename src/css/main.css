@@ -271,8 +271,8 @@ label {
   background-repeat: no-repeat;
   background-position: center;
   background-color: #111111;
-  width: calc(100vw - 150px);
-  height: calc((100vw - 150px) * 2 / 3);
+  width: calc(100vw - 30px);
+  height: calc((100vw - 30px) * 2 / 3);
 }
 .canvas {
   border-radius: 0px 0px 0px 0px;
