@@ -368,46 +368,117 @@ export async function FSSync() {
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
-    const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240;
-    bufferCanvas.height = 160;
-    const bufferCtx = bufferCanvas.getContext("2d");
-
     const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = 240; // Giữ nguyên kích thước gốc
+    const gl = canvas.getContext("webgl");
+    canvas.width = 240;
     canvas.height = 160;
 
-    // Scale bằng CSS thay vì vẽ trực tiếp
-    canvas.style.transform = "scale(1.5)";
-    canvas.style.transformOrigin = "top left";
-    canvas.style.imageRendering = "pixelated";
+    // Set up WebGL viewport and other settings
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0, 0, 0, 1);  // Set background color to black
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // Vertex shader code
+    const vertexShaderSource = `
+        attribute vec2 a_position;
+        attribute vec2 a_texCoord;
+        varying vec2 v_texCoord;
+
+        void main() {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+            v_texCoord = a_texCoord;
+        }
+    `;
     
+    // Fragment shader code
+    const fragmentShaderSource = `
+        precision mediump float;
+        uniform sampler2D u_texture;
+        varying vec2 v_texCoord;
+
+        void main() {
+            vec4 color = texture2D(u_texture, v_texCoord);
+            gl_FragColor = color;
+        }
+    `;
+
+    // Compile shader program
+    function compileShader(source, type) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error("ERROR compiling shader:", gl.getShaderInfoLog(shader));
+        }
+        
+        return shader;
+    }
+
+    const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
+    const fragmentShader = compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
+
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+    
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        console.error("ERROR linking shader program:", gl.getProgramInfoLog(shaderProgram));
+    }
+
+    gl.useProgram(shaderProgram);
+
+    // Define geometry
+    const vertices = new Float32Array([
+        -1.0, -1.0,  0.0, 1.0, // Bottom-left corner
+        1.0, -1.0,  1.0, 1.0,  // Bottom-right corner
+        -1.0,  1.0,  0.0, 0.0, // Top-left corner
+        1.0,  1.0,  1.0, 0.0   // Top-right corner
+    ]);
+
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(shaderProgram, "a_position");
+    const texCoordLocation = gl.getAttribLocation(shaderProgram, "a_texCoord");
+
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 4 * 4, 0);
+    gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 4 * 4, 2 * 4);
+    gl.enableVertexAttribArray(positionLocation);
+    gl.enableVertexAttribArray(texCoordLocation);
+
+    // Create texture for the game pixel data
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
     function updateFrame() {
         const pixelData = Module.getPixelData();
-        const imageData = bufferCtx.createImageData(240, 160);
+        const imageData = new Uint8Array(pixelData.length * 4);
 
+        // Convert the pixel data to RGBA format
         for (let i = 0; i < pixelData.length; i++) {
             const color = pixelData[i];
-            const index = i * 4;
-            
-            imageData.data[index] = (color & 0xFF);          // Blue → Red
-            imageData.data[index + 1] = (color >> 8) & 0xFF; // Green (không đổi)
-            imageData.data[index + 2] = (color >> 16) & 0xFF;// Red → Blue
-            imageData.data[index + 3] = 255;                 // Alpha luôn là 255
+            imageData[i * 4] = (color & 0xFF);          // Blue
+            imageData[i * 4 + 1] = (color >> 8) & 0xFF; // Green
+            imageData[i * 4 + 2] = (color >> 16) & 0xFF; // Red
+            imageData[i * 4 + 3] = 255;                 // Alpha
         }
-        bufferCtx.putImageData(imageData, 0, 0);
-        
-        // Tắt làm mịn pixel
-        ctx.imageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
-        ctx.oImageSmoothingEnabled = false;
-        
-        ctx.drawImage(bufferCanvas, 0, 0, 240, 160); // Giữ nguyên size khi vẽ
+
+        // Update texture with new data
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 240, 160, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         requestAnimationFrame(updateFrame);
     }
-    requestAnimationFrame(updateFrame);
-};
+
+    updateFrame();
+}
