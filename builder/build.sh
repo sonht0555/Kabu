@@ -70,7 +70,7 @@ cp ./src/core/* $Docs_DIR/src/backup/
 mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 git add . && git commit -m "--- Build $Vers ---" && git push origin main
-clear
+#clear
 echo "╔═════════════════════╗"
 echo "║ --- Build $Vers --- ║"
 echo "╚═════════════════════╝"

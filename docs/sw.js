@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 let revision = 'V3.44';
+=======
+let revision = 'V3.40';
+>>>>>>> parent of ac7e6c3 (--- Build V3.41 ---)
 var urlsToCache = [
     '/',
     './src/css/main.css',
