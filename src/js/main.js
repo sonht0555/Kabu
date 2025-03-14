@@ -133,6 +133,7 @@ export async function loadGame(romName) {
         }, 4000);
     }
     // show status ingame
+    Module.displaySet(false);
     Dslay();
     await statusShow();
 }
