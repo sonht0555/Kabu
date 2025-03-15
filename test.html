@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Image Example</title>
+</head>
+<body>
+
+    <h1>Hiển Thị Hình Ảnh Với Canvas Mà Không Bị Nội Suy</h1>
+    
+    <canvas id="myCanvas" width="320" height="213.33"></canvas> <!-- Kích thước phóng to của Canvas -->
+
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        var img = new Image();
+
+        img.onload = function() {
+            // Tắt tính năng nội suy (image smoothing) để giữ nguyên pixel
+            ctx.imageSmoothingEnabled = false;
+            // Phóng to hình ảnh từ 240x160 lên 320x213.33 mà không bị biến dạng
+            ctx.drawImage(img, 0, 0, 240, 160, 0, 0, 320, 213.33);
+        }
+        img.src = '7nkHri28.png'; // Đảm bảo đường dẫn đúng tới hình ảnh
+    </script>
+
+</body>
+</html>
