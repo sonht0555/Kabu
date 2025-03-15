@@ -10,7 +10,6 @@ function initializeCore(coreInitFunction, module) {
 initializeCore(mGBA_v2, Module);
 setTimeout(() => {
     Module.loadGame(`/data/games/Goodboy Galaxy.zip`);
-    Module.displaySet(false);
 }, 1000);
 
 setTimeout(() => {
