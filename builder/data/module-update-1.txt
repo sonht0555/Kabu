@@ -1,0 +1,9 @@
+        dir = "/data/states/";
+      } else if (extension.startsWith("png")) {
+        dir = "/data/screenshots/";
+        } else if (extension.startsWith("cheats")) {
+        dir = "/data/cheats/";
+      } else if (["gba", "gbc", "gb", "zip", "7z"].includes(extension)) {
+        dir = "/data/games/";
+      } else if (["ips", "ups", "bps"].includes(extension)) {
+        dir = "/data/patches/";
