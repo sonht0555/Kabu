@@ -325,7 +325,7 @@ label {
 }
 .Gt-1::before {
   background-size: 1.5px !important;
-  background: url("data:image/svg+xml,%3Csvg width='17' height='17' viewBox='0 0 17 17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 17V1H17' stroke='black'/%3E%3C/svg%3E%0A");
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.9375 0.0625H0.0625V0.9375H0.9375V0.0625ZM0 0V1H1V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-2::before {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 0H0.5V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 1H0.5V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
