@@ -43,7 +43,7 @@
         <div class="gap-15 emu-display">
             <div class="load-state" id="loadStateButton"></div>
             <div class="flex-1 bc dpad-l display-none" id="L"></div>
-            <div class="flex-1 column sha Sega" id="img-shader">
+            <div class="flex-1 column">
                 <div class="notification-container bc">
                     <svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
@@ -60,10 +60,10 @@
                     <span class="timer" id="timer"></span>
                 </div>
                 <div class="flex-1 cw">
-                    <div class="canvas-container cw hw">
+                    <div class="canvas-container cw hw sha">
                         <canvas width="240" height="160" class="canvas display-none" id="canvas-1"></canvas>
                         <canvas width="240" height="160" class="canvas" id="canvas" style="position: absolute; left:0;"></canvas>
-                        <div width="240" height="160" class="Gt-33" style="position: absolute; left:0; transform: scale(1.5); transform-origin: left top; width: 240px; height: 160px;"></div>
+                        <div width="240" height="160" class="Sega sha" id="img-shader" style="position: absolute; left:0; transform: scale(1.5); transform-origin: left top; width: 240px; height: 160px;"></div>
                     </div>
                     <div class="column message-container" id="">
                         <div class="flex-1" id="areaSet"></div>
@@ -373,7 +373,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V3.50';</script>
+    <script>let gameVer = 'V3.51';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
