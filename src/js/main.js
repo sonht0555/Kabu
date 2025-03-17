@@ -401,17 +401,36 @@ export function Dslay() {
     `;
 
     const fragmentShaderSource = `
-        precision mediump float;
-        varying vec2 v_texcoord;
-        uniform sampler2D texture;
-        uniform float gamma;
-        void main() {
-            vec4 color = texture2D(texture, v_texcoord);
-            color.rgb = pow(color.rgb, vec3(gamma));
-            gl_FragColor = color;
-        }
-    `;
+    precision mediump float;
+    varying vec2 v_texcoord;
+    uniform sampler2D texture;
+    uniform float input_gamma;
+    uniform float color_correction_strength;
+    uniform vec3 red_color;
+    uniform vec3 green_color;
+    uniform vec3 blue_color;
 
+    void main() {
+        vec4 orig_color = texture2D(texture, v_texcoord);
+        
+        // Chỉnh gamma đầu vào
+        vec3 color = pow(orig_color.rgb, vec3(input_gamma));
+        
+        // Điều chỉnh màu dựa trên ma trận màu
+        color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
+        
+        // Chỉnh gamma đầu ra
+        color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+        
+        // Giới hạn giá trị trong khoảng 0 - 1
+        color = clamp(color, 0., 1.);
+
+        // Kết hợp với màu gốc
+        orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
+
+        gl_FragColor = orig_color;
+    }
+`;
     function createShader(gl, type, source) {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
@@ -435,9 +454,20 @@ export function Dslay() {
         console.error(gl.getProgramInfoLog(program));
         return;
     }
-    const gammaLocation = gl.getUniformLocation(program, "gamma");
     gl.useProgram(program);
-    gl.uniform1f(gammaLocation, 1.6);  // Gamma correction mặc định
+    const inputGammaLocation = gl.getUniformLocation(program, "input_gamma");
+    const colorCorrectionStrengthLocation = gl.getUniformLocation(program, "color_correction_strength");
+    const redColorLocation = gl.getUniformLocation(program, "red_color");
+    const greenColorLocation = gl.getUniformLocation(program, "green_color");
+    const blueColorLocation = gl.getUniformLocation(program, "blue_color");
+
+
+    gl.uniform1f(inputGammaLocation, 3.7);
+    gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
+    gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
+    gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
+    gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
+
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
