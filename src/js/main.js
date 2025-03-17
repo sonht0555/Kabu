@@ -404,8 +404,11 @@ export function Dslay() {
         precision mediump float;
         varying vec2 v_texcoord;
         uniform sampler2D texture;
+        uniform float gamma;
         void main() {
-            gl_FragColor = texture2D(texture, v_texcoord);
+            vec4 color = texture2D(texture, v_texcoord);
+            color.rgb = pow(color.rgb, vec3(gamma));
+            gl_FragColor = color;
         }
     `;
 
@@ -432,7 +435,9 @@ export function Dslay() {
         console.error(gl.getProgramInfoLog(program));
         return;
     }
+    const gammaLocation = gl.getUniformLocation(program, "gamma");
     gl.useProgram(program);
+    gl.uniform1f(gammaLocation, 1.6);  // Gamma correction mặc định
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);

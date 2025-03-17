@@ -1,29 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas Image Example</title>
+    <title>Hiệu ứng ảnh</title>
 </head>
 <body>
-
-    <h1>Hiển Thị Hình Ảnh Với Canvas Mà Không Bị Nội Suy</h1>
-    
-    <canvas id="myCanvas" width="320" height="213.33"></canvas> <!-- Kích thước phóng to của Canvas -->
-
+    <input type="file" id="imageInput" accept="image/*">
+    <canvas id="canvas"></canvas>
     <script>
-        var canvas = document.getElementById("myCanvas");
-        var ctx = canvas.getContext("2d");
-        var img = new Image();
+        const imageInput = document.getElementById("imageInput");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
 
-        img.onload = function() {
-            // Tắt tính năng nội suy (image smoothing) để giữ nguyên pixel
-            ctx.imageSmoothingEnabled = false;
-            // Phóng to hình ảnh từ 240x160 lên 320x213.33 mà không bị biến dạng
-            ctx.drawImage(img, 0, 0, 240, 160, 0, 0, 320, 213.33);
+        imageInput.addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Tăng kích thước canvas gấp đôi chiều rộng để hiển thị cả ảnh gốc và đã chỉnh sửa
+                    canvas.width = img.width * 2;
+                    canvas.height = img.height;
+
+                    // Vẽ ảnh gốc bên trái
+                    ctx.drawImage(img, 0, 0);
+
+                    // Áp dụng hiệu ứng và vẽ ảnh đã chỉnh sửa bên phải
+                    applyEffects(img.width, img.height);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function applyEffects(width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Tăng độ ấm: tăng Red, giảm Blue nhẹ
+                data[i] = Math.min(255, data[i] * 0.8); // R
+                data[i + 2] = Math.max(0, data[i + 2] * 0.9); // B
+
+                // Tăng bão hòa
+                let [h, s, v] = rgbToHsv(data[i], data[i + 1], data[i + 2]);
+                s = Math.min(1, s * 1.3); // Tăng Saturation 30%
+                [data[i], data[i + 1], data[i + 2]] = hsvToRgb(h, s, v);
+
+                // Tăng tương phản
+                let contrastFactor = 1.2;
+                data[i] = adjustContrast(data[i], contrastFactor);
+                data[i + 1] = adjustContrast(data[i + 1], contrastFactor);
+                data[i + 2] = adjustContrast(data[i + 2], contrastFactor);
+            }
+
+            // Vẽ ảnh đã chỉnh sửa bên phải
+            ctx.putImageData(imageData, width, 0);
         }
-        img.src = '7nkHri28.png'; // Đảm bảo đường dẫn đúng tới hình ảnh
-    </script>
 
+        function adjustContrast(color, factor) {
+            return Math.min(255, Math.max(0, ((color - 128) * factor) + 128));
+        }
+
+        function rgbToHsv(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, v = max;
+            let d = max - min;
+            s = max == 0 ? 0 : d / max;
+            if (max == min) {
+                h = 0;
+            } else {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [h, s, v];
+        }
+
+        function hsvToRgb(h, s, v) {
+            let r, g, b;
+            let i = Math.floor(h * 6);
+            let f = h * 6 - i;
+            let p = v * (1 - s);
+            let q = v * (1 - f * s);
+            let t = v * (1 - (1 - f) * s);
+            switch (i % 6) {
+                case 0: r = v, g = t, b = p; break;
+                case 1: r = q, g = v, b = p; break;
+                case 2: r = p, g = v, b = t; break;
+                case 3: r = p, g = q, b = v; break;
+                case 4: r = t, g = p, b = v; break;
+                case 5: r = v, g = p, b = q; break;
+            }
+            return [r * 255, g * 255, b * 255];
+        }
+    </script>
 </body>
 </html>
