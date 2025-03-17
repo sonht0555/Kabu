@@ -368,8 +368,8 @@ export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*3;
-    bufferCanvas.height = 160*3;
+    bufferCanvas.width = 240;
+    bufferCanvas.height = 160;
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
@@ -378,9 +378,9 @@ export function Dslay() {
 
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = 240*3;
-    canvas.height = 160*3;
-    canvas.style.transform = "scale(0.5)";
+    canvas.width = 240;
+    canvas.height = 160;
+    canvas.style.transform = "scale(1.5)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "crisp-edges";
