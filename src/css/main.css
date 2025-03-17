@@ -324,8 +324,7 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0 0.5V0H0.5L0 0.5Z' fill='black'/%3E%3Cpath d='M0.5 1L1 0.5V1H0.5Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-1::before {
-  background-size: 1.5px !important;
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.9375 0.0625H0.0625V0.9375H0.9375V0.0625ZM0 0V1H1V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
+  background: url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 0H0V0.15H3V0Z' fill='black'/%3E%3Cpath d='M1.34961 1.34961H0.15V0.150391L0 0.15V1.49961H3V0.15L2.84961 0.150391V1.34961H1.65V0.150391H1.34961V1.34961Z' fill='black'/%3E%3Cpath d='M0 1.49961H3V1.65H0V1.49961Z' fill='black'/%3E%3Cpath d='M2.99961 2.84961L3 1.65L2.84961 1.65039V2.84961H1.65V1.65039H1.5H1.34961V2.84961H0.15V1.65039L0 1.65V2.99961H3L2.99961 2.84961Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-2::before {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0.5L0.5 1H0L0 0.5Z' fill='black'/%3E%3Cpath d='M1 0.5L0.5 0H1V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L0 0H0.5V0.5Z' fill='black'/%3E%3Cpath d='M0.5 0.5L1 1H0.5V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
