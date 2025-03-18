@@ -347,7 +347,7 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 1L0 0.5H0.5V1Z' fill='black'/%3E%3Cpath d='M0.5 0L1 0.5V0L0.5 0Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-9::before {
-  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1H0.75V0.5H1V1Z' fill='black'/%3E%3Cpath d='M0.5 1H0.25V0.5H0.5V1Z' fill='black'/%3E%3Cpath d='M0.75 0.5H0.5V0H0.75V0.5Z' fill='black'/%3E%3Cpath d='M0.25 0.5H0V0H0.25V0.5Z' fill='black'/%3E%3C/svg%3E%0A");
+  background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.958333 0.0416667H0.0416667V0.958333H0.958333V0.0416667ZM0 0V1H1V0H0Z' fill='black'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.958333 0.0416667H0.0416667V0.958333H0.958333V0.0416667ZM0 0V1H1V0H0Z' fill='black'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.958333 0.0416667H0.0416667V0.958333H0.958333V0.0416667ZM0 0V1H1V0H0Z' fill='black'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.958333 0.0416667H0.0416667V0.958333H0.958333V0.0416667ZM0 0V1H1V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-10::before {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.875 0.125H0.125V0.875H0.875V0.125ZM0 0V1H1V0H0Z' fill='black'/%3E%3C/svg%3E%0A");

@@ -427,6 +427,14 @@ export function Dslay() {
         // Giới hạn giá trị trong khoảng 0 - 1
         color = clamp(color, 0., 1.);
 
+        // Áp dụng hiệu ứng viền pixel (grid)
+        float border = step(0.9, mod(gl_FragCoord.x, 1.0)) + step(0.9, mod(gl_FragCoord.y, 1.0));
+if (border > 0.0) {
+    color = vec3(1.0, 0.0, 0.0); // Viền thành màu đỏ
+}
+
+
+
         // Kết hợp với màu gốc
         orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
 

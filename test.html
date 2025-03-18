@@ -1,47 +1,137 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scale Image</title>
+    <title>Pixel Grid WebGL</title>
     <style>
-        body {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #222;
-        }
-
-        .container {
-            text-align: center;
-            color: white;
-        }
-
-        .image-2x-down-15x {
-            width: 200%; /* Scale 2x */
-            transform: scale(0.75); /* Scale down 1.5x (1/1.5 = 0.75) */
-            transform-origin: top left;
-            image-rendering: pixelated;
-        }
-
-        .image-15x {
-            transform: scale(1.5);
-            transform-origin: top left;
-            image-rendering: pixelated;
-        }
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { border: 1px solid black; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>2x rồi scale xuống 1.5x</h2>
-        <img src="/7nkHri28.png" class="image-2x-down-15x">
-    </div>
 
-    <div class="container">
-        <h2>Scale trực tiếp 1.5x</h2>
-        <img src="/7nkHri28.png" class="image-15x">
-    </div>
+    <h2>Upload an Image</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <br><br>
+    <canvas id="glCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("glCanvas");
+        const gl = canvas.getContext("webgl");
+
+        if (!gl) {
+            alert("WebGL not supported");
+        }
+
+        // Vertex Shader
+        const vertexShaderSource = `
+            attribute vec2 position;
+            attribute vec2 texcoord;
+            varying vec2 v_texcoord;
+            void main() {
+                gl_Position = vec4(position, 0, 1);
+                v_texcoord = texcoord;
+            }
+        `;
+
+        // Fragment Shader với hiệu ứng viền pixel
+        const fragmentShaderSource = `
+            precision mediump float;
+            uniform sampler2D texture;
+            uniform vec2 resolution;
+            varying vec2 v_texcoord;
+            void main() {
+                vec2 pixelPos = gl_FragCoord.xy;
+                vec4 color = texture2D(texture, v_texcoord);
+                float border = mod(pixelPos.x, 2.0) == 0.0 || mod(pixelPos.y, 2.0) == 0.0 ? 0.3 : 0.0;
+                color.rgb *= 1.0 - border;
+                gl_FragColor = color;
+            }
+        `;
+
+        // Compile Shader
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error(gl.getShaderInfoLog(shader));
+                return null;
+            }
+            return shader;
+        }
+
+        // Khởi tạo WebGL Program
+        function createProgram(gl, vertexSource, fragmentSource) {
+            const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
+            const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.error(gl.getProgramInfoLog(program));
+                return null;
+            }
+            return program;
+        }
+
+        const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
+        gl.useProgram(program);
+
+        // Setup hình vuông full màn hình
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1,   1, -1,   -1, 1,
+             -1, 1,   1, -1,   1, 1
+        ]), gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, "position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Setup tọa độ texture
+        const texcoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            0, 1,   1, 1,   0, 0,
+            0, 0,   1, 1,   1, 0
+        ]), gl.STATIC_DRAW);
+
+        const texcoordLocation = gl.getAttribLocation(program, "texcoord");
+        gl.enableVertexAttribArray(texcoordLocation);
+        gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        // Load ảnh từ input file
+        document.getElementById("imageInput").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const img = new Image();
+                img.onload = function () {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    gl.viewport(0, 0, canvas.width, canvas.height);
+
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+
+                    // Render frame
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                };
+                img.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
+
 </body>
 </html>
