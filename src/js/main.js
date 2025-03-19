@@ -368,8 +368,8 @@ export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*3;
-    bufferCanvas.height = 160*3;
+    bufferCanvas.width = 240*6;
+    bufferCanvas.height = 160*6;
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
@@ -378,9 +378,9 @@ export function Dslay() {
 
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = 240*3;
-    canvas.height = 160*3;
-    canvas.style.transform = "scale(0.5)";
+    canvas.width = 240*6;
+    canvas.height = 160*6;
+    canvas.style.transform = "scale(0.25)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "crisp-edges";
@@ -403,7 +403,7 @@ export function Dslay() {
     `;
 
     const fragmentShaderSource = `
-    precision mediump float;
+    precision highp float;
     varying vec2 v_texcoord;
     uniform sampler2D texture;
     uniform float input_gamma;
@@ -411,6 +411,7 @@ export function Dslay() {
     uniform vec3 red_color;
     uniform vec3 green_color;
     uniform vec3 blue_color;
+    uniform float border_strength;
 
     void main() {
         vec4 orig_color = texture2D(texture, v_texcoord);
@@ -420,21 +421,24 @@ export function Dslay() {
         
         // Điều chỉnh màu dựa trên ma trận màu
         color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
-        
+
+        // ===== Hiệu ứng lưới pixel =====
+        vec2 pixelPos = gl_FragCoord.xy;
+        vec2 gridSize = vec2(240.0 * 6.0, 160.0 * 6.0); // Kích thước game mới (1440x960)
+        vec2 cellSize = gridSize / vec2(240.0, 160.0); // Kích thước mỗi ô lưới
+
+        vec2 grid = mod(pixelPos, cellSize); // Chia thành 240x160 ô
+
+        // Điều chỉnh viền: Đường viền sẽ xuất hiện tại cạnh của mỗi pixel game
+        float border = step(cellSize.x - 0.5, grid.x) + step(cellSize.y - 0.5, grid.y);
+        color.rgb *= 1.0 - border * border_strength; // Áp dụng hiệu ứng đường viền
+
         // Chỉnh gamma đầu ra
         color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
         
         // Giới hạn giá trị trong khoảng 0 - 1
         color = clamp(color, 0., 1.);
-
-        // Áp dụng hiệu ứng viền pixel (grid)
-        float border = step(0.9, mod(gl_FragCoord.x, 1.0)) + step(0.9, mod(gl_FragCoord.y, 1.0));
-if (border > 0.0) {
-    color = vec3(1.0, 0.0, 0.0); // Viền thành màu đỏ
-}
-
-
-
+  
         // Kết hợp với màu gốc
         orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
 
@@ -470,14 +474,14 @@ if (border > 0.0) {
     const redColorLocation = gl.getUniformLocation(program, "red_color");
     const greenColorLocation = gl.getUniformLocation(program, "green_color");
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
-
+    const borderStrengthLocation = gl.getUniformLocation(program, "border_strength");
 
     gl.uniform1f(inputGammaLocation, 3.7);
     gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
     gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
     gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
     gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
-
+    gl.uniform1f(borderStrengthLocation, 0.8); // Giảm sáng viền 50%
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);

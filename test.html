@@ -1,137 +1,216 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+      <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="apple-mobile-web-app-capable" content="none" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Grid WebGL</title>
-    <style>
-        body { text-align: center; font-family: Arial, sans-serif; }
-        canvas { border: 1px solid black; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Canvas Pattern 240x160</title>
+  <style>
+  </style>
 </head>
 <body>
+  <canvas width="" height="" id="canvas-1" ></canvas>
+  <canvas width="" height="" id="canvas-2"></canvas>
+  <canvas width="" height="" id="canvas" hidden=""></canvas>
+  <script type="module">
+import mGBA_v2 from "./mgba.js";
 
-    <h2>Upload an Image</h2>
-    <input type="file" id="imageInput" accept="image/*">
-    <br><br>
-    <canvas id="glCanvas"></canvas>
+const Module = { canvas: document.getElementById("canvas") };
+function initializeCore(coreInitFunction, module) {
+    coreInitFunction(module).then(function (module) {
+        module.FSInit();
+    });
+}
 
-    <script>
-        const canvas = document.getElementById("glCanvas");
-        const gl = canvas.getContext("webgl");
+initializeCore(mGBA_v2, Module);
+setTimeout(() => {
+    Module.loadGame(`/data/games/Goodboy Galaxy.zip`);
+}, 500);
 
-        if (!gl) {
-            alert("WebGL not supported");
+setTimeout(() => {
+  const bufferCanvas = document.getElementById("canvas-1");
+    bufferCanvas.width = 240*6;
+    bufferCanvas.height = 160*6;
+    bufferCanvas.style.imageRendering = "pixelated";
+    const gl = bufferCanvas.getContext("webgl");
+    if (!gl) {
+        console.error("WebGL not supported");
+        return;
+    }
+
+    const canvas = document.getElementById("canvas-2");
+    const ctx = canvas.getContext("2d");
+    canvas.width = 240*6;
+    canvas.height = 160*6;
+    canvas.style.transform = "scale(0.25)";
+    canvas.style.transformOrigin = "top left";
+    canvas.style.imageRendering = "pixelated";
+    canvas.style.imageRendering = "crisp-edges";
+    canvas.style.willChange = "transform";
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    ctx.oImageSmoothingEnabled = false;
+
+    const vertexShaderSource = `
+        attribute vec2 position;
+        attribute vec2 texcoord;
+        varying vec2 v_texcoord;
+        void main() {
+            gl_Position = vec4(position, 0, 1);
+            v_texcoord = texcoord;
         }
+    `;
 
-        // Vertex Shader
-        const vertexShaderSource = `
-            attribute vec2 position;
-            attribute vec2 texcoord;
-            varying vec2 v_texcoord;
-            void main() {
-                gl_Position = vec4(position, 0, 1);
-                v_texcoord = texcoord;
-            }
-        `;
+    const fragmentShaderSource = `
+    precision highp float; // Đảm bảo độ chính xác cao
 
-        // Fragment Shader với hiệu ứng viền pixel
-        const fragmentShaderSource = `
-            precision mediump float;
-            uniform sampler2D texture;
-            uniform vec2 resolution;
-            varying vec2 v_texcoord;
-            void main() {
-                vec2 pixelPos = gl_FragCoord.xy;
-                vec4 color = texture2D(texture, v_texcoord);
-                float border = mod(pixelPos.x, 2.0) == 0.0 || mod(pixelPos.y, 2.0) == 0.0 ? 0.3 : 0.0;
-                color.rgb *= 1.0 - border;
-                gl_FragColor = color;
-            }
-        `;
+varying vec2 v_texcoord;
+uniform sampler2D texture;
+uniform float input_gamma;
+uniform float color_correction_strength;
+uniform vec3 red_color;
+uniform vec3 green_color;
+uniform vec3 blue_color;
+uniform float border_strength;
 
-        // Compile Shader
-        function createShader(gl, type, source) {
-            const shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.error(gl.getShaderInfoLog(shader));
-                return null;
-            }
-            return shader;
+void main() {
+    vec4 orig_color = texture2D(texture, v_texcoord);
+
+    // Chỉnh gamma đầu vào
+    vec3 color = pow(orig_color.rgb, vec3(input_gamma));
+
+    // Điều chỉnh màu dựa trên ma trận màu
+    color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
+
+// ===== Hiệu ứng lưới pixel =====
+vec2 pixelPos = gl_FragCoord.xy;
+vec2 gridSize = vec2(240.0 * 6.0, 160.0 * 6.0); // Kích thước game mới (1440x960)
+vec2 cellSize = gridSize / vec2(240.0, 160.0); // Kích thước mỗi ô lưới
+
+vec2 grid = mod(pixelPos, cellSize); // Chia thành 240x160 ô
+
+// Điều chỉnh viền: Đường viền sẽ xuất hiện tại cạnh của mỗi pixel game
+float border = step(cellSize.x - 0.5, grid.x) + step(cellSize.y - 0.5, grid.y);
+color.rgb *= 1.0 - border * border_strength; // Áp dụng hiệu ứng đường viền
+
+
+
+    // Chỉnh gamma đầu ra
+    color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+
+    // Giới hạn giá trị trong khoảng 0 - 1
+    color = clamp(color, 0., 1.);
+
+    // Kết hợp với màu gốc
+    orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
+
+    gl_FragColor = orig_color;
+}
+
+`;
+    function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error(gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
         }
+        return shader;
+    }
 
-        // Khởi tạo WebGL Program
-        function createProgram(gl, vertexSource, fragmentSource) {
-            const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
-            const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-            const program = gl.createProgram();
-            gl.attachShader(program, vertexShader);
-            gl.attachShader(program, fragmentShader);
-            gl.linkProgram(program);
-            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                console.error(gl.getProgramInfoLog(program));
-                return null;
-            }
-            return program;
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(program));
+        return;
+    }
+    gl.useProgram(program);
+    const inputGammaLocation = gl.getUniformLocation(program, "input_gamma");
+    const colorCorrectionStrengthLocation = gl.getUniformLocation(program, "color_correction_strength");
+    const redColorLocation = gl.getUniformLocation(program, "red_color");
+    const greenColorLocation = gl.getUniformLocation(program, "green_color");
+    const blueColorLocation = gl.getUniformLocation(program, "blue_color");
+    const borderStrengthLocation = gl.getUniformLocation(program, "border_strength");
+
+
+    gl.uniform1f(inputGammaLocation, 3.7);
+    gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
+    gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
+    gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
+    gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0); 
+    gl.uniform1f(borderStrengthLocation, 1); // Giảm sáng viền 50%
+ 
+
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1, -1,
+         1, -1,
+        -1,  1,
+         1,  1,
+    ]), gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const texcoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        0, 1,
+        1, 1,
+        0, 0,
+        1, 0,
+    ]), gl.STATIC_DRAW);
+
+    const texcoordLocation = gl.getAttribLocation(program, "texcoord");
+    gl.enableVertexAttribArray(texcoordLocation);
+    gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    function updateFrame() {
+        const pixelData = Module.getPixelData();
+        const imageData = new Uint8Array(240 * 160 * 4);
+
+        for (let i = 0; i < pixelData.length; i++) {
+            const color = pixelData[i];
+            const index = i * 4;
+            imageData[index] = (color & 0xFF);
+            imageData[index + 1] = (color >> 8) & 0xFF;
+            imageData[index + 2] = (color >> 16) & 0xFF;
+            imageData[index + 3] = 255;
         }
-
-        const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
-        gl.useProgram(program);
-
-        // Setup hình vuông full màn hình
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1, -1,   1, -1,   -1, 1,
-             -1, 1,   1, -1,   1, 1
-        ]), gl.STATIC_DRAW);
-
-        const positionLocation = gl.getAttribLocation(program, "position");
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-        // Setup tọa độ texture
-        const texcoordBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            0, 1,   1, 1,   0, 0,
-            0, 0,   1, 1,   1, 0
-        ]), gl.STATIC_DRAW);
-
-        const texcoordLocation = gl.getAttribLocation(program, "texcoord");
-        gl.enableVertexAttribArray(texcoordLocation);
-        gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-
-        const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        // Load ảnh từ input file
-        document.getElementById("imageInput").addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const img = new Image();
-                img.onload = function () {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    gl.viewport(0, 0, canvas.width, canvas.height);
-
-                    gl.bindTexture(gl.TEXTURE_2D, texture);
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
-                    // Render frame
-                    gl.clear(gl.COLOR_BUFFER_BIT);
-                    gl.drawArrays(gl.TRIANGLES, 0, 6);
-                };
-                img.src = URL.createObjectURL(file);
-            }
-        });
-    </script>
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 240, 160, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        ctx.drawImage(bufferCanvas, 0, 0);
+        requestAnimationFrame(updateFrame);
+    }
+    updateFrame();
+}, 1000);
+  </script>
 
 </body>
 </html>
