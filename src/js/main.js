@@ -368,8 +368,8 @@ export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*8;
-    bufferCanvas.height = 160*8;
+    bufferCanvas.width = 240*2;
+    bufferCanvas.height = 160*2;
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
@@ -378,9 +378,9 @@ export function Dslay() {
 
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = 240*8;
-    canvas.height = 160*8;
-    canvas.style.transform = "scale(0.1875)";
+    canvas.width = 240*2;
+    canvas.height = 160*2;
+    canvas.style.transform = "scale(0.75)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "crisp-edges";
@@ -424,7 +424,7 @@ export function Dslay() {
 
         // ===== Hiệu ứng lưới pixel =====
         vec2 pixelPos = gl_FragCoord.xy;
-        vec2 gridSize = vec2(240.0 * 8.0, 160.0 * 8.0); // Kích thước game mới (1440x960)
+        vec2 gridSize = vec2(240.0 * 2.0, 160.0 * 2.0); // Kích thước game mới (1440x960)
         vec2 cellSize = gridSize / vec2(240.0, 160.0); // Kích thước mỗi ô lưới
 
         vec2 grid = mod(pixelPos, cellSize); // Chia thành 240x160 ô
