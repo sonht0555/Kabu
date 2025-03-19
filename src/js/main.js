@@ -368,8 +368,8 @@ export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*3;
-    bufferCanvas.height = 160*3;
+    bufferCanvas.width = 240*6;
+    bufferCanvas.height = 160*6;
     const gl = bufferCanvas.getContext("webgl", { antialias: false });
     if (!gl) {
         console.error("WebGL not supported");
@@ -379,13 +379,13 @@ export function Dslay() {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-    canvas.width = 240*3;
-    canvas.height = 160*3;
-    canvas.style.transform = "scale(0.5)";
+    canvas.width = 240*6;
+    canvas.height = 160*6;
+    canvas.style.transform = "scale(0.25)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "-moz-crisp-edges";
-    canvas.style.imageRendering = "-webkit-optimize-contrast";
+    // canvas.style.imageRendering = "-webkit-optimize-contrast";
     canvas.style.imageRendering = "crisp-edges";
     canvas.style.willChange = "transform";
 
@@ -425,20 +425,22 @@ export function Dslay() {
         // Điều chỉnh màu dựa trên ma trận màu
         color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
 
+        // Tạo lưới pixel
         vec2 pixelPos = gl_FragCoord.xy;
-        vec2 gridSize = vec2(240.0 * 3.0, 160.0 * 3.0); // Kích thước game mới (1440x960)
+        vec2 gridSize = vec2(240.0 * 6.0, 160.0 * 6.0); // Kích thước game mới
         vec2 cellSize = gridSize / vec2(240.0, 160.0);  // Kích thước mỗi pixel logic
+        float borderSize = 0.5; // 2px vật lý → 0.66px logic (vì DPR = 3)
 
-        float borderSize = 2.0 / 3.0; // 4px vật lý → 1.33px logic (vì DPR = 3)
+        vec2 grid = mod(pixelPos, cellSize);
 
-        vec2 grid = mod(pixelPos, cellSize); // Vị trí trong mỗi ô pixel
+        // Tạo viền trên cả 4 cạnh
+        float borderX = step(cellSize.x - borderSize, grid.x) + step(grid.x, borderSize);
+        float borderY = step(cellSize.y - borderSize, grid.y) + step(grid.y, borderSize);
+        
+        float border = max(borderX, borderY); // Viền trên cả X & Y
 
-        // Tạo viền dày đúng 4px vật lý (≈ 1.33px logic)
-        float borderX = step(cellSize.x - borderSize, grid.x);
-        float borderY = step(cellSize.y - borderSize, grid.y);
-        float border = max(borderX, borderY); // Viền xuất hiện trên cả trục X & Y
-
-        color.rgb *= 1.0 - border * border_strength; // Áp dụng hiệu ứng đường viền
+        // Áp dụng hiệu ứng viền
+        color.rgb *= 1.0 - border * border_strength;
 
         // Chỉnh gamma đầu ra
         color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
@@ -488,7 +490,7 @@ export function Dslay() {
     gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
     gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
     gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
-    gl.uniform1f(borderStrengthLocation, 0.5); // Giảm sáng viền 50%
+    gl.uniform1f(borderStrengthLocation, 0.44); // Giảm sáng viền 50%
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
