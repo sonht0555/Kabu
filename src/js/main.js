@@ -434,8 +434,11 @@ export function Dslay() {
         vec2 grid = mod(pixelPos, cellSize);
 
         // Tạo viền trên cả 4 cạnh
-        float borderX = step(cellSize.x - borderSize, grid.x) + step(grid.x, borderSize);
-        float borderY = step(cellSize.y - borderSize, grid.y) + step(grid.y, borderSize);
+       float borderX = smoothstep(cellSize.x - borderSize - 0.5, cellSize.x - borderSize + 0.5, grid.x) +
+                smoothstep(borderSize - 0.5, borderSize + 0.5, grid.x);
+float borderY = smoothstep(cellSize.y - borderSize - 0.5, cellSize.y - borderSize + 0.5, grid.y) +
+                smoothstep(borderSize - 0.5, borderSize + 0.5, grid.y);
+
         
         float border = max(borderX, borderY); // Viền trên cả X & Y
 
