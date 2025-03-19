@@ -368,8 +368,8 @@ export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*6;
-    bufferCanvas.height = 160*6;
+    bufferCanvas.width = 240*3;
+    bufferCanvas.height = 160*3;
     const gl = bufferCanvas.getContext("webgl", { antialias: false });
     if (!gl) {
         console.error("WebGL not supported");
@@ -379,9 +379,9 @@ export function Dslay() {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-    canvas.width = 240*6;
-    canvas.height = 160*6;
-    canvas.style.transform = "scale(0.25)";
+    canvas.width = 240*3;
+    canvas.height = 160*3;
+    canvas.style.transform = "scale(0.5)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "-moz-crisp-edges";
@@ -427,7 +427,7 @@ export function Dslay() {
 
         // Tạo lưới pixel
         vec2 pixelPos = gl_FragCoord.xy;
-        vec2 gridSize = vec2(240.0 * 6.0, 160.0 * 6.0); // Kích thước game mới
+        vec2 gridSize = vec2(240.0 * 3.0, 160.0 * 3.0); // Kích thước game mới
         vec2 cellSize = gridSize / vec2(240.0, 160.0);  // Kích thước mỗi pixel logic
         float borderSize = 0.5; // 2px vật lý → 0.66px logic (vì DPR = 3)
 
@@ -490,7 +490,7 @@ export function Dslay() {
     gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
     gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
     gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
-    gl.uniform1f(borderStrengthLocation, 0.44); // Giảm sáng viền 50%
+    gl.uniform1f(borderStrengthLocation, 0.4); // Giảm sáng viền 50%
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
