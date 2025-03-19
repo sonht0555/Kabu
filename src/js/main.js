@@ -425,15 +425,19 @@ export function Dslay() {
         // Điều chỉnh màu dựa trên ma trận màu
         color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
 
-        // ===== Hiệu ứng lưới pixel =====
         vec2 pixelPos = gl_FragCoord.xy;
         vec2 gridSize = vec2(240.0 * 3.0, 160.0 * 3.0); // Kích thước game mới (1440x960)
-        vec2 cellSize = gridSize / vec2(240.0, 160.0); // Kích thước mỗi ô lưới
+        vec2 cellSize = gridSize / vec2(240.0, 160.0);  // Kích thước mỗi pixel logic
 
-        vec2 grid = mod(pixelPos, cellSize); // Chia thành 240x160 ô
+        float borderSize = 4.0 / 3.0; // 4px vật lý → 1.33px logic (vì DPR = 3)
 
-        // Điều chỉnh viền: Đường viền sẽ xuất hiện tại cạnh của mỗi pixel game
-        float border = step(cellSize.x - 0.5, grid.x) + step(cellSize.y - 0.5, grid.y);
+        vec2 grid = mod(pixelPos, cellSize); // Vị trí trong mỗi ô pixel
+
+        // Tạo viền dày đúng 4px vật lý (≈ 1.33px logic)
+        float borderX = step(cellSize.x - borderSize, grid.x);
+        float borderY = step(cellSize.y - borderSize, grid.y);
+        float border = max(borderX, borderY); // Viền xuất hiện trên cả trục X & Y
+
         color.rgb *= 1.0 - border * border_strength; // Áp dụng hiệu ứng đường viền
 
         // Chỉnh gamma đầu ra
