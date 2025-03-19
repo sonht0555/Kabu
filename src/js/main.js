@@ -370,19 +370,22 @@ export function Dslay() {
   const bufferCanvas = document.createElement("canvas");
     bufferCanvas.width = 240*3;
     bufferCanvas.height = 160*3;
-    const gl = bufferCanvas.getContext("webgl");
+    const gl = bufferCanvas.getContext("webgl", { antialias: false });
     if (!gl) {
         console.error("WebGL not supported");
         return;
     }
 
     const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
     canvas.width = 240*3;
     canvas.height = 160*3;
     canvas.style.transform = "scale(0.5)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
+    canvas.style.imageRendering = "-moz-crisp-edges";
+    canvas.style.imageRendering = "-webkit-optimize-contrast";
     canvas.style.imageRendering = "crisp-edges";
     canvas.style.willChange = "transform";
 
