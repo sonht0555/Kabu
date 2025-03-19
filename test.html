@@ -33,8 +33,8 @@ setTimeout(() => {
 
 setTimeout(() => {
   const bufferCanvas = document.getElementById("canvas-1");
-    bufferCanvas.width = 240*6;
-    bufferCanvas.height = 160*6;
+    bufferCanvas.width = 240*3;
+    bufferCanvas.height = 160*3;
     bufferCanvas.style.imageRendering = "pixelated";
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
@@ -44,9 +44,9 @@ setTimeout(() => {
 
     const canvas = document.getElementById("canvas-2");
     const ctx = canvas.getContext("2d");
-    canvas.width = 240*6;
-    canvas.height = 160*6;
-    canvas.style.transform = "scale(0.25)";
+    canvas.width = 240*3;
+    canvas.height = 160*3;
+    canvas.style.transform = "scale(0.5)";
     canvas.style.transformOrigin = "top left";
     canvas.style.imageRendering = "pixelated";
     canvas.style.imageRendering = "crisp-edges";
@@ -91,7 +91,7 @@ void main() {
 
 // ===== Hiệu ứng lưới pixel =====
 vec2 pixelPos = gl_FragCoord.xy;
-vec2 gridSize = vec2(240.0 * 6.0, 160.0 * 6.0); // Kích thước game mới (1440x960)
+vec2 gridSize = vec2(240.0 * 3.0, 160.0 * 3.0); // Kích thước game mới (1440x960)
 vec2 cellSize = gridSize / vec2(240.0, 160.0); // Kích thước mỗi ô lưới
 
 vec2 grid = mod(pixelPos, cellSize); // Chia thành 240x160 ô
