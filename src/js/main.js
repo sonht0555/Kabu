@@ -367,33 +367,19 @@ export async function FSSync() {
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
 export function Dslay() {
-  const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = 240*3;
-    bufferCanvas.height = 160*3;
-    const gl = bufferCanvas.getContext("webgl", { antialias: false });
+  const bufferCanvas = document.getElementById("canvas");
+    bufferCanvas.width = 240;
+    bufferCanvas.height = 160;
+    bufferCanvas.style.transform = "scale(" + (4 / 3) + ")";
+    bufferCanvas.style.transformOrigin = "top left";
+    bufferCanvas.style.imageRendering = "pixelated";
+    bufferCanvas.style.imageRendering = "crisp-edges";
+    bufferCanvas.style.willChange = "transform";
+    const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
         return;
     }
-
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-    canvas.width = 240*3;
-    canvas.height = 160*3;
-    canvas.style.transform = "scale(0.5)";
-    canvas.style.transformOrigin = "top left";
-    canvas.style.imageRendering = "pixelated";
-    canvas.style.imageRendering = "-moz-crisp-edges";
-    // canvas.style.imageRendering = "-webkit-optimize-contrast";
-    canvas.style.imageRendering = "crisp-edges";
-    canvas.style.willChange = "transform";
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
-    ctx.oImageSmoothingEnabled = false;
 
     const vertexShaderSource = `
         attribute vec2 position;
@@ -424,25 +410,6 @@ export function Dslay() {
         
         // Điều chỉnh màu dựa trên ma trận màu
         color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
-
-        // Tạo lưới pixel
-        vec2 pixelPos = gl_FragCoord.xy;
-        vec2 gridSize = vec2(240.0 * 3.0, 160.0 * 3.0); // Kích thước game mới
-        vec2 cellSize = gridSize / vec2(240.0, 160.0);  // Kích thước mỗi pixel logic
-        float borderSize = 0.5; // 2px vật lý → 0.66px logic (vì DPR = 3)
-
-        vec2 grid = mod(pixelPos, cellSize);
-
-        // Tạo viền trên cả 4 cạnh
-       float borderX = smoothstep(cellSize.x - borderSize - 0.5, cellSize.x - borderSize + 0.5, grid.x) +
-                smoothstep(borderSize - 0.5, borderSize + 0.5, grid.x);
-       float borderY = smoothstep(cellSize.y - borderSize - 0.5, cellSize.y - borderSize + 0.5, grid.y) +
-                smoothstep(borderSize - 0.5, borderSize + 0.5, grid.y);
-
-        float border = max(borderX, borderY); // Viền trên cả X & Y
-
-        // Áp dụng hiệu ứng viền
-        color.rgb *= 1.0 - border * border_strength;
 
         // Chỉnh gamma đầu ra
         color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
@@ -543,7 +510,6 @@ export function Dslay() {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 240, 160, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        ctx.drawImage(bufferCanvas, 0, 0);
         requestAnimationFrame(updateFrame);
     }
     updateFrame();
