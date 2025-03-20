@@ -40,7 +40,7 @@
     <div class="errorLog column"></div>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
-        <div class="gap-15 emu-display">
+        <div class="gap-8 emu-display">
             <div class="load-state" id="loadStateButton"></div>
             <div class="flex-1 bc dpad-l display-none" id="L"></div>
             <div class="flex-1 column">
@@ -234,18 +234,8 @@
             <div class="flex-1 bc dpad-r display-none" id="R"></div>
             <div class="save-state" id="saveStateButton"></div>
         </div>
-        <div class="gap-34 emu-menu" id="control-pad">
-            <div class="flex-1 gap-15">
-                <div class="bc dpad-state" id="statePageButton"></div>
-                <div class="flex-1 bc dpad-select" id="Select"></div>
-            </div>
-            <div class="flex-1 gap-15">
-                <div class="flex-1 bc dpad-start" id="Start"></div>
-                <div class="bc dpad-menu" id="menu-pad"></div>
-            </div>
-        </div>
-        <div class="between column bc emu-control" id="emu-control">
-            <div class="flex-1 gap-34">
+        <div class="between column bc emu-control gap-8" id="emu-control">
+            <div class="flex-1 gap-20">
                 <div class="flex-1">
                     <div class="flex-1 bc1 ch cw dpad">
                         <div class="d-pad">
@@ -272,18 +262,29 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-1 column gap-15">
-                    <div class="flex-1 gap-15">
-                        <div class="flex-1 bc1 dpad-a" id="A"></div>
-                        <div class="bc1 dpad-turbo" id="turbo"></div>
-                    </div>
+                <div class="flex-1 column gap-8">
                     <div class="flex-1" style="position: relative">
-                        <div class="flex-1 gap-15 bc1" id="B">
-                            <div class="flex-1 dpad-b"></div>
+                        <div class="flex-1 gap-8 bc1" id="A">
+                            <div class="flex-1 dpad-a"></div>
                             <div class="dpad-blank"></div>
                         </div>
                         <div class="rewind" id="rewind"></div>
                     </div>
+                    <div class="flex-1 gap-8">
+                        <div class="flex-1 bc1 dpad-b" id="B"></div>
+                        <div class="bc1 dpad-turbo" id="turbo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="gap-20 emu-menu" id="control-pad">
+                <div class="flex-1 gap-8">
+                    <div class="bc1 dpad-state" id="statePageButton"></div>
+                    <div class="bc1 flex-1" id=""></div>
+                    <div class="bc1 dpad-menu" id="menu-pad"></div>
+                </div>
+                <div class="flex-1 gap-8">
+                    <div class="flex-1 bc1 dpad-select" id="Select"></div>
+                    <div class="flex-1 bc1 dpad-start" id="Start"></div>
                 </div>
             </div>
         </div>
@@ -373,7 +374,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V3.83';</script>
+    <script>let gameVer = 'V3.84';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
