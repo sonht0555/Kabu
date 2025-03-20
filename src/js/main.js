@@ -438,7 +438,7 @@ export function Dslay() {
                 smoothstep(borderSize - 0.5, borderSize + 0.5, grid.x);
        float borderY = smoothstep(cellSize.y - borderSize - 0.5, cellSize.y - borderSize + 0.5, grid.y) +
                 smoothstep(borderSize - 0.5, borderSize + 0.5, grid.y);
-                
+
         float border = max(borderX, borderY); // Viền trên cả X & Y
 
         // Áp dụng hiệu ứng viền
@@ -492,7 +492,7 @@ export function Dslay() {
     gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
     gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
     gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
-    gl.uniform1f(borderStrengthLocation, 0.4); // Giảm sáng viền 50%
+    gl.uniform1f(borderStrengthLocation, 0.5); // Giảm sáng viền 50%
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
