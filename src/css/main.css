@@ -316,6 +316,7 @@ label {
   opacity: var(--before-opacity, 1);
   background-size: var(--bg-size, auto) !important;
   z-index: 20;
+  image-rendering: pixelated !important
 }
 .shu {
   position: relative;

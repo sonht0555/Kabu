@@ -8,7 +8,6 @@ const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader') || "Sega";
-const wrap = document.querySelector('.wrap') || "Sega";
 export async function shaderData() {
     cheatX = await Main.getData(gameName, "0", "cheatCode") || "xx xxx";
     box1.textContent = cheatX;
@@ -28,8 +27,9 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
-    wrap.classList.add(shaderX);
-    wrap.style.setProperty('--before-opacity', opacityX);
+    document.querySelectorAll(".wrap").forEach(function(element, index) {
+        element.classList.add(shaderX);
+    });
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
     console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX});
 }
@@ -42,7 +42,6 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        wrap.style.setProperty('--before-opacity', box.textContent);
         await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
@@ -60,7 +59,6 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        wrap.style.setProperty('--before-opacity', box.textContent);
         await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
@@ -175,11 +173,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     sdValues.forEach(shaderClass => {
                         imgShader.classList.remove(shaderClass);
-                        wrap.classList.remove(shaderClass);
+                        document.querySelectorAll(".wrap").forEach(function(element, index) {
+                            element.classList.remove(shaderClass);
+                        });
                     });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    wrap.classList.add(currentShaderClass);
+                    document.querySelectorAll(".wrap").forEach(function(element, index) {
+                        element.classList.add(currentShaderClass);
+                    });
                     await Main.setData(gameName, "0","shader" ,currentShaderClass);
                     await shaderData();
                 }
@@ -227,11 +229,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                     sdValues.forEach(shaderClass => {
                         imgShader.classList.remove(shaderClass);
-                        wrap.classList.remove(shaderClass);
+                        document.querySelectorAll(".wrap").forEach(function(element, index) {
+                            element.classList.remove(shaderClass);
+                        });
                     });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    wrap.classList.add(currentShaderClass);
+                    document.querySelectorAll(".wrap").forEach(function(element, index) {
+                        element.classList.add(currentShaderClass);
+                    });
                     await Main.setData(gameName, "0","shader" ,currentShaderClass);
                     await shaderData();
                 }
