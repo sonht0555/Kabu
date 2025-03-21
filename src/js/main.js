@@ -377,9 +377,11 @@ export function Dslay(systemType, scaleValue) {
     bufferCanvas.width = width;
     bufferCanvas.height = height;
     document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`; 
-    document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`; 
+    document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`;
+    document.querySelector('.wrap').style.setProperty('--bg-size', "1px"); 
     document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`; 
     document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`; 
+    document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
     bufferCanvas.style.transform = `scale(${scaleValue / dpr})`;
     bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
