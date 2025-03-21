@@ -128,10 +128,10 @@ export async function loadGame(romName) {
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
             areaTrans.classList.add("gbc1");
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
-            Dslay("gbc");
+            Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
-            Dslay("gba");
+            Dslay("gba", 4);
         }
     // check file extension
     await statusShow();
@@ -366,7 +366,7 @@ export async function FSSync() {
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
-export function Dslay(systemType) {
+export function Dslay(systemType, scaleValue) {
     const bufferCanvas = document.getElementById("canvas");
     const dpr = window.devicePixelRatio;
     console.log("dpr", dpr);
@@ -376,13 +376,13 @@ export function Dslay(systemType) {
     
     bufferCanvas.width = width;
     bufferCanvas.height = height;
-    document.getElementById("canvas-container").style.width = `${width * (4 / dpr)}px`; 
-    document.getElementById("canvas-container").style.height = `${height * (4 / dpr)}px`; 
+    document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`; 
+    document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`; 
     document.getElementById("img-shader").style.width = `${width}px`;
     document.getElementById("img-shader").style.height = `${height}px`;
-    document.getElementById("img-shader").style.transform = `scale(${4 / dpr})`;
+    document.getElementById("img-shader").style.transform = `scale(${scaleValue / dpr})`;
     document.getElementById("img-shader").style.transformOrigin = "top center";
-    bufferCanvas.style.transform = `scale(${4 / dpr})`;
+    bufferCanvas.style.transform = `scale(${scaleValue / dpr})`;
     bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
     bufferCanvas.style.imageRendering = "crisp-edges";
