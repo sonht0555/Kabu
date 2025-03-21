@@ -28,35 +28,22 @@ function initializeCore(coreInitFunction, module) {
 
 initializeCore(mGBA_v2, Module);
 setTimeout(() => {
-    Module.loadGame(`/data/games/Pokemon Ultra Violet (1.22) LSA (Fire Red Hack).gba`);
+    //Module.loadGame(`/data/games/Goodboy Galaxy.zip`);
+    Module.loadGame(`/data/games/PKM_Trading Card Game.zip`);
 }, 500);
 
 setTimeout(() => {
   const bufferCanvas = document.getElementById("canvas-1");
-    bufferCanvas.width = 240;
-    bufferCanvas.height = 160;
+    bufferCanvas.width = 160;
+    bufferCanvas.height = 144;
+    //bufferCanvas.style.transform = "scale(" + (5 / 3) + ")";
+    //bufferCanvas.style.transformOrigin = "top left";
     bufferCanvas.style.imageRendering = "pixelated";
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
         return;
     }
-
-    const canvas = document.getElementById("canvas-2");
-    const ctx = canvas.getContext("2d");
-    canvas.width = 240;
-    canvas.height = 160;
-    canvas.style.transform = "scale(" + (5 / 3) + ")";
-    canvas.style.transformOrigin = "top left";
-    canvas.style.imageRendering = "pixelated";
-    canvas.style.imageRendering = "crisp-edges";
-    canvas.style.willChange = "transform";
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
-    ctx.oImageSmoothingEnabled = false;
 
     const vertexShaderSource = `
         attribute vec2 position;
@@ -69,18 +56,17 @@ setTimeout(() => {
     `;
 
     const fragmentShaderSource = `
-    precision highp float; // Đảm bảo độ chính xác cao
+    precision highp float;
+    varying vec2 v_texcoord;
+    uniform sampler2D texture;
+    uniform float input_gamma;
+    uniform float color_correction_strength;
+    uniform vec3 red_color;
+    uniform vec3 green_color;
+    uniform vec3 blue_color;
+    uniform float border_strength;
 
-varying vec2 v_texcoord;
-uniform sampler2D texture;
-uniform float input_gamma;
-uniform float color_correction_strength;
-uniform vec3 red_color;
-uniform vec3 green_color;
-uniform vec3 blue_color;
-uniform float border_strength;
-
-void main() {
+    void main() {
     vec4 orig_color = texture2D(texture, v_texcoord);
 
     // Chỉnh gamma đầu vào
@@ -178,27 +164,37 @@ void main() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    function updateFrame() {
-        const pixelData = Module.getPixelData();
-        const imageData = new Uint8Array(240 * 160 * 4);
+    function updateFrame(systemType) {
+        const width = systemType === "GBC" ? 160 : 240;
+        const height = systemType === "GBC" ? 144 : 160;
+        const stride = systemType === "GBC" ? 256 : 240;
 
-        for (let i = 0; i < pixelData.length; i++) {
-            const color = pixelData[i];
-            const index = i * 4;
-            imageData[index] = (color & 0xFF);
-            imageData[index + 1] = (color >> 8) & 0xFF;
-            imageData[index + 2] = (color >> 16) & 0xFF;
-            imageData[index + 3] = 255;
+        const pixelData = Module.getPixelData();
+        if (!pixelData) return; // Kiểm tra dữ liệu hợp lệ
+
+        const imageData = new Uint8Array(width * height * 4);
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const srcIndex = y * stride + x;
+                const destIndex = (y * width + x) * 4;
+                const color = pixelData[srcIndex];
+
+                imageData[destIndex] = (color & 0xFF);
+                imageData[destIndex + 1] = (color >> 8) & 0xFF;
+                imageData[destIndex + 2] = (color >> 16) & 0xFF;
+                imageData[destIndex + 3] = 255;
+            }
         }
+
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 240, 160, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        ctx.drawImage(bufferCanvas, 0, 0);
-        requestAnimationFrame(updateFrame);
+        requestAnimationFrame(() => updateFrame(systemType));
     }
-    updateFrame();
-}, 1000);
+    updateFrame("GBC");
+    }, 1000);
   </script>
 
 </body>

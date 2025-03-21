@@ -8,6 +8,7 @@ const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader') || "Sega";
+const wrapEmu = document.getElementById('wrap-emu') || "Sega";
 export async function shaderData() {
     cheatX = await Main.getData(gameName, "0", "cheatCode") || "xx xxx";
     box1.textContent = cheatX;
@@ -27,6 +28,8 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
+    wrapEmu.classList.add(shaderX);
+    wrapEmu.style.setProperty('--before-opacity', opacityX);
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
     console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX});
 }
@@ -39,6 +42,7 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
+        wrapEmu.style.setProperty('--before-opacity', box.textContent);
         await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
@@ -56,6 +60,7 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
+        wrapEmu.style.setProperty('--before-opacity', box.textContent);
         await Main.setData(gameName, "0",localStorageKey ,box.textContent);
         await delay(100);
         await shaderData();
@@ -168,9 +173,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         box3.textContent = sdValues[0];
                     }
-                    sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                    sdValues.forEach(shaderClass => {
+                        imgShader.classList.remove(shaderClass);
+                        wrapEmu.classList.remove(shaderClass);
+                    });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
+                    wrapEmu.classList.add(currentShaderClass);
                     await Main.setData(gameName, "0","shader" ,currentShaderClass);
                     await shaderData();
                 }
@@ -216,9 +225,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         box3.textContent = sdValues[sdValues.length - 1];
                     }
-                    sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                    sdValues.forEach(shaderClass => {
+                        imgShader.classList.remove(shaderClass);
+                        wrapEmu.classList.remove(shaderClass);
+                    });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
+                    wrapEmu.classList.add(currentShaderClass);
                     await Main.setData(gameName, "0","shader" ,currentShaderClass);
                     await shaderData();
                 }

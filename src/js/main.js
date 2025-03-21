@@ -110,14 +110,6 @@ export async function loadGame(romName) {
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
-    // check file extension
-    if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
-        canvas.classList.add("gbc");
-        areaTrans.classList.add("gbc1");
-        localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
-    } else {
-        localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
-    }
     // check save state in local
     if (statesList.includes(stateName)) {
         await Module.loadGame(`/data/games/${romName}`);
@@ -133,7 +125,15 @@ export async function loadGame(romName) {
         }, 4000);
     }
     // show status ingame
-    Dslay();
+        if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
+            areaTrans.classList.add("gbc1");
+            localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
+            Dslay("gbc");
+        } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
+            localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
+            Dslay("gba");
+        }
+    // check file extension
     await statusShow();
 }
 export async function saveState(slot) {
@@ -366,63 +366,34 @@ export async function FSSync() {
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
-export function Dslay() {
-  const bufferCanvas = document.getElementById("canvas");
-    bufferCanvas.width = 240;
-    bufferCanvas.height = 160;
-    bufferCanvas.style.transform = "scale(" + (4 / 3) + ")";
-    bufferCanvas.style.transformOrigin = "top left";
+export function Dslay(systemType) {
+    const bufferCanvas = document.getElementById("canvas");
+    const dpr = window.devicePixelRatio;
+    console.log("dpr", dpr);
+    const width = systemType === "gbc" ? 160 : 240;
+    const height = systemType === "gbc" ? 144 : 160;
+    const stride = systemType === "gbc" ? 256 : 240;
+    
+    bufferCanvas.width = width;
+    bufferCanvas.height = height;
+    document.getElementById("canvas-container").style.width = `${width * (4 / dpr)}px`; 
+    document.getElementById("canvas-container").style.height = `${height * (4 / dpr)}px`; 
+    document.getElementById("img-shader").style.width = `${width}px`;
+    document.getElementById("img-shader").style.height = `${height}px`;
+    document.getElementById("img-shader").style.transform = `scale(${4 / dpr})`;
+    document.getElementById("img-shader").style.transformOrigin = "top center";
+    bufferCanvas.style.transform = `scale(${4 / dpr})`;
+    bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
     bufferCanvas.style.imageRendering = "crisp-edges";
     bufferCanvas.style.willChange = "transform";
+    
     const gl = bufferCanvas.getContext("webgl");
     if (!gl) {
         console.error("WebGL not supported");
         return;
     }
-
-    const vertexShaderSource = `
-        attribute vec2 position;
-        attribute vec2 texcoord;
-        varying vec2 v_texcoord;
-        void main() {
-            gl_Position = vec4(position, 0, 1);
-            v_texcoord = texcoord;
-        }
-    `;
-
-    const fragmentShaderSource = `
-    precision highp float;
-    varying vec2 v_texcoord;
-    uniform sampler2D texture;
-    uniform float input_gamma;
-    uniform float color_correction_strength;
-    uniform vec3 red_color;
-    uniform vec3 green_color;
-    uniform vec3 blue_color;
-    uniform float border_strength;
-
-    void main() {
-        vec4 orig_color = texture2D(texture, v_texcoord);
-        
-        // Chỉnh gamma đầu vào
-        vec3 color = pow(orig_color.rgb, vec3(input_gamma));
-        
-        // Điều chỉnh màu dựa trên ma trận màu
-        color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
-
-        // Chỉnh gamma đầu ra
-        color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
-        
-        // Giới hạn giá trị trong khoảng 0 - 1
-        color = clamp(color, 0., 1.);
-  
-        // Kết hợp với màu gốc
-        orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
-
-        gl_FragColor = orig_color;
-    }
-`;
+    
     function createShader(gl, type, source) {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
@@ -434,10 +405,38 @@ export function Dslay() {
         }
         return shader;
     }
-
-    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-
+    
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, `
+        attribute vec2 position;
+        attribute vec2 texcoord;
+        varying vec2 v_texcoord;
+        void main() {
+            gl_Position = vec4(position, 0, 1);
+            v_texcoord = texcoord;
+        }
+    `);
+    
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, `
+        precision highp float;
+        varying vec2 v_texcoord;
+        uniform sampler2D texture;
+        uniform float input_gamma;
+        uniform float color_correction_strength;
+        uniform vec3 red_color;
+        uniform vec3 green_color;
+        uniform vec3 blue_color;
+        
+        void main() {
+            vec4 orig_color = texture2D(texture, v_texcoord);
+            vec3 color = pow(orig_color.rgb, vec3(input_gamma));
+            color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
+            color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+            color = clamp(color, 0., 1.);
+            orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
+            gl_FragColor = orig_color;
+        }
+    `);
+    
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -447,70 +446,78 @@ export function Dslay() {
         return;
     }
     gl.useProgram(program);
+    
     const inputGammaLocation = gl.getUniformLocation(program, "input_gamma");
     const colorCorrectionStrengthLocation = gl.getUniformLocation(program, "color_correction_strength");
     const redColorLocation = gl.getUniformLocation(program, "red_color");
     const greenColorLocation = gl.getUniformLocation(program, "green_color");
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
-    const borderStrengthLocation = gl.getUniformLocation(program, "border_strength");
+    
+    if (systemType === "gbc") {
 
-    gl.uniform1f(inputGammaLocation, 3.7);
-    gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
-    gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0); 
-    gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05); 
-    gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);  
-    gl.uniform1f(borderStrengthLocation, 0.4); // Giảm sáng viền 50%
-
+        gl.uniform1f(inputGammaLocation, 2.2);
+        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
+        gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
+        gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
+        gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
+    } else {
+        
+        gl.uniform1f(inputGammaLocation, 3.7);
+        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
+        gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0);
+        gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05);
+        gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);
+    }
+    
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        -1, -1,
-         1, -1,
-        -1,  1,
-         1,  1,
+        -1, -1,  1, -1, -1,  1,  1,  1
     ]), gl.STATIC_DRAW);
-
+    
     const positionLocation = gl.getAttribLocation(program, "position");
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
+    
     const texcoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        0, 1,
-        1, 1,
-        0, 0,
-        1, 0,
+        0, 1,  1, 1,  0, 0,  1, 0
     ]), gl.STATIC_DRAW);
-
+    
     const texcoordLocation = gl.getAttribLocation(program, "texcoord");
     gl.enableVertexAttribArray(texcoordLocation);
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-
+    
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+    
     function updateFrame() {
         const pixelData = Module.getPixelData();
-        const imageData = new Uint8Array(240 * 160 * 4);
-
-        for (let i = 0; i < pixelData.length; i++) {
-            const color = pixelData[i];
-            const index = i * 4;
-            imageData[index] = (color & 0xFF);
-            imageData[index + 1] = (color >> 8) & 0xFF;
-            imageData[index + 2] = (color >> 16) & 0xFF;
-            imageData[index + 3] = 255;
+        if (!pixelData) return;
+        
+        const imageData = new Uint8Array(width * height * 4);
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const srcIndex = y * stride + x;
+                const destIndex = (y * width + x) * 4;
+                const color = pixelData[srcIndex];
+                
+                imageData[destIndex] = (color & 0xFF);
+                imageData[destIndex + 1] = (color >> 8) & 0xFF;
+                imageData[destIndex + 2] = (color >> 16) & 0xFF;
+                imageData[destIndex + 3] = 255;
+            }
         }
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 240, 160, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(updateFrame);
     }
     updateFrame();
-};
+}
