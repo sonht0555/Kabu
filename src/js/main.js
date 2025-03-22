@@ -53,6 +53,7 @@ async function statusShow() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
+    shaderData();
     startTimer();
     await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
     await delay(200);
@@ -116,22 +117,18 @@ export async function loadGame(romName) {
         if (confirm("Do you want to load save state?")) {
             await delay(100);
             await Module.loadState(0);
-            await shaderData();
         }
     } else {
         await Module.loadGame(`/data/games/${romName}`);
-        setTimeout(() => {
-        shaderData();
-        }, 4000);
     }
     // show status ingame
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
             areaTrans.classList.add("gbc1");
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
-            Dslay("gbc", 6);
+            Dslay("gbc", 7);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
-            Dslay("gba", 4);
+            Dslay("gba", 4.5);
         }
     // check file extension
     await statusShow();
