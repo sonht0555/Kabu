@@ -125,10 +125,10 @@ export async function loadGame(romName) {
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
             areaTrans.classList.add("gbc1");
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
-            Dslay("gbc", 7);
+            Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
-            Dslay("gba", 4.5);
+            Dslay("gba", 4);
         }
     // check file extension
     await statusShow();
@@ -453,11 +453,10 @@ export function Dslay(systemType, scaleValue) {
         document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`; 
         document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`; 
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
-        gl.uniform1f(inputGammaLocation, 2.2);
-        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
-        gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
-        gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
-        gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
+        gl.uniform1f(inputGammaLocation, 1.3);
+        gl.uniform3f(redColorLocation, 0.78824, 0.025, 0.12039);  
+        gl.uniform3f(greenColorLocation, 0.12157, 0.72941, 0.12157);  
+        gl.uniform3f(blueColorLocation, 0.0, 0.275000, 0.82);  
     } else {
         document.getElementById("img-shader").style.width = `${width}px`; 
         document.getElementById("img-shader").style.height = `${height}px`;
