@@ -1060,5 +1060,6 @@ rect {
 .textured {
   background-image: url("../textured.png");
   background-repeat: repeat;
-  background-size: 256px 256px;
+  background-size: 128px 128px;
+  image-rendering: pixelated !important;
 }
