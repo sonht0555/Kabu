@@ -370,11 +370,11 @@ export function Dslay(systemType, scaleValue) {
     const width = systemType === "gbc" ? 160 : 240;
     const height = systemType === "gbc" ? 144 : 160;
     const stride = systemType === "gbc" ? 256 : 240;
-    
+
     document.querySelectorAll(".wrap").forEach(function(element) {
-        element.style.setProperty('--bg-size', "1px"); 
+        element.style.setProperty('--bg-size', "1px");
     });
-    document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`; 
+    document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`;
     document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`;
     bufferCanvas.width = width;
     bufferCanvas.height = height;
@@ -383,13 +383,48 @@ export function Dslay(systemType, scaleValue) {
     bufferCanvas.style.imageRendering = "pixelated";
     bufferCanvas.style.imageRendering = "crisp-edges";
     bufferCanvas.style.willChange = "transform";
-    
-    const gl = bufferCanvas.getContext("webgl");
+
+    const gl = bufferCanvas.getContext("webgl2");
     if (!gl) {
-        console.error("WebGL not supported");
+        console.error("WebGL2 not supported");
         return;
     }
-    
+
+    const vertexShaderSource = 
+    `#version 300 es
+    in vec2 position;
+    in vec2 texcoord;
+    out vec2 v_texcoord;
+    void main() {
+    gl_Position = vec4(position, 0, 1);
+    v_texcoord = texcoord;
+    }`;
+
+    const fragmentShaderSource = 
+    `#version 300 es
+    precision highp float;
+
+    in vec2 v_texcoord;
+    out vec4 fragColor;
+
+    uniform sampler2D texSampler;
+    uniform float input_gamma;
+    uniform float color_correction_strength;
+    uniform vec3 red_color;
+    uniform vec3 green_color;
+    uniform vec3 blue_color;
+    uniform float border_strength;
+
+    void main() {
+    vec4 orig_color = texture(texSampler, v_texcoord);
+    vec3 color = pow(orig_color.rgb, vec3(input_gamma));
+    color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
+    color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+    color = clamp(color, 0., 1.);
+    orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
+    fragColor = orig_color;
+    }`;
+
     function createShader(gl, type, source) {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
@@ -401,38 +436,10 @@ export function Dslay(systemType, scaleValue) {
         }
         return shader;
     }
-    
-    const vertexShader = createShader(gl, gl.VERTEX_SHADER, `
-        attribute vec2 position;
-        attribute vec2 texcoord;
-        varying vec2 v_texcoord;
-        void main() {
-            gl_Position = vec4(position, 0, 1);
-            v_texcoord = texcoord;
-        }
-    `);
-    
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, `
-        precision highp float;
-        varying vec2 v_texcoord;
-        uniform sampler2D texture;
-        uniform float input_gamma;
-        uniform float color_correction_strength;
-        uniform vec3 red_color;
-        uniform vec3 green_color;
-        uniform vec3 blue_color;
-        
-        void main() {
-            vec4 orig_color = texture2D(texture, v_texcoord);
-            vec3 color = pow(orig_color.rgb, vec3(input_gamma));
-            color.rgb = color.r * red_color + color.g * green_color + color.b * blue_color;
-            color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
-            color = clamp(color, 0., 1.);
-            orig_color.rgb = mix(orig_color.rgb, color, color_correction_strength);
-            gl_FragColor = orig_color;
-        }
-    `);
-    
+
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -442,23 +449,24 @@ export function Dslay(systemType, scaleValue) {
         return;
     }
     gl.useProgram(program);
-    
+
     const inputGammaLocation = gl.getUniformLocation(program, "input_gamma");
     const colorCorrectionStrengthLocation = gl.getUniformLocation(program, "color_correction_strength");
     const redColorLocation = gl.getUniformLocation(program, "red_color");
     const greenColorLocation = gl.getUniformLocation(program, "green_color");
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
-    
+
     if (systemType === "gbc") {
-        document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`; 
-        document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`; 
+        document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`;
+        document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`;
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
-        gl.uniform1f(inputGammaLocation, 1.3);
-        gl.uniform3f(redColorLocation, 0.78824, 0.025, 0.12039);  
-        gl.uniform3f(greenColorLocation, 0.12157, 0.72941, 0.12157);  
-        gl.uniform3f(blueColorLocation, 0.0, 0.275000, 0.82);  
+        gl.uniform1f(inputGammaLocation, 2.2);
+        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
+        gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
+        gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
+        gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
-        document.getElementById("img-shader").style.width = `${width}px`; 
+        document.getElementById("img-shader").style.width = `${width}px`;
         document.getElementById("img-shader").style.height = `${height}px`;
         document.getElementById("img-shader").style.transform = `scale(${scaleValue / dpr})`;
         document.getElementById("img-shader").style.transformOrigin = "top center";
@@ -469,45 +477,45 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05);
         gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);
     }
-    
+
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        -1, -1,  1, -1, -1,  1,  1,  1
+        -1, -1, 1, -1, -1, 1, 1, 1,
     ]), gl.STATIC_DRAW);
-    
+
     const positionLocation = gl.getAttribLocation(program, "position");
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-    
+
     const texcoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        0, 1,  1, 1,  0, 0,  1, 0
+        0, 1, 1, 1, 0, 0, 1, 0,
     ]), gl.STATIC_DRAW);
-    
+
     const texcoordLocation = gl.getAttribLocation(program, "texcoord");
     gl.enableVertexAttribArray(texcoordLocation);
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-    
+
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    
+
     function updateFrame() {
         const pixelData = Module.getPixelData();
         if (!pixelData) return;
-        
+
         const imageData = new Uint8Array(width * height * 4);
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 const srcIndex = y * stride + x;
                 const destIndex = (y * width + x) * 4;
                 const color = pixelData[srcIndex];
-                
+
                 imageData[destIndex] = (color & 0xFF);
                 imageData[destIndex + 1] = (color >> 8) & 0xFF;
                 imageData[destIndex + 2] = (color >> 16) & 0xFF;
