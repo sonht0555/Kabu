@@ -374,6 +374,8 @@ export function Dslay(systemType, scaleValue) {
     document.querySelectorAll(".wrap").forEach(function(element) {
         element.style.setProperty('--bg-size', "1px");
     });
+    document.getElementById("textured").style.width = `${width * (scaleValue / dpr)}px`;
+    document.getElementById("textured").style.height = `${height * (scaleValue / dpr)}px`;
     document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`;
     document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`;
     bufferCanvas.width = width;
@@ -460,11 +462,11 @@ export function Dslay(systemType, scaleValue) {
         document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`;
         document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`;
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
-        gl.uniform1f(inputGammaLocation, 2.2);
         gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
-        gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
-        gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
-        gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
+        gl.uniform1f(inputGammaLocation, 1.3);
+        gl.uniform3f(redColorLocation, 0.78824, 0.025, 0.12039);  
+        gl.uniform3f(greenColorLocation, 0.12157, 0.72941, 0.12157);  
+        gl.uniform3f(blueColorLocation, 0.0, 0.275000, 0.82); 
     } else {
         document.getElementById("img-shader").style.width = `${width}px`;
         document.getElementById("img-shader").style.height = `${height}px`;
