@@ -730,7 +730,7 @@ dialog .rom-item {
 
 /*Vba-open*/
 .input-container {
-  display: flex;
+  /*display: flex;*/
   padding: 0px 4px 0px 4px;
   font-family: "tuson";
   font-size: 8px;
