@@ -37,10 +37,10 @@ function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.FSSync();
         pauseGame();
-        canvas.classList.add("visible");
+        //canvas.classList.add("visible");
     } else {
         setTimeout(() => {
-            canvas.classList.remove("visible");
+            //canvas.classList.remove("visible");
         }, 600);
         if (controlSetting.classList.contains("visible")) {
             resumeGame();

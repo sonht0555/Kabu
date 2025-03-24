@@ -1062,5 +1062,6 @@ rect {
   background-image: url("../textured.png");
   background-repeat: repeat;
   background-size: 128px;
+  filter: brightness(1) contrast(1.6);
   image-rendering: pixelated !important;
 }
