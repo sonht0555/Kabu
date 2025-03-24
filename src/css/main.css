@@ -317,6 +317,7 @@ label {
   opacity: var(--before-opacity, 1);
   background-size: var(--bg-size, auto) !important;
   z-index: 20;
+  mix-blend-mode: soft-light;
   image-rendering: pixelated !important
 }
 .shu {
@@ -1060,6 +1061,6 @@ rect {
 .textured {
   background-image: url("../textured.png");
   background-repeat: repeat;
-  background-size: 128px 128px;
+  background-size: 128px;
   image-rendering: pixelated !important;
 }
