@@ -468,6 +468,7 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
+        bufferCanvas.style.mixBlendMode = "multiply";
         document.getElementById("img-shader").style.width = `${width}px`;
         document.getElementById("img-shader").style.height = `${height}px`;
         document.getElementById("img-shader").style.transform = `scale(${scaleValue / dpr})`;
