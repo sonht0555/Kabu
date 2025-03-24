@@ -848,13 +848,13 @@ dialog .rom-item {
   transition: color 0.4s ease-in-out;
   padding-left: 4px;
   gap:4px;
+  height: 20px;
 }
 .notification-container::before {
   border-radius: 0px 0px 2px 2px;
 }
 .notification-container span {
   padding: 10px 6px 2px 6px;
-  height: 20px;
 }
 rect {
   transition: fill 0.4s ease-in-out;
