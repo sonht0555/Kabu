@@ -459,6 +459,7 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
+        bufferCanvas.style.mixBlendMode = "multiply";
         document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`;
         document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`;
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
