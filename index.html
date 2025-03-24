@@ -42,23 +42,8 @@
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-8 emu-display cw hw">
             <div class="load-state display-none" id="loadStateButton"></div>
-            <div class="flex-1 bc dpad-l display-none" id="L"></div>
             <div class="column">
-                <div class="notification-container bc sha wrap">
-                    <svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led01"  x="3" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led02"  x="6" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led03"  x="9" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led04"  y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led05"  x="3" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led06"  x="6" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led07"  x="9" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        </svg>  
-                    <span id="noti-mess"></span>
-                    <div class="flex-1"></div>
-                    <span class="timer" id="timer"></span>
-                </div>
+
                 <div class="flex-1 cw">
                     <div class="canvas-container cw hw" id="canvas-container">
                         <div class="textured" id="textured" style="position: absolute;"></div>
@@ -224,25 +209,38 @@
                           </div>
                     </div>
                 </div>
-                <div id="input-container" class="input-container flex-1 sha wrap">
+                <div id="input-container" class="input-container flex-1 sha wrap display-none">
                     <div id="logoOcr" class="logoOcr"></div>
                     <div class="flex-1" style="height:18px;">
                         <div id="inputText" class="inputText"></div>
                     </div> 
                 </div>
             </div>
-            <div class="flex-1 bc dpad-r display-none" id="R"></div>
             <div class="save-state display-none" id="saveStateButton"></div>
         </div>
         <div class="between column bc emu-control gap-8" id="emu-control">
+            <div class="notification-container bc sha wrap">
+                <svg class="display-none" width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led01"  x="3" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led02"  x="6" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led03"  x="9" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led04"  y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led05"  x="3" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led06"  x="6" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    <rect id ="led07"  x="9" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
+                    </svg>  
+                <span id="noti-mess"></span>
+                <div class="flex-1"></div>
+                <span class="timer" id="timer"></span>
+            </div>
             <div class="gap-20 emu-menu" id="control-pad">
                 <div class="flex-1 gap-8">
-                    <div class="flex-1 bc1 dpad-select" id="Select"></div>
-                    <div class="flex-1 bc1 dpad-start" id="Start"></div>
+                    <div class="bc1 dpad-state" id="statePageButton"></div>
+                    <div class="bc1 flex-1 dpad-l" id="L"></div>
                 </div>
                 <div class="flex-1 gap-8">
-                    <div class="bc1 dpad-state" id="statePageButton"></div>
-                    <div class="bc1 flex-1" id=""></div>
+                    <div class="bc1 flex-1 dpad-r" id="R"></div>
                     <div class="bc1 dpad-menu" id="menu-pad"></div>
                 </div>
             </div>
@@ -284,6 +282,10 @@
                     <div class="flex-1 gap-8">
                         <div class="flex-1 bc1 dpad-b" id="B"></div>
                         <div class="bc1 dpad-turbo" id="turbo"></div>
+                    </div>
+                    <div class="gap-8">
+                        <div class="flex-1 bc1 dpad-select" id="Select"></div>
+                        <div class="flex-1 bc1 dpad-start" id="Start"></div>
                     </div>
                 </div>
             </div>
@@ -376,7 +378,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V4.02';</script>
+    <script>let gameVer = 'V4.03';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

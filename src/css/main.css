@@ -257,8 +257,12 @@ label {
 
 /*in-game-open*/
 .dpad-l {
-  z-index: 10;
-  background: url("data:image/svg+xml,%3Csvg width='44' height='175' viewBox='0 0 44 175' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 80.2C19 80.0895 18.9105 80 18.8 80H17.2C17.0895 80 17 80.0895 17 80.2V93.8C17 93.9105 17.0895 94 17.2 94H26.8C26.9105 94 27 93.9105 27 93.8V92.2C27 92.0895 26.9105 92 26.8 92H19.2C19.0895 92 19 91.9105 19 91.8V80.2Z' fill='%23F5E8D1'/%3E%3C/svg%3E%0A");
+  height: 26px;
+  background: url("data:image/svg+xml,%3Csvg width='124' height='26' viewBox='0 0 124 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.4'%3E%3Cpath d='M56 17V9H54V17H56Z' fill='%23F5E8D1'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M58 17H66V11H60V9H58V17ZM60 15V13H64V15H60Z' fill='%23F5E8D1'/%3E%3Cpath d='M68 17H70V15H68V17Z' fill='%23F5E8D1'/%3E%3C/g%3E%3C/svg%3E%0A");
+}
+.dpad-r {
+  height: 26px;
+  background: url("data:image/svg+xml,%3Csvg width='124' height='26' viewBox='0 0 124 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.4'%3E%3Cpath d='M54 12V16H52V10H58V12H54Z' fill='%23F5E8D1'/%3E%3Cpath d='M68 16H60V8H62V10H68V16ZM62 12V14H66V12H62Z' fill='%23F5E8D1'/%3E%3Cpath d='M70 16H72V14H70V16Z' fill='%23F5E8D1'/%3E%3C/g%3E%3C/svg%3E%0A");
 }
 .load-state {
   width: 44px;
@@ -361,10 +365,6 @@ label {
 .Line::before {
   background: url("data:image/svg+xml,%3Csvg width='1' height='1' viewBox='0 0 1 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.9375 0.0625H0.0625V0.9375H0.9375V0.0625ZM0 0V1H1V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
 }
-.dpad-r {
-  z-index: 10;
-  background: url("data:image/svg+xml,%3Csvg width='44' height='175' viewBox='0 0 44 175' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M27 80.2C27 80.0895 26.9105 80 26.8 80H17.2C17.0895 80 17 80.0895 17 80.2V93.8C17 93.9105 17.0895 94 17.2 94H18.8C18.9105 94 19 93.9105 19 93.8V82.2C19 82.0895 19.0895 82 19.2 82H24.8C24.9105 82 25 82.0895 25 82.2V85.8C25 85.9105 24.9105 86 24.8 86H22.2C22.0895 86 22 86.0895 22 86.2V87.8C22 87.9105 22.0895 88 22.2 88H24.8C24.9105 88 25 88.0895 25 88.2V93.8C25 93.9105 25.0895 94 25.2 94H26.8C26.9105 94 27 93.9105 27 93.8V80.2Z' fill='%23F5E8D1'/%3E%3C/svg%3E%0A");
-}
 .save-state {
   width: 44px;
   height: 80px;
@@ -391,9 +391,11 @@ label {
 }
 
 .dpad-select {
+  height: 26px;
   background: url("data:image/svg+xml,%3Csvg width='103' height='26' viewBox='0 0 103 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M42 10H50V12H47V14H50V16H42V14H45V12H42V10Z' fill='%23F5E8D1' fill-opacity='0.4'/%3E%3Cpath d='M57 16H52V10H56V12H54V14H57V16Z' fill='%23F5E8D1' fill-opacity='0.4'/%3E%3Cpath opacity='0.4' d='M59 14H61V16H59V14Z' fill='%23F5E8D1'/%3E%3C/svg%3E%0A");
 }
 .dpad-start {
+  height: 26px;
   background: url("data:image/svg+xml,%3Csvg width='103' height='26' viewBox='0 0 103 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M42 10H50V12H47V14H50V16H42V14H45V12H42V10Z' fill='%23F5E8D1' fill-opacity='0.4'/%3E%3Cpath d='M57 16H52V8H54V10H55H56V12H54V14H57V16Z' fill='%23F5E8D1' fill-opacity='0.4'/%3E%3Cpath opacity='0.4' d='M59 14H61V16H59V14Z' fill='%23F5E8D1'/%3E%3C/svg%3E%0A");
 }
 .dpad-menu {
@@ -408,6 +410,7 @@ label {
   width: calc(100vw - 18px);
   margin: 0px -15px;
   padding: 8px;
+  padding-top: 0px;
 }
 .dpad-a {
   background-position: center !important;
@@ -839,16 +842,19 @@ dialog .rom-item {
   background-color: #f5e8d1;
 }
 .notification-container {
-  height: 15px;
-  border-radius: 2px 2px 0px 0px;
+  border-radius: 0px 0px 2px 2px;
   font-size: 8px;
   color: rgba(245, 232, 209, 1);
   transition: color 0.4s ease-in-out;
   padding-left: 4px;
   gap:4px;
 }
+.notification-container::before {
+  border-radius: 0px 0px 2px 2px;
+}
 .notification-container span {
-  padding-top: 5px;
+  padding: 10px 6px 2px 6px;
+  height: 20px;
 }
 rect {
   transition: fill 0.4s ease-in-out;
@@ -900,8 +906,7 @@ rect {
   transition: opacity 0.3s ease-in-out;
 }
 .timer {
-  padding-top: 5px !important;
-  padding-right: 3px !important;
+  padding: 10px 6px 2px 6px;
   opacity: 0.4;
   font-family: "04bf" !important;
 }
