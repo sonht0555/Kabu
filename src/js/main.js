@@ -465,7 +465,7 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
-        const scaleFactor = 4;
+        const scaleFactor = 2;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
@@ -477,7 +477,7 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
-        const scaleFactor = 2;
+        const scaleFactor = 1;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
