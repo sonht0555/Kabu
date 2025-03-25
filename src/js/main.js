@@ -327,11 +327,11 @@ export async function ledSave(color) {
     const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         await delay(1000);
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         document.getElementById(ledId).style.fill = color;
     } catch (error) {
@@ -372,13 +372,6 @@ export function Dslay(systemType, scaleValue) {
     const height = systemType === "gbc" ? 144 : 160;
     const stride = systemType === "gbc" ? 256 : 240;
 
-    const scaleFactor = 8; // Hệ số nhân mới
-    bufferCanvas.style.mixBlendMode = "multiply";
-    document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
-    document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
-    document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
-    document.getElementById("img-shader").style.transformOrigin = "top center";
-    document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
     document.querySelectorAll(".wrap").forEach(function(element) {
         element.style.setProperty('--bg-size', "1px");
     });
@@ -392,6 +385,7 @@ export function Dslay(systemType, scaleValue) {
     document.getElementById("canvas-container").style.height = `${height * (scaleValue / dpr)}px`;
     bufferCanvas.width = width;
     bufferCanvas.height = height;
+    bufferCanvas.style.mixBlendMode = "multiply";
     bufferCanvas.style.transform = `scale(${scaleValue / dpr})`;
     bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
@@ -471,19 +465,30 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
+        const scaleFactor = 4;
+        document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
+        document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
+        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
+        document.getElementById("img-shader").style.transformOrigin = "top center";
+        document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 2.2);
         gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
         gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
+        const scaleFactor = 2;
+        document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
+        document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
+        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
+        document.getElementById("img-shader").style.transformOrigin = "top center";
+        document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 3.7);
         gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
         gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0);
         gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05);
         gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);
-    }
-
+    }    
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
