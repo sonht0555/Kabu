@@ -1066,15 +1066,15 @@ rect {
 }
 .canvas-top {
   height: 8px;
-  border-radius: 2px 2px 0px 0px;
+  border-radius: 2px 2px 0px 0px!important;
 }
 .canvas-top::before {
-  border-radius: 2px 2px 0px 0px;
+  border-radius: 2px 2px 0px 0px!important;
 }
 .canvas-bot {
   height: 8px;
-  border-radius: 0px 0px 2x 2px;
+  border-radius: 0px 0px 2px 2px !important;
 }
 .canvas-bot::before {
-  border-radius: 0px 0px 2x 2px;
+  border-radius: 0px 0px 2px 2px !important;
 }
