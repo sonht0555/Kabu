@@ -3,7 +3,7 @@ import * as Main from './main.js';
 let selectedIndex = 0;
 let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX ;
 const boxes = document.querySelectorAll('.box');
-const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC-line', 'GBA-line', 'White-line', 'Mess'];
+const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
 const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
@@ -96,7 +96,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {
-                    await lockNoti("", "Relaunch...", 1000)
+                    ingame.classList.add("disable");
+                    await lockNoti("", "Relaunch...", 1000);
                     Main.FSSync();
                     setTimeout(() => {
                         if (navigator.onLine) {
