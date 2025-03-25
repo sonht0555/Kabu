@@ -43,7 +43,7 @@
         <div class="gap-8 emu-display cw hw">
             <div class="load-state display-none" id="loadStateButton"></div>
             <div class="column">
-
+                <div class="bc canvas-top sha Gt-5"></div>
                 <div class="flex-1 cw">
                     <div class="canvas-container cw hw" id="canvas-container">
                         <div class="textured" id="textured" style="position: absolute;"></div>
@@ -129,6 +129,30 @@
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Scale</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-minus"></div>
+                                    <div id="" class="flex-1 box">1x</div>
+                                    <div class="cs-plus"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Streng</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-minus"></div>
+                                    <div id="" class="flex-1 box">0.0</div>
+                                    <div class="cs-plus"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Texture</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-minus"></div>
+                                    <div id="" class="flex-1 box">paper_01</div>
+                                    <div class="cs-plus"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex-1"></div>
                     </div>
@@ -209,6 +233,18 @@
                           </div>
                     </div>
                 </div>
+                <div class="bc canvas-bot sha Gt-5">
+                    <svg width="49" height="8" viewBox="0 0 49 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect id ="led00" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led01" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led02" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led03" x="21" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led04" x="26" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led05" x="31" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led06" x="36" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        <rect id ="led07" x="41" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.4)"/>
+                        </svg>
+                </div>
                 <div id="input-container" class="input-container flex-1 sha wrap display-none">
                     <div id="logoOcr" class="logoOcr"></div>
                     <div class="flex-1" style="height:18px;">
@@ -219,20 +255,10 @@
             <div class="save-state display-none" id="saveStateButton"></div>
         </div>
         <div class="between column bc emu-control gap-8" id="emu-control">
-            <div class="notification-container bc sha wrap">
-                <svg class="display-none" width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led01"  x="3" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led02"  x="6" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led03"  x="9" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led04"  y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led05"  x="3" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led06"  x="6" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    <rect id ="led07"  x="9" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                    </svg>  
-                <span id="noti-mess"></span>
+            <div class="notification-container bc sha Gt-5"> 
+                <span id="noti-mess">[_]...</span>
                 <div class="flex-1"></div>
-                <span class="timer" id="timer"></span>
+                <span class="timer" id="timer">...</span>
             </div>
             <div class="gap-20 emu-menu" id="control-pad">
                 <div class="flex-1 gap-8">
@@ -378,7 +404,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V4.04';</script>
+    <script>let gameVer = 'V4.05';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

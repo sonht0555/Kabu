@@ -374,6 +374,10 @@ export function Dslay(systemType, scaleValue) {
     document.querySelectorAll(".wrap").forEach(function(element) {
         element.style.setProperty('--bg-size', "1px");
     });
+    document.querySelectorAll(".message-container").forEach(function(element) {
+        element.style.width = `${width * (scaleValue / dpr)}px`;
+        element.style.height = `${height * (scaleValue / dpr)}px`;
+    });
     document.getElementById("textured").style.width = `${width * (scaleValue / dpr)}px`;
     document.getElementById("textured").style.height = `${height * (scaleValue / dpr)}px`;
     document.getElementById("canvas-container").style.width = `${width * (scaleValue / dpr)}px`;
