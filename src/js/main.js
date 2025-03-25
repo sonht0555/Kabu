@@ -327,11 +327,11 @@ export async function ledSave(color) {
     const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
     try {
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
         }
         await delay(1000);
         for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.2)";
         }
         document.getElementById(ledId).style.fill = color;
     } catch (error) {
