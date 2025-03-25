@@ -68,15 +68,17 @@ async function getImage() {
         clearTimeout(clickTimeout);
     }
     clickTimeout = setTimeout(() => {
-        document.getElementById("inputText").textContent = "..."
+        document.getElementById("inputText").textContent = ""
+        Main.notiMessage("", 0);
     }, 30000);
 }
 async function freeServer(base64data) {
+    document.getElementById("noti-mess").textContent = ""
     let progress = 0;
     const interval = setInterval(() => {
         progress += 1;
         if (progress <= 100) {
-            inputText.textContent = `Waiting..${progress}%`;
+            inputText.textContent = `.._ ${progress}%`;
         }
     }, 100);
 
@@ -120,7 +122,8 @@ async function freeServer(base64data) {
     }
 }
 async function azureServer(base64data) {
-    inputText.textContent = '...';
+    document.getElementById("noti-mess").textContent = ""
+    inputText.textContent = '.._ ';
     const ApiAzure = localStorage.getItem("ApiAzure");
     let [apiKey, endpoint, countTimes] = ApiAzure.split(',');
     countTimes = parseInt(countTimes);
@@ -187,13 +190,15 @@ async function translateText(textContent, sourceLang, targetLang) {
         const result = await response.json();
         if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
             var translatedText = result[0].map(sentence => sentence[0]).join(' ');
-            inputText.textContent = translatedText.replace(/ {2,}/g, ' ');
+            document.getElementById("noti-mess").textContent = ""
+            inputText.textContent = `.._ ${translatedText.replace(/ {2,}/g, ' ')}`;
             setTimeout(() => {
                 startAutoScroll();
             }, 2000);
             return translatedText.replace(/ {2,}/g, ' ');
         } else {
-            inputText.textContent = result;
+            document.getElementById("noti-mess").textContent = ""
+            inputText.textContent = `.._ ${result}`;
             return result;
         }
     } catch (error) {
@@ -254,11 +259,6 @@ function dataURItoBlob(dataURI) {
         type: 'image/png'
     });
 }
-function logoOcr() {
-    var s = Math.floor(Math.random() * 3) + 1;
-    var newPositionX = -15 * s + 'px';
-    document.getElementById('logoOcr').style.backgroundPositionX = newPositionX;
-}
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     ID.forEach(function(id) {
@@ -280,7 +280,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (!isFunctionARunning) {
                         isFunctionARunning = true;
                         getImage();
-                        logoOcr()
                     }
                 }
                 clickTurbo = 0;

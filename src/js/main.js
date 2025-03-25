@@ -340,6 +340,7 @@ export async function ledSave(color) {
 };
 export async function notiMessage(messageContent, second, showCanvas = false) {
     var message = document.getElementById("noti-mess");
+    document.getElementById("inputText").textContent = ""
     const slotState = parseInt(await getData(gameName, "0", "slotStateSaved")) || 0;
     if (message.style.opacity === "0.4") {
         clearTimeout(messageTimeout);
