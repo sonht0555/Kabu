@@ -465,9 +465,16 @@ export function Dslay(systemType, scaleValue) {
 
     if (systemType === "gbc") {
         bufferCanvas.style.mixBlendMode = "multiply";
-        document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`;
-        document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`;
-        document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
+        //document.getElementById("img-shader").style.width = `${width * (scaleValue / dpr)}px`;
+        //document.getElementById("img-shader").style.height = `${height * (scaleValue / dpr)}px`;
+        //document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleValue / dpr}px ${scaleValue / dpr}px`);
+        const scaleFactor = 8; // Hệ số nhân mới
+        document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
+        document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
+        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
+        document.getElementById("img-shader").style.transformOrigin = "top center";
+        document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
+        
         gl.uniform1f(inputGammaLocation, 2.2);
         gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
         gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
