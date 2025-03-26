@@ -124,10 +124,10 @@ export async function loadGame(romName) {
     // show status ingame
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
             areaTrans.classList.add("gbc1");
-            localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
+            localStorage.setItem("screenSize", `0,0,${160*(6/3)},${144*(6/3)}`)
             Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
-            localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
+            localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
             Dslay("gba", 4);
         }
     // check file extension
@@ -465,7 +465,7 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
-        const scaleFactor = 2;
+        const scaleFactor = 4;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
@@ -477,7 +477,7 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
-        const scaleFactor = 1;
+        const scaleFactor = 2;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;

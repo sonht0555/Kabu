@@ -34,9 +34,9 @@ async function getImage() {
             const resolutionFactor = 4;
             let generalRatio;
             if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
-                generalRatio = Math.round(160 / (window.innerWidth - 230));
+                generalRatio = Math.round(6/3);
             } else {
-                generalRatio = Math.round(240 / (window.innerWidth - 150));
+                generalRatio = Math.round(4/3);
             }
             const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
