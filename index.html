@@ -41,7 +41,6 @@
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
         <div class="gap-8 emu-display cw hw">
-            <div class="load-state display-none" id="loadStateButton"></div>
             <div class="column">
                 <div class="bc canvas-top shu Gt-5"></div>
                 <div class="flex-1 cw">
@@ -166,6 +165,8 @@
                                     <div class="stateDate" id="dateState01"></div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="flex-1 shu Gt-5">
                             <div class="flex-1 stateDiv" id="stateDiv02">
                                 <div class="stateImg" id="state02">
                                 </div>
@@ -183,40 +184,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-1 shu Gt-5">
-                            <div class="flex-1 stateDiv" id="stateDiv04">
-                                <div class="stateImg" id="state04">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[04]</div>
-                                    <div class="stateDate" id="dateState04"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv05">
-                                <div class="stateImg" id="state05">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[05]</div>
-                                    <div class="stateDate" id="dateState05"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv06">
-                                <div class="stateImg" id="state06">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[06]</div>
-                                    <div class="stateDate" id="dateState06"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv07">
-                                <div class="stateImg" id="state07">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[07]</div>
-                                    <div class="stateDate" id="dateState07"></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="message-container column visible" id="areaTrans">
                         <div id="resizable-draggable">
@@ -231,14 +198,9 @@
                         <rect id ="led01" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         <rect id ="led02" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         <rect id ="led03" x="21" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led04" x="26" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led05" x="31" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led06" x="36" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led07" x="41" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         </svg>
                 </div>
             </div>
-            <div class="save-state display-none" id="saveStateButton"></div>
         </div>
         <div class="between column bc emu-control gap-8" id="emu-control">
             <div class="notification-container bc shu Gt-5"> 
@@ -249,11 +211,13 @@
                 <span class="timer" id="timer">...</span>
             </div>
             <div class="gap-20 emu-menu" id="control-pad">
-                <div class="flex-1 gap-8">
+                <div class="flex-1 gap-8" style="position:relative;">
+                    <div class="load-state" id="loadStateButton"></div>
                     <div class="bc1 dpad-state" id="statePageButton"></div>
                     <div class="bc1 flex-1 dpad-l" id="L"></div>
                 </div>
-                <div class="flex-1 gap-8">
+                <div class="flex-1 gap-8" style="position:relative;">
+                    <div class="save-state" id="saveStateButton"></div>
                     <div class="bc1 flex-1 dpad-r" id="R"></div>
                     <div class="bc1 dpad-menu" id="menu-pad"></div>
                 </div>
@@ -392,7 +356,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V4.21';</script>
+    <script>let gameVer = 'V4.22';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

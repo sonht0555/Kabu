@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ["touchend"].forEach(eventType => {
         //Buton Open Save States Page
         statePageButton.addEventListener(eventType, () => {
-            for (let i = 0; i <= 7; i++) {
+            for (let i = 0; i <= 3; i++) {
                 LoadstateInPage(i, `state0${i}`, `dateState0${i}`, `stateDiv0${i}`);
             }
             stateList.classList.toggle("visible");
