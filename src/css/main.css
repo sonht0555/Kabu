@@ -967,7 +967,7 @@ rect {
   bottom: 0;
   width: -webkit-fill-available;
   background-color: rgb(37, 37, 37, 0.6);
-  box-shadow: inset 0 0 0 1px rgb(37, 37, 37, 0)
+  box-shadow: inset 0 0 0 1px rgb(37, 37, 37, 0.2)
 }
 .stateDate {
   opacity: 0.6;
