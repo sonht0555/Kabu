@@ -5,13 +5,11 @@ const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDA
 /* --------------- Function ------------------ */
 // Load States
 async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
-    const imageStateDiv = document.getElementById(divs);
     const localSlot = await Main.getData(gameName, "0", "slotStateSaved");
     const stateDiv = document.getElementById(stateDivs);
     const pngName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `_${saveSlot}.png`);
     const imageData = await Main.dowloadScreenShot(`/data/screenshots/${pngName}`) || noneImage;
     const timeData = await Main.getData(gameName, saveSlot, "saveTime");
-    imageStateDiv.style.cssText = `background-image: url('${imageData}');background-size: cover;background-repeat: no-repeat;background-position: center center`;
     document.getElementById(dateState).textContent = timeData || "__";
     if (parseInt(localSlot) === parseInt(saveSlot)) {
         stateDiv.classList.add('stated');
@@ -73,11 +71,9 @@ export async function wrapContent () {
                     if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
                         const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
                         const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
-                        const imageStateDiv = document.getElementById(`state0${selectedIndex}`);
                         await Main.deleteFile(`/data/states/${stateName}`);
                         await delay(200)
                         await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
-                        imageStateDiv.style.backgroundImage = `url('${noneImage}')`;
                         document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
                     }
                 }

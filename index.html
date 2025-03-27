@@ -47,6 +47,37 @@
                     <div class="canvas-container cw hw" id="canvas-container">
                         <div class="textured" id="textured" style="position: absolute;"></div>
                         <canvas width="240" height="160" class="canvas" id="canvas" style="position: absolute;"></canvas>
+                        <div class="message-container column visible" id="stateList">
+                            <div class="flex-1"></div>
+                            <div class="flex-1"></div>
+                            <div class="flex-1"></div>
+                            <div class="flex-1" style="padding: 2px; gap: 2px;">
+                                <div class="flex-1 stateDiv" id="stateDiv00">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[00]</div>
+                                        <div class="stateDate" id="dateState00"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 stateDiv" id="stateDiv01">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[01]</div>
+                                        <div class="stateDate" id="dateState01"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 stateDiv" id="stateDiv02">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[02]</div>
+                                        <div class="stateDate" id="dateState02"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 stateDiv" id="stateDiv03">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[03]</div>
+                                        <div class="stateDate" id="dateState03"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="sha" id="img-shader" style="position: absolute;"></div>
                     </div>
                     <div class="column message-container" id="">
@@ -146,44 +177,6 @@
                             </div>
                         </div>
                         <div class="flex-1"></div>
-                    </div>
-                    <div class="message-container column visible" id="stateList">
-                        <div class="flex-1 shu Gt-5">
-                            <div class="flex-1 stateDiv" id="stateDiv00">
-                                <div class="stateImg" id="state00">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[00]</div>
-                                    <div class="stateDate" id="dateState00"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv01">
-                                <div class="stateImg" id="state01">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[01]</div>
-                                    <div class="stateDate" id="dateState01"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex-1 shu Gt-5">
-                            <div class="flex-1 stateDiv" id="stateDiv02">
-                                <div class="stateImg" id="state02">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[02]</div>
-                                    <div class="stateDate" id="dateState02"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv03">
-                                <div class="stateImg" id="state03">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[03]</div>
-                                    <div class="stateDate" id="dateState03"></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="message-container column visible" id="areaTrans">
                         <div id="resizable-draggable">
@@ -356,7 +349,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V4.22';</script>
+    <script>let gameVer = 'V4.23';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
