@@ -133,10 +133,10 @@ export async function loadGame(romName) {
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
             document.getElementById("state-container").style.paddingRight = `52px`;
+            document.getElementById("state-container").style.gap = `2px`;
             document.querySelectorAll(".stateInfo").forEach(function(element) {
                 element.style.padding = `4px 5px 2px 5px`;
             });
-            document.getElementById("state-container").style.padding = `4px 5px 2px 5px`;
             Dslay("gba", 4);
         }
     // check file extension
