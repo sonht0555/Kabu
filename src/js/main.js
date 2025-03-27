@@ -129,7 +129,7 @@ export async function loadGame(romName) {
                 console.log("element.style.aspectRatio");
             });
             localStorage.setItem("screenSize", `0,0,${160*(6/3)},${144*(6/3)}`)
-            Dslay("gbc", 7);
+            Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
             document.getElementById("state-container").style.paddingRight = `52px`;
@@ -398,7 +398,6 @@ export function Dslay(systemType, scaleValue) {
     bufferCanvas.height = height;
     bufferCanvas.style.mixBlendMode = "multiply";
     bufferCanvas.style.zoom = `${scaleValue / dpr}`
-    bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
     bufferCanvas.style.imageRendering = "crisp-edges";
     bufferCanvas.style.willChange = "transform";
@@ -476,7 +475,7 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
-        const scaleFactor = 2;
+        const scaleFactor = 4;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.zoom = `${(scaleValue / dpr) / scaleFactor}`;
@@ -491,7 +490,7 @@ export function Dslay(systemType, scaleValue) {
         const scaleFactor = 2;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
-        document.getElementById("img-shader").style.zoom = `${(scaleValue / dpr) / scaleFactor}`;
+        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
         document.getElementById("img-shader").style.transformOrigin = "top center";
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 3.7);

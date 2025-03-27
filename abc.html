@@ -1,0 +1,22 @@
+<canvas id="myCanvas" width="800" height="800"></canvas>
+
+<script>
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // SVG dưới dạng data URI
+
+
+  const img = new Image();
+  img.src = "data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7 1H1V7H7V1ZM0 0V8H8V0H0Z' fill='black'/%3E%3C/svg%3E%0A"
+
+img.onload = () => {
+  ctx.imageSmoothingEnabled = false; // Tắt nội suy
+  ctx.drawImage(img, 0, 0, 200, 200);
+  document.body.style.backgroundImage = `url(${canvas.toDataURL()})`;
+    ctx.imageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+ctx.mozImageSmoothingEnabled = false;
+ctx.msImageSmoothingEnabled = false;
+  };
+</script>
