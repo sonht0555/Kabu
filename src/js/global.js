@@ -164,7 +164,6 @@ async function led(slotStateNumbers) {
             { id: "led00", color: "rgba(245, 232, 209, 0.14)" },
             { id: "led01", color: "rgba(245, 232, 209, 0.14)" },
             { id: "led02", color: "rgba(245, 232, 209, 0.14)" },
-            { id: "led03", color: "rgba(245, 232, 209, 0.14)" },
         ];
 
         if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {

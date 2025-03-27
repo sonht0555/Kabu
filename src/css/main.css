@@ -285,7 +285,7 @@ label {
   /* transition: opacity 0.3s ease-in-out; /*
   /* filter: brightness(1) contrast(1.1) saturate(1.4) hue-rotate(4deg) sepia(0.4) */
 }
-.message-container {
+.message-container, .setting-container  {
   position: absolute;
   overflow: hidden;
   transition: opacity 1s ease-in-out;
@@ -772,7 +772,6 @@ dialog .rom-item {
   white-space: nowrap;
   overflow: auto;
   text-overflow: ellipsis;
-  max-width: calc(100vw - 184px);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scrollbar-width: none;
@@ -934,14 +933,15 @@ rect {
   flex-direction: column;
   border-radius: 0px;
   text-align: left;
+  color: rgba(245, 232, 209, 0.9)
 }
 .stateDiv.stated {
-  color: rgb(32, 165, 166);
+  color: #DD5639
 }
 .stateDiv.selected .stateInfo {
-  box-shadow: inset 0 0 0 1px rgb(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 1px rgb(255, 255, 255, 0.2);
   background-color: rgb(32, 165, 166, 0.9);
-  color: #fff;
+  color: rgba(245, 232, 209, 0.9);
 }
 .stateImg,
 .stateInfo {
@@ -1117,4 +1117,8 @@ rect {
   overflow: hidden;
   padding-left: 6px;
   opacity: 0.4;
+}
+.state-container {
+  padding: 2px; 
+  gap: 3px;
 }

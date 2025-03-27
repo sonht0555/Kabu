@@ -51,7 +51,7 @@
                             <div class="flex-1"></div>
                             <div class="flex-1"></div>
                             <div class="flex-1"></div>
-                            <div class="flex-1" style="padding: 2px; gap: 2px;">
+                            <div class="flex-1 state-container" id ="state-container">
                                 <div class="flex-1 stateDiv" id="stateDiv00">
                                     <div class="flex-1 stateInfo column cw">
                                         <div class="stateTitle">[00]</div>
@@ -70,12 +70,6 @@
                                         <div class="stateDate" id="dateState02"></div>
                                     </div>
                                 </div>
-                                <div class="flex-1 stateDiv" id="stateDiv03">
-                                    <div class="flex-1 stateInfo column cw">
-                                        <div class="stateTitle">[03]</div>
-                                        <div class="stateDate" id="dateState03"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="sha" id="img-shader" style="position: absolute;"></div>
@@ -84,7 +78,7 @@
                         <div class="flex-1" id="areaSet"></div>
                         <div class="flex-1" id=""></div>
                     </div>
-                    <div class="message-container visible" id="control-setting">
+                    <div class="setting-container visible" id="control-setting">
                         <div class="flex-1 column control-setting shu Gt-5">
                             <div class="flex-1">
                                 <div class="flex-1 cs-name">Power</div>
@@ -190,7 +184,6 @@
                         <rect id ="led00" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         <rect id ="led01" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         <rect id ="led02" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led03" x="21" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
                         </svg>
                 </div>
             </div>
@@ -198,7 +191,7 @@
         <div class="between column bc emu-control gap-8" id="emu-control">
             <div class="notification-container bc shu Gt-5"> 
                 <span id="noti-mess" style="position: absolute;">[_]...</span>
-                <div class="flex-1 inputContainer" style="height:18px;">
+                <div class="flex-1 inputContainer" style="height:20px;">
                     <div id="inputText" class="inputText"></div>
                 </div> 
                 <span class="timer" id="timer">...</span>
@@ -349,7 +342,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V4.23';</script>
+    <script>let gameVer = 'V4.24';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

@@ -132,6 +132,7 @@ export async function loadGame(romName) {
             Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
+            document.getElementById("state-container").style.paddingRight = `52px`;
             Dslay("gba", 4);
         }
     // check file extension
@@ -328,13 +329,13 @@ export async function getData(romName, slot, type) {
 }
 export async function ledSave(color) {
     const slotState = parseInt(await getData(gameName, "0", "slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led00";
+    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : "led00";
     try {
-        for (let i = 0; i <= 3; i++) {
+        for (let i = 0; i <= 2; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         await delay(1000);
-        for (let i = 0; i <= 3; i++) {
+        for (let i = 0; i <= 2; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         document.getElementById(ledId).style.fill = color;
@@ -379,10 +380,14 @@ export function Dslay(systemType, scaleValue) {
     document.querySelectorAll(".wrap").forEach(function(element) {
         element.style.setProperty('--bg-size', "1px");
     });
+    document.querySelectorAll(".setting-container").forEach(function(element) {
+        element.style.width = `${width* (scaleValue / dpr)}px`;
+        element.style.height = `${height* (scaleValue / dpr)}px`;
+    });
     document.querySelectorAll(".message-container").forEach(function(element) {
         element.style.width = `${width}px`;
         element.style.height = `${height}px`;
-        element.style.transform = `scale(${scaleValue / dpr})`;
+        element.style.zoom = `${scaleValue / dpr}`;
         element.style.transformOrigin = "top center";
     });
     document.getElementById("textured").style.width = `${width * (scaleValue / dpr)}px`;
@@ -392,7 +397,7 @@ export function Dslay(systemType, scaleValue) {
     bufferCanvas.width = width;
     bufferCanvas.height = height;
     bufferCanvas.style.mixBlendMode = "multiply";
-    bufferCanvas.style.transform = `scale(${scaleValue / dpr})`;
+    bufferCanvas.style.zoom = `${scaleValue / dpr}`
     bufferCanvas.style.transformOrigin = "top center";
     bufferCanvas.style.imageRendering = "pixelated";
     bufferCanvas.style.imageRendering = "crisp-edges";
@@ -471,10 +476,10 @@ export function Dslay(systemType, scaleValue) {
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
 
     if (systemType === "gbc") {
-        const scaleFactor = 4;
+        const scaleFactor = 2;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
-        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
+        document.getElementById("img-shader").style.zoom = `${(scaleValue / dpr) / scaleFactor}`;
         document.getElementById("img-shader").style.transformOrigin = "top center";
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 2.2);
@@ -483,10 +488,10 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
-        const scaleFactor = 2;
+        const scaleFactor = 1;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
-        document.getElementById("img-shader").style.transform = `scale(${(scaleValue / dpr) / scaleFactor})`;
+        document.getElementById("img-shader").style.zoom = `${(scaleValue / dpr) / scaleFactor}`;
         document.getElementById("img-shader").style.transformOrigin = "top center";
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 3.7);

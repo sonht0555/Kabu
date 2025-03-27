@@ -147,7 +147,7 @@ let lastSaveTime = 0;
                 lastSaveTime = Date.now();
                 const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
                 const slotStateNumbers = autoStateCheck === "On"
-                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 3) + 1) || 1
+                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 2) + 1) || 1
                     : parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
                 await delay(100);
                 await saveState(slotStateNumbers);
