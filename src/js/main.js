@@ -129,7 +129,7 @@ export async function loadGame(romName) {
                 console.log("element.style.aspectRatio");
             });
             localStorage.setItem("screenSize", `0,0,${160*(6/3)},${144*(6/3)}`)
-            Dslay("gbc", 6);
+            Dslay("gbc", 7);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
             document.getElementById("state-container").style.paddingRight = `52px`;
@@ -488,7 +488,7 @@ export function Dslay(systemType, scaleValue) {
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
     } else {
-        const scaleFactor = 1;
+        const scaleFactor = 2;
         document.getElementById("img-shader").style.width = `${width * scaleFactor}px`;
         document.getElementById("img-shader").style.height = `${height * scaleFactor}px`;
         document.getElementById("img-shader").style.zoom = `${(scaleValue / dpr) / scaleFactor}`;
