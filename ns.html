@@ -27,7 +27,7 @@ setTimeout(() => {
     const aspectRatio = 160 / 144;
 bufferCanvas.width = window.innerWidth;
 bufferCanvas.height = window.innerWidth / aspectRatio;
-    //bufferCanvas.style.imageRendering = "pixelated";
+    bufferCanvas.style.imageRendering = "pixelated";
 
     const gl = bufferCanvas.getContext("webgl2");
     if (!gl) {
