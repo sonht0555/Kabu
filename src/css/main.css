@@ -963,7 +963,7 @@ rect {
   box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.2);
 }
 .stateDate {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 #stateList {
   background-color: rgba(37, 37, 37, 0);
