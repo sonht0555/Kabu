@@ -935,7 +935,7 @@ rect {
 }
 .stateDiv.selected .stateInfo {
   box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.4);
-  background-color: rgb(221, 86, 57, 0.8);
+  background-color: rgb(32, 165, 166, 0.8);
   color: rgba(245, 232, 209, 1);
 }
 .stateImg,

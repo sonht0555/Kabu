@@ -154,7 +154,7 @@ let lastSaveTime = 0;
                 await delay(50);
                 await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
                 await delay(50);
-                await Main.ledSave("#DD5639");
+                await Main.ledSave("#20A5A6");
                 await delay(50);
                 await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
                 
@@ -162,7 +162,7 @@ let lastSaveTime = 0;
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
                 Main.setVolume(newVolume);
-                Main.notiMessage(`Volume: ${newVolume * 100}%`, 1000);
+                Main.notiMessage(`[_] Volume: ${newVolume * 100}%`, 1000);
             }  
             clickState = 0;
         }, 300);
@@ -176,6 +176,8 @@ let lastSaveTime = 0;
                 const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
                 Main.notiMessage(`[_] Loaded.`, 1000);
+                await delay(50);
+                await Main.ledSave("#20A5A6");
             } else if (clickState === 3) {
                 let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
