@@ -290,11 +290,6 @@ label {
   overflow: hidden;
   transition: opacity 1s ease-in-out;
 }
-.gbc1 {
-  width: calc(100vw - 230px);
-  height: calc((100vw - 230px) * 9 / 10);
-  margin: 8px 40px;
-}
 .message {
   background-color: rgba(0, 0, 0, 0.4);
   padding: 4px 4px 2px 6px;
@@ -940,7 +935,7 @@ rect {
 }
 .stateDiv.selected .stateInfo {
   box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.4);
-  background-color: rgb(32, 165, 166, 0.8);
+  background-color: rgb(221, 86, 57, 0.8);
   color: rgba(245, 232, 209, 1);
 }
 .stateImg,
@@ -967,7 +962,7 @@ rect {
   bottom: 0;
   width: -webkit-fill-available;
   background-color: rgb(37, 37, 37, 0.6);
-  box-shadow: inset 0 0 0 1px rgb(37, 37, 37, 0.2)
+  box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.05);
 }
 .stateDate {
   opacity: 0.6;
@@ -987,7 +982,7 @@ rect {
   align-items: flex-end;
 }
 .cs-name {
-  opacity: 0.26;
+  opacity: 0.32;
   height: 10px;
 }
 .cs-detail {

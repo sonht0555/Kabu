@@ -60,7 +60,7 @@ async function statusShow() {
     await Module.SDL2();
     await delay(800);
     await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
-    await notiMessage(`W_©${currentVersion}`, 1000);
+    await notiMessage(`[_] W_©${currentVersion}`, 1000);
     await wrapContent();
 }
 // Auto Save Every 1m
@@ -123,7 +123,6 @@ export async function loadGame(romName) {
     }
     // show status ingame
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
-            areaTrans.classList.add("gbc1");
             document.querySelectorAll(".stateImg").forEach(function(element) {
                 element.classList.add("gbcs")
                 console.log("element.style.aspectRatio");
@@ -225,12 +224,12 @@ export function fileSize(filePart) {
 export async function resumeGame() {
     Module.resumeGame();
     Module.SDL2();
-    notiMessage("Resumed!", 2000);
+    notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
     Module.pauseGame();
     Module.SDL2();
-    notiMessage("Paused!", 2000);
+    notiMessage("[_] Paused!", 2000);
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)

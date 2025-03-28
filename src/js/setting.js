@@ -212,12 +212,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         const autoStateCheck = "On"
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        Main.notiMessage("Auto Switches Slots", 1500);
+                        Main.notiMessage("[_] Auto Switches", 1500);
                     } else {
                         const autoStateCheck = "Off"
                         await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        Main.notiMessage("Manual Switches Slots", 1500);
+                        Main.notiMessage("[_] Manual Switches", 1500);
                     }
                 }
                 if (document.getElementById('box3').classList.contains('selected')) {

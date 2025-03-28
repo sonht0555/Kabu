@@ -8,7 +8,6 @@ var maxRunCount = 2;
 let clickTurbo = 0
 let clickTimeout;
 const inputText = document.getElementById("inputText");
-const input = document.getElementById("input-container");
 const turbo = document.getElementById("turbo");
 const ID = ['A', 'B', 'R', 'L'];
 /* --------------- Function ------------------ */
@@ -28,15 +27,15 @@ async function getImage() {
         });
         const img = new Image();
         img.src = base64;
-        img.onload = () => {
+        img.onload = async () =>  {
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
             const resolutionFactor = 4;
             let generalRatio;
             if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
-                generalRatio = Math.round(6/3);
+                generalRatio = 3/6
             } else {
-                generalRatio = Math.round(4/3);
+                generalRatio = 3/4;
             }
             const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
             const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
@@ -54,7 +53,8 @@ async function getImage() {
                 cropHeight * generalRatio * resolutionFactor        
             );
             const base64data = canvas.toDataURL("image/png").split(',')[1];
-            const ApiAzure = localStorage.getItem("ApiAzure");
+            const ApiAzure = await Main.getData(gameName, "0", "ApiAzure")
+            console.log(ApiAzure);
             if (ApiAzure) {
                 azureServer(base64data);
             } else {
@@ -124,22 +124,8 @@ async function freeServer(base64data) {
 async function azureServer(base64data) {
     document.getElementById("noti-mess").textContent = ""
     inputText.textContent = '.._ ';
-    const ApiAzure = localStorage.getItem("ApiAzure");
-    let [apiKey, endpoint, countTimes] = ApiAzure.split(',');
-    countTimes = parseInt(countTimes);
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-    const lastSavedDate = localStorage.getItem("lastSavedDate");
-    const lastSaved = lastSavedDate ? new Date(lastSavedDate) : null;
-    if (lastSaved && (currentMonth !== lastSaved.getMonth() || currentYear !== lastSaved.getFullYear())) {
-        countTimes = 0;
-        localStorage.setItem("lastSavedDate", currentDate.toISOString());
-    }
-    if (countTimes >= 4950) {
-        inputText.textContent = 'Used more than 4950 times. Continue using next month.';
-        return;
-    }
+    const ApiAzure = await Main.getData(gameName, "0", "ApiAzure");
+    let [apiKey, endpoint] = ApiAzure.split(',');
     try {
         const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {
             method: 'POST',
@@ -160,16 +146,8 @@ async function azureServer(base64data) {
         transLogic(text);
     } catch (error) {
         inputText.textContent = error.message;
-        const newTime = ++countTimes;
-        Main.notiMessage(`[${newTime}] Times Azure`, 2000);
-        localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
-        localStorage.setItem("lastSavedDate", currentDate.toISOString());
     } finally {
-        const newTime = ++countTimes;
-        Main.notiMessage(`[${newTime}] Times Azure`, 2000);
         isFunctionARunning = false;
-        localStorage.setItem("ApiAzure", `${apiKey},${endpoint},${newTime}`);
-        localStorage.setItem("lastSavedDate", currentDate.toISOString());
     }
 }
 async function translateText(textContent, sourceLang, targetLang) {

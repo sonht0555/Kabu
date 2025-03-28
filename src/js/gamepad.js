@@ -29,17 +29,17 @@ async function loadState(slot) {
 // Turbo
 export async function turboF(turboState) {
     if (turboState === 1) {
-        Main.notiMessage("1x Speed", 1500, true);
+        Main.notiMessage("[_] 1x Speed", 1500);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(1);
     } else if (turboState === 2) {
-        Main.notiMessage("2x Speed", 1500, true);
+        Main.notiMessage("[_] 2x Speed", 1500);
         turboButton.classList.add("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(2);
     } else if (turboState === 3) {
-        Main.notiMessage("4x Speed", 1500, true);
+        Main.notiMessage("[_] 4x Speed", 1500);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.add("turbo-fast");
         Main.setFastForwardMultiplier(4);
