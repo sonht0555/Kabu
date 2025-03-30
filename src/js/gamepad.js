@@ -46,48 +46,49 @@ export async function turboF(turboState) {
     }
 }
 /* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {
-    ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
+document.addEventListener("DOMContentLoaded", function () {
+    const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
+    const allButtons = ["A", "B", "Start", "Select", "L", "R", ...dpadButtons];
+    let currentButton = null;
+    allButtons.forEach((buttonId) => {
         const element = document.getElementById(buttonId);
-        let currentButton = null;
         ["mousedown", "touchstart"].forEach((startEventName) => {
             element.addEventListener(startEventName, () => {
-                currentButton = element;
-                buttonPress(buttonId, true);
-                element.classList.add('touched');
+                if (currentButton !== element) {
+                    currentButton = element;
+                    buttonPress(buttonId, true);
+                    element.classList.add("touched");
+                }
             });
         });
         ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
             element.addEventListener(endEventName, () => {
-                if (currentButton) {
+                if (currentButton === element) {
                     buttonPress(buttonId, false);
+                    element.classList.remove("touched");
                     currentButton = null;
-                    element.classList.remove('touched');
                 }
             });
         });
         element.addEventListener("touchmove", (event) => {
             const touch = event.touches[0];
             const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (newButton !== currentButton && event.touches.length === 1) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
+            if (!newButton) return;
+            if (newButton !== currentButton) {
+                if (dpadButtons.includes(currentButton?.id)) {
+                    if (!dpadButtons.includes(newButton.id)) return;
                 }
-                if (newButton) {
-                    const touchstartEvent = new Event("touchstart");
-                    newButton.dispatchEvent(touchstartEvent);
+                if (dpadButtons.includes(newButton.id)) {
+                    if (currentButton) currentButton.dispatchEvent(new Event("touchend"));
+                    newButton.dispatchEvent(new Event("touchstart"));
+                    currentButton = newButton;
                 }
-                currentButton = newButton;
             }
         });
         document.addEventListener("touchend", (event) => {
-            if (event.touches.length === 0) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
-                    currentButton = null;
-                }
+            if (event.touches.length === 0 && currentButton) {
+                currentButton.dispatchEvent(new Event("touchend"));
+                currentButton = null;
             }
         });
         // Joy Stick
