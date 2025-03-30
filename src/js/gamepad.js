@@ -46,77 +46,103 @@ export async function turboF(turboState) {
     }
 }
 /* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
-    const allButtons = ["A", "B", "Start", "Select", "L", "R", ...dpadButtons];
-    let activeButtons = new Set(); // Lưu danh sách các nút đang được nhấn
-    let touchMap = {}; // Lưu ID của nút mà mỗi ngón tay đang nhấn
-    allButtons.forEach((buttonId) => {
+    const actionButtons = ["A", "B", "Start", "Select", "L", "R"];
+    
+    let dpadActive = null; // Chỉ một nút D-pad được active tại một thời điểm
+    let buttonState = {}; // Trạng thái các nút khác
+
+    function buttonPress(buttonId, isPressed) {
+        console.log(`${buttonId} ${isPressed ? 'pressed' : 'released'}`);
+    }
+
+    function activateDpad(newButton) {
+        if (dpadActive !== newButton) {
+            if (dpadActive) {
+                buttonPress(dpadActive, false);
+                document.getElementById(dpadActive).classList.remove('touched');
+            }
+            dpadActive = newButton;
+            buttonPress(newButton, true);
+            document.getElementById(newButton).classList.add('touched');
+        }
+    }
+
+    function activateButton(newButton) {
+        if (buttonState[newButton]) return;
+        Object.keys(buttonState).forEach((btn) => {
+            buttonPress(btn, false);
+            document.getElementById(btn).classList.remove('touched');
+        });
+        buttonState = {};
+        buttonState[newButton] = true;
+        buttonPress(newButton, true);
+        document.getElementById(newButton).classList.add('touched');
+    }
+
+    function deactivateButton(buttonId) {
+        if (buttonState[buttonId]) {
+            buttonPress(buttonId, false);
+            document.getElementById(buttonId).classList.remove('touched');
+            delete buttonState[buttonId];
+        }
+    }
+
+    [...dpadButtons, ...actionButtons].forEach((buttonId) => {
         const element = document.getElementById(buttonId);
+        let currentButton = null;
+
         ["mousedown", "touchstart"].forEach((startEventName) => {
             element.addEventListener(startEventName, (event) => {
-                const touchId = event.touches ? event.touches[0].identifier : "mouse";
-
-                if (touchMap[touchId] !== element) {
-                    if (dpadButtons.includes(buttonId)) {
-                        // Nếu đang giữ một nút D-pad khác, thì bỏ nút cũ trước
-                        if (touchMap[touchId] && dpadButtons.includes(touchMap[touchId].id)) {
-                            touchMap[touchId].dispatchEvent(new Event("touchend"));
-                        }
-                    }
-
-                    buttonPress(buttonId, true);
-                    element.classList.add("touched");
-                    activeButtons.add(element);
-                    touchMap[touchId] = element;
+                if (dpadButtons.includes(buttonId)) {
+                    activateDpad(buttonId);
+                } else {
+                    activateButton(buttonId);
                 }
+                currentButton = element;
             });
         });
+
         ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
             element.addEventListener(endEventName, (event) => {
-                const touchId = event.changedTouches ? event.changedTouches[0].identifier : "mouse";
-
-                if (touchMap[touchId] === element) {
-                    buttonPress(buttonId, false);
-                    element.classList.remove("touched");
-                    activeButtons.delete(element);
-                    delete touchMap[touchId];
+                if (dpadButtons.includes(buttonId)) {
+                    if (dpadActive === buttonId) {
+                        buttonPress(buttonId, false);
+                        document.getElementById(buttonId).classList.remove('touched');
+                        dpadActive = null;
+                    }
+                } else {
+                    deactivateButton(buttonId);
                 }
             });
         });
+
         element.addEventListener("touchmove", (event) => {
             const touch = event.touches[0];
-            const touchId = touch.identifier;
             const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
             if (!newButton) return;
-            if (touchMap[touchId] !== newButton) {
-                if (dpadButtons.includes(touchMap[touchId]?.id)) {
-                    // Nếu ngón tay đang ở một nút D-pad khác, thì bỏ nút cũ trước
-                    touchMap[touchId]?.dispatchEvent(new Event("touchend"));
-                }
-                if (dpadButtons.includes(newButton.id)) {
-                    newButton.dispatchEvent(new Event("touchstart"));
-                    touchMap[touchId] = newButton;
-                }
+            const newButtonId = newButton.id;
+
+            if (dpadButtons.includes(buttonId) && dpadButtons.includes(newButtonId)) {
+                activateDpad(newButtonId);
+            } else if (actionButtons.includes(buttonId) && actionButtons.includes(newButtonId)) {
+                activateButton(newButtonId);
             }
         });
+
         document.addEventListener("touchend", (event) => {
-            for (let i = 0; i < event.changedTouches.length; i++) {
-                const touchId = event.changedTouches[i].identifier;
-                if (touchMap[touchId]) {
-                    touchMap[touchId].dispatchEvent(new Event("touchend"));
-                    delete touchMap[touchId];
-                }
-            }
             if (event.touches.length === 0) {
-                // Nếu không còn ngón tay nào trên màn hình => tắt tất cả các nút đang active
-                activeButtons.forEach((button) => {
-                    buttonPress(button.id, false);
-                    button.classList.remove("touched");
-                });
-                activeButtons.clear();
+                if (dpadActive) {
+                    buttonPress(dpadActive, false);
+                    document.getElementById(dpadActive).classList.remove('touched');
+                    dpadActive = null;
+                }
+                Object.keys(buttonState).forEach(deactivateButton);
             }
         });
+
+
         // Joy Stick
         let currentDirection = '';
         const updateButtonState = (direction, isPressed) => {
