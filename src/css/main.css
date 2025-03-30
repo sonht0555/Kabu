@@ -618,10 +618,8 @@ label {
   transition: height 0.4s 0.3s ease-in-out, margin-top 0.4s 0.3s ease-in-out,
     opacity 0.4s 0s ease-in-out;
 }
-.dynamic {
-  height: 1000px;
-  width: 100%;
-  position: relative;
+.static {
+  position: absolute;
 }
 /*in-game-close*/
 
