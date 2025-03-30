@@ -48,17 +48,49 @@ export async function turboF(turboState) {
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
-        // Joy Stick
-        const JTContainer = document.getElementById("JTContainer");
-        var dynamic = nipplejs.create({
-            zone: document.getElementById('static'),
-            mode: 'static',
-            position: { left: '50%', top: '50%' },
-            color: "rgba(0, 0, 0, 0)",
-            size: JTContainer.clientWidth,
+        const element = document.getElementById(buttonId);
+        let currentButton = null;
+        ["mousedown", "touchstart"].forEach((startEventName) => {
+            element.addEventListener(startEventName, () => {
+                currentButton = element;
+                buttonPress(buttonId, true);
+                element.classList.add('touched');
+            });
         });
-        document.getElementById('static').style.width = JTContainer.clientWidth + "px";
-        document.getElementById('static').style.height = JTContainer.clientHeight + "px";
+        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
+            element.addEventListener(endEventName, () => {
+                if (currentButton) {
+                    buttonPress(buttonId, false);
+                    currentButton = null;
+                    element.classList.remove('touched');
+                }
+            });
+        });
+        element.addEventListener("touchmove", (event) => {
+            const touch = event.touches[0];
+            const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (newButton !== currentButton && event.touches.length === 1) {
+                if (currentButton) {
+                    const touchendEvent = new Event("touchend");
+                    currentButton.dispatchEvent(touchendEvent);
+                }
+                if (newButton) {
+                    const touchstartEvent = new Event("touchstart");
+                    newButton.dispatchEvent(touchstartEvent);
+                }
+                currentButton = newButton;
+            }
+        });
+        document.addEventListener("touchend", (event) => {
+            if (event.touches.length === 0) {
+                if (currentButton) {
+                    const touchendEvent = new Event("touchend");
+                    currentButton.dispatchEvent(touchendEvent);
+                    currentButton = null;
+                }
+            }
+        });
+        // Joy Stick
         let currentDirection = '';
         const updateButtonState = (direction, isPressed) => {
             const directions = direction.split('-');
@@ -73,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function() {
         dynamic.on('move', (evt, data) => {
             const angle = data.angle.degree;
             let dpadDirection = '';
-        
             if (angle >= 337.5 || angle < 22.5) {
                 dpadDirection = 'Right';
             } else if (angle >= 22.5 && angle < 67.5) {
@@ -91,39 +122,16 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (angle >= 292.5 && angle < 337.5) {
                 dpadDirection = 'Down-right';
             }
-        
             if (dpadDirection !== currentDirection) {
-                // Xóa class 'touched' của hướng cũ
-                if (currentDirection) {
-                    const oldElement = document.getElementById(currentDirection);
-                    if (oldElement) oldElement.classList.remove('touched');
-                }
-        
-                // Thêm class 'touched' cho hướng mới
-                const newElement = document.getElementById(dpadDirection);
-                if (newElement) newElement.classList.add('touched');
-        
-                console.log(`Joystick moved: ${dpadDirection}`);
-        
                 updateButtonState(currentDirection, false);
                 updateButtonState(dpadDirection, true);
                 currentDirection = dpadDirection;
             }
         });
-        
         dynamic.on('end', () => {
-            console.log("Joystick released");
-        
-            // Xóa class 'touched' khi joystick dừng lại
-            if (currentDirection) {
-                const element = document.getElementById(currentDirection);
-                if (element) element.classList.remove('touched');
-            }
-        
             updateButtonState(currentDirection, false);
             currentDirection = '';
         });
-        
     })
 });
 let lastSaveTime = 0;

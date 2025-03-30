@@ -110,7 +110,7 @@ export async function loadGame(romName) {
     const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
-    ingame.classList.remove("visible");
+    ingame.classList.remove("disable");
     // check save state in local
     if (statesList.includes(stateName)) {
         await Module.loadGame(`/data/games/${romName}`);

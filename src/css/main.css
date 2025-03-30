@@ -146,6 +146,21 @@ label {
 .right {
   justify-content: flex-end;
 }
+.nipple div {
+  border: 1px solid gray;
+}
+.nipple .back {
+  -webkit-box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  -moz-box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  border: 0px;
+}
+.nipple .front {
+  -webkit-box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  -moz-box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  border: 0px;
+}
 .touched {
   background-color: #363636 !important;
 }
@@ -468,8 +483,8 @@ label {
   height: 100%;
   background: linear-gradient(
     225deg,
-    rgba(47, 47, 47, 0) 20%,
-    rgba(47, 47, 47, 1) 100%
+    rgba(50, 50, 50, 0) 20%,
+    rgba(50, 50, 50, 1) 100%
   );
 }
 .pad-r::after {
@@ -487,8 +502,8 @@ label {
   height: 100%;
   background: linear-gradient(
     135deg,
-    rgba(47, 47, 47, 0) 20%,
-    rgba(47, 47, 47, 1) 100%
+    rgba(50, 50, 50, 0) 20%,
+    rgba(50, 50, 50, 1) 100%
   );
 }
 .pad-u::after {
@@ -506,8 +521,8 @@ label {
   height: 100%;
   background: linear-gradient(
     45deg,
-    rgba(47, 47, 47, 0) 20%,
-    rgba(47, 47, 47, 1) 100%
+    rgba(50, 50, 50, 0) 20%,
+    rgba(50, 50, 50, 1) 100%
   );
 }
 .pad-l::after {
@@ -525,8 +540,8 @@ label {
   height: 100%;
   background: linear-gradient(
     315deg,
-    rgba(47, 47, 47, 0) 20%,
-    rgba(47, 47, 47, 1) 100%
+    rgba(50, 50, 50, 0) 20%,
+    rgba(50, 50, 50, 1) 100%
   );
 }
 .pad-d::after {
@@ -603,8 +618,10 @@ label {
   transition: height 0.4s 0.3s ease-in-out, margin-top 0.4s 0.3s ease-in-out,
     opacity 0.4s 0s ease-in-out;
 }
-.static {
-  position: absolute;
+.dynamic {
+  height: 1000px;
+  width: 100%;
+  position: relative;
 }
 /*in-game-close*/
 
