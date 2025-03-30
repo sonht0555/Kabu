@@ -50,24 +50,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const allButtons = ["A", "B", "Start", "Select", "L", "R", ...dpadButtons];
     let currentButton = null;
+    let activeButtons = new Set(); // Lưu danh sách các nút đang được nhấn
     allButtons.forEach((buttonId) => {
         const element = document.getElementById(buttonId);
         ["mousedown", "touchstart"].forEach((startEventName) => {
-            element.addEventListener(startEventName, () => {
-                if (currentButton !== element) {
-                    currentButton = element;
+            element.addEventListener(startEventName, (event) => {
+                if (!activeButtons.has(element)) {
                     buttonPress(buttonId, true);
                     element.classList.add("touched");
+                    activeButtons.add(element);
                 }
+                currentButton = element;
             });
         });
         ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
             element.addEventListener(endEventName, () => {
-                if (currentButton === element) {
+                if (activeButtons.has(element)) {
                     buttonPress(buttonId, false);
                     element.classList.remove("touched");
-                    currentButton = null;
+                    activeButtons.delete(element);
                 }
+                if (currentButton === element) currentButton = null;
             });
         });
         element.addEventListener("touchmove", (event) => {
@@ -86,8 +89,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         document.addEventListener("touchend", (event) => {
-            if (event.touches.length === 0 && currentButton) {
-                currentButton.dispatchEvent(new Event("touchend"));
+            if (event.touches.length === 0) {
+                // Nếu không còn ngón tay nào trên màn hình => tắt tất cả các nút đang active
+                activeButtons.forEach((button) => {
+                    buttonPress(button.id, false);
+                    button.classList.remove("touched");
+                });
+                activeButtons.clear();
                 currentButton = null;
             }
         });
