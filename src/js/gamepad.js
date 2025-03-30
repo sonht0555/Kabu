@@ -49,10 +49,9 @@ export async function turboF(turboState) {
 document.addEventListener("DOMContentLoaded", function() {
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
-    
     let activeDpadTouches = new Map();
     let activeOtherTouches = new Map();
-    
+
     function handleButtonPress(buttonId, isPressed) {
         if (!buttonId) return;
         buttonPress(buttonId, isPressed);
@@ -72,13 +71,10 @@ document.addEventListener("DOMContentLoaded", function() {
         return button ? button.id : null;
     }
     
-    
     document.addEventListener("touchstart", (event) => {
         for (let touch of event.changedTouches) {
             const buttonId = getButtonIdFromTouch(touch);
-            console.log("Touched:", buttonId); // Debugging
             if (!buttonId) continue;
-            
             if (dpadButtons.includes(buttonId)) {
                 if (activeDpadTouches.has(touch.identifier)) {
                     handleButtonPress(activeDpadTouches.get(touch.identifier), false);
@@ -94,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
-    
+
     document.addEventListener("touchmove", (event) => {
         for (let touch of event.changedTouches) {
             const buttonId = getButtonIdFromTouch(touch);
@@ -140,50 +136,50 @@ document.addEventListener("DOMContentLoaded", function() {
                 activeOtherTouches.delete(touch.identifier);
             }
         }
-
-        // Joy Stick
-        let currentDirection = '';
-        const updateButtonState = (direction, isPressed) => {
-            const directions = direction.split('-');
-            directions.forEach(dir => {
-                if (isPressed) {
-                    Main.buttonPress(dir);
-                } else {
-                    Main.buttonUnpress(dir);
-                }
-            });
-        };
-        dynamic.on('move', (evt, data) => {
-            const angle = data.angle.degree;
-            let dpadDirection = '';
-            if (angle >= 337.5 || angle < 22.5) {
-                dpadDirection = 'Right';
-            } else if (angle >= 22.5 && angle < 67.5) {
-                dpadDirection = 'Up-right';
-            } else if (angle >= 67.5 && angle < 112.5) {
-                dpadDirection = 'Up';
-            } else if (angle >= 112.5 && angle < 157.5) {
-                dpadDirection = 'Up-left';
-            } else if (angle >= 157.5 && angle < 202.5) {
-                dpadDirection = 'Left';
-            } else if (angle >= 202.5 && angle < 247.5) {
-                dpadDirection = 'Down-left';
-            } else if (angle >= 247.5 && angle < 292.5) {
-                dpadDirection = 'Down';
-            } else if (angle >= 292.5 && angle < 337.5) {
-                dpadDirection = 'Down-right';
-            }
-            if (dpadDirection !== currentDirection) {
-                updateButtonState(currentDirection, false);
-                updateButtonState(dpadDirection, true);
-                currentDirection = dpadDirection;
+    });
+    
+     // Joy Stick
+    let currentDirection = '';
+    const updateButtonState = (direction, isPressed) => {
+        const directions = direction.split('-');
+        directions.forEach(dir => {
+            if (isPressed) {
+                Main.buttonPress(dir);
+            } else {
+                Main.buttonUnpress(dir);
             }
         });
-        dynamic.on('end', () => {
+    };
+    dynamic.on('move', (evt, data) => {
+        const angle = data.angle.degree;
+        let dpadDirection = '';
+        if (angle >= 337.5 || angle < 22.5) {
+            dpadDirection = 'Right';
+        } else if (angle >= 22.5 && angle < 67.5) {
+            dpadDirection = 'Up-right';
+        } else if (angle >= 67.5 && angle < 112.5) {
+            dpadDirection = 'Up';
+        } else if (angle >= 112.5 && angle < 157.5) {
+            dpadDirection = 'Up-left';
+        } else if (angle >= 157.5 && angle < 202.5) {
+            dpadDirection = 'Left';
+        } else if (angle >= 202.5 && angle < 247.5) {
+            dpadDirection = 'Down-left';
+        } else if (angle >= 247.5 && angle < 292.5) {
+            dpadDirection = 'Down';
+        } else if (angle >= 292.5 && angle < 337.5) {
+            dpadDirection = 'Down-right';
+        }
+        if (dpadDirection !== currentDirection) {
             updateButtonState(currentDirection, false);
-            currentDirection = '';
-        });
-    })
+            updateButtonState(dpadDirection, true);
+            currentDirection = dpadDirection;
+        }
+    });
+    dynamic.on('end', () => {
+        updateButtonState(currentDirection, false);
+        currentDirection = '';
+    });
 });
 let lastSaveTime = 0;
 ["touchend"].forEach(eventType => {
