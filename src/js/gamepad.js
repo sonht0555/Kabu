@@ -48,100 +48,98 @@ export async function turboF(turboState) {
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
-    const actionButtons = ["A", "B", "Start", "Select", "L", "R"];
+    const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     
-    let dpadActive = null; // Chỉ một nút D-pad được active tại một thời điểm
-    let buttonState = {}; // Trạng thái các nút khác
-
-    function buttonPress(buttonId, isPressed) {
-        console.log(`${buttonId} ${isPressed ? 'pressed' : 'released'}`);
-    }
-
-    function activateDpad(newButton) {
-        if (dpadActive !== newButton) {
-            if (dpadActive) {
-                buttonPress(dpadActive, false);
-                document.getElementById(dpadActive).classList.remove('touched');
-            }
-            dpadActive = newButton;
-            buttonPress(newButton, true);
-            document.getElementById(newButton).classList.add('touched');
-        }
-    }
-
-    function activateButton(newButton) {
-        if (buttonState[newButton]) return;
-        Object.keys(buttonState).forEach((btn) => {
-            buttonPress(btn, false);
-            document.getElementById(btn).classList.remove('touched');
-        });
-        buttonState = {};
-        buttonState[newButton] = true;
-        buttonPress(newButton, true);
-        document.getElementById(newButton).classList.add('touched');
-    }
-
-    function deactivateButton(buttonId) {
-        if (buttonState[buttonId]) {
-            buttonPress(buttonId, false);
-            document.getElementById(buttonId).classList.remove('touched');
-            delete buttonState[buttonId];
-        }
-    }
-
-    [...dpadButtons, ...actionButtons].forEach((buttonId) => {
+    let activeDpadTouches = new Map();
+    let activeOtherTouches = new Map();
+    
+    function handleButtonPress(buttonId, isPressed) {
+        if (!buttonId) return;
+        buttonPress(buttonId, isPressed);
         const element = document.getElementById(buttonId);
-        let currentButton = null;
-
-        ["mousedown", "touchstart"].forEach((startEventName) => {
-            element.addEventListener(startEventName, (event) => {
-                if (dpadButtons.includes(buttonId)) {
-                    activateDpad(buttonId);
-                } else {
-                    activateButton(buttonId);
-                }
-                currentButton = element;
-            });
-        });
-
-        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
-            element.addEventListener(endEventName, (event) => {
-                if (dpadButtons.includes(buttonId)) {
-                    if (dpadActive === buttonId) {
-                        buttonPress(buttonId, false);
-                        document.getElementById(buttonId).classList.remove('touched');
-                        dpadActive = null;
-                    }
-                } else {
-                    deactivateButton(buttonId);
-                }
-            });
-        });
-
-        element.addEventListener("touchmove", (event) => {
-            const touch = event.touches[0];
-            const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (!newButton) return;
-            const newButtonId = newButton.id;
-
-            if (dpadButtons.includes(buttonId) && dpadButtons.includes(newButtonId)) {
-                activateDpad(newButtonId);
-            } else if (actionButtons.includes(buttonId) && actionButtons.includes(newButtonId)) {
-                activateButton(newButtonId);
+        if (element) {
+            if (isPressed) {
+                element.classList.add('touched');
+            } else {
+                element.classList.remove('touched');
             }
-        });
-
-        document.addEventListener("touchend", (event) => {
-            if (event.touches.length === 0) {
-                if (dpadActive) {
-                    buttonPress(dpadActive, false);
-                    document.getElementById(dpadActive).classList.remove('touched');
-                    dpadActive = null;
+        }
+    }
+    
+    function getButtonIdFromTouch(touch) {
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const button = element?.closest("[id]");
+        return button ? button.id : null;
+    }
+    
+    
+    document.addEventListener("touchstart", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            console.log("Touched:", buttonId); // Debugging
+            if (!buttonId) continue;
+            
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier)) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
                 }
-                Object.keys(buttonState).forEach(deactivateButton);
+                activeDpadTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier)) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                }
+                activeOtherTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
             }
-        });
-
+        }
+    });
+    
+    document.addEventListener("touchmove", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier) && activeDpadTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                    activeDpadTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier) && activeOtherTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                    activeOtherTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            }
+        }
+    });
+    
+    document.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+    document.addEventListener("touchcancel", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
 
         // Joy Stick
         let currentDirection = '';
