@@ -49,46 +49,65 @@ export async function turboF(turboState) {
 document.addEventListener("DOMContentLoaded", function () {
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const allButtons = ["A", "B", "Start", "Select", "L", "R", ...dpadButtons];
-    let currentButton = null;
     let activeButtons = new Set(); // Lưu danh sách các nút đang được nhấn
+    let touchMap = {}; // Lưu ID của nút mà mỗi ngón tay đang nhấn
     allButtons.forEach((buttonId) => {
         const element = document.getElementById(buttonId);
         ["mousedown", "touchstart"].forEach((startEventName) => {
             element.addEventListener(startEventName, (event) => {
-                if (!activeButtons.has(element)) {
+                const touchId = event.touches ? event.touches[0].identifier : "mouse";
+
+                if (touchMap[touchId] !== element) {
+                    if (dpadButtons.includes(buttonId)) {
+                        // Nếu đang giữ một nút D-pad khác, thì bỏ nút cũ trước
+                        if (touchMap[touchId] && dpadButtons.includes(touchMap[touchId].id)) {
+                            touchMap[touchId].dispatchEvent(new Event("touchend"));
+                        }
+                    }
+
                     buttonPress(buttonId, true);
                     element.classList.add("touched");
                     activeButtons.add(element);
+                    touchMap[touchId] = element;
                 }
-                currentButton = element;
             });
         });
         ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
-            element.addEventListener(endEventName, () => {
-                if (activeButtons.has(element)) {
+            element.addEventListener(endEventName, (event) => {
+                const touchId = event.changedTouches ? event.changedTouches[0].identifier : "mouse";
+
+                if (touchMap[touchId] === element) {
                     buttonPress(buttonId, false);
                     element.classList.remove("touched");
                     activeButtons.delete(element);
+                    delete touchMap[touchId];
                 }
-                if (currentButton === element) currentButton = null;
             });
         });
         element.addEventListener("touchmove", (event) => {
             const touch = event.touches[0];
+            const touchId = touch.identifier;
             const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
             if (!newButton) return;
-            if (newButton !== currentButton) {
-                if (dpadButtons.includes(currentButton?.id)) {
-                    if (!dpadButtons.includes(newButton.id)) return;
+            if (touchMap[touchId] !== newButton) {
+                if (dpadButtons.includes(touchMap[touchId]?.id)) {
+                    // Nếu ngón tay đang ở một nút D-pad khác, thì bỏ nút cũ trước
+                    touchMap[touchId]?.dispatchEvent(new Event("touchend"));
                 }
                 if (dpadButtons.includes(newButton.id)) {
-                    if (currentButton) currentButton.dispatchEvent(new Event("touchend"));
                     newButton.dispatchEvent(new Event("touchstart"));
-                    currentButton = newButton;
+                    touchMap[touchId] = newButton;
                 }
             }
         });
         document.addEventListener("touchend", (event) => {
+            for (let i = 0; i < event.changedTouches.length; i++) {
+                const touchId = event.changedTouches[i].identifier;
+                if (touchMap[touchId]) {
+                    touchMap[touchId].dispatchEvent(new Event("touchend"));
+                    delete touchMap[touchId];
+                }
+            }
             if (event.touches.length === 0) {
                 // Nếu không còn ngón tay nào trên màn hình => tắt tất cả các nút đang active
                 activeButtons.forEach((button) => {
@@ -96,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     button.classList.remove("touched");
                 });
                 activeButtons.clear();
-                currentButton = null;
             }
         });
         // Joy Stick
