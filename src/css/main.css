@@ -483,8 +483,8 @@ label {
   height: 100%;
   background: linear-gradient(
     225deg,
-    rgba(50, 50, 50, 0) 20%,
-    rgba(50, 50, 50, 1) 100%
+    rgba(47, 47, 47, 0) 20%,
+    rgba(47, 47, 47, 1) 100%
   );
 }
 .pad-r::after {
@@ -502,8 +502,8 @@ label {
   height: 100%;
   background: linear-gradient(
     135deg,
-    rgba(50, 50, 50, 0) 20%,
-    rgba(50, 50, 50, 1) 100%
+    rgba(47, 47, 47, 0) 20%,
+    rgba(47, 47, 47, 1) 100%
   );
 }
 .pad-u::after {
@@ -521,8 +521,8 @@ label {
   height: 100%;
   background: linear-gradient(
     45deg,
-    rgba(50, 50, 50, 0) 20%,
-    rgba(50, 50, 50, 1) 100%
+    rgba(47, 47, 47, 0) 20%,
+    rgba(47, 47, 47, 1) 100%
   );
 }
 .pad-l::after {
@@ -540,8 +540,8 @@ label {
   height: 100%;
   background: linear-gradient(
     315deg,
-    rgba(50, 50, 50, 0) 20%,
-    rgba(50, 50, 50, 1) 100%
+    rgba(47, 47, 47, 0) 20%,
+    rgba(47, 47, 47, 1) 100%
   );
 }
 .pad-d::after {
