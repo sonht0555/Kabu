@@ -48,48 +48,6 @@ export async function turboF(turboState) {
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
-        const element = document.getElementById(buttonId);
-        let currentButton = null;
-        ["mousedown", "touchstart"].forEach((startEventName) => {
-            element.addEventListener(startEventName, () => {
-                currentButton = element;
-                buttonPress(buttonId, true);
-                element.classList.add('touched');
-            });
-        });
-        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
-            element.addEventListener(endEventName, () => {
-                if (currentButton) {
-                    buttonPress(buttonId, false);
-                    currentButton = null;
-                    element.classList.remove('touched');
-                }
-            });
-        });
-        element.addEventListener("touchmove", (event) => {
-            const touch = event.touches[0];
-            const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (newButton !== currentButton && event.touches.length === 1) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
-                }
-                if (newButton) {
-                    const touchstartEvent = new Event("touchstart");
-                    newButton.dispatchEvent(touchstartEvent);
-                }
-                currentButton = newButton;
-            }
-        });
-        document.addEventListener("touchend", (event) => {
-            if (event.touches.length === 0) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
-                    currentButton = null;
-                }
-            }
-        });
         // Joy Stick
         const JTContainer = document.getElementById("JTContainer");
         var dynamic = nipplejs.create({

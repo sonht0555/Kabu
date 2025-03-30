@@ -17,13 +17,6 @@ const ids = ['inputText', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03'
 const touchedID = ['saveStateButton', 'loadStateButton', 'openLocalStorage', 'upLoadFile', 'backToHome', 'rewind'];
 /* --------------- Function ------------------ */
 // Joy Stick
-var dynamicZone = document.getElementById("dynamic");
-var nippleOptions = {
-    zone: dynamicZone,
-    color: "#2F2F2F",
-    size: 120
-};
-var dynamic = nipplejs.create(nippleOptions);
 // Position Adjustment
 function positionAdjustment(stateAdj) {
     const states = [{
