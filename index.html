@@ -41,10 +41,10 @@
             const stride = systemType === "GBC" ? 256 : 240;
             const bufferCanvas = document.getElementById("canvas-1");
             const aspectRatio = 144 / 160;
-            const upscaleFactor = 2;
+            const upscaleFactor = 4;
             bufferCanvas.width = window.innerWidth * upscaleFactor;
             bufferCanvas.height = bufferCanvas.width * aspectRatio
-            bufferCanvas.style.imageRendering = "pixelated";
+            //bufferCanvas.style.imageRendering = "pixelated";
             bufferCanvas.style.transform = `scale(${1/upscaleFactor})`;
             bufferCanvas.style.transformOrigin = "top left";
             const gl = bufferCanvas.getContext("webgl2");
