@@ -53,7 +53,7 @@ async function getImage() {
                 cropHeight * generalRatio * resolutionFactor        
             );
             const base64data = canvas.toDataURL("image/png").split(',')[1];
-            const ApiAzure = await Main.getData(gameName, "0", "ApiAzure")
+            const ApiAzure = localStorage.getItem("ApiAzure");
             console.log(ApiAzure);
             if (ApiAzure) {
                 azureServer(base64data);
@@ -124,7 +124,7 @@ async function freeServer(base64data) {
 async function azureServer(base64data) {
     document.getElementById("noti-mess").textContent = ""
     inputText.textContent = '.._ ';
-    const ApiAzure = await Main.getData(gameName, "0", "ApiAzure");
+    const ApiAzure = localStorage.getItem("ApiAzure");
     let [apiKey, endpoint] = ApiAzure.split(',');
     try {
         const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {

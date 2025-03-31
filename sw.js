@@ -1,4 +1,4 @@
-let revision = 'V4.45';
+let revision = 'V4.46';
 var urlsToCache = [
     '/',
     './src/css/main.css',
@@ -7,6 +7,7 @@ var urlsToCache = [
     './src/font/Tuson.ttf',
     './img/favi.png',
     './img/icon.png',
+    './img/textured.png',
     './src/js/cloud.js',
     './src/js/gamepad.js',
     './src/js/global.js',

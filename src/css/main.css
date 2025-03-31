@@ -4,15 +4,15 @@
 }
 @font-face {
   font-family: "04b";
-  src: url("../font/04b.ttf");
+  src: url("/src/font/04b.ttf");
 }
 @font-face {
   font-family: "04bf";
-  src: url("../font/04bf.woff");
+  src: url("/src/font/04bf.woff");
 }
 @font-face {
   font-family: "tuson";
-  src: url("../font/Tuson.ttf");
+  src: url("/src/font/Tuson.ttf");
 }
 body,
 html {
@@ -1087,7 +1087,7 @@ rect {
   right: 0;
 }
 .textured {
-  background-image: url("../textured.png");
+  background-image: url("/img/textured.png");
   background-repeat: repeat;
   background-size: 128px;
   image-rendering: pixelated !important;

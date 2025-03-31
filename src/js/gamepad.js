@@ -226,10 +226,10 @@ let lastSaveTime = 0;
                 await delay(50);
                 await Main.ledSave("#20A5A6");
             } else if (clickState === 3) {
-                let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
+                let setApiAzure = localStorage.getItem("ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
                 if (ApiAzure !== null && ApiAzure !== "") {
-                    await Main.setData(gameName, "0", "ApiAzure", ApiAzure);
+                    localStorage.setItem("ApiAzure", ApiAzure);                
                 }
             }
             clickState = 0;
