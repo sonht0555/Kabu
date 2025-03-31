@@ -192,14 +192,14 @@ let lastSaveTime = 0;
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
                 lastSaveTime = Date.now();
-                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
+                const autoStateCheck = await Main.getData(gameName, "1", "stateAuto") || await Main.setData(gameName, "1", "stateAuto", "On");
                 const slotStateNumbers = autoStateCheck === "On"
-                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 2) + 1) || 1
-                    : parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
+                    ? (parseInt(await Main.getData(gameName, "1", "slotStateSaved") % 3) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
                 await delay(100);
                 await saveState(slotStateNumbers);
                 await delay(50);
-                await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
                 await delay(50);
                 await Main.ledSave("#20A5A6");
                 await delay(50);
@@ -220,7 +220,7 @@ let lastSaveTime = 0;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
+                const slotStateNumbers = await Main.getData( gameName, "1", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
                 Main.notiMessage(`[_] Loaded.`, 1000);
                 await delay(50);
@@ -243,7 +243,7 @@ let lastSaveTime = 0;
             if (clickTurbo === 2) {
                 turboState = (turboState % 3) + 1;
                 turboF(turboState);
-                await Main.setData(gameName, "0", "turboState", turboState)
+                await Main.setData(gameName, "1", "turboState", turboState)
             }
             clickTurbo = 0;
         }, 300);

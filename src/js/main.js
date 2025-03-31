@@ -55,25 +55,25 @@ async function statusShow() {
     restoreArea();
     shaderData();
     startTimer();
-    await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
+    await gamepPad.turboF(parseInt(await getData(gameName, "1", "turboState")));
     await delay(200);
     await Module.SDL2();
     await delay(800);
-    await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
+    await led(parseInt(await getData(gameName, "1", "slotStateSaved")));
     await notiMessage(`[_] W_©${currentVersion}`, 1000);
     await wrapContent();
 }
 // Auto Save Every 1m
 async function saveStatePeriodically() {
     await ledSave("#DD5639");
-    await Module.saveState(0);
+    await Module.saveState(1);
+    await screenShot(1);
     await Module.FSSync();
-    await screenShot(0);
     console.log(`Auto save ${++countAutoSave} time(s)`);
 }
 // Auto Save In Cloud Every 1h
 async function saveStateInCloud() {
-    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss0")
+    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss1")
     const uId = localStorage.getItem("uId");
     if (navigator.onLine) {
         if (uId) {
@@ -106,7 +106,7 @@ export async function uploadGame(romName) {
     });
 }
 export async function loadGame(romName) {
-    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
+    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss1");
     const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
@@ -116,7 +116,7 @@ export async function loadGame(romName) {
         await Module.loadGame(`/data/games/${romName}`);
         if (confirm("Do you want to load save state?")) {
             await delay(100);
-            await Module.loadState(0);
+            await Module.loadState(1);
         }
     } else {
         await Module.loadGame(`/data/games/${romName}`);
@@ -331,14 +331,14 @@ export async function getData(romName, slot, type) {
     }
 }
 export async function ledSave(color) {
-    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : "led00";
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved"));
+    const ledId = slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led01";
     try {
-        for (let i = 0; i <= 2; i++) {
+        for (let i = 1; i <= 3; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         await delay(1000);
-        for (let i = 0; i <= 2; i++) {
+        for (let i = 1; i <= 3; i++) {
             document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         document.getElementById(ledId).style.fill = color;
@@ -349,7 +349,7 @@ export async function ledSave(color) {
 export async function notiMessage(messageContent, second, showCanvas = false) {
     var message = document.getElementById("noti-mess");
     document.getElementById("inputText").textContent = ""
-    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved")) || 0;
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved")) || 0;
     if (message.style.opacity === "0.4") {
         clearTimeout(messageTimeout);
         message.style.opacity = "0";
@@ -372,7 +372,7 @@ export async function FSSync() {
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 
-export function Dslay(systemType, scaleValue) {
+export async function Dslay(systemType, scaleValue) {
     const bufferCanvas = document.getElementById("canvas");
     const dpr = window.devicePixelRatio;
     console.log("dpr", dpr);
@@ -476,6 +476,8 @@ export function Dslay(systemType, scaleValue) {
     const redColorLocation = gl.getUniformLocation(program, "red_color");
     const greenColorLocation = gl.getUniformLocation(program, "green_color");
     const blueColorLocation = gl.getUniformLocation(program, "blue_color");
+    const colorStreng = await getData(gameName, "1", "streng") || 1.0;
+    gl.uniform1f(colorCorrectionStrengthLocation, colorStreng);
 
     if (systemType === "gbc") {
         const scaleFactor = 4;
@@ -485,7 +487,6 @@ export function Dslay(systemType, scaleValue) {
         document.getElementById("img-shader").style.transformOrigin = "top center";
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 2.2);
-        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
         gl.uniform3f(redColorLocation, 26./32, 0./32, 6./32);
         gl.uniform3f(greenColorLocation, 4./32, 24./32, 4./32);
         gl.uniform3f(blueColorLocation, 2./32, 8./32, 22./32);
@@ -497,7 +498,6 @@ export function Dslay(systemType, scaleValue) {
         document.getElementById("img-shader").style.transformOrigin = "top center";
         document.getElementById("img-shader").style.setProperty('--bg-size', `${scaleFactor}px ${scaleFactor}px`);
         gl.uniform1f(inputGammaLocation, 3.7);
-        gl.uniform1f(colorCorrectionStrengthLocation, 1.0);
         gl.uniform3f(redColorLocation, 1.0, 0.05, 0.0);
         gl.uniform3f(greenColorLocation, 0.05, 1.0, 0.05);
         gl.uniform3f(blueColorLocation, 0.0, 0.05, 1.0);
