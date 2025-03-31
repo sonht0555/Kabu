@@ -7,14 +7,30 @@
       <meta name="apple-mobile-web-app-capable" content="none" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-    <title>Canvas Pattern 240x160 (WebGL2)</title>
+    <title>GBC input</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .shader {
+        position: absolute;
+        top: 0;
+        background-size: 2px 2px !important;
+        pointer-events: none;
+        width: 320px;
+        height: 288px;
+        background: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 1H1V15H15V1ZM0 0V16H16V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
+      }
+    </style>
   </head>
   <body style="margin: 0px; background-color: black;">
-    <canvas id="canvas-1"></canvas>
+    <div>
+      <canvas id="canvas-1"></canvas>
+      <div class="shader" id="shader"></div>
+    </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">(WebGL2) - 2</label>
-    <input type = "file" id = "file-input">
+    <label for="" style="color: wheat;">GBC input</label>
+    </br>
+    </br>
+    <input type = "file" id = "file-input" accept=".gbc">
     <script type="module">
       import mGBA_v2 from "./temp/mgba.js";
       const Module = {
@@ -44,8 +60,13 @@
             const aspectRatio = 144 / 160;
             const upscaleFactor = 3;
             bufferCanvas.width = window.innerWidth * upscaleFactor;
-            bufferCanvas.height = bufferCanvas.width * aspectRatio
+            bufferCanvas.height = bufferCanvas.width * aspectRatio;
             //bufferCanvas.style.imageRendering = "pixelated";
+            const shader = document.getElementById("shader");
+            shader.style.transform = `scale(${390 / 320})`;
+            shader.style.transformOrigin = "top left";
+
+
             bufferCanvas.style.zoom = `${1/upscaleFactor}`;
             const gl = bufferCanvas.getContext("webgl2");
             if (!gl) {
