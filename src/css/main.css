@@ -877,21 +877,21 @@ rect {
 #path-2,
 #path-3 {
   opacity: 0;
-  animation: fadeInPath 0.5s ease-in-out forwards;
+  animation: fadeInPath 0.4s ease-in-out forwards;
 }
 #path-1 {
-  animation-delay: 0.5s;
+  animation-delay: 0.2s;
 }
 #path-2 {
-  animation-delay: 1.25s;
+  animation-delay: 0.6s;
 }
 #path-3 {
-  animation-delay: 2s;
+  animation-delay: 1s;
 }
 .firstLoading {
   opacity: 1;
-  animation: firstLoading 0.5s ease-in-out forwards;
-  animation-delay: 3s;
+  animation: firstLoading 0.4s ease-in-out forwards;
+  animation-delay: 1.8s;
 }
 @keyframes fadeInPath {
   from {
