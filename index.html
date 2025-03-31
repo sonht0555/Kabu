@@ -13,7 +13,7 @@
   <body style="margin: 0px; background-color: black;">
     <canvas id="canvas-1"></canvas>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">(WebGL2) - 1</label>
+    <label for="" style="color: wheat;">(WebGL2) - 2</label>
     <input type = "file" id = "file-input">
     <script type="module">
       import mGBA_v2 from "./temp/mgba.js";
@@ -42,7 +42,7 @@
             const stride = systemType === "GBC" ? 256 : 240;
             const bufferCanvas = document.getElementById("canvas-1");
             const aspectRatio = 144 / 160;
-            const upscaleFactor = 2;
+            const upscaleFactor = 3;
             bufferCanvas.width = window.innerWidth * upscaleFactor;
             bufferCanvas.height = bufferCanvas.width * aspectRatio
             //bufferCanvas.style.imageRendering = "pixelated";
