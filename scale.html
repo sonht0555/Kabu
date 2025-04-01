@@ -29,19 +29,19 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 3.8</label>
+    <label for="" style="color: wheat;">GBC - 3.9</label>
     </br>
     </br>
     <input type="file" id="file-input" accept=".gbc">
     <br><br>
-    <button id="toggleInterpolation">Toggle Interpolation</button>
-    <button id="toggleColorAdjustment">Toggle Color Adjustment</button>
+    <button id="toggleShader">Shader</button>
+    <button id="toggleColorAdjustment">Color Adjustment</button>
     <select id="colorCorrectionStrength">
-      <option value="0.0">0.0 (Off)</option>
-      <option value="0.25">0.25</option>
-      <option value="0.5">0.5</option>
-      <option value="0.75">0.75</option>
-      <option value="1.0">1.0 (Max)</option>
+      <option value="0.0">Color Streng - Off</option>
+      <option value="0.25">Color Streng - 0.25</option>
+      <option value="0.5">Color Streng - 0.5</option>
+      <option value="0.75">Color Streng - 0.75</option>
+      <option value="1.0">Color Streng - Max</option>
     </select>
     <br><br>
     <script type="module">
@@ -49,9 +49,11 @@
       const Module = { canvas: document.getElementById("canvas") };
       let gl = null; // Ngữ cảnh WebGL
       let program = null; // Chương trình WebGL
-      let enableInterpolation = 0; // 1 = bật, 0 = tắt
       let enableColorAdjustment = 0; // 1 = bật, 0 = tắt
       let colorStreng = 1; // 1 = bật, 0 = tắt
+      const aspectRatio = 0.9;
+      const upscaleFactor = 3;
+      const upscaleShader = 3;
       const bufferCanvas = document.getElementById("canvas-1");
       const shaderElement = document.getElementById("shader");
       function initializeCore(coreInitFunction, module) {
@@ -80,8 +82,6 @@
       uniform vec3 red_color;
       uniform vec3 green_color;
       uniform vec3 blue_color;
-      uniform float border_strength;
-      uniform bool enable_interpolation;
       uniform bool enable_color_adjustment;
 
       vec3 adjust_color(vec4 color) {
@@ -155,10 +155,7 @@
         const width = 160;
         const height = 144;
         const stride = 256;
-        const aspectRatio = 0.9;
-        const upscaleFactor = 2;
-        const upscaleShader = 2;
-        const widthV = window.innerWidth;
+        const widthV = document.documentElement.clientWidth; // Sử dụng clientWidth thay vì innerWidth`
         bufferCanvas.width = widthV * upscaleFactor;
         bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
         bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
@@ -247,7 +244,6 @@
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform1i(gl.getUniformLocation(program, "enable_interpolation"), enableInterpolation);
         gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
         gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -279,11 +275,12 @@
             }, 1000);
           });
         });
-        document.getElementById("toggleInterpolation").addEventListener("click", () => {
-          enableInterpolation = 1 - enableInterpolation;
-        });
         document.getElementById("toggleColorAdjustment").addEventListener("click", () => {
           enableColorAdjustment = 1 - enableColorAdjustment;
+        });
+        document.getElementById("toggleShader").addEventListener("click", () => {
+            const shader = document.getElementById("shader");
+            shader.style.display = (shader.style.display === "none") ? "block" : "none";
         });
         document.getElementById("colorCorrectionStrength").addEventListener("change", (event) => {
             colorStreng = parseFloat(event.target.value); 
@@ -291,10 +288,10 @@
             gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng); // Cập nhật giá trị uniform
         });
         window.addEventListener("resize", () => {
-          const width = document.documentElement.clientWidth; // Sử dụng clientWidth thay vì innerWidth
-          bufferCanvas.width = width * 2; // Ví dụ: phóng to 2x
-          bufferCanvas.height = width * 2 * 0.9; // Tỷ lệ khung hình 0.9
-
+          const widthV = document.documentElement.clientWidth; // Sử dụng clientWidth thay vì innerWidth
+          bufferCanvas.width = widthV * upscaleFactor; // Ví dụ: phóng to 2x
+          bufferCanvas.height = widthV * upscaleFactor * aspectRatio; // Tỷ lệ khung hình 0.9
+          shaderElement.style.transform = `scale(${(widthV / 160) / upscaleShader})`;
           // Cập nhật viewport
           gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
 
@@ -302,7 +299,7 @@
           gl.useProgram(program);
           gl.uniform2f(gl.getUniformLocation(program, "render_size"), bufferCanvas.width, bufferCanvas.height);
 
-          console.log(`clientWidth: ${width}`);
+          console.log(`clientWidth: ${widthV}`);
           console.log(`Canvas resized to ${bufferCanvas.width}x${bufferCanvas.height}`);
         });
       })
