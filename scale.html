@@ -14,11 +14,8 @@
         mix-blend-mode: soft-light;
         position: absolute;
         top: 0;
-        background-size: 2px 2px !important;
         pointer-events: none;
-        width: 320px;
-        height: 288px;
-        background-image: url("/123.png");
+        background: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 1H1V15H15V1ZM0 0V16H16V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
       }
     </style>
   </head>
@@ -58,13 +55,17 @@
             const height = systemType === "GBC" ? 144 : 160;
             const stride = systemType === "GBC" ? 256 : 240;
             const bufferCanvas = document.getElementById("canvas-1");
-            const aspectRatio = 144 / 160;
-            const upscaleFactor = 3;
-            bufferCanvas.width = window.innerWidth * upscaleFactor;
-            bufferCanvas.height = bufferCanvas.width * aspectRatio;
-            //bufferCanvas.style.imageRendering = "pixelated";
             const shader = document.getElementById("shader");
-            shader.style.zoom = `${390 / 320}`;
+            const aspectRatio = 0.9;
+            const upscaleFactor = 3;
+            const upscaleShader = 6;
+            const widthV = window.innerWidth;
+            bufferCanvas.width = widthV * upscaleFactor;
+            bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
+            shader.style.width = `${widthV * upscaleShader}px`;
+            shader.style.height = `${widthV * upscaleShader * aspectRatio}px`
+            shader.style.backgroundSize = `${(widthV/160) * upscaleShader}px ${(widthV/160) * upscaleShader}px`;
+            shader.style.transform = `scale(${1/upscaleShader})`;
             shader.style.transformOrigin = "top left";
 
 
