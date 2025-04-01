@@ -29,18 +29,31 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 3.7</label>
+    <label for="" style="color: wheat;">GBC input - 3.8</label>
     </br>
     </br>
     <input type="file" id="file-input" accept=".gbc">
     <br><br>
     <button id="toggleInterpolation">Toggle Interpolation</button>
     <button id="toggleColorAdjustment">Toggle Color Adjustment</button>
+    <select id="colorCorrectionStrength">
+      <option value="0.0">0.0 (Off)</option>
+      <option value="0.25">0.25</option>
+      <option value="0.5">0.5</option>
+      <option value="0.75">0.75</option>
+      <option value="1.0">1.0 (Max)</option>
+    </select>
+    <br><br>
     <script type="module">
       import mGBA_v2 from "./temp/mgba.js";
       const Module = { canvas: document.getElementById("canvas") };
+      let gl = null; // Ngữ cảnh WebGL
+      let program = null; // Chương trình WebGL
       let enableInterpolation = 0; // 1 = bật, 0 = tắt
       let enableColorAdjustment = 0; // 1 = bật, 0 = tắt
+      let colorStreng = 1; // 1 = bật, 0 = tắt
+      const bufferCanvas = document.getElementById("canvas-1");
+      const shaderElement = document.getElementById("shader");
       function initializeCore(coreInitFunction, module) {
         coreInitFunction(module).then(module => module.FSInit());
       }
@@ -72,46 +85,59 @@
       uniform bool enable_color_adjustment;
 
       vec3 adjust_color(vec4 color) {
-          vec3 c = pow(color.rgb, vec3(input_gamma));
-          c = c.r * red_color + c.g * green_color + c.b * blue_color;
-          c = pow(c, vec3(1.0 / 2.2));
-          return mix(color.rgb, clamp(c, 0., 1.), color_correction_strength);
+          vec3 c = pow(color.rgb, vec3(input_gamma));    // Điều chỉnh gamma cho các kênh màu
+          c = c.r * red_color + c.g * green_color + c.b * blue_color;  // Trộn với tỷ lệ các màu
+          c = pow(c, vec3(1.0 / 2.2));  // Quay lại giá trị gamma bình thường
+          return mix(color.rgb, clamp(c, 0., 1.), color_correction_strength); // Trả về màu đã chỉnh
       }
 
       vec4 get_color(vec2 tex_coord) {
-          vec4 color = texture(texSampler, tex_coord);
+          vec4 color = texture(texSampler, tex_coord);  // Lấy màu từ texture
           if (enable_color_adjustment) {
-              color.rgb = adjust_color(color);
+              color.rgb = adjust_color(color);  // Nếu bật điều chỉnh màu, gọi hàm adjust_color
           }
-          return color;
+          return color;  // Trả về màu
       }
 
       vec4 interpolate_color(vec2 tex_coord) {
-          vec2 ip = floor(tex_coord * emu_lcd_size - 0.5) + 0.5;
-          vec2 residual = fract(tex_coord * emu_lcd_size + 0.5);
-          ip /= emu_lcd_size;
-          vec4 v0 = get_color(ip);
-          vec4 v1 = get_color(ip + vec2(1.0, 0.0) / emu_lcd_size);
-          vec4 v2 = get_color(ip + vec2(0.0, 1.0) / emu_lcd_size);
-          vec4 v3 = get_color(ip + vec2(1.0, 1.0) / emu_lcd_size);
-          vec2 smooth_dim = vec2(smooth_width, smooth_height);
-          if (fract(render_size.x / emu_lcd_size.x) * emu_lcd_size.x < 0.01) smooth_dim.x = 0.01;
-          if (fract(render_size.y / emu_lcd_size.y) * emu_lcd_size.y < 0.01) smooth_dim.y = 0.01;
+          vec2 ip = floor(tex_coord * emu_lcd_size - 0.5) + 0.5;  // Tính toán tọa độ pixel
+          vec2 residual = fract(tex_coord * emu_lcd_size + 0.5);  // Lấy phần dư của tọa độ
+          ip /= emu_lcd_size;  // Đưa tọa độ về phạm vi [0, 1]
+          vec4 v0 = get_color(ip);  // Lấy màu tại pixel (0, 0)
+          vec4 v1 = get_color(ip + vec2(1.0, 0.0) / emu_lcd_size);  // Lấy màu tại pixel (1, 0)
+          vec4 v2 = get_color(ip + vec2(0.0, 1.0) / emu_lcd_size);  // Lấy màu tại pixel (0, 1)
+          vec4 v3 = get_color(ip + vec2(1.0, 1.0) / emu_lcd_size);  // Lấy màu tại pixel (1, 1)
+
+          vec2 smooth_dim = vec2(smooth_width, smooth_height);  // Kích thước làm mượt
+          if (fract(render_size.x / emu_lcd_size.x) * emu_lcd_size.x < 0.01) smooth_dim.x = 0.01;  // Điều chỉnh nếu cần thiết
+          if (fract(render_size.y / emu_lcd_size.y) * emu_lcd_size.y < 0.01) smooth_dim.y = 0.01;  // Điều chỉnh nếu cần thiết
+
           vec2 alpha = vec2(
-              smoothstep(0.5 - smooth_dim.x * 0.5, 0.5 + smooth_dim.x * 0.5, residual.x),
-              smoothstep(0.5 - smooth_dim.y * 0.5, 0.5 + smooth_dim.y * 0.5, residual.y)
+              smoothstep(0.5 - smooth_dim.x * 0.5, 0.5 + smooth_dim.x * 0.5, residual.x),  // Nội suy cho x
+              smoothstep(0.5 - smooth_dim.y * 0.5, 0.5 + smooth_dim.y * 0.5, residual.y)   // Nội suy cho y
           );
-          return mix(mix(v0, v1, alpha.x), mix(v2, v3, alpha.x), alpha.y);
+          return mix(mix(v0, v1, alpha.x), mix(v2, v3, alpha.x), alpha.y);  // Trả về màu nội suy
       }
 
       void main() {
-          if (enable_interpolation == true) { // Sử dụng so sánh boolean
-              fragColor = interpolate_color(v_texcoord);
+          bool shouldInterpolate = abs(mod(render_size.x / emu_lcd_size.x, 2.0)) > 0.001 || abs(mod(render_size.y / emu_lcd_size.y, 2.0)) > 0.001;  // Kiểm tra điều kiện nội suy
+          vec4 color;
+          if (shouldInterpolate) {
+              color = interpolate_color(v_texcoord);  // Nội suy nếu cần
+
+              // Xác định viền 2 pixel
+              vec2 pixel_size = 2.0 / render_size;
+              if (v_texcoord.x < pixel_size.x || v_texcoord.x > 1.0 - pixel_size.x ||
+                  v_texcoord.y < pixel_size.y || v_texcoord.y > 1.0 - pixel_size.y) {
+                  color.rgb = vec3(0.8667, 0.3373, 0.2235); // Màu #DD5639
+              }
+
           } else {
-              fragColor = get_color(v_texcoord);
+              color = get_color(v_texcoord);  // Lấy màu trực tiếp nếu không nội suy
           }
-      }
-      `;
+
+          fragColor = color;  // Trả về màu cuối cùng
+      }`;
 
       function createShader(gl, type, source) {
         const shader = gl.createShader(type);
@@ -130,24 +156,28 @@
         const height = 144;
         const stride = 256;
         const aspectRatio = 0.9;
-        const upscaleFactor = 3;
-        const upscaleShader = 3;
+        const upscaleFactor = 2;
+        const upscaleShader = 2;
         const widthV = window.innerWidth;
         bufferCanvas.width = widthV * upscaleFactor;
         bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
-        bufferCanvas.style.zoom = `${1/upscaleFactor}`;
+        bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
         shaderElement.style.width = `${160 * upscaleShader}px`;
         shaderElement.style.height = `${144 * upscaleShader}px`;
         shaderElement.style.backgroundSize = `${upscaleShader}px ${upscaleShader}px`;
         shaderElement.style.transform = `scale(${(widthV / 160) / upscaleShader})`;
         shaderElement.style.transformOrigin = "top left";
+        console.log(`Canvas resized to ${bufferCanvas.width}x${bufferCanvas.height}`);
         const gl = bufferCanvas.getContext("webgl2");
         if (!gl) {
-          console.error("WebGL2 not supported");
-          return null;
+            console.error("WebGL2 not supported");
+            return null;
         }
+
+        gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
+
         return { gl, width, height, stride };
-      }
+    }
 
       function setupShaders(gl, vertexShaderSource, fragmentShaderSource) {
         const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
@@ -175,7 +205,6 @@
         gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
         gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), 160 / gl.canvas.width);
         gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), 144 / gl.canvas.height);
-        gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), 1.0);
         gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
         gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26. / 32, 0. / 32, 6. / 32);
         gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4. / 32, 24. / 32, 4. / 32);
@@ -220,21 +249,21 @@
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1i(gl.getUniformLocation(program, "enable_interpolation"), enableInterpolation);
         gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
+        gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(() => updateFrame(gl, texture, width, height, stride, program));
       }
 
       function runG() {
-        const bufferCanvas = document.getElementById("canvas-1");
-        const shaderElement = document.getElementById("shader");
-        const webGLSetup = setupWebGL(bufferCanvas, shaderElement);
-        if (!webGLSetup) return;
-        const { gl, width, height, stride } = webGLSetup;
-        const program = setupShaders(gl, vertexShaderSource, fragmentShaderSource);
-        if (!program) return;
-        const texture = setupTexture(gl, program, width, height);
-        setupBuffers(gl, program);
-        updateFrame(gl, texture, width, height, stride, program);
+          const webGLSetup = setupWebGL(bufferCanvas, shaderElement);
+          if (!webGLSetup) return;
+          const { gl: newGl, width, height, stride } = webGLSetup;
+          gl = newGl;
+          program = setupShaders(gl, vertexShaderSource, fragmentShaderSource);
+          if (!program) return;
+          const texture = setupTexture(gl, program, width, height);
+          setupBuffers(gl, program);
+          updateFrame(gl, texture, width, height, stride, program);
       }
       
       document.addEventListener("DOMContentLoaded", function () {
@@ -255,6 +284,26 @@
         });
         document.getElementById("toggleColorAdjustment").addEventListener("click", () => {
           enableColorAdjustment = 1 - enableColorAdjustment;
+        });
+        document.getElementById("colorCorrectionStrength").addEventListener("change", (event) => {
+            colorStreng = parseFloat(event.target.value); 
+            gl.useProgram(program);
+            gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng); // Cập nhật giá trị uniform
+        });
+        window.addEventListener("resize", () => {
+          const width = document.documentElement.clientWidth; // Sử dụng clientWidth thay vì innerWidth
+          bufferCanvas.width = width * 2; // Ví dụ: phóng to 2x
+          bufferCanvas.height = width * 2 * 0.9; // Tỷ lệ khung hình 0.9
+
+          // Cập nhật viewport
+          gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
+
+          // Cập nhật uniform trong shader
+          gl.useProgram(program);
+          gl.uniform2f(gl.getUniformLocation(program, "render_size"), bufferCanvas.width, bufferCanvas.height);
+
+          console.log(`clientWidth: ${width}`);
+          console.log(`Canvas resized to ${bufferCanvas.width}x${bufferCanvas.height}`);
         });
       })
     </script>
