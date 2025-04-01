@@ -29,7 +29,7 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 3.5</label>
+    <label for="" style="color: wheat;">GBC input - 3.6</label>
     </br>
     </br>
     <input type="file" id="file-input" accept=".gbc">
@@ -39,8 +39,8 @@
     <script type="module">
       import mGBA_v2 from "./temp/mgba.js";
       const Module = { canvas: document.getElementById("canvas") };
-      let enableInterpolation = 1; // 1 = bật, 0 = tắt
-      let enableColorAdjustment = 1; // 1 = bật, 0 = tắt
+      let enableInterpolation = 0; // 1 = bật, 0 = tắt
+      let enableColorAdjustment = 0; // 1 = bật, 0 = tắt
       function initializeCore(coreInitFunction, module) {
         coreInitFunction(module).then(module => module.FSInit());
       }
