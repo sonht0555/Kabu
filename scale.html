@@ -11,10 +11,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       .shader {
-        mix-blend-mode: soft-light;
+        opacity: 0.3;
         position: absolute;
         top: 0;
         pointer-events: none;
+        shape-rendering: crispEdges;
+        image-rendering: pixelated;
+        image-rendering: -webkit-optimize-contrast;
+        text-rendering: geometricPrecision;
         background: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 1H1V15H15V1ZM0 0V16H16V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
       }
     </style>
@@ -25,7 +29,7 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 3.1</label>
+    <label for="" style="color: wheat;">GBC input - 3.2</label>
     </br>
     </br>
     <input type = "file" id = "file-input" accept=".gbc">
@@ -58,7 +62,7 @@
             const shader = document.getElementById("shader");
             const aspectRatio = 0.9;
             const upscaleFactor = 3;
-            const upscaleShader = 2;
+            const upscaleShader = 1;
             const widthV = window.innerWidth;
             bufferCanvas.width = widthV * upscaleFactor;
             bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
