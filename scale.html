@@ -58,14 +58,14 @@
             const shader = document.getElementById("shader");
             const aspectRatio = 0.9;
             const upscaleFactor = 3;
-            const upscaleShader = 2;
+            const upscaleShader = 4;
             const widthV = window.innerWidth;
             bufferCanvas.width = widthV * upscaleFactor;
             bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
-            shader.style.width = `${widthV * upscaleShader}px`;
-            shader.style.height = `${widthV * upscaleShader * aspectRatio}px`
-            shader.style.backgroundSize = `${(widthV/160) * upscaleShader}px ${(widthV/160) * upscaleShader}px`;
-            shader.style.transform = `scale(${1/upscaleShader})`;
+            shader.style.width =  `${160 * upscaleShader}px`;
+            shader.style.height = `${144 * upscaleShader}px`
+            shader.style.backgroundSize = `${upscaleShader}px ${upscaleShader}px`;
+            shader.style.transform = `scale(${(widthV/160)/upscaleShader})`;
             shader.style.transformOrigin = "top left";
 
 
