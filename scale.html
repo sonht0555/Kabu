@@ -29,7 +29,7 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 3.3</label>
+    <label for="" style="color: wheat;">GBC input - 3.4</label>
     </br>
     </br>
     <input type = "file" id = "file-input" accept=".gbc">
@@ -66,14 +66,12 @@
             const widthV = window.innerWidth;
             bufferCanvas.width = widthV * upscaleFactor;
             bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
+            bufferCanvas.style.zoom = `${1/upscaleFactor}`;
             shader.style.width =  `${160 * upscaleShader}px`;
             shader.style.height = `${144 * upscaleShader}px`
             shader.style.backgroundSize = `${upscaleShader}px ${upscaleShader}px`;
             shader.style.transform = `scale(${(widthV/160)/upscaleShader})`;
             shader.style.transformOrigin = "top left";
-
-
-            bufferCanvas.style.zoom = `${1/upscaleFactor}`;
             const gl = bufferCanvas.getContext("webgl2");
             if (!gl) {
               console.error("WebGL2 not supported");
@@ -101,16 +99,42 @@
             uniform vec2 render_size;
             uniform float smooth_width;
             uniform float smooth_height;
+            uniform float input_gamma;
+            uniform float color_correction_strength;
+            uniform vec3 red_color;
+            uniform vec3 green_color;
+            uniform vec3 blue_color;
+            uniform float border_strength;
+            uniform bool enable_interpolation; // Cho phép bật/tắt nội suy
+            uniform bool enable_color_adjustment; // Cho phép bật/tắt chỉnh màu
 
-            void main() {
-                vec2 ip = floor(v_texcoord * emu_lcd_size - 0.5) + 0.5;
-                vec2 residual = fract(v_texcoord * emu_lcd_size + 0.5);
+            // Hàm chỉnh màu
+            vec3 adjust_color(vec4 color) {
+                vec3 c = pow(color.rgb, vec3(input_gamma)); // Gamma correction
+                c = c.r * red_color + c.g * green_color + c.b * blue_color; // Điều chỉnh màu
+                c = pow(c, vec3(1.0 / 2.2)); // Chỉnh gamma về lại chuẩn
+                return mix(color.rgb, clamp(c, 0., 1.), color_correction_strength); // Pha trộn với độ mạnh nhất định
+            }
+
+            // Hàm lấy màu gốc hoặc đã chỉnh màu
+            vec4 get_color(vec2 tex_coord) {
+                vec4 color = texture(texSampler, tex_coord);
+                if (enable_color_adjustment) {
+                    color.rgb = adjust_color(color);
+                }
+                return color;
+            }
+
+            // Hàm nội suy màu
+            vec4 interpolate_color(vec2 tex_coord) {
+                vec2 ip = floor(tex_coord * emu_lcd_size - 0.5) + 0.5;
+                vec2 residual = fract(tex_coord * emu_lcd_size + 0.5);
                 ip /= emu_lcd_size;
 
-                vec4 v0 = texture(texSampler, ip);
-                vec4 v1 = texture(texSampler, ip + vec2(1.0, 0.0) / emu_lcd_size);
-                vec4 v2 = texture(texSampler, ip + vec2(0.0, 1.0) / emu_lcd_size);
-                vec4 v3 = texture(texSampler, ip + vec2(1.0, 1.0) / emu_lcd_size);
+                vec4 v0 = get_color(ip);
+                vec4 v1 = get_color(ip + vec2(1.0, 0.0) / emu_lcd_size);
+                vec4 v2 = get_color(ip + vec2(0.0, 1.0) / emu_lcd_size);
+                vec4 v3 = get_color(ip + vec2(1.0, 1.0) / emu_lcd_size);
 
                 vec2 smooth_dim = vec2(smooth_width, smooth_height);
                 if (fract(render_size.x / emu_lcd_size.x) * emu_lcd_size.x < 0.01) smooth_dim.x = 0.01;
@@ -121,7 +145,16 @@
                     smoothstep(0.5 - smooth_dim.y * 0.5, 0.5 + smooth_dim.y * 0.5, residual.y)
                 );
 
-                fragColor = mix(mix(v0, v1, alpha.x), mix(v2, v3, alpha.x), alpha.y);
+                return mix(mix(v0, v1, alpha.x), mix(v2, v3, alpha.x), alpha.y);
+            }
+
+            // Hàm render chính
+            void main() {
+                if (enable_interpolation) {
+                    fragColor = interpolate_color(v_texcoord);
+                } else {
+                    fragColor = get_color(v_texcoord);
+                }
             }`;
 
             function createShader(gl, type, source) {
@@ -157,6 +190,14 @@
             gl.uniform2f(gl.getUniformLocation(program, "render_size"), bufferCanvas.width, bufferCanvas.height);
             gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), 160 / bufferCanvas.width);
             gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), 144 / bufferCanvas.height);
+            gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), 1.0);
+            gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
+            gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26./32, 0./32, 6./32);
+            gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4./32, 24./32, 4./32);
+            gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 2./32, 8./32, 22./32);
+            gl.uniform1i(gl.getUniformLocation(program, "enable_interpolation"), 0); // 1 = bật, 0 = tắt
+            gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), 1); // 1 = bật, 0 = tắt
+
             // Vertex Data
             const positionBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
