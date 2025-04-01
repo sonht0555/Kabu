@@ -25,7 +25,7 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: wheat;">GBC input - 4</label>
+    <label for="" style="color: wheat;">GBC input - 2</label>
     </br>
     </br>
     <input type = "file" id = "file-input" accept=".gbc">
@@ -58,7 +58,7 @@
             const shader = document.getElementById("shader");
             const aspectRatio = 0.9;
             const upscaleFactor = 3;
-            const upscaleShader = 4;
+            const upscaleShader = 2;
             const widthV = window.innerWidth;
             bufferCanvas.width = widthV * upscaleFactor;
             bufferCanvas.height = widthV * upscaleFactor * aspectRatio;
