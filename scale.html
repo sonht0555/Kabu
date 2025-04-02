@@ -23,18 +23,18 @@
       }
     </style>
   </head>
-  <body style="margin: 0px; background-color: black; text-align: center;">
-    </br>
-    </br>
+  <body style="margin: 0px; background-color: black;">
     <div>
       <canvas id="canvas-1"></canvas>
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <p for="" style="color: white; width: 100%; text-align: left;">GBC - GBA [4.0]</p>
-    <input type="file" id="file-input" accept="" style="width: 100%;">
+    <label for="" style="color: white">GBC - GBA [4.1]</label>
     </br>
     </br>
+    <input type="file" id="file-input" accept="">
+    <br>
+    <br>
     <button id="toggleShader">Shader</button>
     <button id="integerScaling">Integer Scaling</button>
     <button id="toggleColorAdjustment">Color Adjustment</button>
@@ -192,7 +192,7 @@
         shaderElement.style.width = `${gameWidth * upscaleShader}px`;
         shaderElement.style.height = `${gameHeight * upscaleShader}px`;
         shaderElement.style.backgroundSize = `${upscaleShader}px ${upscaleShader}px`;
-        shaderElement.style.transformOrigin = "top center";
+        shaderElement.style.transformOrigin = "top left";
       }
 
       function setupWebGL() {
