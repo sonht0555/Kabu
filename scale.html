@@ -29,7 +29,7 @@
       <div class="shader" id="shader"></div>
     </div>
     <canvas id="canvas" hidden></canvas>
-    <label for="" style="color: white">GBC - GBA [4.1]</label>
+    <label for="" style="color: white">GBC - GBA [4.2]</label>
     </br>
     </br>
     <input type="file" id="file-input" accept="">
@@ -63,7 +63,7 @@
       let enableColorAdjustment = 0;
       let colorStreng = 1;
       let upscaleFactor = 3;
-      let upscaleShader = 3;
+      let upscaleShader;
       let gameWidth;
       let gameHeight;
       let gameStride;
@@ -170,10 +170,12 @@
           gameWidth = 160;
           gameHeight = 144;
           gameStride = 256;
+          upscaleShader = 4;
         } else {
           gameWidth = 240;
           gameHeight = 160;
           gameStride = 240;
+          upscaleShader = 2;
         }
         if (integerStatus === true) {
           bufferCanvas.width = gameWidth;
