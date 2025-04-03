@@ -1,7 +1,8 @@
 import * as Main from './main.js';
+import {updateViewport, updateIntegerScaling} from "./shader.js";
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX, strengX ;
+let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX, strengX, integerX ;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
 const menuPad = document.getElementById("menu-pad");
@@ -27,6 +28,8 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     strengX = await Main.getData(gameName, "1", "streng") || 1.0;
     box9.textContent = strengX;
+    integerX = await Main.getData(gameName, "1", "integer") || "Off";
+    box10.textContent = integerX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
     document.querySelectorAll(".wrap").forEach(function(element, index) {
@@ -44,14 +47,12 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        await Main.setData(gameName, "1",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
-    } else {
-        await Main.setData(gameName, "1",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
+    } else if (property === 'streng') {
+        updateViewport();
     }
+    await Main.setData(gameName, "1",localStorageKey ,box.textContent);
+    await delay(100);
+    await shaderData();
 }
 // Left
 async function Left(boxId, limit, decrement, property, localStorageKey) {
@@ -61,14 +62,12 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        await Main.setData(gameName, "1",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
-    } else {
-        await Main.setData(gameName, "1",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
+    } else if (property === 'streng') {
+        updateViewport();
     }
+    await Main.setData(gameName, "1",localStorageKey ,box.textContent);
+    await delay(100);
+    await shaderData();
 }
 // SDL2ID
 SDL2ID.forEach(function(id) {
@@ -206,6 +205,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (document.getElementById('box9').classList.contains('selected')) {
                     Right('box9', 1, 0.1, 'streng', 'streng');
                 }
+                if (document.getElementById('box10').classList.contains('selected')) {
+                    let box10 = document.getElementById('box10');
+                    box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
+                    if (box10.textContent === 'On') {
+                        localStorage.setItem ("integer", "On")
+                        updateIntegerScaling();
+                    } else {
+                        localStorage.setItem ("integer", "Off")
+                        updateIntegerScaling();
+                    }
+                }
             }
         });
         document.getElementById('Left').addEventListener(eventType, async () => {
@@ -264,6 +274,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (document.getElementById('box9').classList.contains('selected')) {
                     Left('box9', 0, 0.1, 'streng', 'streng');
+                }
+                if (document.getElementById('box10').classList.contains('selected')) {
+                    let box10 = document.getElementById('box10');
+                    box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
+                    if (box10.textContent === 'On') {
+                        localStorage.setItem ("integer", "On")
+                        updateIntegerScaling();
+                    } else {
+                        localStorage.setItem ("integer", "Off")
+                        updateIntegerScaling();
+                    }
                 }
             }
         });

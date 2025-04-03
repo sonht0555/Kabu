@@ -932,15 +932,15 @@ rect {
   flex-direction: column;
   border-radius: 0px;
   text-align: left;
-  color: rgba(245, 232, 209, 0.9);
+  color: rgba(245, 232, 209, 0.8);
 }
 .stateDiv.stated {
-  color: rgba(245, 232, 209, 0.9);
+  color: rgba(245, 232, 209, 0.8);
 }
 .stateDiv.selected .stateInfo {
   box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.4);
   background-color: rgb(32, 165, 166, 0.8);
-  color: rgba(245, 232, 209, 0.9);
+  color: rgba(245, 232, 209, 0.8);
 }
 .stateImg,
 .stateInfo {
@@ -969,7 +969,11 @@ rect {
   box-shadow: inset 0 0 0 1px rgb(245, 232, 209, 0.2);
 }
 .stateDate {
+  height: 8px;
   opacity: 0.6;
+}
+.stateTitle {
+  height: 8px;
 }
 #stateList {
   background-color: rgba(37, 37, 37, 0);

@@ -3,9 +3,8 @@ import * as Main from './main.js';
 let gl = null;
 let program = null;
 let systemType;
-let integerStatus = false;
+let integerStatus;
 let enableColorAdjustment = 1;
-let colorStreng = 1;
 let upscaleFactor = 3;
 let upscaleShader;
 let gameWidth;
@@ -37,10 +36,21 @@ async function loadShaderSource(url) {
     return await response.text();
 }
 
-function updateViewport(width, height) {
-    gl.viewport(0, 0, width, height);
+export function updateViewport() {
     gl.useProgram(program);
-    gl.uniform2f(gl.getUniformLocation(program, "render_size"), width, height);
+}
+
+export function updateIntegerScaling () {
+    gl.useProgram(program);
+    if ((localStorage.getItem ("integer") || "Off") === "On") {
+        setupStyle();
+        gl.viewport(0, 0, gameWidth, gameHeight);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
+      } else {
+        setupStyle();
+        gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), bufferCanvas.width, bufferCanvas.height);
+      }
 }
 
 function setupStyle() {
@@ -57,7 +67,7 @@ function setupStyle() {
         gameStride = 240;
         upscaleShader = 2;
     }
-    if (integerStatus === true) {
+    if ((localStorage.getItem ("integer") || "Off") === "On") {
         const integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
@@ -168,7 +178,7 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
-function renderPixel() {
+async function renderPixel() {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     const imageData = new Uint8Array(gameWidth * gameHeight * 4);
@@ -183,6 +193,7 @@ function renderPixel() {
             imageData[destIndex + 3] = 255;
         }
     }
+    const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
     gl.clear(gl.COLOR_BUFFER_BIT);
