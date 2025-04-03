@@ -285,6 +285,7 @@ label {
 .canvas {
   border-radius: 0px 0px 0px 0px;
   image-rendering: pixelated;
+  mix-blend-mode: multiply;
   /* transition: opacity 0.3s ease-in-out; /*
   /* filter: brightness(1) contrast(1.1) saturate(1.4) hue-rotate(4deg) sepia(0.4) */
 }
@@ -305,9 +306,9 @@ label {
 }
 .sha {
   position: relative;
+  mix-blend-mode: overlay;
 }
 .sha::before{
-  will-change: transform;
   content: "";
   position: absolute;
   top:0;
@@ -318,7 +319,6 @@ label {
   opacity: var(--before-opacity, 1);
   background-size: var(--bg-size, auto) !important;
   z-index: 20;
-  mix-blend-mode: soft-light;
   image-rendering: pixelated !important
 }
 .shu {
