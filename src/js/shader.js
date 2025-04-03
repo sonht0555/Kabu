@@ -136,10 +136,17 @@ function setupTexture() {
     gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
-    gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
-    gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26. / 32, 0. / 32, 6. / 32);
-    gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4. / 32, 24. / 32, 4. / 32);
-    gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 2. / 32, 8. / 32, 22. / 32);
+    if (systemType === "gbc") {
+        gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
+        gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26. / 32, 0. / 32, 6. / 32);
+        gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4. / 32, 24. / 32, 4. / 32);
+        gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 2. / 32, 8. / 32, 22. / 32);
+    } else {
+        gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 3.7);
+        gl.uniform3f(gl.getUniformLocation(program, "red_color"), 1.0, 0.05, 0.0);
+        gl.uniform3f(gl.getUniformLocation(program, "green_color"), 0.05, 1.0, 0.05);
+        gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 0.0, 0.05, 1.0);
+    }
 }
 
 function setupBuffers() {

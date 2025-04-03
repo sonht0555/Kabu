@@ -55,10 +55,10 @@ void main() {
     if (shouldInterpolate) {
         color = interpolate_color(v_texcoord);
         vec2 pixel_size = 2.0 / render_size;
-        if (v_texcoord.x < pixel_size.x || v_texcoord.x > 1.0 - pixel_size.x ||
-            v_texcoord.y < pixel_size.y || v_texcoord.y > 1.0 - pixel_size.y) {
-            color.rgb = vec3(0.8667, 0.3373, 0.2235);
-        }
+        //if (v_texcoord.x < pixel_size.x || v_texcoord.x > 1.0 - pixel_size.x ||
+        //    v_texcoord.y < pixel_size.y || v_texcoord.y > 1.0 - pixel_size.y) {
+        //    color.rgb = vec3(0.8667, 0.3373, 0.2235);
+        //}
     } else {
         color = get_color(v_texcoord);
     }
