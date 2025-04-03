@@ -28,7 +28,7 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     strengX = await Main.getData(gameName, "1", "streng") || 1.0;
     box9.textContent = strengX;
-    integerX = await Main.getData(gameName, "1", "integer") || "Off";
+    integerX = localStorage.getItem("integer") || "Off";
     box10.textContent = integerX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);

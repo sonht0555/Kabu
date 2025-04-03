@@ -975,6 +975,11 @@ rect {
 .stateTitle {
   height: 8px;
 }
+.fefs {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
 #stateList {
   background-color: rgba(37, 37, 37, 0);
 }

@@ -17,7 +17,7 @@ const canvasContainer = document.getElementById("canvas-container")
 const imgShader = document.getElementById("img-shader")
 const settingContainer = document.querySelectorAll(".setting-container")
 const messageContainer = document.querySelectorAll(".message-container")
-//const shaderElement = document.getElementById("shader");
+const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
 /* --------------- Function ------------------ */
 function createShader(type, source) {
     const shader = gl.createShader(type);
@@ -42,7 +42,7 @@ export function updateViewport() {
 
 export function updateIntegerScaling () {
     gl.useProgram(program);
-    if ((localStorage.getItem ("integer") || "Off") === "On") {
+    if ((localStorage.getItem("integer") || "Off") === "On") {
         setupStyle();
         gl.viewport(0, 0, gameWidth, gameHeight);
         gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
@@ -67,7 +67,7 @@ function setupStyle() {
         gameStride = 240;
         upscaleShader = 2;
     }
-    if ((localStorage.getItem ("integer") || "Off") === "On") {
+    if ((localStorage.getItem("integer") || "Off") === "On") {
         const integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
@@ -87,6 +87,9 @@ function setupStyle() {
             element.style.height = `${gameHeight}px`;
             element.style.zoom = `${integerScaling / dpr}`;
         });
+        stateTitle.forEach(function(element) {
+            element.classList.remove("fefs")
+        });
     } else {
         bufferCanvas.width = clientWidth * upscaleFactor;
         bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
@@ -105,6 +108,9 @@ function setupStyle() {
             element.style.width = `${gameWidth}px`;
             element.style.height = `${gameHeight}px`;
             element.style.zoom = `${(clientWidth / gameWidth)}`;
+        });
+        stateTitle.forEach(function(element) {
+            element.classList.add("fefs")
         });
     }
     imgShader.style.width = `${gameWidth * upscaleShader}px`;
