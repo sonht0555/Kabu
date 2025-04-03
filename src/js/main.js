@@ -4,6 +4,7 @@ import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
+import {runG} from "./shader.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
 const versions = { "1.1.0": mGBA_v1, "2.0.0": mGBA_v2 };
@@ -128,7 +129,6 @@ export async function loadGame(romName) {
                 console.log("element.style.aspectRatio");
             });
             localStorage.setItem("screenSize", `0,0,${160*(6/3)},${144*(6/3)}`)
-            Dslay("gbc", 6);
         } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
             localStorage.setItem("screenSize", `0,0,${240*(4/3)},${160*(4/3)}`)
             document.getElementById("state-container").style.paddingRight = `54px`;
@@ -136,8 +136,8 @@ export async function loadGame(romName) {
             document.querySelectorAll(".stateInfo").forEach(function(element) {
                 element.style.padding = `4px 5px 2px 5px`;
             });
-            Dslay("gba", 4);
         }
+        runG();
     // check file extension
     await statusShow();
 }
@@ -197,6 +197,12 @@ export function listFiles(name) {
     const result = Module.listFiles(name).filter((file) => file !== "." && file !== "..");
     return result;
 }
+
+export function getPixelData() {
+    const result = Module.getPixelData();
+    return result;
+}
+
 export function listGame() {
     const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
     return result;

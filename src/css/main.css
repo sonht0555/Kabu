@@ -116,6 +116,9 @@ label {
 .gap-20 {
   gap: 20px;
 }
+.gap-22 {
+  gap: 22px;
+}
 .gap-48 {
   gap: 48px;
 }
@@ -423,8 +426,8 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='44' height='26' viewBox='0 0 44 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='26' fill='%23F5E8D1'/%3E%3Crect x='15' y='10' width='2' height='6' fill='black'/%3E%3Crect x='21' y='10' width='2' height='6' fill='black'/%3E%3Crect x='27' y='10' width='2' height='6' fill='black'/%3E%3C/svg%3E%0A");
 }
 .emu-control {
-  width: calc(100vw - 18px);
-  margin: 0px -15px;
+  width: calc(100vw - 16px);
+  margin: 0px -16px;
   padding: 8px;
   padding-top: 0px;
 }
@@ -1101,6 +1104,7 @@ rect {
 }
 .canvas-bot {
   height: 8px;
+  padding-left: 2px;
   border-radius: 0px 0px 2px 2px !important;
 }
 .canvas-bot::before {
