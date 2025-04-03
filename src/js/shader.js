@@ -4,7 +4,7 @@ let gl = null;
 let program = null;
 let systemType;
 let integerStatus = false;
-let enableColorAdjustment = 0;
+let enableColorAdjustment = 1;
 let colorStreng = 1;
 let upscaleFactor = 3;
 let upscaleShader;
@@ -137,11 +137,13 @@ function setupTexture() {
     gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
     if (systemType === "gbc") {
+        console.log("gbc")
         gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
         gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26. / 32, 0. / 32, 6. / 32);
         gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4. / 32, 24. / 32, 4. / 32);
         gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 2. / 32, 8. / 32, 22. / 32);
     } else {
+        console.log("gba")
         gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 3.7);
         gl.uniform3f(gl.getUniformLocation(program, "red_color"), 1.0, 0.05, 0.0);
         gl.uniform3f(gl.getUniformLocation(program, "green_color"), 0.05, 1.0, 0.05);
