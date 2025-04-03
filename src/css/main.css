@@ -307,6 +307,7 @@ label {
   position: relative;
 }
 .sha::before{
+  will-change: transform;
   content: "";
   position: absolute;
   top:0;
