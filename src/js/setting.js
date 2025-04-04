@@ -28,7 +28,7 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     strengX = await Main.getData(gameName, "1", "streng") || 1.0;
     box9.textContent = strengX;
-    integerX = localStorage.getItem("integer") || "Off";
+    integerX = localStorage.getItem(`${gameName}_integer`) || "Off";
     box10.textContent = integerX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
@@ -209,10 +209,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     let box10 = document.getElementById('box10');
                     box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
                     if (box10.textContent === 'On') {
-                        localStorage.setItem ("integer", "On")
+                        localStorage.setItem (`${gameName}_integer`, "On")
                         updateIntegerScaling();
                     } else {
-                        localStorage.setItem ("integer", "Off")
+                        localStorage.setItem (`${gameName}_integer`, "Off")
                         updateIntegerScaling();
                     }
                 }
@@ -279,10 +279,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     let box10 = document.getElementById('box10');
                     box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
                     if (box10.textContent === 'On') {
-                        localStorage.setItem ("integer", "On")
+                        localStorage.setItem (`${gameName}_integer`, "On")
                         updateIntegerScaling();
                     } else {
-                        localStorage.setItem ("integer", "Off")
+                        localStorage.setItem (`${gameName}_integer`, "Off")
                         updateIntegerScaling();
                     }
                 }

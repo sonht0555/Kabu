@@ -3,7 +3,7 @@ import * as Main from './main.js';
 let gl = null;
 let program = null;
 let systemType;
-let integerStatus;
+let clientWidth;
 let enableColorAdjustment = 1;
 let upscaleFactor = 3;
 let upscaleShader;
@@ -41,20 +41,19 @@ export function updateViewport() {
 }
 
 export function updateIntegerScaling () {
+    setupStyle();
     gl.useProgram(program);
-    if ((localStorage.getItem("integer") || "Off") === "On") {
-        setupStyle();
+    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
         gl.viewport(0, 0, gameWidth, gameHeight);
         gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
       } else {
-        setupStyle();
-        gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
-        gl.uniform2f(gl.getUniformLocation(program, "render_size"), bufferCanvas.width, bufferCanvas.height);
+        gl.viewport(0, 0, clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
       }
 }
 
 function setupStyle() {
-    const clientWidth = document.documentElement.clientWidth;
+    clientWidth = document.documentElement.clientWidth;
     const dpr = window.devicePixelRatio;
     if (systemType === "gbc") {
         gameWidth = 160;
@@ -67,7 +66,7 @@ function setupStyle() {
         gameStride = 240;
         upscaleShader = 2;
     }
-    if ((localStorage.getItem("integer") || "Off") === "On") {
+    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
         const integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
