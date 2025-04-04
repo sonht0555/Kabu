@@ -40,18 +40,6 @@ export function updateViewport() {
     gl.useProgram(program);
 }
 
-export function updateIntegerScaling () {
-    setupStyle();
-    gl.useProgram(program);
-    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
-        gl.viewport(0, 0, gameWidth, gameHeight);
-        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
-      } else {
-        gl.viewport(0, 0, clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
-        gl.uniform2f(gl.getUniformLocation(program, "render_size"), clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
-      }
-}
-
 function setupStyle() {
     clientWidth = document.documentElement.clientWidth;
     const dpr = window.devicePixelRatio;
@@ -206,6 +194,19 @@ async function renderPixel() {
     gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     requestAnimationFrame(() => renderPixel(gl, texture, gameWidth, gameHeight, gameStride, program));
+}
+
+export function updateIntegerScaling () {
+    setupStyle();
+    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
+        gl.viewport(0, 0, gameWidth, gameHeight);
+        gl.useProgram(program);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
+      } else {
+        gl.viewport(0, 0, clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
+        gl.useProgram(program);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
+      }
 }
 
 export async function runG() {
