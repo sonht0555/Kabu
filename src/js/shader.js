@@ -139,6 +139,7 @@ function setupTexture() {
     gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
+    console.log("smooth_width", gameWidth, gl.canvas.width, gameHeight, gl.canvas.height)
     if (systemType === "gbc") {
         console.log("gbc")
         gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
@@ -202,10 +203,14 @@ export function updateIntegerScaling () {
         gl.viewport(0, 0, gameWidth, gameHeight);
         gl.useProgram(program);
         gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), 1);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), 1);
       } else {
         gl.viewport(0, 0, clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
         gl.useProgram(program);
         gl.uniform2f(gl.getUniformLocation(program, "render_size"), clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / (clientWidth * upscaleFactor));
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / (clientWidth * upscaleFactor * (gameHeight / gameWidth)));
       }
 }
 
