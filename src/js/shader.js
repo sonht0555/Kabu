@@ -17,7 +17,7 @@ async function loadLUT64() {
     systemType = gameName.slice(-3)
     if (!lut64) {
         if (systemType === "gbc") {
-            const res = await fetch("./lut64_mix_V2.bin");
+            const res = await fetch("./lut64_alt.bin");
             const buf = await res.arrayBuffer();
             lut64 = new Uint8Array(buf);
         } else {
