@@ -11,16 +11,17 @@ let gameWidth;
 let gameHeight;
 let gameStride;
 let texture;
+let integerScaling
 let ctx2d = null;
 let lut64 = null;
 let lut64Streng = null;
 async function loadLUT64() {
     systemType = gameName.slice(-3);
-    const colorStreng = await Main.getData(gameName, "1", "streng") || 4.0;
+    const colorStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
     if (!lut64 || lut64Streng !== colorStreng) {
         const filename = (systemType === "gbc")
-            ? `./lut/lut64_gbc_${colorStreng}.bin`
-            : `./lut/lut64_gba_${colorStreng}.bin`;
+            ? `./src/lut/lut64_gbc_${colorStreng}.bin`
+            : `./src/lut/lut64_gba_${colorStreng}.bin`;
 
         console.log(filename);
         const res = await fetch(filename);
@@ -67,14 +68,17 @@ function setupStyle() {
         gameHeight = 144;
         gameStride = 256;
         upscaleShader = 3;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${ gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
     } else {
         gameWidth = 240;
         gameHeight = 160;
         gameStride = 240;
         upscaleShader = 2;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
     }
     if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
-        const integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
         bufferCanvas.style.zoom = `${integerScaling / dpr}`;
@@ -240,7 +244,6 @@ async function renderPixel(mode) {
     requestAnimationFrame(() => renderPixel(mode));
 }
 
-
 export function updateIntegerScaling () {
     setupStyle();
     if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
@@ -264,7 +267,6 @@ export async function switchRenderMode(mode) {
         localStorage.setItem(`${gameName}_integer`, "On");
         setupStyle();
         renderPixel("2d");
-        console.log("Switched to Canvas 2D.");
     } else if (mode === "webgl2") {
         setupStyle();
         setupWebGL();
@@ -272,7 +274,6 @@ export async function switchRenderMode(mode) {
         setupTexture();
         setupBuffers();
         renderPixel("webgl2");
-        console.log("Switched to WebGL2.");
     }
 }
 

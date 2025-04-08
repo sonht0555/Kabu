@@ -1,5 +1,5 @@
 import * as Main from './main.js';
-import {updateViewport, updateIntegerScaling} from "./shader.js";
+import {updateIntegerScaling} from "./shader.js";
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
 let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX, strengX, integerX ;
@@ -26,7 +26,7 @@ export async function shaderData() {
     box7.textContent = saturateX;
     sepiaX = await Main.getData(gameName, "1", "sepia") || 0.0;
     box8.textContent = sepiaX;
-    strengX = await Main.getData(gameName, "1", "streng") || 4.0;
+    strengX = localStorage.getItem(`${gameName}_streng`) || "4.0";
     box9.textContent = strengX;
     integerX = localStorage.getItem(`${gameName}_integer`) || "Off";
     box10.textContent = integerX;
@@ -47,6 +47,8 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
+    } else if (property === 'streng') {
+        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -60,6 +62,8 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
+    }  else if (property === 'streng') {
+        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -290,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (controlSetting.classList.contains("visible")) {
                 statePageButton.style.removeProperty("pointer-events");
                 Main.resumeGame();
+                Main.FSSync();
             } else {
                 statePageButton.style.setProperty("pointer-events", "none", "important");
                 Main.pauseGame();
