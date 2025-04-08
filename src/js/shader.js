@@ -12,6 +12,14 @@ let gameHeight;
 let gameStride;
 let texture;
 let ctx2d = null;
+let lut64 = null;
+async function loadLUT64() {
+    if (!lut64) {
+        const res = await fetch("./lut64_mix.bin");
+        const buf = await res.arrayBuffer();
+        lut64 = new Uint8Array(buf);
+    }
+}
 const textured = document.getElementById("textured")
 const bufferCanvas = document.getElementById("canvas");
 const canvasContainer = document.getElementById("canvas-container")
@@ -173,64 +181,27 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
-const inputGamma = 1.7;
-const strength = 1.0;
-const gammaEncodeLUT = Array.from({ length: 256 }, (_, i) => Math.pow(i / 255, inputGamma));
-const colors = {
-    red: [1.0, 0.05, 0.0],
-    green: [0.05, 1.0, 0.05],
-    blue: [0.0, 0.05, 1.0]
-};
-const { red: redColor, green: greenColor, blue: blueColor } = colors;
-
-function applyColorCorrection(r, g, b) {
-    const rL = gammaEncodeLUT[r];
-    const gL = gammaEncodeLUT[g];
-    const bL = gammaEncodeLUT[b];
-    let cR = rL * redColor[0] + gL * redColor[1] + bL * redColor[2];
-    let cG = rL * greenColor[0] + gL * greenColor[1] + bL * greenColor[2];
-    let cB = rL * blueColor[0] + gL * blueColor[1] + bL * blueColor[2];
-    const fR = r / 255;
-    const fG = g / 255;
-    const fB = b / 255;
-
-    cR = fR * (1.0 - strength) + cR * strength;
-    cG = fG * (1.0 - strength) + cG * strength;
-    cB = fB * (1.0 - strength) + cB * strength;
-
-    return [
-        Math.min(255, cR * 255),
-        Math.min(255, cG * 255),
-        Math.min(255, cB * 255)
-    ];
-}
-
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
+    await loadLUT64();
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
     for (let y = 0; y < gameHeight; y++) {
         for (let x = 0; x < gameWidth; x++) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            const r = color & 0xFF;
-            const g = (color >> 8) & 0xFF;
-            const b = (color >> 16) & 0xFF;
-            let outR, outG, outB;
-            if (mode === "2d") {
-                [outR, outG, outB] = applyColorCorrection(r, g, b);
-            } else {
-                outR = r;
-                outG = g;
-                outB = b;
-            }
-            imageData[destIndex] = outR;
-            imageData[destIndex + 1] = outG;
-            imageData[destIndex + 2] = outB;
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
+            imageData[destIndex + 1] = lut64[lutIndex + 1];
+            imageData[destIndex + 2] = lut64[lutIndex + 2];
             imageData[destIndex + 3] = 255;
         }
     }
+    
     if (mode === "webgl2") {
         const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -246,7 +217,6 @@ async function renderPixel(mode) {
         createImageBitmap(imageDataObj).then((bitmap) => {
             ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
             ctx2d.drawImage(bitmap, 0, 0);
-            console.log(gameStride)
         });
     }
 
