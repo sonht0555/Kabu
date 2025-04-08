@@ -173,6 +173,38 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
+const inputGamma = 1.7;
+const strength = 1.0;
+const gammaEncodeLUT = Array.from({ length: 256 }, (_, i) => Math.pow(i / 255, inputGamma));
+const colors = {
+    red: [1.0, 0.05, 0.0],
+    green: [0.05, 1.0, 0.05],
+    blue: [0.0, 0.05, 1.0]
+};
+const { red: redColor, green: greenColor, blue: blueColor } = colors;
+
+function applyColorCorrection(r, g, b) {
+    const rL = gammaEncodeLUT[r];
+    const gL = gammaEncodeLUT[g];
+    const bL = gammaEncodeLUT[b];
+    let cR = rL * redColor[0] + gL * redColor[1] + bL * redColor[2];
+    let cG = rL * greenColor[0] + gL * greenColor[1] + bL * greenColor[2];
+    let cB = rL * blueColor[0] + gL * blueColor[1] + bL * blueColor[2];
+    const fR = r / 255;
+    const fG = g / 255;
+    const fB = b / 255;
+
+    cR = fR * (1.0 - strength) + cR * strength;
+    cG = fG * (1.0 - strength) + cG * strength;
+    cB = fB * (1.0 - strength) + cB * strength;
+
+    return [
+        Math.min(255, cR * 255),
+        Math.min(255, cG * 255),
+        Math.min(255, cB * 255)
+    ];
+}
+
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
@@ -182,9 +214,20 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            imageData[destIndex] = (color & 0xFF);
-            imageData[destIndex + 1] = (color >> 8) & 0xFF;
-            imageData[destIndex + 2] = (color >> 16) & 0xFF;
+            const r = color & 0xFF;
+            const g = (color >> 8) & 0xFF;
+            const b = (color >> 16) & 0xFF;
+            let outR, outG, outB;
+            if (mode === "2d") {
+                [outR, outG, outB] = applyColorCorrection(r, g, b);
+            } else {
+                outR = r;
+                outG = g;
+                outB = b;
+            }
+            imageData[destIndex] = outR;
+            imageData[destIndex + 1] = outG;
+            imageData[destIndex + 2] = outB;
             imageData[destIndex + 3] = 255;
         }
     }
@@ -197,29 +240,19 @@ async function renderPixel(mode) {
         gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
-        if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("2d");
-            ctx2d.imageSmoothingEnabled = false;
-        }
-
-        // Kiểm tra gameWidth và gameHeight
-        if (!Number.isInteger(gameWidth) || !Number.isInteger(gameHeight) || gameWidth <= 0 || gameHeight <= 0) {
-            console.error("Invalid gameWidth or gameHeight:", gameWidth, gameHeight);
-            return;
-        }
-
-        // Tạo ImageData
+        ctx2d = bufferCanvas.getContext("2d");
+        ctx2d.imageSmoothingEnabled = false;
         const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
-
-        // Sử dụng createImageBitmap để vẽ lên canvas
         createImageBitmap(imageDataObj).then((bitmap) => {
-            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height); // Optional
+            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
             ctx2d.drawImage(bitmap, 0, 0);
+            console.log(gameStride)
         });
     }
 
     requestAnimationFrame(() => renderPixel(mode));
 }
+
 
 export function updateIntegerScaling () {
     setupStyle();
@@ -239,6 +272,7 @@ export function updateIntegerScaling () {
 }
 
 export async function switchRenderMode(mode) {
+    systemType = gameName.slice(-3)
     if (mode === "2d") {
         localStorage.setItem(`${gameName}_integer`, "On");
         setupStyle();
