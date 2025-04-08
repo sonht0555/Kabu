@@ -4,7 +4,7 @@ import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
-import {runG} from "./shader.js"
+import {switchRenderMode} from "./shader.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
 const versions = { "1.1.0": mGBA_v1, "2.0.0": mGBA_v2 };
@@ -17,6 +17,14 @@ document.getElementById("GBAver").addEventListener("click", () => {
     currentVersion = versionKeys[(index + 1) % versionKeys.length];
     localStorage.setItem("GBAver", currentVersion);
     document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+    setTimeout(() => { window.location.reload(); }, 1000);
+});
+let currentMode = localStorage.getItem("grapMode") || "webgl2";
+document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
+document.getElementById("grapMode").addEventListener("click", () => {
+    currentMode = currentMode === "webgl2" ? "2d" : "webgl2";
+    localStorage.setItem("grapMode", currentMode);
+    document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
     setTimeout(() => { window.location.reload(); }, 1000);
 });
 /*/ --------------- Initialization ----------- */
@@ -137,7 +145,8 @@ export async function loadGame(romName) {
                 element.style.padding = `4px 5px 2px 5px`;
             });
         }
-        runG();
+        //runG();
+        switchRenderMode(localStorage.getItem("grapMode")||"webgl2");
     // check file extension
     await statusShow();
 }

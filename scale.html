@@ -36,6 +36,7 @@
     <br>
     <br>
     <button id="toggleShader">Shader</button>
+    <button id="toggleMode">Mode</button>
     <button id="integerScaling">Integer Scaling</button>
     <button id="toggleColorAdjustment">Color Adjustment</button>
     <select id="colorCorrectionStrength">
@@ -56,6 +57,9 @@
       function initializeCore(coreInitFunction, module) {
         coreInitFunction(module).then(module => module.FSInit());
       }
+      let renderMode = null;
+      let ctx2d = null;
+      let imageData = null;
       let gl = null;
       let program = null;
       let systemType;
@@ -127,6 +131,28 @@
         gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
       }
 
+      function cleanupWebGL() {
+        if (!gl) return;
+
+        if (texture) {
+          gl.deleteTexture(texture);
+          texture = null;
+        }
+
+        if (program) {
+          gl.deleteProgram(program);
+          program = null;
+        }
+
+        const ext = gl.getExtension("WEBGL_lose_context");
+        if (ext) {
+          ext.loseContext(); // Giải phóng GPU
+        }
+
+        gl = null;
+        console.log("WebGL cleaned up.");
+      }
+
       async function loadShaderSource(url) {
           const response = await fetch(url);
           return await response.text();
@@ -179,10 +205,10 @@
         gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
       }
 
-      function renderPixel() {
+      function renderPixel(mode) {
         const pixelData = Module.getPixelData();
         if (!pixelData) return;
-        const imageData = new Uint8Array(gameWidth * gameHeight * 4);
+        let imageData = new Uint8Array(gameWidth * gameHeight * 4);
         for (let y = 0; y < gameHeight; y++) {
           for (let x = 0; x < gameWidth; x++) {
             const srcIndex = y * gameStride + x;
@@ -194,13 +220,22 @@
             imageData[destIndex + 3] = 255;
           }
         }
+        if (mode === "2d") {
+          ctx2d = bufferCanvas.getContext("2d");
+          ctx2d.imageSmoothingEnabled = false;
+          const imageDataObj = ctx2d.createImageData(gameWidth, gameHeight);
+          imageDataObj.data.set(imageData);
+          ctx2d.putImageData(imageDataObj, 0, 0);
+          requestAnimationFrame(() => renderPixel("2d"));
+        } else if (mode === "webgl2") {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
         gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        requestAnimationFrame(() => renderPixel(gl, texture, gameWidth, gameHeight, gameStride, program));
+        requestAnimationFrame(() => renderPixel("webgl2"));
+        }
       }
 
       async function runG() {
@@ -210,6 +245,28 @@
           setupTexture();
           setupBuffers();
           renderPixel();
+      }
+
+
+      async function switchRenderMode(mode) {
+        if (renderMode === mode) return;
+        if (renderMode === "webgl2") {
+          cleanupWebGL();
+        }
+        renderMode = mode;
+        if (mode === "2d") {
+          console.log("Switched to Canvas 2D.");
+          setupStyle();
+          renderPixel("2d");
+        } else if (mode === "webgl2") {
+          setupStyle();
+          setupWebGL();
+          await setupShaders();
+          setupTexture();
+          setupBuffers();
+          renderPixel("webgl2");
+          console.log("Switched to WebGL2.");
+        }
       }
 
       function updateViewport(width, height) {
@@ -228,7 +285,7 @@
             systemType = file.name.slice(-3)
             console.log("sysType", systemType)
             setTimeout(() => {
-              runG();
+              switchRenderMode("2d");
             }, 1000);
           });
         });
@@ -244,6 +301,13 @@
           gl.useProgram(program);
           gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng); // Cập nhật giá trị uniform
         });
+        document.getElementById("toggleMode").addEventListener("click", () => {
+  if (renderMode === "2d") {
+    switchRenderMode("webgl2"); // Chuyển sang chế độ WebGL2
+  } else if (renderMode === "webgl2") {
+    switchRenderMode("2d"); // Chuyển sang chế độ 2D
+  }
+});
         document.getElementById("integerScaling").addEventListener("click", () => {
           integerStatus = !integerStatus;
           if (integerStatus) {
@@ -253,7 +317,6 @@
             setupStyle();
             updateViewport(bufferCanvas.width, bufferCanvas.height);
           }
-          console.log("Integer Scaling:", integerStatus);
         });
         window.addEventListener("resize", () => {
           if (integerStatus === true) {

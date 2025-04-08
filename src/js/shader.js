@@ -11,6 +11,7 @@ let gameWidth;
 let gameHeight;
 let gameStride;
 let texture;
+let ctx2d = null;
 const textured = document.getElementById("textured")
 const bufferCanvas = document.getElementById("canvas");
 const canvasContainer = document.getElementById("canvas-container")
@@ -172,7 +173,7 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
-async function renderPixel() {
+async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     const imageData = new Uint8Array(gameWidth * gameHeight * 4);
@@ -187,14 +188,22 @@ async function renderPixel() {
             imageData[destIndex + 3] = 255;
         }
     }
-    const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
-    gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(() => renderPixel(gl, texture, gameWidth, gameHeight, gameStride, program));
+    if (mode === "webgl2") {
+        const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
+        gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    } else if (mode === "2d") {
+        ctx2d = bufferCanvas.getContext("2d");
+        ctx2d.imageSmoothingEnabled = false;
+        const imageDataObj = ctx2d.createImageData(gameWidth, gameHeight);
+        imageDataObj.data.set(imageData);
+        ctx2d.putImageData(imageDataObj, 0, 0);
+    }
+    requestAnimationFrame(() => renderPixel(mode));
 }
 
 export function updateIntegerScaling () {
@@ -214,19 +223,22 @@ export function updateIntegerScaling () {
       }
 }
 
-export async function runG() {
-    systemType = gameName.slice(-3);
-    console.log("systemType", systemType)
-    setupStyle();
-    setupWebGL();
-    await setupShaders();
-    setupTexture();
-    setupBuffers();
-    renderPixel();
+export async function switchRenderMode(mode) {
+    if (mode === "2d") {
+        localStorage.setItem(`${gameName}_integer`, "On");
+        setupStyle();
+        renderPixel("2d");
+        console.log("Switched to Canvas 2D.");
+    } else if (mode === "webgl2") {
+        setupStyle();
+        setupWebGL();
+        await setupShaders();
+        setupTexture();
+        setupBuffers();
+        renderPixel("webgl2");
+        console.log("Switched to WebGL2.");
+    }
 }
 
 /* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {
- 
-   
-})
+document.addEventListener("DOMContentLoaded", function() {})
