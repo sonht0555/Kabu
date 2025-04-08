@@ -26,7 +26,7 @@ export async function shaderData() {
     box7.textContent = saturateX;
     sepiaX = await Main.getData(gameName, "1", "sepia") || 0.0;
     box8.textContent = sepiaX;
-    strengX = await Main.getData(gameName, "1", "streng") || 1.0;
+    strengX = await Main.getData(gameName, "1", "streng") || 4.0;
     box9.textContent = strengX;
     integerX = localStorage.getItem(`${gameName}_integer`) || "Off";
     box10.textContent = integerX;
@@ -47,8 +47,6 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-    } else if (property === 'streng') {
-        updateViewport();
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -62,8 +60,6 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-    } else if (property === 'streng') {
-        updateViewport();
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -203,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     Right('box8', 1, 0.1, 'sepia', 'sepia');
                 }
                 if (document.getElementById('box9').classList.contains('selected')) {
-                    Right('box9', 1, 0.1, 'streng', 'streng');
+                    Right('box9', 4.0, 1, 'streng', 'streng');
                 }
                 if (document.getElementById('box10').classList.contains('selected')) {
                     let box10 = document.getElementById('box10');
@@ -273,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     Left('box8', 0, 0.1, 'sepia', 'sepia');
                 }
                 if (document.getElementById('box9').classList.contains('selected')) {
-                    Left('box9', 0, 0.1, 'streng', 'streng');
+                    Left('box9', 0.0, 1, 'streng', 'streng');
                 }
                 if (document.getElementById('box10').classList.contains('selected')) {
                     let box10 = document.getElementById('box10');

@@ -13,20 +13,23 @@ let gameStride;
 let texture;
 let ctx2d = null;
 let lut64 = null;
+let lut64Streng = null;
 async function loadLUT64() {
-    systemType = gameName.slice(-3)
-    if (!lut64) {
-        if (systemType === "gbc") {
-            const res = await fetch("./lut64_alt.bin");
-            const buf = await res.arrayBuffer();
-            lut64 = new Uint8Array(buf);
-        } else {
-            const res = await fetch("./lut64_mix.bin");
-            const buf = await res.arrayBuffer();
-            lut64 = new Uint8Array(buf);
-        }
+    systemType = gameName.slice(-3);
+    const colorStreng = await Main.getData(gameName, "1", "streng") || 4.0;
+    if (!lut64 || lut64Streng !== colorStreng) {
+        const filename = (systemType === "gbc")
+            ? `./lut/lut64_gbc_${colorStreng}.bin`
+            : `./lut/lut64_gba_${colorStreng}.bin`;
+
+        console.log(filename);
+        const res = await fetch(filename);
+        const buf = await res.arrayBuffer();
+        lut64 = new Uint8Array(buf);
+        lut64Streng = colorStreng;
     }
 }
+
 const textured = document.getElementById("textured")
 const bufferCanvas = document.getElementById("canvas");
 const canvasContainer = document.getElementById("canvas-container")
