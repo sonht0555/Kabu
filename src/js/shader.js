@@ -176,7 +176,7 @@ function setupBuffers() {
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
-    const imageData = new Uint8Array(gameWidth * gameHeight * 4);
+    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
     for (let y = 0; y < gameHeight; y++) {
         for (let x = 0; x < gameWidth; x++) {
             const srcIndex = y * gameStride + x;
@@ -197,12 +197,27 @@ async function renderPixel(mode) {
         gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
-        ctx2d = bufferCanvas.getContext("2d");
-        ctx2d.imageSmoothingEnabled = false;
-        const imageDataObj = ctx2d.createImageData(gameWidth, gameHeight);
-        imageDataObj.data.set(imageData);
-        ctx2d.putImageData(imageDataObj, 0, 0);
+        if (!ctx2d) {
+            ctx2d = bufferCanvas.getContext("2d");
+            ctx2d.imageSmoothingEnabled = false;
+        }
+
+        // Kiểm tra gameWidth và gameHeight
+        if (!Number.isInteger(gameWidth) || !Number.isInteger(gameHeight) || gameWidth <= 0 || gameHeight <= 0) {
+            console.error("Invalid gameWidth or gameHeight:", gameWidth, gameHeight);
+            return;
+        }
+
+        // Tạo ImageData
+        const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+
+        // Sử dụng createImageBitmap để vẽ lên canvas
+        createImageBitmap(imageDataObj).then((bitmap) => {
+            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height); // Optional
+            ctx2d.drawImage(bitmap, 0, 0);
+        });
     }
+
     requestAnimationFrame(() => renderPixel(mode));
 }
 
