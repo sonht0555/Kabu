@@ -14,10 +14,17 @@ let texture;
 let ctx2d = null;
 let lut64 = null;
 async function loadLUT64() {
+    systemType = gameName.slice(-3)
     if (!lut64) {
-        const res = await fetch("./lut64_mix.bin");
-        const buf = await res.arrayBuffer();
-        lut64 = new Uint8Array(buf);
+        if (systemType === "gbc") {
+            const res = await fetch("./lut64_mix_V2.bin");
+            const buf = await res.arrayBuffer();
+            lut64 = new Uint8Array(buf);
+        } else {
+            const res = await fetch("./lut64_mix.bin");
+            const buf = await res.arrayBuffer();
+            lut64 = new Uint8Array(buf);
+        }
     }
 }
 const textured = document.getElementById("textured")
@@ -191,17 +198,24 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            const r = (color & 0xFF) >> 2;
-            const g = ((color >> 8) & 0xFF) >> 2;
-            const b = ((color >> 16) & 0xFF) >> 2;
-            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-            imageData[destIndex]     = lut64[lutIndex];
-            imageData[destIndex + 1] = lut64[lutIndex + 1];
-            imageData[destIndex + 2] = lut64[lutIndex + 2];
-            imageData[destIndex + 3] = 255;
+            if (mode === "webgl2") {
+                imageData[destIndex] = (color & 0xFF);
+                imageData[destIndex + 1] = (color >> 8) & 0xFF;
+                imageData[destIndex + 2] = (color >> 16) & 0xFF;
+                imageData[destIndex + 3] = 255;
+            } else if (mode === "2d") {
+                const r = (color & 0xFF) >> 2;
+                const g = ((color >> 8) & 0xFF) >> 2;
+                const b = ((color >> 16) & 0xFF) >> 2;
+                const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+                imageData[destIndex]     = lut64[lutIndex];
+                imageData[destIndex + 1] = lut64[lutIndex + 1];
+                imageData[destIndex + 2] = lut64[lutIndex + 2];
+                imageData[destIndex + 3] = 255;
+            }
         }
     }
-    
+
     if (mode === "webgl2") {
         const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
         gl.bindTexture(gl.TEXTURE_2D, texture);

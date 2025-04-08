@@ -624,8 +624,9 @@ label {
 }
 .dynamic {
   height: 1000px;
-  width: 100%;
+  width: 60%;
   position: relative;
+  margin: auto;
 }
 /*in-game-close*/
 
