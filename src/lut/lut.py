@@ -30,11 +30,14 @@ def generate_lut64_file(filename, gamma, red_color, green_color, blue_color, str
     print(f"✅ Saved {filename}")
 
 if __name__ == "__main__":
-    gamma = 2.2
-    red_color = np.array([0.8125, 0.0, 0.1875])
-    green_color = np.array([0.125, 0.75, 0.125])
-    blue_color = np.array([0.0625, 0.25, 0.6875])
+    gamma = 2.0
 
-    for i, strength in enumerate([0.0, 0.25, 0.5, 0.75, 1.0]):
-        filename = f"lut64_gbc_{int(strength * 100):03}.bin"
+    red_color   = np.array([0.80, 0.135, 0.195])
+    green_color = np.array([0.275, 0.64, 0.155])
+    blue_color  = np.array([-0.075, 0.225, 0.65])
+
+    strengths = [0.0, 0.25, 0.5, 0.75, 1.0]
+
+    for i, strength in enumerate(strengths):
+        filename = f"lut64_rtk_{i:.1f}.bin"
         generate_lut64_file(filename, gamma, red_color, green_color, blue_color, strength)
