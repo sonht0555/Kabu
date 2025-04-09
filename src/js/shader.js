@@ -4,7 +4,6 @@ let gl = null;
 let program = null;
 let systemType;
 let clientWidth;
-let enableColorAdjustment = 1;
 let upscaleFactor = 3;
 let upscaleShader;
 let gameWidth;
@@ -15,6 +14,14 @@ let integerScaling
 let ctx2d = null;
 let lut64 = null;
 let lut64Streng = null;
+const textured = document.getElementById("textured")
+const bufferCanvas = document.getElementById("canvas");
+const canvasContainer = document.getElementById("canvas-container")
+const imgShader = document.getElementById("img-shader")
+const settingContainer = document.querySelectorAll(".setting-container")
+const messageContainer = document.querySelectorAll(".message-container")
+const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
+/* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
     const colorStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
@@ -31,36 +38,12 @@ async function loadLUT64() {
     }
 }
 
-const textured = document.getElementById("textured")
-const bufferCanvas = document.getElementById("canvas");
-const canvasContainer = document.getElementById("canvas-container")
-const imgShader = document.getElementById("img-shader")
-const settingContainer = document.querySelectorAll(".setting-container")
-const messageContainer = document.querySelectorAll(".message-container")
-const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
-/* --------------- Function ------------------ */
-function createShader(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-    }
-    return shader;
-}
-
 async function loadShaderSource(url) {
     const response = await fetch(url);
     return await response.text();
 }
 
-export function updateViewport() {
-    gl.useProgram(program);
-}
-
-function setupStyle() {
+function setupStyle(mode) {
     clientWidth = document.documentElement.clientWidth;
     const dpr = window.devicePixelRatio;
     if (systemType === "gbc") {
@@ -78,7 +61,7 @@ function setupStyle() {
         integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
     }
-    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
+    if (mode === "2d") {
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
         bufferCanvas.style.zoom = `${integerScaling / dpr}`;
@@ -100,7 +83,7 @@ function setupStyle() {
         stateTitle.forEach(function(element) {
             element.classList.remove("fefs")
         });
-    } else {
+    } else if (mode === "webgl2") {
         bufferCanvas.width = clientWidth * upscaleFactor;
         bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
         bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
@@ -138,9 +121,21 @@ function setupWebGL() {
     gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
 }
 
+function createShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
+}
+
 async function setupShaders() {
-    const vertexShaderSource = await loadShaderSource('./shaders/vertexShader.glsl');
-    const fragmentShaderSource = await loadShaderSource('./shaders/fragmentShader.glsl');
+    const vertexShaderSource = await loadShaderSource('./src/shaders/vertexShader.glsl');
+    const fragmentShaderSource = await loadShaderSource('./src/shaders/fragmentShader.glsl');
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
     program = gl.createProgram();
@@ -162,20 +157,6 @@ function setupTexture() {
     gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
     gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
-    console.log("smooth_width", gameWidth, gl.canvas.width, gameHeight, gl.canvas.height)
-    if (systemType === "gbc") {
-        console.log("gbc")
-        gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 2.2);
-        gl.uniform3f(gl.getUniformLocation(program, "red_color"), 26. / 32, 0. / 32, 6. / 32);
-        gl.uniform3f(gl.getUniformLocation(program, "green_color"), 4. / 32, 24. / 32, 4. / 32);
-        gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 2. / 32, 8. / 32, 22. / 32);
-    } else {
-        console.log("gba")
-        gl.uniform1f(gl.getUniformLocation(program, "input_gamma"), 3.7);
-        gl.uniform3f(gl.getUniformLocation(program, "red_color"), 1.0, 0.05, 0.0);
-        gl.uniform3f(gl.getUniformLocation(program, "green_color"), 0.05, 1.0, 0.05);
-        gl.uniform3f(gl.getUniformLocation(program, "blue_color"), 0.0, 0.05, 1.0);
-    }
 }
 
 function setupBuffers() {
@@ -205,31 +186,21 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            if (mode === "webgl2") {
-                imageData[destIndex] = (color & 0xFF);
-                imageData[destIndex + 1] = (color >> 8) & 0xFF;
-                imageData[destIndex + 2] = (color >> 16) & 0xFF;
-                imageData[destIndex + 3] = 255;
-            } else if (mode === "2d") {
-                const r = (color & 0xFF) >> 2;
-                const g = ((color >> 8) & 0xFF) >> 2;
-                const b = ((color >> 16) & 0xFF) >> 2;
-                const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-                imageData[destIndex]     = lut64[lutIndex];
-                imageData[destIndex + 1] = lut64[lutIndex + 1];
-                imageData[destIndex + 2] = lut64[lutIndex + 2];
-                imageData[destIndex + 3] = 255;
-            }
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
+            imageData[destIndex + 1] = lut64[lutIndex + 1];
+            imageData[destIndex + 2] = lut64[lutIndex + 2];
+            imageData[destIndex + 3] = 255;
         }
     }
 
     if (mode === "webgl2") {
-        const colorStreng = await Main.getData(gameName, "1", "streng") || 1.0;
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform1i(gl.getUniformLocation(program, "enable_color_adjustment"), enableColorAdjustment);
-        gl.uniform1f(gl.getUniformLocation(program, "color_correction_strength"), colorStreng);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
         ctx2d = bufferCanvas.getContext("2d");
@@ -244,31 +215,13 @@ async function renderPixel(mode) {
     requestAnimationFrame(() => renderPixel(mode));
 }
 
-export function updateIntegerScaling () {
-    setupStyle();
-    if ((localStorage.getItem(`${gameName}_integer`) || "Off") === "On") {
-        gl.viewport(0, 0, gameWidth, gameHeight);
-        gl.useProgram(program);
-        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gameWidth, gameHeight);
-        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), 1);
-        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), 1);
-      } else {
-        gl.viewport(0, 0, clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
-        gl.useProgram(program);
-        gl.uniform2f(gl.getUniformLocation(program, "render_size"), clientWidth * upscaleFactor, clientWidth * upscaleFactor * (gameHeight / gameWidth));
-        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / (clientWidth * upscaleFactor));
-        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / (clientWidth * upscaleFactor * (gameHeight / gameWidth)));
-      }
-}
-
 export async function switchRenderMode(mode) {
     systemType = gameName.slice(-3)
     if (mode === "2d") {
-        localStorage.setItem(`${gameName}_integer`, "On");
-        setupStyle();
+        setupStyle("2d");
         renderPixel("2d");
     } else if (mode === "webgl2") {
-        setupStyle();
+        setupStyle("webgl2");
         setupWebGL();
         await setupShaders();
         setupTexture();

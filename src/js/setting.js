@@ -1,5 +1,4 @@
 import * as Main from './main.js';
-import {updateIntegerScaling} from "./shader.js";
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
 let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX, strengX, integerX ;
@@ -210,10 +209,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
                     if (box10.textContent === 'On') {
                         localStorage.setItem (`${gameName}_integer`, "On")
-                        updateIntegerScaling();
                     } else {
                         localStorage.setItem (`${gameName}_integer`, "Off")
-                        updateIntegerScaling();
                     }
                 }
             }
@@ -280,10 +277,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
                     if (box10.textContent === 'On') {
                         localStorage.setItem (`${gameName}_integer`, "On")
-                        updateIntegerScaling();
                     } else {
                         localStorage.setItem (`${gameName}_integer`, "Off")
-                        updateIntegerScaling();
                     }
                 }
             }

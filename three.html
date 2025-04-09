@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="apple-mobile-web-app-capable" content="none" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+    <title>mGBA Scale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style></style>
+  </head>
+  <body style="margin: 0px; background-color: black;">
+    <canvas id="canvas-1"></canvas>
+    <canvas id="canvas" hidden></canvas>
+    <label for="" style="color: white">GBC - GBA [4.7]</label>
+    </br>
+    </br>
+    <input type="file" id="file-input" accept="">
+
+    <script type="module">
+      import mGBA_v2 from "./src/temp/mgba.js";
+      import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+
+      // Cấu hình game
+      let gameWidth = 160;
+      let gameHeight = 144;
+      let gameStride = 256;
+      let upscaleFactor = 3;
+
+      // Biến toàn cục
+      let scene, camera, renderer, texture, material, mesh;
+
+      const Module = {
+        canvas: document.getElementById("canvas")
+      };
+
+      // Khởi tạo lõi mGBA
+      function initializeCore(coreInitFunction, module) {
+        coreInitFunction(module).then(module => module.FSInit());
+      }
+
+      // Khởi tạo Three.js
+      function initializeThreeJS() {
+        const clientWidth = document.documentElement.clientWidth;
+        const bufferCanvas = document.getElementById("canvas-1");
+        bufferCanvas.width = clientWidth * upscaleFactor;
+        bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
+        bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
+
+        // Tạo scene, camera và renderer
+        scene = new THREE.Scene();
+        camera = new THREE.OrthographicCamera(0, gameWidth, gameHeight, 0, -1, 1);
+        renderer = new THREE.WebGLRenderer({ canvas: bufferCanvas });
+        renderer.setSize(bufferCanvas.width, bufferCanvas.height);
+
+        // Tạo texture và ShaderMaterial
+        const data = new Uint8Array(gameWidth * gameHeight * 4);
+        texture = new THREE.DataTexture(data, gameWidth, gameHeight, THREE.RGBAFormat);
+        texture.needsUpdate = true;
+
+        material = new THREE.ShaderMaterial({
+          uniforms: {
+            uTexture: { value: texture },
+            game_size: { value: new THREE.Vector2(gameWidth, gameHeight) },
+            render_size: { value: new THREE.Vector2(bufferCanvas.width, bufferCanvas.height) },
+            smooth_width: { value: (gameWidth / bufferCanvas.width) },
+            smooth_height: { value: (gameHeight / bufferCanvas.height) }
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `,
+          fragmentShader: `
+            uniform sampler2D uTexture;
+            uniform vec2 game_size;
+            uniform vec2 render_size;
+            uniform float smooth_width;
+            uniform float smooth_height;
+            varying vec2 vUv;
+
+            vec4 get_color(vec2 tex_coord) {
+              return texture2D(uTexture, tex_coord);
+            }
+
+            vec4 interpolate_color(vec2 tex_coord) {
+              vec2 ip = floor(tex_coord * game_size - 0.5) + 0.5;
+              vec2 residual = fract(tex_coord * game_size + 0.5);
+              ip /= game_size;
+              vec4 v0 = get_color(ip);
+              vec4 v1 = get_color(ip + vec2(1.0, 0.0) / game_size);
+              vec4 v2 = get_color(ip + vec2(0.0, 1.0) / game_size);
+              vec4 v3 = get_color(ip + vec2(1.0, 1.0) / game_size);
+
+              vec2 smooth_dim = vec2(smooth_width, smooth_height);
+              if (fract(render_size.x / game_size.x) * game_size.x < 0.01) smooth_dim.x = 0.01;
+              if (fract(render_size.y / game_size.y) * game_size.y < 0.01) smooth_dim.y = 0.01;
+
+              vec2 alpha = vec2(
+                smoothstep(0.5 - smooth_dim.x * 0.5, 0.5 + smooth_dim.x * 0.5, residual.x),
+                smoothstep(0.5 - smooth_dim.y * 0.5, 0.5 + smooth_dim.y * 0.5, residual.y)
+              );
+              return mix(mix(v0, v1, alpha.x), mix(v2, v3, alpha.x), alpha.y);
+            }
+
+            void main() {
+              gl_FragColor = interpolate_color(vUv);
+            }
+          `
+        });
+
+        // Tạo geometry và mesh
+        const geometry = new THREE.PlaneGeometry(gameWidth, gameHeight);
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(gameWidth / 2, gameHeight / 2, 0);
+        scene.add(mesh);
+      }
+
+      // Render dữ liệu pixel
+      function renderPixel() {
+        const pixelData = Module.getPixelData();
+        if (!pixelData) return;
+
+        const imageData = new Uint8Array(gameWidth * gameHeight * 4);
+        for (let y = 0; y < gameHeight; y++) {
+          for (let x = 0; x < gameWidth; x++) {
+            const srcIndex = (gameHeight - 1 - y) * gameStride + x; // Đảo ngược thứ tự dòng
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            imageData[destIndex] = (color & 0xFF); // Red
+            imageData[destIndex + 1] = (color >> 8) & 0xFF; // Green
+            imageData[destIndex + 2] = (color >> 16) & 0xFF; // Blue
+            imageData[destIndex + 3] = 255; // Alpha
+          }
+        }
+
+        texture.image.data = imageData;
+        texture.needsUpdate = true;
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(renderPixel);
+      }
+
+      // Khởi chạy ứng dụng
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeCore(mGBA_v2, Module);
+        initializeThreeJS();
+
+        document.getElementById("file-input").addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          Module.uploadRom(file, () => {
+            Module.FSSync();
+            Module.loadGame(`/data/games/${file.name}`);
+            renderPixel();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

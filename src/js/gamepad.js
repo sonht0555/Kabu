@@ -184,7 +184,19 @@ document.addEventListener("DOMContentLoaded", function() {
 let lastSaveTime = 0;
 ["touchend"].forEach(eventType => {
     // Save State Button
-    saveStateButton.addEventListener(eventType, async () => {
+    const er = document.getElementById("R");
+    er.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = er.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = er.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = er.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX > width / 4) return;
         const now = Date.now();
         if (now - lastSaveTime < 1000) return;
         clickState++;
@@ -215,12 +227,24 @@ let lastSaveTime = 0;
         }, 300);
     });
     // Load State Button
-    loadStateButton.addEventListener(eventType, async () => {
+    const el = document.getElementById("L");
+    el.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = el.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = el.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = el.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX < (width * 3) / 4) return;
         clickState++;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const slotStateNumbers = await Main.getData( gameName, "1", "slotStateSaved") || 1;
+                const slotStateNumbers = await Main.getData(gameName, "1", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
                 Main.notiMessage(`[_] Loaded.`, 1000);
                 await delay(50);
