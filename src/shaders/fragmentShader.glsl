@@ -11,22 +11,17 @@ uniform vec2 render_size;
 uniform float smooth_width;
 uniform float smooth_height;
 
-// Hàm lấy màu từ texture
-vec4 get_color(vec2 tex_coord) {
-    return texture(texSampler, tex_coord);
-}
-
-// Hàm nội suy màu sắc
+// Hàm nội suy màu sắc (gộp luôn việc lấy màu)
 vec4 interpolate_color(vec2 tex_coord) {
     vec2 ip = floor(tex_coord * game_size - 0.5) + 0.5;
     vec2 residual = fract(tex_coord * game_size + 0.5);
     ip /= game_size;
 
-    // Lấy 4 giá trị màu từ các điểm lân cận
-    vec4 v0 = get_color(ip);
-    vec4 v1 = get_color(ip + vec2(1.0, 0.0) / game_size);
-    vec4 v2 = get_color(ip + vec2(0.0, 1.0) / game_size);
-    vec4 v3 = get_color(ip + vec2(1.0, 1.0) / game_size);
+    // Lấy 4 giá trị màu từ các điểm lân cận trực tiếp
+    vec4 v0 = texture(texSampler, ip);
+    vec4 v1 = texture(texSampler, ip + vec2(1.0, 0.0) / game_size);
+    vec4 v2 = texture(texSampler, ip + vec2(0.0, 1.0) / game_size);
+    vec4 v3 = texture(texSampler, ip + vec2(1.0, 1.0) / game_size);
 
     // Tính toán độ mịn
     vec2 smooth_dim = vec2(smooth_width, smooth_height);
@@ -45,7 +40,5 @@ vec4 interpolate_color(vec2 tex_coord) {
 
 // Hàm chính
 void main() {
-    vec4 color;
-    color = interpolate_color(v_texcoord);
-    fragColor = color;
+    fragColor = interpolate_color(v_texcoord);
 }
