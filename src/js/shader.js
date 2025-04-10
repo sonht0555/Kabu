@@ -30,6 +30,7 @@ async function loadLUT64() {
     const colorProfile = localStorage.getItem(`${gameName}_colorProfile`) || "Gba";
     if (!lut64 || lut64Streng !== colorStreng || lut64Profile !== colorProfile) 
         filename = `./src/lut/lut64_${colorProfile}_${colorStreng}.bin`;
+        console.log(`Loading LUT64: ${filename}`);
         const res = await fetch(filename);
         const buf = await res.arrayBuffer();
         lut64 = new Uint8Array(buf);
