@@ -14,6 +14,7 @@ let integerScaling
 let ctx2d = null;
 let lut64 = null;
 let lut64Streng = null;
+let lut64Profile = null;
 const textured = document.getElementById("textured")
 const bufferCanvas = document.getElementById("canvas");
 const canvasContainer = document.getElementById("canvas-container")
@@ -26,7 +27,7 @@ async function loadLUT64() {
     systemType = gameName.slice(-3);
     const colorStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
     const colorProfile = localStorage.getItem(`${gameName}_colorProfile`) || "Gba";
-    if (!lut64 || lut64Streng !== colorStreng || lut64profile !== colorProfile) {
+    if (!lut64 || lut64Streng !== colorStreng || lut64Profile !== colorProfile) {
         const filename = `./src/lut/lut64_${colorProfile}_${colorStreng}.bin`
         console.log(filename);
         const res = await fetch(filename);
