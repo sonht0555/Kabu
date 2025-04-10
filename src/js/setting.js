@@ -4,6 +4,7 @@ let selectedIndex = 0;
 let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX, strengX, integerX ;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
+const colorValues = ['Gba', 'Gbc', 'Dci'];
 const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
@@ -27,7 +28,7 @@ export async function shaderData() {
     box8.textContent = sepiaX;
     strengX = localStorage.getItem(`${gameName}_streng`) || "4.0";
     box9.textContent = strengX;
-    integerX = localStorage.getItem(`${gameName}_integer`) || "Off";
+    integerX = localStorage.getItem(`${gameName}_colorProfile`) || "Gba";
     box10.textContent = integerX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
@@ -204,14 +205,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (document.getElementById('box9').classList.contains('selected')) {
                     Right('box9', 4.0, 1, 'streng', 'streng');
                 }
+
                 if (document.getElementById('box10').classList.contains('selected')) {
                     let box10 = document.getElementById('box10');
-                    box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
-                    if (box10.textContent === 'On') {
-                        localStorage.setItem (`${gameName}_integer`, "On")
+                    let currentIndex = colorValues.indexOf(box10.textContent);
+                    if (currentIndex < colorValues.length - 1) {
+                        box10.textContent = colorValues[currentIndex + 1];
                     } else {
-                        localStorage.setItem (`${gameName}_integer`, "Off")
+                        box10.textContent = colorValues[0];
                     }
+                    let currentColorValues = box10.textContent;
+                    localStorage.setItem(`${gameName}_colorProfile`, currentColorValues)
                 }
             }
         });
@@ -274,12 +278,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (document.getElementById('box10').classList.contains('selected')) {
                     let box10 = document.getElementById('box10');
-                    box10.textContent = box10.textContent === 'On' ? 'Off' : 'On';
-                    if (box10.textContent === 'On') {
-                        localStorage.setItem (`${gameName}_integer`, "On")
+                    let currentIndex = colorValues.indexOf(box10.textContent);
+                    if (currentIndex > 0) {
+                        box10.textContent = colorValues[currentIndex - 1];
                     } else {
-                        localStorage.setItem (`${gameName}_integer`, "Off")
+                        box10.textContent = colorValues[colorValues.length - 1];
                     }
+                    let currentColorValues = box10.textContent;
+                    localStorage.setItem(`${gameName}_colorProfile`, currentColorValues)
                 }
             }
         });
