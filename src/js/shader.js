@@ -26,9 +26,9 @@ const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
 async function loadLUT64() {
     systemType = gameName.slice(-3);
     const colorStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
-    const colorProfile = localStorage.getItem(`${gameName}_colorProfile`) || "Gba";
+    const colorProfile = (localStorage.getItem(`${gameName}_colorProfile`) || "gba").toLowerCase();
     if (!lut64 || lut64Streng !== colorStreng || lut64Profile !== colorProfile) {
-        const filename = `./src/lut/lut64_gba_${colorStreng}.bin`
+        const filename = `./src/lut/lut64_${colorProfile}_${colorStreng}.bin`
         console.log(filename);
         const res = await fetch(filename);
         const buf = await res.arrayBuffer();
