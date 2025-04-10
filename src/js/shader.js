@@ -34,6 +34,7 @@ async function loadLUT64() {
         const buf = await res.arrayBuffer();
         lut64 = new Uint8Array(buf);
         lut64Streng = colorStreng;
+        lut64Profile = colorProfile;
     }
 }
 
