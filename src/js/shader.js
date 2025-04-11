@@ -25,16 +25,16 @@ const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
-    const colorStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
-    const colorProfile = (localStorage.getItem(`${gameName}_colorProfile`) || "gba").toLowerCase();
-    if (!lut64 || lut64Streng !== colorStreng || lut64Profile !== colorProfile) {
-        const filename = `./src/lut/lut64_${colorProfile}_${colorStreng}.bin`
+    const temperatureStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
+    const temperature = (localStorage.getItem(`${gameName}_temperature`) || "warm").toLowerCase();
+    if (!lut64 || lut64Streng !== temperatureStreng || lut64Profile !== temperature) {
+        const filename = `./src/lut/lut64_${temperature}_${temperatureStreng}.bin`
         console.log(filename);
         const res = await fetch(filename);
         const buf = await res.arrayBuffer();
         lut64 = new Uint8Array(buf);
-        lut64Streng = colorStreng;
-        lut64Profile = colorProfile;
+        lut64Streng = temperatureStreng;
+        lut64Profile = temperature;
     }
 }
 
