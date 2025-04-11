@@ -1,34 +1,39 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-let cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX ;
+let cheatX, stateAutoX, shaderX, opacityX, temperatureX, strengX, brightnessX, contrastX, saturateX, sepiaX;
 const boxes = document.querySelectorAll('.box');
-const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Gt-7', 'Gt-8', 'Gt-9', 'Gt-10', 'Line'];
+const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
+const colorValues = ['Warm', 'Neutral', 'Cool'];
 const menuPad = document.getElementById("menu-pad");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
-const imgShader = document.getElementById('img-shader') || "Sega";
+const imgShader = document.getElementById('img-shader');
 export async function shaderData() {
-    cheatX = await Main.getData(gameName, "0", "cheatCode") || "xx xxx";
+    cheatX = await Main.getData(gameName, "1", "cheatCode") || "xx xxx";
     box1.textContent = cheatX;
-    stateAutoX = await Main.getData(gameName, "0", "stateAuto") || "On";
+    stateAutoX = await Main.getData(gameName, "1", "stateAuto") || "On";
     box2.textContent = stateAutoX;
-    shaderX = await Main.getData(gameName, "0", "shader") || "Sega"
+    shaderX = await Main.getData(gameName, "1", "shader") || "Lcd"
     box3.textContent = shaderX;
-    opacityX = await Main.getData(gameName, "0", "opacity") || 1.0;
+    opacityX = await Main.getData(gameName, "1", "opacity") || 0.8;
     box4.textContent = opacityX;
-    brightnessX = await Main.getData(gameName, "0", "brightness") || 1.0;
-    box5.textContent = brightnessX;
-    contrastX = await Main.getData(gameName, "0", "contrast") || 1.0;
-    box6.textContent = contrastX;
-    saturateX = await Main.getData(gameName, "0", "saturate") || 1.0;
-    box7.textContent = saturateX;
-    sepiaX = await Main.getData(gameName, "0", "sepia") || 0.0;
-    box8.textContent = sepiaX;
+    temperatureX = localStorage.getItem(`${gameName}_temperature`) || "Warm";
+    box5.textContent = temperatureX;
+    strengX = localStorage.getItem(`${gameName}_streng`) || "4.0";
+    box6.textContent = strengX;
+    brightnessX = await Main.getData(gameName, "1", "brightness") || 0.8;
+    box7.textContent = brightnessX;
+    contrastX = await Main.getData(gameName, "1", "contrast") || 1.0;
+    box8.textContent = contrastX;
+    saturateX = await Main.getData(gameName, "1", "saturate") || 1.0;
+    box9.textContent = saturateX;
+    sepiaX = await Main.getData(gameName, "1", "sepia") || 0.0;
+    box10.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
-    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, brightnessX, contrastX, saturateX, sepiaX});
+    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, temperatureX, strengX, brightnessX, contrastX, saturateX, sepiaX});
 }
 /* --------------- Function ------------------ */
 // Right
@@ -39,14 +44,12 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
-    } else {
-        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
+    } else if (property === 'streng') {
+        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
+    await Main.setData(gameName, "1",localStorageKey ,box.textContent);
+    await delay(100);
+    await shaderData();
 }
 // Left
 async function Left(boxId, limit, decrement, property, localStorageKey) {
@@ -56,14 +59,12 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     box.textContent = currentValue.toFixed(1);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
-    } else {
-        await Main.setData(gameName, "0",localStorageKey ,box.textContent);
-        await delay(100);
-        await shaderData();
+    }  else if (property === 'streng') {
+        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
+    await Main.setData(gameName, "1",localStorageKey ,box.textContent);
+    await delay(100);
+    await shaderData();
 }
 // SDL2ID
 SDL2ID.forEach(function(id) {
@@ -93,7 +94,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {
-                    await lockNoti("", "Relaunch...", 1000)
+                    ingame.classList.add("disable");
+                    await lockNoti("", "Relaunch...", 1000);
                     Main.FSSync();
                     setTimeout(() => {
                         if (navigator.onLine) {
@@ -120,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const blob = new Blob([display], { type: "text/plain" });
                     const file = new File([blob], cheatName);
                     Main.uploadCheats(file, gameName);
-                    await Main.setData(gameName, "0", "cheatCode", newCheatCode.trim());
+                    await Main.setData(gameName, "1", "cheatCode", newCheatCode.trim());
                     await delay(200)
                     await shaderData();
                     console.log( display);
@@ -150,12 +152,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        await Main.setData(gameName, "1","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
                         Main.notiMessage("Auto Switches Slots", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        await Main.setData(gameName, "1","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
                         Main.notiMessage("Manual Switches Slots", 1500);
                     }
@@ -168,26 +170,42 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         box3.textContent = sdValues[0];
                     }
-                    sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                    sdValues.forEach(shaderClass => {
+                        imgShader.classList.remove(shaderClass);
+                    });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    await Main.setData(gameName, "0","shader" ,currentShaderClass);
+                    await Main.setData(gameName, "1","shader" ,currentShaderClass);
                     await shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
                     Right('box4', 1, 0.1, 'opacity', 'opacity');
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Right('box5', 2, 0.1, 'brightness', 'brightness');
+                    let box5 = document.getElementById('box5');
+                    let currentIndex = colorValues.indexOf(box5.textContent);
+                    if (currentIndex < colorValues.length - 1) {
+                        box5.textContent = colorValues[currentIndex + 1];
+                    } else {
+                        box5.textContent = colorValues[0];
+                    }
+                    let currentColorValues = box5.textContent;
+                    localStorage.setItem(`${gameName}_temperature`, currentColorValues)
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Right('box6', 2, 0.1, 'contrast', 'contrast');
+                    Right('box6', 4.0, 1, 'streng', 'streng');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Right('box7', 4, 0.1, 'saturate', 'saturate');
+                    Right('box7', 2, 0.1, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Right('box8', 1, 0.1, 'sepia', 'sepia');
+                    Right('box8', 2, 0.1, 'contrast', 'contrast');
+                }
+                if (document.getElementById('box9').classList.contains('selected')) {
+                    Right('box9', 4, 0.1, 'saturate', 'saturate');
+                }
+                if (document.getElementById('box10').classList.contains('selected')) {
+                    Right('box10', 1, 0.1, 'sepia', 'sepia');
                 }
             }
         });
@@ -198,14 +216,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     box2.textContent = box2.textContent === 'On' ? 'Off' : 'On';
                     if (box2.textContent === 'On') {
                         const autoStateCheck = "On"
-                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        await Main.setData(gameName, "1","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        Main.notiMessage("Auto Switches Slots", 1500);
+                        Main.notiMessage("[_] Auto Switches", 1500);
                     } else {
                         const autoStateCheck = "Off"
-                        await Main.setData(gameName, "0","stateAuto" ,autoStateCheck);
+                        await Main.setData(gameName, "1","stateAuto" ,autoStateCheck);
                         document.getElementById("box2").textContent = autoStateCheck;
-                        Main.notiMessage("Manual Switches Slots", 1500);
+                        Main.notiMessage("[_] Manual Switches", 1500);
                     }
                 }
                 if (document.getElementById('box3').classList.contains('selected')) {
@@ -216,26 +234,42 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         box3.textContent = sdValues[sdValues.length - 1];
                     }
-                    sdValues.forEach(shaderClass => imgShader.classList.remove(shaderClass));
+                    sdValues.forEach(shaderClass => {
+                        imgShader.classList.remove(shaderClass);
+                    });
                     currentShaderClass = box3.textContent;
                     imgShader.classList.add(currentShaderClass);
-                    await Main.setData(gameName, "0","shader" ,currentShaderClass);
+                    await Main.setData(gameName, "1","shader" ,currentShaderClass);
                     await shaderData();
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
                     Left('box4', 0, 0.1, 'opacity', 'opacity');
                 }
                 if (document.getElementById('box5').classList.contains('selected')) {
-                    Left('box5', 0, 0.1, 'brightness', 'brightness');
+                    let box5 = document.getElementById('box5');
+                    let currentIndex = colorValues.indexOf(box5.textContent);
+                    if (currentIndex > 0) {
+                        box5.textContent = colorValues[currentIndex - 1];
+                    } else {
+                        box5.textContent = colorValues[colorValues.length - 1];
+                    }
+                    let currentColorValues = box5.textContent;
+                    localStorage.setItem(`${gameName}_temperature`, currentColorValues)
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Left('box6', 0, 0.1, 'contrast', 'contrast');
+                    Left('box6', 0.0, 1, 'streng', 'streng');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Left('box7', 0, 0.1, 'saturate', 'saturate');
+                    Left('box7', 0, 0.1, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Left('box8', 0, 0.1, 'sepia', 'sepia');
+                    Left('box8', 0, 0.1, 'contrast', 'contrast');
+                }
+                if (document.getElementById('box9').classList.contains('selected')) {
+                    Left('box9', 0, 0.1, 'saturate', 'saturate');
+                }
+                if (document.getElementById('box10').classList.contains('selected')) {
+                    Left('box10', 0, 0.1, 'sepia', 'sepia');
                 }
             }
         });
@@ -245,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (controlSetting.classList.contains("visible")) {
                 statePageButton.style.removeProperty("pointer-events");
                 Main.resumeGame();
+                Main.FSSync();
             } else {
                 statePageButton.style.setProperty("pointer-events", "none", "important");
                 Main.pauseGame();

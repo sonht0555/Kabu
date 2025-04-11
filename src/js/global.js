@@ -161,20 +161,15 @@ async function delay(ms) {
 async function led(slotStateNumbers) {
     try {
         const ledInfo = [
-            { id: "led00", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led01", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led02", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led03", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led04", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led05", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led06", color: "rgba(245, 232, 209, 0.4)" },
-            { id: "led07", color: "rgba(245, 232, 209, 0.4)" }
+            { id: "led01", color: "rgba(245, 232, 209, 0.14)" },
+            { id: "led02", color: "rgba(245, 232, 209, 0.14)" },
+            { id: "led03", color: "rgba(245, 232, 209, 0.14)" },
         ];
 
-        if (slotStateNumbers >= 0 && slotStateNumbers < ledInfo.length) {
+        if (slotStateNumbers >= 1 && slotStateNumbers <= ledInfo.length) {
             const activeColor = "#20A5A6";
             ledInfo.forEach((led, index) => {
-                document.getElementById(led.id).style.fill = (index === slotStateNumbers) ? activeColor : led.color;
+                document.getElementById(led.id).style.fill = (index + 1 === slotStateNumbers) ? activeColor : led.color;
             });
         }
     } catch (error) {

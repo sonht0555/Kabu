@@ -7,12 +7,12 @@
       <meta name="apple-mobile-web-app-capable" content="none" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-      <link rel="stylesheet" type="text/css" href="./src/css/main.css" />
+      <link rel="stylesheet" type="text/css" href="/src/css/main.css" />
       <link rel="apple-touch-icon" href="img/icon.png" />
       <link rel="icon" href="img/favi.png" type="image/png" />
       <link rel="manifest" href="manifest.json" />
-      <script src="./src/library/interact.js"></script>
-      <script src="./src/library/nip.js"></script>
+      <script src="/src/library/interact.js"></script>
+      <script src="/src/library/nip.js"></script>
       <title>Kabu</title>
       <script>
        if ('serviceWorker' in navigator) {
@@ -40,35 +40,46 @@
     <div class="errorLog column"></div>
     <div class="gap-15 column in-game disable" id="in-game">
         <div class="target-boxes" id="target-boxes"></div>
-        <div class="gap-15 emu-display">
-            <div class="load-state" id="loadStateButton"></div>
-            <div class="flex-1 bc dpad-l" id="L"></div>
-            <div class="flex-1 column sha Sega" id="img-shader">
-                <div class="notification-container bc">
-                    <svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect id ="led00"  y="7" width="2" height="1" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led01"  x="3" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led02"  x="6" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led03"  x="9" y="6" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led04"  y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led05"  x="3" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led06"  x="6" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        <rect id ="led07"  x="9" y="9" width="2" height="2" fill="rgba(245, 232, 209, 0.4)"/>
-                        </svg>  
-                    <span id="noti-mess"></span>
-                    <div class="flex-1"></div>
-                    <span class="timer" id="timer"></span>
-                </div>
+        <div class="gap-8 emu-display cw hw">
+            <div class="column">
+                <div class="bc canvas-top shu Gt-5"></div>
                 <div class="flex-1 cw">
-                    <div class="canvas-container cw hw">
-                        <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
+                    <div class="canvas-container cw hw" id="canvas-container">
+                        <div class="textured" id="textured" style="position: absolute;"></div>
+                        <canvas width="240" height="160" class="canvas" id="canvas" style="position: absolute;"></canvas>
+                        <div class="message-container column visible" id="stateList">
+                            <div class="flex-1"></div>
+                            <div class="flex-1"></div>
+                            <div class="flex-1"></div>
+                            <div class="flex-1 state-container" id ="state-container">
+                                <div class="flex-1 stateDiv" id="stateDiv01">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[01]</div>
+                                        <div class="stateDate" id="dateState01"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 stateDiv" id="stateDiv02">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[02]</div>
+                                        <div class="stateDate" id="dateState02"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 stateDiv" id="stateDiv03">
+                                    <div class="flex-1 stateInfo column cw">
+                                        <div class="stateTitle">[03]</div>
+                                        <div class="stateDate" id="dateState03"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sha" id="img-shader" style="z-index: 23; pointer-events: none; position: absolute;"></div>
                     </div>
                     <div class="column message-container" id="">
                         <div class="flex-1" id="areaSet"></div>
                         <div class="flex-1" id=""></div>
                     </div>
-                    <div class="message-container visible" id="control-setting">
-                        <div class="flex-1 column control-setting">
+                    <div class="setting-container visible" id="control-setting">
+                        <div class="flex-1 column control-setting shu Gt-5">
                             <div class="flex-1">
                                 <div class="flex-1 cs-name">Power</div>
                                 <div class="flex-1 cs-detail">
@@ -89,7 +100,7 @@
                                 <div class="flex-1 cs-name">Auto Sav</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box2" class="flex-1 box">On</div>
+                                    <div id="box2" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -97,7 +108,7 @@
                                 <div class="flex-1 cs-name">Shader</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box3" class="flex-1 box">sd-1</div>
+                                    <div id="box3" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -105,16 +116,31 @@
                                 <div class="flex-1 cs-name">Shader Op</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box4" class="flex-1 box">0.0</div>
+                                    <div id="box4" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
-
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Temp</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-minus"></div>
+                                    <div id="box5" class="flex-1 box"></div>
+                                    <div class="cs-plus"></div>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex-1 cs-name">Temp Op</div>
+                                <div class="flex-1 cs-detail">
+                                    <div class="cs-minus"></div>
+                                    <div id="box6" class="flex-1 box"></div>
+                                    <div class="cs-plus"></div>
+                                </div>
+                            </div>
                             <div class="flex-1">
                                 <div class="flex-1 cs-name">Brightness</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box5" class="flex-1 box">0.0</div>
+                                    <div id="box7" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -122,7 +148,7 @@
                                 <div class="flex-1 cs-name">Contrast</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box6" class="flex-1 box">0.0</div>
+                                    <div id="box8" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -130,7 +156,7 @@
                                 <div class="flex-1 cs-name">Saturate</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box7" class="flex-1 box">0.0</div>
+                                    <div id="box9" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
@@ -138,112 +164,48 @@
                                 <div class="flex-1 cs-name">Sepia</div>
                                 <div class="flex-1 cs-detail">
                                     <div class="cs-minus"></div>
-                                    <div id="box8" class="flex-1 box">0.0</div>
+                                    <div id="box10" class="flex-1 box"></div>
                                     <div class="cs-plus"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex-1"></div>
                     </div>
-                    <div class="message-container column visible" id="stateList">
-                        <div class="flex-1">
-                            <div class="flex-1 stateDiv" id="stateDiv00">
-                                <div class="stateImg" id="state00">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[00]</div>
-                                    <div class="stateDate" id="dateState00"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv01">
-                                <div class="stateImg" id="state01">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[01]</div>
-                                    <div class="stateDate" id="dateState01"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv02">
-                                <div class="stateImg" id="state02">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[02]</div>
-                                    <div class="stateDate" id="dateState02"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv03">
-                                <div class="stateImg" id="state03">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[03]</div>
-                                    <div class="stateDate" id="dateState03"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex-1 stateDiv" id="stateDiv04">
-                                <div class="stateImg" id="state04">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[04]</div>
-                                    <div class="stateDate" id="dateState04"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv05">
-                                <div class="stateImg" id="state05">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[05]</div>
-                                    <div class="stateDate" id="dateState05"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv06">
-                                <div class="stateImg" id="state06">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[06]</div>
-                                    <div class="stateDate" id="dateState06"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1 stateDiv" id="stateDiv07">
-                                <div class="stateImg" id="state07">
-                                </div>
-                                <div class="flex-1 stateInfo column cw">
-                                    <div class="stateTitle">[07]</div>
-                                    <div class="stateDate" id="dateState07"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-container column visible" id="areaTrans">
+                    <div class="setting-container column visible" id="areaTrans">
                         <div id="resizable-draggable">
                             <div class="resizer bottom-right"></div>
                             <div class="resizer top-left"></div> 
                           </div>
                     </div>
                 </div>
-                <div id="input-container" class="input-container flex-1">
-                    <div id="logoOcr" class="logoOcr"></div>
-                    <div class="flex-1" style="height:18px;">
-                        <div id="inputText" class="inputText"></div>
-                    </div> 
+                <div class="bc canvas-bot shu Gt-5">
+                    <svg width="49" height="8" viewBox="0 0 49 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect id ="led01" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                        <rect id ="led02" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                        <rect id ="led03" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                        </svg>
                 </div>
             </div>
-            <div class="flex-1 bc dpad-r" id="R"></div>
-            <div class="save-state" id="saveStateButton"></div>
         </div>
-        <div class="gap-34 emu-menu" id="control-pad">
-            <div class="flex-1 gap-15">
-                <div class="bc dpad-state" id="statePageButton"></div>
-                <div class="flex-1 bc dpad-select" id="Select"></div>
+        <div class="between column bc emu-control gap-8" id="emu-control">
+            <div class="notification-container bc shu Gt-5"> 
+                <span id="noti-mess" style="position: absolute;">[_]...</span>
+                <div class="flex-1 inputContainer" style="height:20px;">
+                    <div id="inputText" class="inputText"></div>
+                </div> 
+                <span class="timer" id="timer">...</span>
             </div>
-            <div class="flex-1 gap-15">
-                <div class="flex-1 bc dpad-start" id="Start"></div>
-                <div class="bc dpad-menu" id="menu-pad"></div>
+            <div class="gap-22 emu-menu" id="control-pad">
+                <div class="flex-1 gap-8" style="position:relative;">
+                    <div class="bc1 dpad-state" id="statePageButton"></div>
+                    <div class="bc1 flex-1 dpad-l" id="L"></div>
+                </div>
+                <div class="flex-1 gap-8" style="position:relative;">
+                    <div class="bc1 flex-1 dpad-r" id="R"></div>
+                    <div class="bc1 dpad-menu" id="menu-pad"></div>
+                </div>
             </div>
-        </div>
-        <div class="between column bc emu-control" id="emu-control">
-            <div class="flex-1 gap-34">
+            <div class="flex-1 gap-22">
                 <div class="flex-1">
                     <div class="flex-1 bc1 ch cw dpad">
                         <div class="d-pad">
@@ -270,17 +232,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-1 column gap-15">
-                    <div class="flex-1 gap-15">
-                        <div class="flex-1 bc1 dpad-a" id="A"></div>
-                        <div class="bc1 dpad-turbo" id="turbo"></div>
-                    </div>
+                <div class="flex-1 column gap-8">
                     <div class="flex-1" style="position: relative">
-                        <div class="flex-1 gap-15 bc1" id="B">
-                            <div class="flex-1 dpad-b"></div>
+                        <div class="flex-1 gap-8 bc1" id="A">
+                            <div class="flex-1 dpad-a"></div>
                             <div class="dpad-blank"></div>
                         </div>
                         <div class="rewind" id="rewind"></div>
+                    </div>
+                    <div class="flex-1 gap-8">
+                        <div class="flex-1 bc1 dpad-b" id="B"></div>
+                        <div class="bc1 dpad-turbo" id="turbo"></div>
+                    </div>
+                    <div class="gap-8">
+                        <div class="flex-1 bc1 dpad-select" id="Select"></div>
+                        <div class="flex-1 bc1 dpad-start" id="Start"></div>
                     </div>
                 </div>
             </div>
@@ -305,8 +271,8 @@
         </div>
         <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
             <div class="flex-1 rom-item">
-                <span class="flex-1">ROM file.</span>
-                <span class="" id="GBAver">mgba-wasm@2.0.0-beta.3</span>
+                <span class="flex-1" id="grapMode">...</span>
+                <span class="" id="GBAver">...</span>
             </div>
             <div id="romsFile" class="column"></div>
             <div class="flex-1 rom-item">STATE file.</div>
@@ -336,7 +302,7 @@
                         <path id="G0" opacity="0" d="M32 68H24V58H32V68ZM26 60V66H30V60H26Z" fill="#F5E8D1" />
                         <path id="G1" opacity="0" d="M26 68V60H24V58H28V68H26Z" fill="#F5E8D1" />
                         <path id="G2" opacity="0" d="M24 58H32V64H26V66H32V68H24V62H30V60H24V58Z" fill="#F5E8D1" />
-                        <path id="G3" opacity="1" d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#F5E8D1" />
+                        <path id="G3" opacity="1", d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#F5E8D1" />
                         <g opacity="0.4">
                             <path d="M14 76H22V84H16V86H14V76ZM20 82V78H16V82H20Z" fill="#F5E8D1" />
                             <path d="M28 86H24V78H26V80H28V82H26V84H28V86Z" fill="#F5E8D1" />
@@ -362,7 +328,9 @@
                 <path id="path-3" opacity="0.4" d="M8 12V10H10V12H8Z" fill="#F5E8D1"/>
             </svg>
         </div>
-        <div class="flex-1"></div>
+        <div class="flex-1">                        
+            <canvas width="240" height="160" class="canvas display-none" id="canvas-1"></canvas>
+        </div>
     </div>
 
     <div class="lockNoti column cw ch visible" id="lockNoti">
@@ -371,7 +339,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V3.41';</script>
+    <script>let gameVer = 'V4.83';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
@@ -381,6 +349,7 @@
     <script type="module" src="./src/js/state.js"></script> 
     <script type="module" src="./src/js/storage.js"></script> 
     <script type="module" src="./src/js/cloud.js"></script>  
+    <script type="module" src="./src/js/shader.js"></script>  
 </body>
 
 </html> 

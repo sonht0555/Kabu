@@ -4,6 +4,7 @@ import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
+import {switchRenderMode} from "./shader.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
 const versions = { "1.1.0": mGBA_v1, "2.0.0": mGBA_v2 };
@@ -18,8 +19,16 @@ document.getElementById("GBAver").addEventListener("click", () => {
     document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
     setTimeout(() => { window.location.reload(); }, 1000);
 });
+let currentMode = localStorage.getItem("grapMode") || "webgl2";
+document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
+document.getElementById("grapMode").addEventListener("click", () => {
+    currentMode = currentMode === "webgl2" ? "2d" : "webgl2";
+    localStorage.setItem("grapMode", currentMode);
+    document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
+    setTimeout(() => { window.location.reload(); }, 1000);
+});
 /*/ --------------- Initialization ----------- */
-const Module = {canvas: document.getElementById("canvas")};
+const Module = {canvas: document.getElementById("canvas-1")};
 function initializeCore(coreInitFunction, module) {
     coreInitFunction(module).then(function(module) {
         module.FSInit();
@@ -37,10 +46,10 @@ function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.FSSync();
         pauseGame();
-        canvas.classList.add("visible");
+        //canvas.classList.add("visible");
     } else {
         setTimeout(() => {
-            canvas.classList.remove("visible");
+            //canvas.classList.remove("visible");
         }, 600);
         if (controlSetting.classList.contains("visible")) {
             resumeGame();
@@ -53,26 +62,27 @@ async function statusShow() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
+    shaderData();
     startTimer();
-    await gamepPad.turboF(parseInt(await getData(gameName, "0", "turboState")));
+    await gamepPad.turboF(parseInt(await getData(gameName, "1", "turboState")));
     await delay(200);
     await Module.SDL2();
     await delay(800);
-    await led(parseInt(await getData(gameName, "0", "slotStateSaved")));
-    await notiMessage(`W_©${currentVersion}`, 1000);
+    await led(parseInt(await getData(gameName, "1", "slotStateSaved")));
+    await notiMessage(`[_] W_©${currentVersion}`, 1000);
     await wrapContent();
 }
 // Auto Save Every 1m
 async function saveStatePeriodically() {
-    await ledSave("#20A5A6");
-    await Module.saveState(0);
+    await ledSave("#DD5639");
+    await Module.saveState(1);
+    await screenShot(1);
     await Module.FSSync();
-    await screenShot(0);
     console.log(`Auto save ${++countAutoSave} time(s)`);
 }
 // Auto Save In Cloud Every 1h
 async function saveStateInCloud() {
-    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss0")
+    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss1")
     const uId = localStorage.getItem("uId");
     if (navigator.onLine) {
         if (uId) {
@@ -105,32 +115,37 @@ export async function uploadGame(romName) {
     });
 }
 export async function loadGame(romName) {
-    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss0");
+    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss1");
     const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
-    // check file extension
-    if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
-        canvas.classList.add("gbc");
-        areaTrans.classList.add("gbc1");
-        localStorage.setItem("screenSize", `0,0,${window.innerWidth - 230},${(window.innerWidth - 230) * 9 / 10}`)
-    } else {
-        localStorage.setItem("screenSize", `0,0,${window.innerWidth - 150},${(window.innerWidth - 150) * 2 / 3}`)
-    }
     // check save state in local
     if (statesList.includes(stateName)) {
         await Module.loadGame(`/data/games/${romName}`);
         if (confirm("Do you want to load save state?")) {
             await delay(100);
-            await Module.loadState(0);
-            await shaderData();
+            await Module.loadState(1);
         }
     } else {
         await Module.loadGame(`/data/games/${romName}`);
-        await shaderData();
     }
     // show status ingame
+        if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
+            document.querySelectorAll(".stateImg").forEach(function(element) {
+                element.classList.add("gbcs")
+                console.log("element.style.aspectRatio");
+            });
+        } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
+            document.getElementById("state-container").style.paddingRight = `54px`;
+            document.getElementById("state-container").style.gap = `2px`;
+            document.querySelectorAll(".stateInfo").forEach(function(element) {
+                element.style.padding = `4px 5px 2px 5px`;
+            });
+        }
+        //runG();
+        switchRenderMode(localStorage.getItem("grapMode")||"webgl2");
+    // check file extension
     await statusShow();
 }
 export async function saveState(slot) {
@@ -189,6 +204,12 @@ export function listFiles(name) {
     const result = Module.listFiles(name).filter((file) => file !== "." && file !== "..");
     return result;
 }
+
+export function getPixelData() {
+    const result = Module.getPixelData();
+    return result;
+}
+
 export function listGame() {
     const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
     return result;
@@ -216,12 +237,12 @@ export function fileSize(filePart) {
 export async function resumeGame() {
     Module.resumeGame();
     Module.SDL2();
-    notiMessage("Resumed!", 2000);
+    notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
     Module.pauseGame();
     Module.SDL2();
-    notiMessage("Paused!", 2000);
+    notiMessage("[_] Paused!", 2000);
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)
@@ -323,15 +344,15 @@ export async function getData(romName, slot, type) {
     }
 }
 export async function ledSave(color) {
-    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved"));
-    const ledId = slotState === 1 ? "led01" : slotState === 2 ? "led02" : slotState === 3 ? "led03" : slotState === 4 ? "led04" : slotState === 5 ? "led05" : slotState === 6 ? "led06" : slotState === 7 ? "led07" : "led00";
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved"));
+    const ledId = slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led01";
     try {
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         await delay(1000);
-        for (let i = 0; i <= 7; i++) {
-            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.4)";
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
         }
         document.getElementById(ledId).style.fill = color;
     } catch (error) {
@@ -340,7 +361,8 @@ export async function ledSave(color) {
 };
 export async function notiMessage(messageContent, second, showCanvas = false) {
     var message = document.getElementById("noti-mess");
-    const slotState = parseInt(await getData(gameName, "0", "slotStateSaved")) || 0;
+    document.getElementById("inputText").textContent = ""
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved")) || 0;
     if (message.style.opacity === "0.4") {
         clearTimeout(messageTimeout);
         message.style.opacity = "0";

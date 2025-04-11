@@ -29,17 +29,17 @@ async function loadState(slot) {
 // Turbo
 export async function turboF(turboState) {
     if (turboState === 1) {
-        Main.notiMessage("1x Speed", 1500, true);
+        Main.notiMessage("[_] 1x Speed", 1500);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(1);
     } else if (turboState === 2) {
-        Main.notiMessage("2x Speed", 1500, true);
+        Main.notiMessage("[_] 2x Speed", 1500);
         turboButton.classList.add("turbo-medium");
         turboButton.classList.remove("turbo-fast");
         Main.setFastForwardMultiplier(2);
     } else if (turboState === 3) {
-        Main.notiMessage("4x Speed", 1500, true);
+        Main.notiMessage("[_] 4x Speed", 1500);
         turboButton.classList.remove("turbo-medium");
         turboButton.classList.add("turbo-fast");
         Main.setFastForwardMultiplier(4);
@@ -47,97 +47,156 @@ export async function turboF(turboState) {
 }
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
-    ["A", "B", "Start", "Select", "L", "R", "Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"].forEach((buttonId) => {
+    const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
+    const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
+    let activeDpadTouches = new Map();
+    let activeOtherTouches = new Map();
+
+    function handleButtonPress(buttonId, isPressed) {
+        if (!buttonId) return;
+        buttonPress(buttonId, isPressed);
         const element = document.getElementById(buttonId);
-        let currentButton = null;
-        ["mousedown", "touchstart"].forEach((startEventName) => {
-            element.addEventListener(startEventName, () => {
-                currentButton = element;
-                buttonPress(buttonId, true);
+        if (element) {
+            if (isPressed) {
                 element.classList.add('touched');
-            });
-        });
-        ["mouseup", "touchend", "touchcancel"].forEach((endEventName) => {
-            element.addEventListener(endEventName, () => {
-                if (currentButton) {
-                    buttonPress(buttonId, false);
-                    currentButton = null;
-                    element.classList.remove('touched');
+            } else {
+                element.classList.remove('touched');
+            }
+        }
+    }
+    
+    function getButtonIdFromTouch(touch) {
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const button = element?.closest("[id]");
+        return button ? button.id : null;
+    }
+    
+    document.addEventListener("touchstart", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier)) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
                 }
-            });
-        });
-        element.addEventListener("touchmove", (event) => {
-            const touch = event.touches[0];
-            const newButton = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (newButton !== currentButton && event.touches.length === 1) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
+                activeDpadTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier)) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
                 }
-                if (newButton) {
-                    const touchstartEvent = new Event("touchstart");
-                    newButton.dispatchEvent(touchstartEvent);
+                activeOtherTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            }
+        }
+    });
+
+    document.addEventListener("touchmove", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier) && activeDpadTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                    activeDpadTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
                 }
-                currentButton = newButton;
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier) && activeOtherTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                    activeOtherTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            }
+        }
+    });
+    
+    document.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+    document.addEventListener("touchcancel", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+     // Joy Stick
+    let currentDirection = '';
+    const updateButtonState = (direction, isPressed) => {
+        const directions = direction.split('-');
+        directions.forEach(dir => {
+            if (isPressed) {
+                Main.buttonPress(dir);
+            } else {
+                Main.buttonUnpress(dir);
             }
         });
-        document.addEventListener("touchend", (event) => {
-            if (event.touches.length === 0) {
-                if (currentButton) {
-                    const touchendEvent = new Event("touchend");
-                    currentButton.dispatchEvent(touchendEvent);
-                    currentButton = null;
-                }
-            }
-        });
-        // Joy Stick
-        let currentDirection = '';
-        const updateButtonState = (direction, isPressed) => {
-            const directions = direction.split('-');
-            directions.forEach(dir => {
-                if (isPressed) {
-                    Main.buttonPress(dir);
-                } else {
-                    Main.buttonUnpress(dir);
-                }
-            });
-        };
-        dynamic.on('move', (evt, data) => {
-            const angle = data.angle.degree;
-            let dpadDirection = '';
-            if (angle >= 337.5 || angle < 22.5) {
-                dpadDirection = 'Right';
-            } else if (angle >= 22.5 && angle < 67.5) {
-                dpadDirection = 'Up-right';
-            } else if (angle >= 67.5 && angle < 112.5) {
-                dpadDirection = 'Up';
-            } else if (angle >= 112.5 && angle < 157.5) {
-                dpadDirection = 'Up-left';
-            } else if (angle >= 157.5 && angle < 202.5) {
-                dpadDirection = 'Left';
-            } else if (angle >= 202.5 && angle < 247.5) {
-                dpadDirection = 'Down-left';
-            } else if (angle >= 247.5 && angle < 292.5) {
-                dpadDirection = 'Down';
-            } else if (angle >= 292.5 && angle < 337.5) {
-                dpadDirection = 'Down-right';
-            }
-            if (dpadDirection !== currentDirection) {
-                updateButtonState(currentDirection, false);
-                updateButtonState(dpadDirection, true);
-                currentDirection = dpadDirection;
-            }
-        });
-        dynamic.on('end', () => {
+    };
+    dynamic.on('move', (evt, data) => {
+        const angle = data.angle.degree;
+        let dpadDirection = '';
+        if (angle >= 337.5 || angle < 22.5) {
+            dpadDirection = 'Right';
+        } else if (angle >= 22.5 && angle < 67.5) {
+            dpadDirection = 'Up-right';
+        } else if (angle >= 67.5 && angle < 112.5) {
+            dpadDirection = 'Up';
+        } else if (angle >= 112.5 && angle < 157.5) {
+            dpadDirection = 'Up-left';
+        } else if (angle >= 157.5 && angle < 202.5) {
+            dpadDirection = 'Left';
+        } else if (angle >= 202.5 && angle < 247.5) {
+            dpadDirection = 'Down-left';
+        } else if (angle >= 247.5 && angle < 292.5) {
+            dpadDirection = 'Down';
+        } else if (angle >= 292.5 && angle < 337.5) {
+            dpadDirection = 'Down-right';
+        }
+        if (dpadDirection !== currentDirection) {
             updateButtonState(currentDirection, false);
-            currentDirection = '';
-        });
-    })
+            updateButtonState(dpadDirection, true);
+            currentDirection = dpadDirection;
+        }
+    });
+    dynamic.on('end', () => {
+        updateButtonState(currentDirection, false);
+        currentDirection = '';
+    });
 });
 let lastSaveTime = 0;
 ["touchend"].forEach(eventType => {
     // Save State Button
-    saveStateButton.addEventListener(eventType, async () => {
+    const er = document.getElementById("R");
+    er.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = er.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = er.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = er.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX > width / 4) return;
         const now = Date.now();
         if (now - lastSaveTime < 1000) return;
         clickState++;
@@ -145,16 +204,16 @@ let lastSaveTime = 0;
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
                 lastSaveTime = Date.now();
-                const autoStateCheck = await Main.getData(gameName, "0", "stateAuto") || await Main.setData(gameName, "0", "stateAuto", "On");
+                const autoStateCheck = await Main.getData(gameName, "1", "stateAuto") || await Main.setData(gameName, "1", "stateAuto", "On");
                 const slotStateNumbers = autoStateCheck === "On"
-                    ? (parseInt(await Main.getData(gameName, "0", "slotStateSaved") % 7) + 1) || 1
-                    : parseInt(await Main.getData(gameName, "0", "slotStateSaved")) || 1;
+                    ? (parseInt(await Main.getData(gameName, "1", "slotStateSaved") % 3) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
                 await delay(100);
                 await saveState(slotStateNumbers);
                 await delay(50);
-                await Main.setData(gameName, "0", "slotStateSaved", slotStateNumbers);
+                await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
                 await delay(50);
-                await Main.ledSave("#DD5639");
+                await Main.ledSave("#20A5A6");
                 await delay(50);
                 await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
                 
@@ -162,25 +221,39 @@ let lastSaveTime = 0;
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
                 Main.setVolume(newVolume);
-                Main.notiMessage(`Volume: ${newVolume * 100}%`, 1000);
+                Main.notiMessage(`[_] Volume: ${newVolume * 100}%`, 1000);
             }  
             clickState = 0;
         }, 300);
     });
     // Load State Button
-    loadStateButton.addEventListener(eventType, async () => {
+    const el = document.getElementById("L");
+    el.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = el.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = el.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = el.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX < (width * 3) / 4) return;
         clickState++;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const slotStateNumbers = await Main.getData( gameName, "0", "slotStateSaved") || 1;
+                const slotStateNumbers = await Main.getData(gameName, "1", "slotStateSaved") || 1;
                 loadState(slotStateNumbers);
                 Main.notiMessage(`[_] Loaded.`, 1000);
+                await delay(50);
+                await Main.ledSave("#20A5A6");
             } else if (clickState === 3) {
-                let setApiAzure = await Main.getData(gameName, "0", "ApiAzure");
+                let setApiAzure = localStorage.getItem("ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
                 if (ApiAzure !== null && ApiAzure !== "") {
-                    await Main.setData(gameName, "0", "ApiAzure", ApiAzure);
+                    localStorage.setItem("ApiAzure", ApiAzure);                
                 }
             }
             clickState = 0;
@@ -194,7 +267,7 @@ let lastSaveTime = 0;
             if (clickTurbo === 2) {
                 turboState = (turboState % 3) + 1;
                 turboF(turboState);
-                await Main.setData(gameName, "0", "turboState", turboState)
+                await Main.setData(gameName, "1", "turboState", turboState)
             }
             clickTurbo = 0;
         }, 300);
