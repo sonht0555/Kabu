@@ -1133,7 +1133,8 @@ rect {
   gap: 3px;
 }
 .glitch-effect {
-  animation: glitch-effect 0.6s steps(3);
+  animation: glitch-gray 0.4s ease-in-out;
+  will-change: transform, filter, opacity;
 }
 @keyframes glitch-effect {
   0%   { transform: translate(0px, 0px); }
