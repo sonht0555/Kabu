@@ -74,7 +74,7 @@ async function statusShow() {
 }
 // Auto Save Every 1m
 async function saveStatePeriodically() {
-    await ledSave("#DD5639");
+    await ledSave("#20A5A6");
     await Module.saveState(1);
     await screenShot(1);
     await Module.FSSync();

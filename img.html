@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Glitch Effect by Button</title>
+  <style>
+    .glitch-img {
+      position: relative;
+      width: 480px;
+      height: auto;
+      overflow: hidden ;
+      background-color: #ff0;
+    }
+
+    .glitch-img img {
+      width: 100%;
+      height: auto;
+      transition: filter 0.3s, transform 0.3s;
+      filter: grayscale(0%);
+    }
+
+    /* Kích hoạt hiệu ứng khi có class "active" */
+    .glitch-img.active img {
+      animation: glitch-effect 0.4s steps(2);
+    }
+
+    @keyframes glitch-effect {
+      0%   { transform: translate(0px, 0px); filter: grayscale(0%); }
+      20%  { transform: translate(-2px, 2px); }
+      40%  { transform: translate(3px, -1px); }
+      60%  { transform: translate(-1px, 3px); filter: grayscale(100%); }
+      80%  { transform: translate(1px, -2px); }
+      100% { transform: translate(0px, 0px); filter: grayscale(0%); }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glitch-img" id="glitchBox">
+    <img src="https://sm.ign.com/ign_gr/gallery/g/goodboy-ga/goodboy-galaxy-screenshots_wt8a.png" alt="Sample Image">
+  </div>
+
+  <button onclick="triggerGlitch()">Glitch it!</button>
+
+  <script>
+    function triggerGlitch() {
+      const box = document.getElementById('glitchBox');
+            box.classList.add('active');
+      setTimeout(() => {
+        box.classList.remove('active');
+      }, 500);
+    }
+  </script>
+
+</body>
+</html>

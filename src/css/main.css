@@ -1133,3 +1133,14 @@ rect {
   padding: 2px; 
   gap: 3px;
 }
+.glitch-effect {
+  animation: glitch-effect 0.4s steps(2);
+}
+@keyframes glitch-effect {
+  0%   { transform: translate(0px, 0px);  }
+  20%  { transform: translate(-2px, 2px); }
+  40%  { transform: translate(3px, -1px); }
+  60%  { transform: translate(-1px, 3px); }
+  80%  { transform: translate(1px, -2px); }
+  100% { transform: translate(0px, 0px);  }
+}
