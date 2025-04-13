@@ -25,12 +25,10 @@
     }
 
     @keyframes glitch-effect {
-      0%   { transform: translate(0px, 0px); filter: grayscale(0%); }
-      20%  { transform: translate(-2px, 2px); }
-      40%  { transform: translate(3px, -1px); }
-      60%  { transform: translate(-1px, 3px); filter: grayscale(100%); }
-      80%  { transform: translate(1px, -2px); }
-      100% { transform: translate(0px, 0px); filter: grayscale(0%); }
+        0%   { filter: grayscale(0%); }
+        20%  { filter: grayscale(50%); }
+        40%  { filter: grayscale(0%); }
+        100%  { filter: grayscale(100%); }
     }
 
     button {

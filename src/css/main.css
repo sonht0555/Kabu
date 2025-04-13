@@ -1133,7 +1133,7 @@ rect {
   gap: 3px;
 }
 .glitch-effect {
-  animation: glitch-gray 0.4s steps(4);
+  animation: glitch-gray 0.4s steps(2);
 }
 @keyframes glitch-effect {
   0%   { transform: translate(0px, 0px); }
@@ -1145,7 +1145,7 @@ rect {
 }
 @keyframes glitch-gray {
   0%   { filter: grayscale(0%); }
-  45%  { filter: grayscale(75%); }
-  75%  { filter: grayscale(100%); }
-  100% { filter: grayscale(0%); }
+  20%  { filter: grayscale(50%); }
+  40%  { filter: grayscale(0%); }
+  100%  { filter: grayscale(100%); }
 }
