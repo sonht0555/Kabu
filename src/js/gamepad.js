@@ -252,10 +252,6 @@ let lastSaveTime = 0;
                 loadState(slotStateNumbers);
                 Main.notiMessage(`[_] Loaded.`, 1000);
                 await delay(50);
-                canvas.classList.add('glitch-effect');
-                setTimeout(() => {
-                canvas.classList.remove('glitch-effect');
-                }, 500);
                 await Main.ledSave("#20A5A6");
             } else if (clickState === 3) {
                 let setApiAzure = localStorage.getItem("ApiAzure");
