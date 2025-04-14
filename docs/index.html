@@ -47,15 +47,7 @@
                     <div class="canvas-container cw hw" id="canvas-container">
                         <div class="textured" id="textured" style="position: absolute;"></div>
                         <canvas width="240" height="160" class="canvas" id="canvas"></canvas>
-                        <div class="message-container" id="">
-                            <div class="flex-1" style="margin: 1px; filter: brightness(0.8) contrast(1) saturate(1) sepia(0);">
-                                <span class="" style="font-size: 8px;height: 7px;padding-left: 1px;background: rgba(32, 165, 166, 0.4);">2 </span>
-                                <img class="" id="" src="./img/sprite.gif" alt="" style="height: 7px; image-rendering: pixelated; background: rgba(32, 165, 166, 0.4);">
-                            </div>
-                        </div>
                         <div class="message-container column visible" id="stateList">
-                            <div class="flex-1"></div>
-                            <div class="flex-1"></div>
                             <div class="flex-1"></div>
                             <div class="flex-1 state-container" id ="state-container">
                                 <div class="flex-1 stateDiv" id="stateDiv01">
@@ -184,12 +176,18 @@
                           </div>
                     </div>
                 </div>
-                <div class="bc canvas-bot shu Gt-5">
-                    <svg width="49" height="8" viewBox="0 0 49 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect id ="led01" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led02" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led03" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        </svg>
+                <div class="bc canvas-bot shu Gt-5 gap-4">
+                    <div class="flex-1 status" id="status-1">                    
+                        <svg width="49" height="8" viewBox="0 0 49 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect id ="led01" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                            <rect id ="led02" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                            <rect id ="led03" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
+                            </svg>
+                    </div>
+                    <div class="flex-1 status" id="status-2"></div>
+                    <div class="flex-1 status" id="status-3"></div>
+
+
                 </div>
             </div>
         </div>
@@ -345,7 +343,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V5.00';</script>
+    <script>let gameVer = 'V5.01';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 

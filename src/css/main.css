@@ -1115,7 +1115,6 @@ rect {
 }
 .canvas-bot {
   height: 8px;
-  padding-left: 2px;
   border-radius: 0px 0px 2px 2px !important;
 }
 .canvas-bot::before {
@@ -1144,9 +1143,17 @@ rect {
   80%  { transform: translate(1px, -2px); }
   100% { transform: translate(0px, 0px);  }
 }
-@keyframes glitch-gray {
-  0%   { filter: grayscale(0%); }
-  20%  { filter: grayscale(50%); }
-  40%  { filter: grayscale(0%); }
-  100%  { filter: grayscale(100%); }
+@keyframes boxShadow {
+  0%   { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
+  25%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
+  50%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
+  75%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
+  100% { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
 }
+.status {
+box-shadow: inset 0 1px 0 0 rgba(245, 232, 209, 0.14);
+}
+.status.active {
+  animation: boxShadow 1s steps(5);
+  will-change: box-shadow;
+  }
