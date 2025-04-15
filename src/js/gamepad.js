@@ -216,7 +216,7 @@ let lastSaveTime = 0;
                 canvas.classList.add('glitch-effect');
                 setTimeout(() => {
                     canvas.classList.remove('glitch-effect');
-                }, 700);
+                }, 300);
                 await Main.ledSave("#20A5A6");
                 await delay(50);
                 await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);

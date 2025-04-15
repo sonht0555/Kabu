@@ -275,6 +275,7 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='124' height='26' viewBox='0 0 124 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.4'%3E%3Cpath d='M54 12V16H52V10H58V12H54Z' fill='%23F5E8D1'/%3E%3Cpath d='M68 16H60V8H62V10H68V16ZM62 12V14H66V12H62Z' fill='%23F5E8D1'/%3E%3Cpath d='M70 16H72V14H70V16Z' fill='%23F5E8D1'/%3E%3C/g%3E%3C/svg%3E%0A");
 }
 .canvas-container {
+  background: url("data:image/svg+xml,%3Csvg width='42' height='10' viewBox='0 0 42 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 8V0H10V10H0V0H2V8H4V0H6V8H8Z' fill='%23F5E8D1'/%3E%3Cpath d='M14 4H20V10H12V6H14V8H18V6H14V4Z' fill='%23F5E8D1'/%3E%3Cpath d='M24 2V4H22V2H24ZM24 6V10H22V6H24Z' fill='%23F5E8D1'/%3E%3Cpath d='M30 10H26V2H28V4H30V6H28V8H30V10Z' fill='%23F5E8D1'/%3E%3Cpath d='M32 10V8H34V10H32Z' fill='%23F5E8D1'/%3E%3Cpath d='M36 10V8H38V10H36Z' fill='%2320A5A6'/%3E%3Cpath d='M40 10V8H42V10H40Z' fill='%23B84B35'/%3E%3C/svg%3E%0A");
   background-repeat: no-repeat;
   background-position: center;
   background-color: #111111;
@@ -1131,19 +1132,17 @@ rect {
   gap: 3px;
 }
 .glitch-effect {
-  animation: glitch-effect 0.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  will-change: transform, opacity;
+  animation: glitch-effect 0.3s steps(3);
+  will-change: transform, filter, opacity;
 }
-
 @keyframes glitch-effect {
-  0%   { transform: translate(0px, 0px); opacity: 1; }
-  20%  { transform: translate(-2px, 2px); opacity: 0.8; }
-  40%  { transform: translate(3px, -1px); opacity: 1; }
-  60%  { transform: translate(-1px, 3px); opacity: 0.8; }
-  80%  { transform: translate(1px, -2px); opacity: 1; }
-  100% { transform: translate(0px, 0px); opacity: 1; }
+  0%   { transform: translate(0px, 0px);  }
+  20%  { transform: translate(-2px, 2px); }
+  40%  { transform: translate(3px, -1px); }
+  60%  { transform: translate(-1px, 3px); }
+  80%  { transform: translate(1px, -2px); }
+  100% { transform: translate(0px, 0px);  }
 }
-
 @keyframes boxShadow {
   0%   { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
   80%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
