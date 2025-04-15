@@ -15,9 +15,6 @@ let ctx2d = null;
 let lut64 = null;
 let lut64Streng = null;
 let lut64Profile = null;
-let lastFrameTime = 0;
-const fps = 59.7;
-const frameDuration = 1000 / fps; // 59.7 FPS, tương đương với mỗi frame là 16.7ms
 const textured = document.getElementById("textured")
 const bufferCanvas = document.getElementById("canvas");
 const canvasContainer = document.getElementById("canvas-container")
@@ -179,53 +176,43 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
-async function renderPixel(mode, timestamp) {
-    const deltaTime = timestamp - lastFrameTime;
-
-    if (deltaTime >= frameDuration) { // Kiểm tra nếu đủ thời gian giữa các frame
-        const pixelData = Main.getPixelData();
-        if (!pixelData) return;
-
-        await loadLUT64(); // Giả sử loadLUT64 là một hàm bất đồng bộ
-        const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-
-        for (let y = 0; y < gameHeight; y++) {
-            for (let x = 0; x < gameWidth; x++) {
-                const srcIndex = y * gameStride + x;
-                const destIndex = (y * gameWidth + x) * 4;
-                const color = pixelData[srcIndex];
-                const r = (color & 0xFF) >> 2;
-                const g = ((color >> 8) & 0xFF) >> 2;
-                const b = ((color >> 16) & 0xFF) >> 2;
-                const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-                imageData[destIndex]     = lut64[lutIndex];
-                imageData[destIndex + 1] = lut64[lutIndex + 1];
-                imageData[destIndex + 2] = lut64[lutIndex + 2];
-                imageData[destIndex + 3] = 255;
-            }
+async function renderPixel(mode) {
+    const pixelData = Main.getPixelData();
+    if (!pixelData) return;
+    await loadLUT64();
+    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
+    for (let y = 0; y < gameHeight; y++) {
+        for (let x = 0; x < gameWidth; x++) {
+            const srcIndex = y * gameStride + x;
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
+            imageData[destIndex + 1] = lut64[lutIndex + 1];
+            imageData[destIndex + 2] = lut64[lutIndex + 2];
+            imageData[destIndex + 3] = 255;
         }
-
-        // Kiểm tra chế độ vẽ
-        if (mode === "webgl2") {
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        } else if (mode === "2d") {
-            ctx2d = bufferCanvas.getContext("2d");
-            ctx2d.imageSmoothingEnabled = false;
-            const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
-            createImageBitmap(imageDataObj).then((bitmap) => {
-                ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-                ctx2d.drawImage(bitmap, 0, 0);
-            });
-        }
-
-        lastFrameTime = timestamp; // Cập nhật thời gian của frame cuối
     }
 
-    // Tiếp tục vẽ lại với đúng tần suất FPS
-    requestAnimationFrame((timestamp) => renderPixel(mode, timestamp));
+    if (mode === "webgl2") {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    } else if (mode === "2d") {
+        ctx2d = bufferCanvas.getContext("2d");
+        ctx2d.imageSmoothingEnabled = false;
+        const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+        createImageBitmap(imageDataObj).then((bitmap) => {
+            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+            ctx2d.drawImage(bitmap, 0, 0);
+        });
+    }
+
+    requestAnimationFrame(() => renderPixel(mode));
 }
 
 export async function switchRenderMode(mode) {
