@@ -2,58 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Glitch Effect by Button</title>
+  <title>Retro Save - Shake Only</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    .glitch-img {
-      position: relative;
-      width: 480px;
-      height: auto;
-      overflow: hidden ;
-      background-color: #ff0;
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+      padding: 50px;
     }
 
-    .glitch-img img {
-      width: 100%;
-      height: auto;
-      transition: filter 0.3s, transform 0.3s;
-      filter: grayscale(0%);
+    .save-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #00ff00;
+      background: #000;
+      padding: 10px 16px;
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 5px #00ff00;
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
-    /* Kích hoạt hiệu ứng khi có class "active" */
-    .glitch-img.active img {
-      animation: glitch-effect 0.4s steps(2);
+    .save-message.show {
+      opacity: 1;
+      animation: shake 0.4s ease-in-out;
     }
 
-    @keyframes glitch-effect {
-        0%   { filter: grayscale(0%); }
-        20%  { filter: grayscale(50%); }
-        40%  { filter: grayscale(0%); }
-        100%  { filter: grayscale(100%); }
+    @keyframes shake {
+      0% { transform: translate(-50%, 0); }
+      25% { transform: translate(-50%, -2px); }
+      50% { transform: translate(-50%, 2px); }
+      75% { transform: translate(-50%, -1px); }
+      100% { transform: translate(-50%, 0); }
     }
 
     button {
-      margin-top: 20px;
-      padding: 8px 16px;
-      font-size: 16px;
+      margin-top: 40px;
+      padding: 12px 20px;
+      font-size: 14px;
+      background: #00ff00;
+      color: #000;
+      border: none;
       cursor: pointer;
+      box-shadow: 0 0 5px #00ff00;
     }
   </style>
 </head>
 <body>
 
-  <div class="glitch-img" id="glitchBox">
-    <img src="https://sm.ign.com/ign_gr/gallery/g/goodboy-ga/goodboy-galaxy-screenshots_wt8a.png" alt="Sample Image">
-  </div>
+  <h1>🎮 Retro Save</h1>
+  <p>Click to Save</p>
 
-  <button onclick="triggerGlitch()">Glitch it!</button>
+  <button onclick="saveGame()">Save Game</button>
+
+  <div id="saveMsg" class="save-message">💾 Game Saved!</div>
 
   <script>
-    function triggerGlitch() {
-      const box = document.getElementById('glitchBox');
-            box.classList.add('active');
+    function saveGame() {
+      const msg = document.getElementById('saveMsg');
+      msg.classList.add('show');
+
       setTimeout(() => {
-        box.classList.remove('active');
-      }, 500);
+        msg.classList.remove('show');
+      }, 1000);
     }
   </script>
 

@@ -1132,28 +1132,28 @@ rect {
   gap: 3px;
 }
 .glitch-effect {
-  animation: glitch-effect 0.3s steps(3);
-  will-change: transform, filter, opacity;
+  animation: glitch-effect 0.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform, opacity;
 }
+
 @keyframes glitch-effect {
-  0%   { transform: translate(0px, 0px);  }
-  20%  { transform: translate(-2px, 2px); }
-  40%  { transform: translate(3px, -1px); }
-  60%  { transform: translate(-1px, 3px); }
-  80%  { transform: translate(1px, -2px); }
-  100% { transform: translate(0px, 0px);  }
+  0%   { transform: translate(0px, 0px); opacity: 1; }
+  20%  { transform: translate(-2px, 2px); opacity: 0.8; }
+  40%  { transform: translate(3px, -1px); opacity: 1; }
+  60%  { transform: translate(-1px, 3px); opacity: 0.8; }
+  80%  { transform: translate(1px, -2px); opacity: 1; }
+  100% { transform: translate(0px, 0px); opacity: 1; }
 }
+
 @keyframes boxShadow {
   0%   { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
-  25%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
-  50%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
-  75%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
+  80%  { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 1); }
   100% { box-shadow: inset 0 1px 0 0 rgba(32, 165, 166, 0); }
 }
 .status {
 box-shadow: inset 0 1px 0 0 rgba(245, 232, 209, 0);
 }
 .status.active {
-  animation: boxShadow 1s steps(5);
+  animation: boxShadow 1s ease-in-out;
   will-change: box-shadow;
   }
