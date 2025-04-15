@@ -208,13 +208,16 @@ async function renderPixel(mode) {
     };
 
     // Gửi dữ liệu tới Worker để xử lý
-    worker.postMessage({
-        pixelData: pixelData,
-        gameWidth: gameWidth,
-        gameHeight: gameHeight,
-        gameStride: gameStride,
-        lut64: lut64,
-    });
+    worker.postMessage(
+        {
+          pixelData,
+          lut64,
+          gameWidth,
+          gameHeight,
+          gameStride
+        },
+        [pixelData.buffer, lut64.buffer]
+      );      
 }
 
 
