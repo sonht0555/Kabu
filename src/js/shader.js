@@ -180,46 +180,40 @@ async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
-    const worker = new Worker('./src/js/worker.js');
-
-    worker.onmessage = function(e) {
-        const imageData = e.data;
-
-        if (mode === "webgl2") {
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        } else if (mode === "2d") {
-            ctx2d = bufferCanvas.getContext("2d");
-            ctx2d.imageSmoothingEnabled = false;
-            const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
-            createImageBitmap(imageDataObj).then((bitmap) => {
-                ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-                ctx2d.drawImage(bitmap, 0, 0);
-            });
+    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
+    for (let y = 0; y < gameHeight; y++) {
+        for (let x = 0; x < gameWidth; x++) {
+            const srcIndex = y * gameStride + x;
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
+            imageData[destIndex + 1] = lut64[lutIndex + 1];
+            imageData[destIndex + 2] = lut64[lutIndex + 2];
+            imageData[destIndex + 3] = 255;
         }
+    }
 
-        requestAnimationFrame(() => renderPixel(mode));
-    };
+    if (mode === "webgl2") {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    } else if (mode === "2d") {
+        ctx2d = bufferCanvas.getContext("2d");
+        ctx2d.imageSmoothingEnabled = false;
+        const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+        createImageBitmap(imageDataObj).then((bitmap) => {
+            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+            ctx2d.drawImage(bitmap, 0, 0);
+        });
+    }
 
-    worker.onerror = function(error) {
-        console.error('Lỗi trong Worker:', error.message);
-    };
-
-    // Gửi dữ liệu tới Worker để xử lý
-    worker.postMessage(
-        {
-          pixelData,
-          lut64,
-          gameWidth,
-          gameHeight,
-          gameStride
-        },
-        [pixelData.buffer, lut64.buffer]
-      );      
+    requestAnimationFrame(() => renderPixel(mode));
 }
-
 
 export async function switchRenderMode(mode) {
     systemType = gameName.slice(-3)

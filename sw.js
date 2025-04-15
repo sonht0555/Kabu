@@ -1,4 +1,4 @@
-let revision = 'V5.07';
+let revision = 'V5.08';
 var urlsToCache = [
     '/',
     './README.md',
@@ -29,7 +29,6 @@ var urlsToCache = [
     './src/js/state.js',
     './src/js/storage.js',
     './src/js/welcome.js',
-    './src/js/worker.js',
     './src/library/interact.js',
     './src/library/nip.js',
     './src/lut/lut.py',
