@@ -47,9 +47,9 @@ if __name__ == "__main__":
         [0.0,    0.0,    0.0,    0.97]  # luminance multiplier
     ])
 
-    darken_screen = [0.0, 0.25, 0.5, 0.75, 1.0]
+    darken_screen = [0.0, 0.5, 1.0, 1.5, 2.0]
 
     for i, darken_screen in enumerate(darken_screen):
         
-        filename = f"lut64_shader_{i:.1f}.bin"
+        filename = f"lut64_cool_{i:.1f}.bin"
         generate_lut64_file(filename, gamma, darken_screen, profile, strength)
