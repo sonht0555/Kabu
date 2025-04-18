@@ -349,7 +349,7 @@ label {
   background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 4L4 8H0L0 4Z' fill='black'/%3E%3Cpath d='M8 4L4 0H8V4Z' fill='black'/%3E%3Cpath d='M4 4L0 0H4V4Z' fill='black'/%3E%3Cpath d='M4 4L8 8H4V4Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Gt-3::before {
-  background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 8L0 4H4V8Z' fill='black'/%3E%3Cpath d='M4 0L8 4H4V0Z' fill='black'/%3E%3Cpath d='M4 4L0 0H4V4Z' fill='black'/%3E%3Cpath d='M4 4L8 8H4V4Z' fill='black'/%3E%3C/svg%3E%0A");
+  background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='8' height='8' fill='white' fill-opacity='0.02'/%3E%3Crect width='4' height='1' fill='%23D9D9D9'/%3E%3Crect x='4' y='4' width='4' height='1' fill='%23D9D9D9'/%3E%3C/svg%3E%0A");
 }
 .Gt-4::before {
   background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 8H0V7H4V8Z' fill='black'/%3E%3Cpath d='M8 5H4V3H8V5Z' fill='black'/%3E%3Cpath d='M4 1H0V0H4V1Z' fill='black'/%3E%3C/svg%3E%0A");
