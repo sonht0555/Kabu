@@ -180,32 +180,21 @@ function setupBuffers() {
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
-
     await loadLUT64();
-
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-    let dest = 0;
-    const readColor = (color) => {
-        const r6 = (color >> 2)  & 0x3F;
-        const g6 = (color >> 10) & 0x3F;
-        const b6 = (color >> 18) & 0x3F;
-        const idx = ((r6 << 12) | (g6 << 6) | b6) * 3;
-        imageData[dest++] = lut64[idx];
-        imageData[dest++] = lut64[idx + 1];
-        imageData[dest++] = lut64[idx + 2];
-        imageData[dest++] = 255;
-    };
-
-    if (systemType === "gbc") {
-        for (let y = 0; y < gameHeight; y++) {
-            let offset = y * gameStride;
-            for (let x = 0; x < gameWidth; x++) {
-                readColor(pixelData[offset++]);
-            }
-        }
-    } else {
-        for (let i = 0; i < gameWidth * gameHeight; i++) {
-            readColor(pixelData[i]);
+    for (let y = 0; y < gameHeight; y++) {
+        for (let x = 0; x < gameWidth; x++) {
+            const srcIndex = y * gameStride + x;
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
+            imageData[destIndex + 1] = lut64[lutIndex + 1];
+            imageData[destIndex + 2] = lut64[lutIndex + 2];
+            imageData[destIndex + 3] = 255;
         }
     }
 
@@ -216,7 +205,7 @@ async function renderPixel(mode) {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
         if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("2d");
+            ctx2d = bufferCanvas.getContext("bitmaprenderer");
             ctx2d.imageSmoothingEnabled = false;
         }
 
@@ -225,10 +214,9 @@ async function renderPixel(mode) {
         }
 
         imageDataObj.data.set(imageData);
-        createImageBitmap(imageDataObj).then((bitmap) => {
-            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-            ctx2d.drawImage(bitmap, 0, 0);
-            bitmap.close();
+        createImageBitmap(imageDataObj).then(bitmap => {
+            ctx2d.transferFromImageBitmap(bitmap);
+          bitmap.close();
         });
     }
 
