@@ -27,7 +27,6 @@ const totalPixels = gameWidth * gameHeight;
 const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
 let srcIndex = 0;
 let destIndex = 0;
-const pixelData = Main.getPixelData();
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
@@ -183,6 +182,7 @@ function setupBuffers() {
 }
 
 async function renderPixel(mode) {
+    const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
     for (let i = 0; i < totalPixels; i++) {
