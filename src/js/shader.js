@@ -208,12 +208,11 @@ async function renderPixel(mode) {
             ctx2d = bufferCanvas.getContext("2d" ,{ alpha: false });
             ctx2d.imageSmoothingEnabled = false;
         }
-
-        if (!imageDataObj || imageDataObj.width !== gameWidth || imageDataObj.height !== gameHeight) {
+        if (!imageDataObj) {
             imageDataObj = new ImageData(gameWidth, gameHeight);
+        } else {
+            imageDataObj.data.set(imageData);
         }
-
-        imageDataObj.data.set(imageData);
         createImageBitmap(imageDataObj).then((bitmap) => {
             ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
             ctx2d.drawImage(bitmap, 0, 0);
