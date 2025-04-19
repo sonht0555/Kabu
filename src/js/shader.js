@@ -22,6 +22,12 @@ const imgShader = document.getElementById("img-shader")
 const settingContainer = document.querySelectorAll(".setting-container")
 const messageContainer = document.querySelectorAll(".message-container")
 const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
+let imageDataObj = null;
+const totalPixels = gameWidth * gameHeight;
+const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
+let srcIndex = 0;
+let destIndex = 0;
+const pixelData = Main.getPixelData();
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
@@ -177,24 +183,21 @@ function setupBuffers() {
 }
 
 async function renderPixel(mode) {
-    const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
-    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-    for (let y = 0; y < gameHeight; y++) {
-        for (let x = 0; x < gameWidth; x++) {
-            const srcIndex = y * gameStride + x;
-            const destIndex = (y * gameWidth + x) * 4;
-            const color = pixelData[srcIndex];
-            const r = (color & 0xFF) >> 2;
-            const g = ((color >> 8) & 0xFF) >> 2;
-            const b = ((color >> 16) & 0xFF) >> 2;
-            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-            imageData[destIndex]     = lut64[lutIndex];
-            imageData[destIndex + 1] = lut64[lutIndex + 1];
-            imageData[destIndex + 2] = lut64[lutIndex + 2];
-            imageData[destIndex + 3] = 255;
-        }
+    for (let i = 0; i < totalPixels; i++) {
+        const color = pixelData[srcIndex++];
+        const r6 = (color >> 2)  & 0x3F;
+        const g6 = (color >> 10) & 0x3F;
+        const b6 = (color >> 18) & 0x3F;
+
+        const lutIndex = (r6 << 12) | (g6 << 6) | b6;
+        const i3 = (lutIndex << 1) + lutIndex;
+
+        imageData[destIndex++] = lut64[i3];
+        imageData[destIndex++] = lut64[i3 + 1];
+        imageData[destIndex++] = lut64[i3 + 2];
+        imageData[destIndex++] = 255;
     }
 
     if (mode === "webgl2") {
@@ -203,12 +206,19 @@ async function renderPixel(mode) {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
-        ctx2d = bufferCanvas.getContext("2d");
-        ctx2d.imageSmoothingEnabled = false;
-        const imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+        if (!ctx2d) {
+            ctx2d = bufferCanvas.getContext("2d", { willReadFrequently: true });
+            ctx2d.imageSmoothingEnabled = false;
+        }
+
+        if (!imageDataObj || imageDataObj.width !== gameWidth || imageDataObj.height !== gameHeight) {
+            imageDataObj = new ImageData(gameWidth, gameHeight);
+        }
+        imageDataObj.data.set(imageData);
         createImageBitmap(imageDataObj).then((bitmap) => {
             ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
             ctx2d.drawImage(bitmap, 0, 0);
+            bitmap.close();
         });
     }
 
