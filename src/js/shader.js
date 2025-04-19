@@ -23,10 +23,6 @@ const settingContainer = document.querySelectorAll(".setting-container")
 const messageContainer = document.querySelectorAll(".message-container")
 const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
 let imageDataObj = null;
-const totalPixels = gameWidth * gameHeight;
-const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-let srcIndex = 0;
-let destIndex = 0;
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
@@ -185,19 +181,34 @@ async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
-    for (let i = 0; i < totalPixels; i++) {
-        const color = pixelData[srcIndex++];
+
+    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
+    const useStride = typeof gameStride === "number" && gameStride !== gameWidth;
+
+    let dest = 0;
+
+    const readColor = (color) => {
         const r6 = (color >> 2)  & 0x3F;
         const g6 = (color >> 10) & 0x3F;
         const b6 = (color >> 18) & 0x3F;
+        const idx = ((r6 << 12) | (g6 << 6) | b6) * 3;
+        imageData[dest++] = lut64[idx];
+        imageData[dest++] = lut64[idx + 1];
+        imageData[dest++] = lut64[idx + 2];
+        imageData[dest++] = 255;
+    };
 
-        const lutIndex = (r6 << 12) | (g6 << 6) | b6;
-        const i3 = (lutIndex << 1) + lutIndex;
-
-        imageData[destIndex++] = lut64[i3];
-        imageData[destIndex++] = lut64[i3 + 1];
-        imageData[destIndex++] = lut64[i3 + 2];
-        imageData[destIndex++] = 255;
+    if (useStride) {
+        for (let y = 0; y < gameHeight; y++) {
+            let offset = y * gameStride;
+            for (let x = 0; x < gameWidth; x++) {
+                readColor(pixelData[offset++]);
+            }
+        }
+    } else {
+        for (let i = 0; i < gameWidth * gameHeight; i++) {
+            readColor(pixelData[i]);
+        }
     }
 
     if (mode === "webgl2") {
@@ -214,6 +225,7 @@ async function renderPixel(mode) {
         if (!imageDataObj || imageDataObj.width !== gameWidth || imageDataObj.height !== gameHeight) {
             imageDataObj = new ImageData(gameWidth, gameHeight);
         }
+
         imageDataObj.data.set(imageData);
         createImageBitmap(imageDataObj).then((bitmap) => {
             ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
