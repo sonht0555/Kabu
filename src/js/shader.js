@@ -205,7 +205,7 @@ async function renderPixel(mode) {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
         if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("bitmaprenderer");
+            ctx2d = bufferCanvas.getContext("2d" ,{ alpha: false });
             ctx2d.imageSmoothingEnabled = false;
         }
 
@@ -214,9 +214,10 @@ async function renderPixel(mode) {
         }
 
         imageDataObj.data.set(imageData);
-        createImageBitmap(imageDataObj).then(bitmap => {
-            ctx2d.transferFromImageBitmap(bitmap);
-          bitmap.close();
+        createImageBitmap(imageDataObj).then((bitmap) => {
+            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+            ctx2d.drawImage(bitmap, 0, 0);
+            bitmap.close();
         });
     }
 
