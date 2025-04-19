@@ -184,10 +184,7 @@ async function renderPixel(mode) {
     await loadLUT64();
 
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-    const useStride = typeof gameStride === "number" && gameStride !== gameWidth;
-
     let dest = 0;
-
     const readColor = (color) => {
         const r6 = (color >> 2)  & 0x3F;
         const g6 = (color >> 10) & 0x3F;
@@ -199,7 +196,7 @@ async function renderPixel(mode) {
         imageData[dest++] = 255;
     };
 
-    if (useStride) {
+    if (systemType === "gbc") {
         for (let y = 0; y < gameHeight; y++) {
             let offset = y * gameStride;
             for (let x = 0; x < gameWidth; x++) {
