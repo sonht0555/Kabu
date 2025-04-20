@@ -177,22 +177,10 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
-let colorToLutIndexMap = null;
-async function loadColorToLutIndexMap() {
-    if (!colorToLutIndexMap) {
-        const res = await fetch('./src/lut/colorToLutIndex.bin');
-        const buf = await res.arrayBuffer();
-        colorToLutIndexMap = new Uint32Array(buf);
-    }
-}
-
-// Sửa đổi hàm renderPixel
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
-    await loadColorToLutIndexMap(); // Tải bảng ánh xạ
-    
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
     const totalPixels = gameWidth * gameHeight;
 
@@ -203,8 +191,12 @@ async function renderPixel(mode) {
         const srcIndex = y * gameStride + x;
         const destIndex = i * 4;
         
-        const color = pixelData[srcIndex] & 0xFFFFFF; // Chỉ lấy 24 bit RGB
-        const lutIndex = colorToLutIndexMap[color];
+        const color = pixelData[srcIndex];
+        const r = (color & 0xFF) >> 2;
+        const g = ((color >> 8) & 0xFF) >> 2;
+        const b = ((color >> 16) & 0xFF) >> 2;
+        
+        const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
         
         imageData[destIndex]     = lut64[lutIndex];
         imageData[destIndex + 1] = lut64[lutIndex + 1];
@@ -232,6 +224,7 @@ async function renderPixel(mode) {
             bitmap.close();
         });
     }
+
     requestAnimationFrame(() => renderPixel(mode));
 }
 
