@@ -182,42 +182,22 @@ async function renderPixel(mode) {
     if (!pixelData) return;
     await loadLUT64();
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-    
-    if (!window.rTable) {
-        window.rTable = new Uint32Array(256);
-        window.gTable = new Uint32Array(256);
-        window.bTable = new Uint32Array(256);
-        
-        for (let i = 0; i < 256; i++) {
-            window.rTable[i] = (i >> 2) * 64 * 64 * 3;
-            window.gTable[i] = (i >> 2) * 64 * 3;
-            window.bTable[i] = (i >> 2) * 3;
-        }
-    }
-    
-    let destIndex = 0;
-    let srcRowOffset = 0;
-    
     for (let y = 0; y < gameHeight; y++) {
         for (let x = 0; x < gameWidth; x++) {
-            const color = pixelData[srcRowOffset + x];
-            
-            const r = color & 0xFF;
-            const g = (color >> 8) & 0xFF;
-            const b = (color >> 16) & 0xFF;
-            
-            const lutIndex = window.rTable[r] + window.gTable[g] + window.bTable[b];
-            
-            imageData[destIndex] = lut64[lutIndex];
+            const srcIndex = y * gameStride + x;
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            const r = (color & 0xFF) >> 2;
+            const g = ((color >> 8) & 0xFF) >> 2;
+            const b = ((color >> 16) & 0xFF) >> 2;
+            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+            imageData[destIndex]     = lut64[lutIndex];
             imageData[destIndex + 1] = lut64[lutIndex + 1];
             imageData[destIndex + 2] = lut64[lutIndex + 2];
             imageData[destIndex + 3] = 255;
-            
-            destIndex += 4;
         }
-        srcRowOffset += gameStride;
     }
-    
+
     if (mode === "webgl2") {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
@@ -225,7 +205,7 @@ async function renderPixel(mode) {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
         if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("2d", { alpha: false });
+            ctx2d = bufferCanvas.getContext("2d" ,{ alpha: false });
             ctx2d.imageSmoothingEnabled = false;
         }
         if (!imageDataObj) {
