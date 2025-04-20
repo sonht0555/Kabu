@@ -385,5 +385,9 @@ export async function FSSync() {
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 export function setCoreSettings(type, number) {
-    Module.setCoreSettings(type, number);
+    if (typeof Module.setCoreSettings === "function") {
+        Module.setCoreSettings(type, number);
+    } else {
+        return null;
+    }
 }
