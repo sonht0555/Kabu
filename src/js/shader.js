@@ -177,27 +177,62 @@ function setupBuffers() {
     gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 }
 
+let indexLUT = null;
+
+async function loadIndexLUT() {
+    if (indexLUT) return;
+    
+    try {
+        const filename = `./src/lut/index_lut_${systemType}.bin`;
+        const response = await fetch(filename);
+        const buffer = await response.arrayBuffer();
+        indexLUT = new Int32Array(buffer);
+        console.log(`Đã tải index LUT cho ${systemType}`);
+    } catch (error) {
+        console.error('Lỗi khi tải index LUT:', error);
+        createIndexLUTInline();
+    }
+}
+
+function createIndexLUTInline() {
+    indexLUT = new Int32Array(gameWidth * gameHeight * 2);
+    let index = 0;
+    
+    for (let y = 0; y < gameHeight; y++) {
+        for (let x = 0; x < gameWidth; x++) {
+            indexLUT[index++] = y * gameStride + x;
+            indexLUT[index++] = (y * gameWidth + x) * 4;
+        }
+    }
+    
+    console.log('Đã tạo index LUT inline');
+}
+
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
     await loadLUT64();
+    
     const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
-    for (let y = 0; y < gameHeight; y++) {
-        for (let x = 0; x < gameWidth; x++) {
-            const srcIndex = y * gameStride + x;
-            const destIndex = (y * gameWidth + x) * 4;
-            const color = pixelData[srcIndex];
-            const r = (color & 0xFF) >> 2;
-            const g = ((color >> 8) & 0xFF) >> 2;
-            const b = ((color >> 16) & 0xFF) >> 2;
-            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-            imageData[destIndex]     = lut64[lutIndex];
-            imageData[destIndex + 1] = lut64[lutIndex + 1];
-            imageData[destIndex + 2] = lut64[lutIndex + 2];
-            imageData[destIndex + 3] = 255;
-        }
+    const pixelCount = gameWidth * gameHeight;
+    
+    for (let i = 0, j = 0; i < pixelCount; i++, j += 2) {
+        const srcIndex = indexLUT[j];
+        const destIndex = indexLUT[j + 1];
+        
+        const color = pixelData[srcIndex];
+        const r = (color & 0xFF) >> 2;
+        const g = ((color >> 8) & 0xFF) >> 2;
+        const b = ((color >> 16) & 0xFF) >> 2;
+        
+        const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+        
+        imageData[destIndex]     = lut64[lutIndex];
+        imageData[destIndex + 1] = lut64[lutIndex + 1];
+        imageData[destIndex + 2] = lut64[lutIndex + 2];
+        imageData[destIndex + 3] = 255;
     }
-
+    
     if (mode === "webgl2") {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
@@ -205,26 +240,36 @@ async function renderPixel(mode) {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
         if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("2d" ,{ alpha: false });
+            ctx2d = bufferCanvas.getContext("2d", { alpha: false });
             ctx2d.imageSmoothingEnabled = false;
         }
+        
         if (!imageDataObj) {
             imageDataObj = new ImageData(gameWidth, gameHeight);
-        } else {
-            imageDataObj.data.set(imageData);
         }
-        createImageBitmap(imageDataObj).then((bitmap) => {
-            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-            ctx2d.drawImage(bitmap, 0, 0);
-            bitmap.close();
-        });
+        
+        imageDataObj.data.set(imageData);
+        ctx2d.putImageData(imageDataObj, 0, 0);
     }
-
+    
     requestAnimationFrame(() => renderPixel(mode));
 }
 
 export async function switchRenderMode(mode) {
-    systemType = gameName.slice(-3)
+    systemType = gameName.slice(-3);
+    
+    if (systemType === "gbc") {
+        gameWidth = 160;
+        gameHeight = 144;
+        gameStride = 256;
+    } else {
+        gameWidth = 240;
+        gameHeight = 160;
+        gameStride = 240;
+    }
+    
+    await loadIndexLUT();
+    
     if (mode === "2d") {
         setupStyle("2d");
         renderPixel("2d");
@@ -238,5 +283,4 @@ export async function switchRenderMode(mode) {
     }
 }
 
-/* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {})
+/* --------------- DOMContentLoaded ---------- */document.addEventListener("DOMContentLoaded", function() {})
