@@ -39,6 +39,11 @@ async function loadLUT64() {
     }
 }
 
+async function loadShaderSource(url) {
+    const response = await fetch(url);
+    return await response.text();
+}
+
 function setupStyle(mode) {
     clientWidth = document.documentElement.clientWidth;
     const dpr = window.devicePixelRatio;
@@ -109,16 +114,9 @@ function setupStyle(mode) {
 }
 
 function setupWebGL() {
-    gl = bufferCanvas.getContext("webgl", {
-        alpha: false,
-        depth: false,
-        antialias: false,
-        premultipliedAlpha: false,
-        preserveDrawingBuffer: false,
-        powerPreference: 'low-power',
-      });
+    gl = bufferCanvas.getContext("webgl2");
     if (!gl) {
-        console.error("WebGL not supported");
+        console.error("WebGL2 not supported");
         return null;
     }
     gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
@@ -136,26 +134,9 @@ function createShader(type, source) {
     return shader;
 }
 
-const vertexShaderSource = `
-    attribute vec2 position;
-    attribute vec2 texcoord;
-    varying vec2 v_texcoord;
-    void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-        v_texcoord = texcoord;
-    }
-`;
-
-const fragmentShaderSource = `
-    precision mediump float;
-    varying vec2 v_texcoord;
-    uniform sampler2D texture;
-    void main() {
-        gl_FragColor = texture2D(texture, v_texcoord);
-    }
-`;
-
-function setupShaders() {
+async function setupShaders() {
+    const vertexShaderSource = await loadShaderSource('./src/shaders/vertexShader.glsl');
+    const fragmentShaderSource = await loadShaderSource('./src/shaders/fragmentShader.glsl');
     const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
     program = gl.createProgram();
@@ -248,7 +229,7 @@ export async function switchRenderMode(mode) {
         setupStyle("2d");
         renderPixel("2d");
     } else if (mode === "webgl2") {
-        setupStyle("2d");
+        setupStyle("webgl2");
         setupWebGL();
         await setupShaders();
         setupTexture();
