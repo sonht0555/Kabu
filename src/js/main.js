@@ -22,7 +22,13 @@ document.getElementById("GBAver").addEventListener("click", () => {
 let currentMode = localStorage.getItem("grapMode") || "webgl";
 document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
 document.getElementById("grapMode").addEventListener("click", () => {
-    currentMode = currentMode === "webgl" ? "2d" : "webgl";
+    if (currentMode === "webgl") {
+        currentMode = "2d";
+    } else if (currentMode === "2d") {
+        currentMode = "webgl_full";
+    } else {
+        currentMode = "webgl";
+    }
     localStorage.setItem("grapMode", currentMode);
     document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
     setTimeout(() => { window.location.reload(); }, 1000);

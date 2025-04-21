@@ -1,6 +1,6 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
-let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Streng = null, lut64Profile = null, imageDataObj = null;
+let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Streng = null, lut64Profile = null, imageDataObj = null, fs = null, vs = null;
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
@@ -17,9 +17,9 @@ async function loadLUT64() {
     }
 }
 // Setup Webgl
-function setupWebGL_Shader(type) {
+function setupWebGL_Shader(mode) {
     // Webgl setup
-    gl = bufferCanvas.getContext(type, {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
+    gl = bufferCanvas.getContext("webgl" , {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
     gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
 
     // Shader setup
@@ -29,8 +29,12 @@ function setupWebGL_Shader(type) {
         gl.compileShader(shader);
         return shader;
     }
-    const vs = `attribute vec2 position;attribute vec2 texcoord;varying vec2 v_texcoord;void main() {gl_Position = vec4(position, 0.0, 1.0);v_texcoord = texcoord;}`;
-    const fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texture;void main() {gl_FragColor = texture2D(texture, v_texcoord);}`;
+    vs = `attribute vec2 position;attribute vec2 texcoord;varying vec2 v_texcoord;void main() {gl_Position = vec4(position, 0.0, 1.0);v_texcoord = texcoord;}`;
+    if (mode === "webgl") {
+        fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texture;void main() {gl_FragColor = texture2D(texture, v_texcoord);}`;
+    } else if (mode === "webgl_full") {
+        fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texSampler;uniform vec2 game_size;uniform vec2 render_size;uniform float smooth_width;uniform float smooth_height;vec4 interpolate_color(vec2 tex_coord){vec2 ip=floor(tex_coord*game_size-0.5)+0.5;vec2 residual=fract(tex_coord*game_size+0.5);ip/=game_size;vec4 v0=texture2D(texSampler,ip);vec4 v1=texture2D(texSampler,ip+vec2(1.0,0.0)/game_size);vec4 v2=texture2D(texSampler,ip+vec2(0.0,1.0)/game_size);vec4 v3=texture2D(texSampler,ip+vec2(1.0,1.0)/game_size);vec2 smooth_dim=vec2(smooth_width,smooth_height);if(fract(render_size.x/game_size.x)*game_size.x<0.01)smooth_dim.x=0.01;if(fract(render_size.y/game_size.y)*game_size.y<0.01)smooth_dim.y=0.01;vec2 alpha=vec2(smoothstep(0.5-smooth_dim.x*0.5,0.5+smooth_dim.x*0.5,residual.x),smoothstep(0.5-smooth_dim.y*0.5,0.5+smooth_dim.y*0.5,residual.y));return mix(mix(v0,v1,alpha.x),mix(v2,v3,alpha.x),alpha.y);}void main(){gl_FragColor=interpolate_color(v_texcoord);}`
+    }
     const vertexShader = createShader(gl.VERTEX_SHADER, vs);
     const fragmentShader = createShader(gl.FRAGMENT_SHADER, fs);
     program = gl.createProgram();
@@ -41,7 +45,7 @@ function setupWebGL_Shader(type) {
     return program;
 }
 // Setup Texture and Buffer
-function setupTexture_Buffer() {
+function setupTexture_Buffer(mode) {
     // Texture setup
     texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -49,7 +53,12 @@ function setupTexture_Buffer() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
+    if (mode === "webgl_full") {
+        gl.uniform2f(gl.getUniformLocation(program, "game_size"), gameWidth, gameHeight);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
+    }
     // Buffer setup
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -114,7 +123,12 @@ export async function switchRenderMode(mode) {
     } else if (mode === "webgl") {
         setupStyle("2d");
         setupWebGL_Shader("webgl");
-        setupTexture_Buffer();
+        setupTexture_Buffer("webgl");
+        renderPixel("webgl");
+    } else if (mode === "webgl_full") {
+        setupStyle("webgl_full");
+        setupWebGL_Shader("webgl_full");
+        setupTexture_Buffer("webgl_full");
         renderPixel("webgl");
     }
 }

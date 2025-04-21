@@ -283,7 +283,7 @@ function setupStyle(mode) {
         stateTitle.forEach(function(element) {
             element.classList.remove("fefs")
         });
-    } else if (mode === "webgl") {
+    } else if (mode === "webgl_full") {
         bufferCanvas.width = clientWidth * upscaleFactor;
         bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
         bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
