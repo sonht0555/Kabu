@@ -5,7 +5,7 @@ var messageTimeout;
 let stateAdj = 1;
 var lockNotiTime;
 let clientWidth;
-let upscaleFactor = 3;
+let upscaleFactor = 2;
 let upscaleShader;
 let integerScaling
 let systemType;
