@@ -1,4 +1,4 @@
-let revision = 'V5.52';
+let revision = 'V5.53';
 var urlsToCache = [
     '/',
     './README.md',
@@ -48,8 +48,6 @@ var urlsToCache = [
     './src/lut/lut64_warm_3.0.bin',
     './src/lut/lut64_warm_4.0.bin',
     './src/lut/lut_gba.py',
-    './src/shaders/fragmentShader.glsl',
-    './src/shaders/vertexShader.glsl',
     './src/temp/main.c',
     './src/temp/main.js',
     './src/temp/mgba.js',

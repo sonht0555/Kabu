@@ -71,8 +71,6 @@ mkdir -p $Docs_DIR/src/library/
 cp ./src/library/* $Docs_DIR/src/library/
 mkdir -p $Docs_DIR/src/lut/
 cp ./src/lut/* $Docs_DIR/src/lut/
-mkdir -p $Docs_DIR/src/shaders/
-cp ./src/shaders/* $Docs_DIR/src/shaders/
 git add . && git commit -m "--- Build $Vers ---" && git push origin main
 clear
 echo "╔═════════════════════╗"
