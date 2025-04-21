@@ -79,7 +79,7 @@ function setupStyle(mode) {
         stateTitle.forEach(function(element) {
             element.classList.remove("fefs")
         });
-    } else if (mode === "webgl2") {
+    } else if (mode === "webgl") {
         bufferCanvas.width = clientWidth * upscaleFactor;
         bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
         bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
@@ -108,56 +108,22 @@ function setupStyle(mode) {
     imgShader.style.setProperty('--bg-size', `${upscaleShader}px ${upscaleShader}px`);
 }
 
-function setupWebGL() {
-    gl = bufferCanvas.getContext("webgl", {
-        alpha: false,
-        depth: false,
-        antialias: false,
-        premultipliedAlpha: false,
-        preserveDrawingBuffer: false,
-        powerPreference: 'low-power',
-      });
-    if (!gl) {
-        console.error("WebGL not supported");
-        return null;
-    }
+function setupWebGL_Shader() {
+    // Webgl setup
+    gl = bufferCanvas.getContext("webgl", {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
     gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
-}
 
-function createShader(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
+    // Shader setup
+    function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
     }
-    return shader;
-}
-
-const vertexShaderSource = `
-    attribute vec2 position;
-    attribute vec2 texcoord;
-    varying vec2 v_texcoord;
-    void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-        v_texcoord = texcoord;
-    }
-`;
-
-const fragmentShaderSource = `
-    precision mediump float;
-    varying vec2 v_texcoord;
-    uniform sampler2D texture;
-    void main() {
-        gl_FragColor = texture2D(texture, v_texcoord);
-    }
-`;
-
-function setupShaders() {
-    const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+    const vs = `attribute vec2 position;attribute vec2 texcoord;varying vec2 v_texcoord;void main() {gl_Position = vec4(position, 0.0, 1.0);v_texcoord = texcoord;}`;
+    const fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texture;void main() {gl_FragColor = texture2D(texture, v_texcoord);}`;
+    const vertexShader = createShader(gl.VERTEX_SHADER, vs);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fs);
     program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -166,34 +132,27 @@ function setupShaders() {
     return program;
 }
 
-function setupTexture() {
+function setupTexture_Buffer() {
+    // Texture setup
     texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.uniform2f(gl.getUniformLocation(program, "game_size"), gameWidth, gameHeight);
-    gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
-    gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
-    gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
-}
 
-function setupBuffers() {
+    // Buffer setup
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1, ]), gl.STATIC_DRAW);
-    const positionLocation = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(gl.getAttribLocation(program, "position"), 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(gl.getAttribLocation(program, "position"));
+
     const texcoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        0, 1, 1, 1, 0, 0, 1, 0,
-    ]), gl.STATIC_DRAW);
-    const texcoordLocation = gl.getAttribLocation(program, "texcoord");
-    gl.enableVertexAttribArray(texcoordLocation);
-    gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(gl.getAttribLocation(program, "texcoord"), 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(gl.getAttribLocation(program, "texcoord"));
 }
 
 async function renderPixel(mode) {
@@ -217,8 +176,7 @@ async function renderPixel(mode) {
         }
     }
 
-    if (mode === "webgl2") {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+    if (mode === "webgl") {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -247,15 +205,10 @@ export async function switchRenderMode(mode) {
     if (mode === "2d") {
         setupStyle("2d");
         renderPixel("2d");
-    } else if (mode === "webgl2") {
+    } else if (mode === "webgl") {
         setupStyle("2d");
-        setupWebGL();
-        await setupShaders();
-        setupTexture();
-        setupBuffers();
-        renderPixel("webgl2");
+        setupWebGL_Shader();
+        setupTexture_Buffer();
+        renderPixel("webgl");
     }
 }
-
-/* --------------- DOMContentLoaded ---------- */
-document.addEventListener("DOMContentLoaded", function() {})

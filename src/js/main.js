@@ -19,10 +19,10 @@ document.getElementById("GBAver").addEventListener("click", () => {
     document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
     setTimeout(() => { window.location.reload(); }, 1000);
 });
-let currentMode = localStorage.getItem("grapMode") || "webgl2";
+let currentMode = localStorage.getItem("grapMode") || "webgl";
 document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
 document.getElementById("grapMode").addEventListener("click", () => {
-    currentMode = currentMode === "webgl2" ? "2d" : "webgl2";
+    currentMode = currentMode === "webgl" ? "2d" : "webgl";
     localStorage.setItem("grapMode", currentMode);
     document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
     setTimeout(() => { window.location.reload(); }, 1000);
