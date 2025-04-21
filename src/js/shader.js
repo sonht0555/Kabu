@@ -1,28 +1,6 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
-let gl = null;
-let program = null;
-let systemType;
-let clientWidth;
-let upscaleFactor = 3;
-let upscaleShader;
-let gameWidth;
-let gameHeight;
-let gameStride;
-let texture;
-let integerScaling
-let ctx2d = null;
-let lut64 = null;
-let lut64Streng = null;
-let lut64Profile = null;
-const textured = document.getElementById("textured")
-const bufferCanvas = document.getElementById("canvas");
-const canvasContainer = document.getElementById("canvas-container")
-const imgShader = document.getElementById("img-shader")
-const settingContainer = document.querySelectorAll(".setting-container")
-const messageContainer = document.querySelectorAll(".message-container")
-const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
-let imageDataObj = null;
+let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Streng = null, lut64Profile = null, imageDataObj = null;
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
@@ -38,79 +16,10 @@ async function loadLUT64() {
         lut64Profile = temperature;
     }
 }
-
-function setupStyle(mode) {
-    clientWidth = document.documentElement.clientWidth;
-    const dpr = window.devicePixelRatio;
-    if (systemType === "gbc") {
-        gameWidth = 160;
-        gameHeight = 144;
-        gameStride = 256;
-        upscaleShader = 3;
-        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
-        localStorage.setItem("screenSize", `0,0,${ gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
-    } else {
-        gameWidth = 240;
-        gameHeight = 160;
-        gameStride = 240;
-        upscaleShader = 2;
-        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
-        localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
-    }
-    if (mode === "2d") {
-        bufferCanvas.width = gameWidth;
-        bufferCanvas.height = gameHeight;
-        bufferCanvas.style.zoom = `${integerScaling / dpr}`;
-        bufferCanvas.style.imageRendering = "crisp-edges";
-        canvasContainer.style.width = `${gameWidth * (integerScaling / dpr)}px`;
-        canvasContainer.style.height = `${gameHeight * (integerScaling / dpr)}px`;
-        textured.style.width = `${gameWidth * (integerScaling / dpr)}px`;
-        textured.style.height = `${gameHeight * (integerScaling / dpr)}px`;
-        imgShader.style.transform = `scale(${integerScaling / dpr/  upscaleShader})`;
-        settingContainer.forEach(function(element) {
-            element.style.width = `${gameWidth * (integerScaling / dpr)}px`;
-            element.style.height = `${gameHeight * (integerScaling / dpr)}px`;
-        });
-        messageContainer.forEach(function(element) {
-            element.style.width = `${gameWidth}px`;
-            element.style.height = `${gameHeight}px`;
-            element.style.zoom = `${integerScaling / dpr}`;
-        });
-        stateTitle.forEach(function(element) {
-            element.classList.remove("fefs")
-        });
-    } else if (mode === "webgl") {
-        bufferCanvas.width = clientWidth * upscaleFactor;
-        bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
-        bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
-        bufferCanvas.style.imageRendering = "";
-        canvasContainer.style.width = `${clientWidth}px`;
-        canvasContainer.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        textured.style.width = `${clientWidth}px`;
-        textured.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        imgShader.style.transform = `scale(${(clientWidth / gameWidth) / upscaleShader})`;
-        settingContainer.forEach(function(element) {
-            element.style.width = `${clientWidth}px`;
-            element.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        });
-        messageContainer.forEach(function(element) {
-            element.style.width = `${gameWidth}px`;
-            element.style.height = `${gameHeight}px`;
-            element.style.zoom = `${(clientWidth / gameWidth)}`;
-        });
-        stateTitle.forEach(function(element) {
-            element.classList.add("fefs")
-        });
-    }
-    imgShader.style.width = `${gameWidth * upscaleShader}px`;
-    imgShader.style.height = `${gameHeight * upscaleShader}px`;
-    imgShader.style.transformOrigin = "top center";
-    imgShader.style.setProperty('--bg-size', `${upscaleShader}px ${upscaleShader}px`);
-}
-
-function setupWebGL_Shader() {
+// Setup Webgl
+function setupWebGL_Shader(type) {
     // Webgl setup
-    gl = bufferCanvas.getContext("webgl", {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
+    gl = bufferCanvas.getContext(type, {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
     gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
 
     // Shader setup
@@ -131,7 +40,7 @@ function setupWebGL_Shader() {
     gl.useProgram(program);
     return program;
 }
-
+// Setup Texture and Buffer
 function setupTexture_Buffer() {
     // Texture setup
     texture = gl.createTexture();
@@ -154,7 +63,12 @@ function setupTexture_Buffer() {
     gl.vertexAttribPointer(gl.getAttribLocation(program, "texcoord"), 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(gl.getAttribLocation(program, "texcoord"));
 }
-
+// Setup 2D context
+function setup2DContext() {
+    ctx2d = bufferCanvas.getContext("2d");
+    ctx2d.imageSmoothingEnabled = false;
+}
+// Render Pixel
 async function renderPixel(mode) {
     const pixelData = Main.getPixelData();
     if (!pixelData) return;
@@ -181,33 +95,25 @@ async function renderPixel(mode) {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
-        if (!ctx2d) {
-            ctx2d = bufferCanvas.getContext("2d" ,{ alpha: false });
-            ctx2d.imageSmoothingEnabled = false;
-        }
-        if (!imageDataObj) {
-            imageDataObj = new ImageData(gameWidth, gameHeight);
-        } else {
-            imageDataObj.data.set(imageData);
-        }
+        imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
         createImageBitmap(imageDataObj).then((bitmap) => {
             ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
             ctx2d.drawImage(bitmap, 0, 0);
-            bitmap.close();
         });
     }
 
     requestAnimationFrame(() => renderPixel(mode));
 }
-
+// Switch Render Mode
 export async function switchRenderMode(mode) {
     systemType = gameName.slice(-3)
     if (mode === "2d") {
         setupStyle("2d");
+        setup2DContext()
         renderPixel("2d");
     } else if (mode === "webgl") {
         setupStyle("2d");
-        setupWebGL_Shader();
+        setupWebGL_Shader("webgl");
         setupTexture_Buffer();
         renderPixel("webgl");
     }
