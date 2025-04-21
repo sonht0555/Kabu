@@ -22,12 +22,12 @@ document.getElementById("GBAver").addEventListener("click", () => {
 let currentMode = localStorage.getItem("grapMode") || "webgl";
 document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
 document.getElementById("grapMode").addEventListener("click", () => {
-    if (currentMode === "webgl") {
-        currentMode = "2d";
-    } else if (currentMode === "2d") {
+    if (currentMode === "2d") {
+        currentMode = "webgl";
+    } else if (currentMode === "webgl") {
         currentMode = "webgl_full";
     } else {
-        currentMode = "webgl";
+        currentMode = "2d";
     }
     localStorage.setItem("grapMode", currentMode);
     document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
