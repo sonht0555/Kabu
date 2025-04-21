@@ -265,6 +265,7 @@ function setupStyle(mode) {
         bufferCanvas.width = gameWidth;
         bufferCanvas.height = gameHeight;
         bufferCanvas.style.zoom = `${integerScaling / dpr}`;
+        bufferCanvas.style.imageRendering = "pixelated";
         bufferCanvas.style.imageRendering = "crisp-edges";
         canvasContainer.style.width = `${gameWidth * (integerScaling / dpr)}px`;
         canvasContainer.style.height = `${gameHeight * (integerScaling / dpr)}px`;

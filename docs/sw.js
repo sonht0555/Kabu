@@ -1,10 +1,9 @@
-let revision = 'V5.53';
+let revision = 'V5.54';
 var urlsToCache = [
     '/',
-    './README.md',
-    './_headers',
     './img/favi.png',
     './img/icon.png',
+    './img/sprite.gif',
     './img/textured.png',
     './index.html',
     './manifest.json',
@@ -48,14 +47,7 @@ var urlsToCache = [
     './src/lut/lut64_warm_3.0.bin',
     './src/lut/lut64_warm_4.0.bin',
     './src/lut/lut_gba.py',
-    './src/temp/main.c',
-    './src/temp/main.js',
-    './src/temp/mgba.js',
-    './src/temp/mgba.wasm',
-    './src/temp/scale.html',
-    './src/temp/test.html',
     './sw.js',
-    './three.html'
 ];
 
 self.addEventListener('install', function (event) {

@@ -17,7 +17,7 @@ function getFiles(dir, fileList = []) {
         if (fs.statSync(filePath).isDirectory()) {
             getFiles(filePath, fileList);
         } else {
-            fileList.push('./' + path.posix.relative(baseDir, filePath));
+            fileList.push('./' + path.relative(baseDir, filePath).split(path.sep).join('/'));
         }
     });
     return fileList;
