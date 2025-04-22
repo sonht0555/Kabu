@@ -152,7 +152,7 @@ export async function loadGame(romName) {
             });
         }
         //runG();
-        switchRenderMode(localStorage.getItem("grapMode")||"webgl2");
+        switchRenderMode(localStorage.getItem("grapMode")||"webgl");
     // check file extension
     await statusShow();
 }
