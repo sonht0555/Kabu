@@ -251,9 +251,10 @@ export function fileSize(filePart) {
     return result;
 }
 export async function resumeGame() {
-    Module.resumeGame();
-    Module.SDL2();
     loadingIcon.classList.add("visible");
+    await delay(500);
+    await Module.resumeGame();
+    Module.SDL2();
     notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
