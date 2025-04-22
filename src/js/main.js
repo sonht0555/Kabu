@@ -162,6 +162,7 @@ export async function saveState(slot) {
     setTimeout(() => {
         canSave = true;
     }, 2000);
+    await Module.saveState(slot);
     await loadding();
 }
 export async function loadState(slot) {
