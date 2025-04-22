@@ -161,11 +161,8 @@ export async function saveState(slot) {
     canSave = false;
     setTimeout(() => {
         canSave = true;
-    }, 1500);
-    await pauseGame();
-    await Module.saveState(slot);
-    await delay(1500);
-    await resumeGame();
+    }, 2000);
+    await loadding();
 }
 export async function loadState(slot) {
     await Module.loadState(slot);
@@ -251,8 +248,6 @@ export function fileSize(filePart) {
     return result;
 }
 export async function resumeGame() {
-    loadingIcon.classList.add("visible");
-    await delay(500);
     await Module.resumeGame();
     Module.SDL2();
     notiMessage("[_] Resumed!", 2000);
@@ -260,13 +255,16 @@ export async function resumeGame() {
 export async function pauseGame() {
     Module.pauseGame();
     Module.SDL2();
-    loadingIcon.classList.remove("visible");
     notiMessage("[_] Paused!", 2000);
 }
-export async function pauseGame_2() {
-    Module.pauseGame();
+export async function loadding() {
+    await Module.pauseGame();
+    loadingIcon.classList.remove("visible");
+    await delay(1500);
+    loadingIcon.classList.add("visible");
+    await delay(500);
+    await Module.resumeGame();
     Module.SDL2();
-    notiMessage("[_] Paused!", 2000);
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)
