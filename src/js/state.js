@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Main.resumeGame();
             } else {
                 document.getElementById("menu-pad").style.setProperty("pointer-events", "none", "important");
-                Main.pauseGame();
+                Main.pauseGame_2();
             }
         });
     });

@@ -263,6 +263,11 @@ export async function pauseGame() {
     loadingIcon.classList.remove("visible");
     notiMessage("[_] Paused!", 2000);
 }
+export async function pauseGame_2() {
+    Module.pauseGame();
+    Module.SDL2();
+    notiMessage("[_] Paused!", 2000);
+}
 export async function buttonPress(key) {
     Module.buttonPress(key)
 }

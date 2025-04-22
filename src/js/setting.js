@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Main.FSSync();
             } else {
                 statePageButton.style.setProperty("pointer-events", "none", "important");
-                Main.pauseGame();
+                Main.pauseGame_2();
             }
         })
     });
