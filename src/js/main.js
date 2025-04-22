@@ -261,9 +261,9 @@ export async function pauseGame() {
 export async function loadding() {
     await Module.pauseGame();
     loadingIcon.classList.remove("visible");
-    await delay(1500);
+    await delay(800);
     loadingIcon.classList.add("visible");
-    await delay(500);
+    await delay(200);
     await Module.resumeGame();
     Module.SDL2();
 }
