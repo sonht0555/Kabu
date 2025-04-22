@@ -161,8 +161,17 @@ function restoreArea() {
     if (savedState) {
         const [x, y, width, height] = savedState.split(',').map(Number);
         const target = document.getElementById('resizable-draggable');
-        target.style.width = width + 'px';
-        target.style.height = height + 'px';
+        areaTrans = document.getElementById("areaTrans");
+        if (areaTrans.offsetWidth < width) {
+            target.style.width = areaTrans.offsetWidth + 'px';
+        } else {
+            target.style.width = width + 'px';
+        }
+        if (areaTrans.offsetHeight < height) {
+            target.style.height = areaTrans.offsetHeight + 'px';
+        } else {
+            target.style.height = height + 'px';
+        }
         target.style.transform = `translate(${x}px, ${y}px)`;
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
