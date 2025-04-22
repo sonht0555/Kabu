@@ -46,6 +46,8 @@ let countAutoSave = 0;
 let countUpload = 0;
 const canvas = document.getElementById("canvas");
 const controlSetting = document.getElementById("control-setting");
+const loadingIcon = document.getElementById("loading-icon");
+let canSave = true;
 /* --------------- Function ------------------ */
 // System Tray
 function handleVisibilityChange(event) {
@@ -155,7 +157,15 @@ export async function loadGame(romName) {
     await statusShow();
 }
 export async function saveState(slot) {
+    if (!canSave) return; 
+    canSave = false;
+    setTimeout(() => {
+        canSave = true;
+    }, 1500);
+    await pauseGame();
     await Module.saveState(slot);
+    await delay(1500);
+    await resumeGame();
 }
 export async function loadState(slot) {
     await Module.loadState(slot);
@@ -243,11 +253,13 @@ export function fileSize(filePart) {
 export async function resumeGame() {
     Module.resumeGame();
     Module.SDL2();
+    loadingIcon.classList.add("visible");
     notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
     Module.pauseGame();
     Module.SDL2();
+    loadingIcon.classList.remove("visible");
     notiMessage("[_] Paused!", 2000);
 }
 export async function buttonPress(key) {

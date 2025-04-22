@@ -213,10 +213,10 @@ let lastSaveTime = 0;
                 await delay(50);
                 await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
                 await delay(50);
-                canvas.classList.add('glitch-effect');
-                setTimeout(() => {
-                    canvas.classList.remove('glitch-effect');
-                }, 300);
+                //canvas.classList.add('glitch-effect');
+                //setTimeout(() => {
+                //    canvas.classList.remove('glitch-effect');
+                //}, 300);
                 await Main.ledSave("#20A5A6");
                 await delay(50);
                 await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
