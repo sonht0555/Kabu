@@ -104,11 +104,13 @@ async function renderPixel(mode) {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     } else if (mode === "2d") {
-        imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
-        createImageBitmap(imageDataObj).then((bitmap) => {
-            ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-            ctx2d.drawImage(bitmap, 0, 0);
-        });
+        if (!imageDataObj) {
+            imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+        } else {
+            imageDataObj.data.set(imageData);
+        }
+        ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+        ctx2d.putImageData(imageDataObj, 0, 0);
     }
 
     requestAnimationFrame(() => renderPixel(mode));
