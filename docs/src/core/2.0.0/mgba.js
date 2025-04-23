@@ -482,13 +482,22 @@ Module.setCoreSettings = (coreSettings) => {
   ]);
 
   if (coreSettings.allowOpposingDirections !== undefined)
-    setIntegerCoreSetting('allowOpposingDirections',coreSettings.allowOpposingDirections);
+    setIntegerCoreSetting(
+      'allowOpposingDirections',
+      coreSettings.allowOpposingDirections
+    );
 
   if (coreSettings.rewindBufferCapacity !== undefined)
-    setIntegerCoreSetting('rewindBufferCapacity', coreSettings.rewindBufferCapacity);
+    setIntegerCoreSetting(
+      'rewindBufferCapacity',
+      coreSettings.rewindBufferCapacity
+    );
 
   if (coreSettings.rewindBufferInterval !== undefined)
-    setIntegerCoreSetting('rewindBufferInterval',coreSettings.rewindBufferInterval);
+    setIntegerCoreSetting(
+      'rewindBufferInterval',
+      coreSettings.rewindBufferInterval
+    );
 
   if (coreSettings?.frameSkip !== undefined)
     setIntegerCoreSetting('frameSkip', coreSettings.frameSkip);
