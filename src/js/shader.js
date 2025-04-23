@@ -88,9 +88,9 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            const r = (color & 0xFF) >> 2;
-            const g = ((color >> 8) & 0xFF) >> 2;
-            const b = ((color >> 16) & 0xFF) >> 2;
+            const r = (color & 0xFF);
+            const g = ((color >> 8) & 0xFF);
+            const b = ((color >> 16) & 0xFF);
             //const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
             //imageData[destIndex]     = lut64[lutIndex];
             //imageData[destIndex + 1] = lut64[lutIndex + 1];
