@@ -32,6 +32,7 @@ export async function shaderData() {
     box10.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
+    imgShader.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
     canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
     console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, temperatureX, strengX, brightnessX, contrastX, saturateX, sepiaX});
 }

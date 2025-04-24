@@ -305,7 +305,7 @@ label {
 }
 .sha {
   position: relative;
-  mix-blend-mode: overlay;
+  /*mix-blend-mode: overlay;*/
 }
 .sha::before{
   content: "";

@@ -1,4 +1,4 @@
-let revision = 'V5.79';
+let revision = 'V5.80';
 var urlsToCache = [
     '/',
     './img/favi.png',
