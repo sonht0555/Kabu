@@ -88,14 +88,21 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            const r = (color & 0xFF) >> 2;
-            const g = ((color >> 8) & 0xFF) >> 2;
-            const b = ((color >> 16) & 0xFF) >> 2;
-            const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
-            imageData[destIndex]     = lut64[lutIndex];
-            imageData[destIndex + 1] = lut64[lutIndex + 1];
-            imageData[destIndex + 2] = lut64[lutIndex + 2];
-            imageData[destIndex + 3] = 255;
+            if (lut64Streng === "0.0") {
+                imageData[destIndex]     = color & 0xFF;         // Red
+                imageData[destIndex + 1] = (color >> 8) & 0xFF;  // Green
+                imageData[destIndex + 2] = (color >> 16) & 0xFF; // Blue
+                imageData[destIndex + 3] = 255;                 // Alpha
+            } else {
+                const r = (color & 0xFF) >> 2;
+                const g = ((color >> 8) & 0xFF) >> 2;
+                const b = ((color >> 16) & 0xFF) >> 2;
+                const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+                imageData[destIndex]     = lut64[lutIndex];
+                imageData[destIndex + 1] = lut64[lutIndex + 1];
+                imageData[destIndex + 2] = lut64[lutIndex + 2];
+                imageData[destIndex + 3] = 255;
+            }
         }
     }
 
