@@ -1,18 +1,16 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
-let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Streng = null, lut64Profile = null, imageDataObj = null, fs = null, vs = null;
+let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Profile = null, imageDataObj = null, fs = null, vs = null;
 /* --------------- Function ------------------ */
 async function loadLUT64() {
     systemType = gameName.slice(-3);
-    const temperatureStreng = localStorage.getItem(`${gameName}_streng`) || "4.0";
-    const temperature = (localStorage.getItem(`${gameName}_temperature`) || "warm").toLowerCase();
-    if (!lut64 || lut64Streng !== temperatureStreng || lut64Profile !== temperature) {
-        const filename = `./src/lut/lut64_${temperature}_${temperatureStreng}.bin`
+    const temperature = (localStorage.getItem(`${gameName}_temperature`) || "none").toLowerCase();
+    if (!lut64 || lut64Profile !== temperature) {
+        const filename = `./src/lut/lut64_${temperature}_4.0.bin`
         console.log(filename);
         const res = await fetch(filename);
         const buf = await res.arrayBuffer();
         lut64 = new Uint8Array(buf);
-        lut64Streng = temperatureStreng;
         lut64Profile = temperature;
     }
 }
@@ -88,7 +86,7 @@ async function renderPixel(mode) {
             const srcIndex = y * gameStride + x;
             const destIndex = (y * gameWidth + x) * 4;
             const color = pixelData[srcIndex];
-            if (lut64Streng === "0.0") {
+            if (lut64Profile === "none") {
                 imageData[destIndex]     = color & 0xFF;         // Red
                 imageData[destIndex + 1] = (color >> 8) & 0xFF;  // Green
                 imageData[destIndex + 2] = (color >> 16) & 0xFF; // Blue

@@ -1,11 +1,13 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-let cheatX, stateAutoX, shaderX, opacityX, temperatureX, strengX, brightnessX, contrastX, saturateX, sepiaX;
+let cheatX, stateAutoX, shaderX, opacityX, temperatureX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
-const colorValues = ['Warm', 'Neutral', 'Cool'];
+const colorValues = ['Warm', 'Neutral', 'Cool', 'None'];
 const menuPad = document.getElementById("menu-pad");
+const stateList = document.getElementById("stateList");
+const loadingIcon = document.getElementById("loading-icon");
 const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader');
@@ -18,10 +20,10 @@ export async function shaderData() {
     box3.textContent = shaderX;
     opacityX = await Main.getData(gameName, "1", "opacity") || 0.8;
     box4.textContent = opacityX;
-    temperatureX = localStorage.getItem(`${gameName}_temperature`) || "Warm";
+    temperatureX = localStorage.getItem(`${gameName}_temperature`) || "None";
     box5.textContent = temperatureX;
-    strengX = localStorage.getItem(`${gameName}_streng`) || "4.0";
-    box6.textContent = strengX;
+    grayscaleX = await Main.getData(gameName, "1", "grayscale") || 0.0;
+    box6.textContent = grayscaleX;
     brightnessX = await Main.getData(gameName, "1", "brightness") || 0.8;
     box7.textContent = brightnessX;
     contrastX = await Main.getData(gameName, "1", "contrast") || 1.0;
@@ -32,9 +34,11 @@ export async function shaderData() {
     box10.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
-    imgShader.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
-    canvas.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX})`;
-    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, temperatureX, strengX, brightnessX, contrastX, saturateX, sepiaX});
+    loadingIcon.style.filter = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
+    stateList.style.filter   = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
+    imgShader.style.filter   = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
+    canvas.style.filter      = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
+    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, temperatureX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX});
 }
 /* --------------- Function ------------------ */
 // Right
@@ -42,11 +46,9 @@ async function Right(boxId, limit, increment, property, localStorageKey) {
     let box = document.getElementById(boxId);
     let currentValue = parseFloat(box.textContent);
     currentValue = Math.min(limit, currentValue + increment);
-    box.textContent = currentValue.toFixed(1);
+    box.textContent = currentValue.toFixed(2);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-    } else if (property === 'streng') {
-        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -57,11 +59,9 @@ async function Left(boxId, limit, decrement, property, localStorageKey) {
     let box = document.getElementById(boxId);
     let currentValue = parseFloat(box.textContent);
     currentValue = Math.max(limit, currentValue - decrement);
-    box.textContent = currentValue.toFixed(1);
+    box.textContent = currentValue.toFixed(2);
     if (property === 'opacity') {
         imgShader.style.setProperty('--before-opacity', box.textContent);
-    }  else if (property === 'streng') {
-        localStorage.setItem(`${gameName}_streng`, box.textContent);
     }
     await Main.setData(gameName, "1",localStorageKey ,box.textContent);
     await delay(100);
@@ -194,19 +194,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     localStorage.setItem(`${gameName}_temperature`, currentColorValues)
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Right('box6', 4.0, 1, 'streng', 'streng');
+                    Right('box6', 1, 0.05, 'grayscale', 'grayscale');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Right('box7', 2, 0.1, 'brightness', 'brightness');
+                    Right('box7', 2, 0.05, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Right('box8', 2, 0.1, 'contrast', 'contrast');
+                    Right('box8', 2, 0.05, 'contrast', 'contrast');
                 }
                 if (document.getElementById('box9').classList.contains('selected')) {
-                    Right('box9', 4, 0.1, 'saturate', 'saturate');
+                    Right('box9', 4, 0.05, 'saturate', 'saturate');
                 }
                 if (document.getElementById('box10').classList.contains('selected')) {
-                    Right('box10', 1, 0.1, 'sepia', 'sepia');
+                    Right('box10', 1, 0.05, 'sepia', 'sepia');
                 }
             }
         });
@@ -258,19 +258,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     localStorage.setItem(`${gameName}_temperature`, currentColorValues)
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
-                    Left('box6', 0.0, 1, 'streng', 'streng');
+                    Left('box6', 0, 0.05, 'grayscale', 'grayscale');
                 }
                 if (document.getElementById('box7').classList.contains('selected')) {
-                    Left('box7', 0, 0.1, 'brightness', 'brightness');
+                    Left('box7', 0, 0.05, 'brightness', 'brightness');
                 }
                 if (document.getElementById('box8').classList.contains('selected')) {
-                    Left('box8', 0, 0.1, 'contrast', 'contrast');
+                    Left('box8', 0, 0.05, 'contrast', 'contrast');
                 }
                 if (document.getElementById('box9').classList.contains('selected')) {
-                    Left('box9', 0, 0.1, 'saturate', 'saturate');
+                    Left('box9', 0, 0.05, 'saturate', 'saturate');
                 }
                 if (document.getElementById('box10').classList.contains('selected')) {
-                    Left('box10', 0, 0.1, 'sepia', 'sepia');
+                    Left('box10', 0, 0.05, 'sepia', 'sepia');
                 }
             }
         });

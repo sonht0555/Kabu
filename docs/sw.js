@@ -1,4 +1,4 @@
-let revision = 'V5.80';
+let revision = 'V5.81';
 var urlsToCache = [
     '/',
     './img/favi.png',
@@ -31,20 +31,9 @@ var urlsToCache = [
     './src/library/interact.js',
     './src/library/nip.js',
     './src/lut/lut.py',
-    './src/lut/lut64_cool_0.0.bin',
-    './src/lut/lut64_cool_1.0.bin',
-    './src/lut/lut64_cool_2.0.bin',
-    './src/lut/lut64_cool_3.0.bin',
+    './src/lut/lut64_none_4.0.bin',
     './src/lut/lut64_cool_4.0.bin',
-    './src/lut/lut64_neutral_0.0.bin',
-    './src/lut/lut64_neutral_1.0.bin',
-    './src/lut/lut64_neutral_2.0.bin',
-    './src/lut/lut64_neutral_3.0.bin',
     './src/lut/lut64_neutral_4.0.bin',
-    './src/lut/lut64_warm_0.0.bin',
-    './src/lut/lut64_warm_1.0.bin',
-    './src/lut/lut64_warm_2.0.bin',
-    './src/lut/lut64_warm_3.0.bin',
     './src/lut/lut64_warm_4.0.bin',
     './src/lut/lut_gba.py',
     './sw.js',
