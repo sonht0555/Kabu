@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     };
     dynamic.on('move', (evt, data) => {
+        if (!data || data.distance < 10) return;
         const angle = data.angle.degree;
         let dpadDirection = '';
         if (angle >= 337.5 || angle < 22.5) {

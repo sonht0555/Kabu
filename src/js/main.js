@@ -54,11 +54,7 @@ function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.FSSync();
         pauseGame();
-        //canvas.classList.add("visible");
     } else {
-        setTimeout(() => {
-            //canvas.classList.remove("visible");
-        }, 600);
         if (controlSetting.classList.contains("visible")) {
             resumeGame();
         }
@@ -70,6 +66,9 @@ async function statusShow() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
+    setTimeout(() => {
+        canvas.classList.remove("visible");
+    }, 300);
     shaderData();
     startTimer();
     await gamepPad.turboF(parseInt(await getData(gameName, "1", "turboState")));
@@ -151,9 +150,7 @@ export async function loadGame(romName) {
                 element.style.padding = `4px 5px 2px 5px`;
             });
         }
-        //runG();
-        switchRenderMode(localStorage.getItem("grapMode")||"webgl");
-    // check file extension
+        switchRenderMode(localStorage.getItem("grapMode")||"2d");
     await statusShow();
 }
 export async function saveState(slot) {
