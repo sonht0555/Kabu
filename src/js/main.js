@@ -403,7 +403,13 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
         }, 600);
     }
 }
+let canSync = true;
 export async function FSSync() {
+    if (!canSync) return; 
+    canSync = false;
+    setTimeout(() => {
+        canSync = true;
+    }, 2000);
     Module.FSSync();
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
