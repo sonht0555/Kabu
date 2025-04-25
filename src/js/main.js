@@ -1,5 +1,7 @@
 import mGBA_v1 from "../core/1.1.0/mgba.js";
 import mGBA_v2 from "../core/2.0.0/mgba.js";
+import mGBA_v2_1 from "../core/2.0.1/mgba.js";
+import mGBA_v2_2 from "../core/2.0.2/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
@@ -7,7 +9,12 @@ import {shaderData} from "./setting.js"
 import {switchRenderMode} from "./shader.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
-const versions = { "1.1.0": mGBA_v1, "2.0.0": mGBA_v2 };
+const versions = { 
+    "1.1.0": mGBA_v1, 
+    "2.0.0": mGBA_v2, 
+    "2.0.1": mGBA_v2_1, 
+    "2.0.2": mGBA_v2_2
+};
 let currentVersion = localStorage.getItem("GBAver") || "1.1.0";
 let mGBA = versions[currentVersion]; 
 document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
