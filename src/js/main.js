@@ -161,13 +161,18 @@ export async function loadGame(romName) {
     await statusShow();
 }
 export async function saveState(slot) {
-    if (!canSave) return; 
+    if (!canSave) return;
     canSave = false;
-    setTimeout(() => {
-        canSave = true;
-    }, 1200);
-    await Module.saveState(slot);
-    await loadding();
+    try {
+        await Module.saveState(slot);
+        await loadding();
+    } catch (error) {
+        console.error('Sync error:', error);
+    } finally {
+        setTimeout(() => {
+            canSave = true;
+        }, 2000);
+    }
 }
 export async function loadState(slot) {
     await Module.loadState(slot);
@@ -409,12 +414,17 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
 }
 let canSync = true;
 export async function FSSync() {
-    if (!canSync) return; 
+    if (!canSync) return;
     canSync = false;
-    setTimeout(() => {
-        canSync = true;
-    }, 2000);
-    Module.FSSync();
+    try {
+        await Module.FSSync();
+    } catch (error) {
+        console.error('Sync error:', error);
+    } finally {
+        setTimeout(() => {
+            canSync = true;
+        }, 3000);
+    }
 }
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 export function setCoreSettings(type, number) {
