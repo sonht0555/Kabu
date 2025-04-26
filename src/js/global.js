@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function() {
         stateAdj = parseInt(savedStateAdj);
         positionAdjustment(stateAdj);
     }
-    ["touchend"].forEach(eventType => {
+    ["touchend","click"].forEach(eventType => {
         romInput.addEventListener("change", () => {
             if (fileInput.files.length > 0) {
                 gameName = fileInput.files[0].name;
@@ -353,7 +353,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         romList.addEventListener(eventType, (event) => {
-            console.log("loại cham", eventType); // Kiểm tra giá trị của eventType trước khi gọi addEventListener
             const clickedElement = event.target;
             if (clickedElement.classList.contains("game-item")) {
             gameName = clickedElement.textContent;

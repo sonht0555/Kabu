@@ -1,4 +1,4 @@
-let revision = 'V5.90';
+let revision = 'V5.91';
 var urlsToCache = [
     '/',
     './img/favi.png',
@@ -14,10 +14,6 @@ var urlsToCache = [
     './src/core/2.0.0/mgba.wasm',
     './src/core/2.0.1/mgba.js',
     './src/core/2.0.1/mgba.wasm',
-    './src/core/2.0.2/mgba.js',
-    './src/core/2.0.2/mgba.wasm',
-    './src/core/2.0.3/mgba.js',
-    './src/core/2.0.3/mgba.wasm',
     './src/core/vba/vba.js',
     './src/core/vba/vba.wasm',
     './src/css/main.css',
