@@ -1,45 +1,12 @@
-import mGBA_v1 from "../core/1.1.0/mgba.js";
-import mGBA_v2 from "../core/2.0.0/mgba.js";
-import mGBA_v2_1 from "../core/2.0.1/mgba.js";
+import mGBA from "../core/2.1.1/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
-import {switchRenderMode} from "./shader.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
-const versions = { 
-    "1.1.0": mGBA_v1, 
-    "2.0.0": mGBA_v2, 
-    "2.0.1": mGBA_v2_1, 
-};
-let currentVersion = localStorage.getItem("GBAver") || "1.1.0";
-let mGBA = versions[currentVersion]; 
-document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
-document.getElementById("GBAver").addEventListener("click", () => {
-    const versionKeys = Object.keys(versions);
-    let index = versionKeys.indexOf(currentVersion);
-    currentVersion = versionKeys[(index + 1) % versionKeys.length];
-    localStorage.setItem("GBAver", currentVersion);
-    document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
-    setTimeout(() => { window.location.reload(); }, 1000);
-});
-let currentMode = localStorage.getItem("grapMode") || "webgl";
-document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
-document.getElementById("grapMode").addEventListener("click", () => {
-    if (currentMode === "2d") {
-        currentMode = "webgl";
-    } else if (currentMode === "webgl") {
-        currentMode = "webgl_full";
-    } else {
-        currentMode = "2d";
-    }
-    localStorage.setItem("grapMode", currentMode);
-    document.getElementById("grapMode").textContent = `Mode/${currentMode}`;
-    setTimeout(() => { window.location.reload(); }, 1000);
-});
 /*/ --------------- Initialization ----------- */
-const Module = {canvas: document.getElementById("canvas-1")};
+const Module = {canvas: document.getElementById("canvas")};
 function initializeCore(coreInitFunction, module) {
     coreInitFunction(module).then(function(module) {
         module.FSInit();
@@ -71,6 +38,7 @@ async function statusShow() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleVisibilityChange);
     restoreArea();
+    setupStyle();
     setTimeout(() => {
         canvas.classList.remove("visible");
     }, 300);
@@ -81,7 +49,6 @@ async function statusShow() {
     await Module.SDL2();
     await delay(800);
     await led(parseInt(await getData(gameName, "1", "slotStateSaved")));
-    await notiMessage(`[_] W_©${currentVersion}`, 1000);
     await wrapContent();
 }
 // Auto Save Every 1m
@@ -155,7 +122,6 @@ export async function loadGame(romName) {
                 element.style.padding = `4px 5px 2px 5px`;
             });
         }
-        switchRenderMode(localStorage.getItem("grapMode")||"2d");
     await statusShow();
 }
 export async function saveState(slot) {

@@ -5,13 +5,11 @@ var messageTimeout;
 let stateAdj = 1;
 var lockNotiTime;
 let clientWidth;
-let upscaleFactor = 3;
-let upscaleShader;
+let upscaleShader = 3;
 let integerScaling
 let systemType;
-let gameWidth;
-let gameHeight;
-let gameStride;
+let gameWidth = 240;
+let gameHeight = 160;
 const bufferCanvas = document.getElementById("canvas");
 let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
 const errorLogElements = document.getElementsByClassName('errorLog');
@@ -252,28 +250,11 @@ function logMessage(type, message) {
         }, 60000);
     }
 }
-function setupStyle(mode) {
-    clientWidth = document.documentElement.clientWidth;
+function setupStyle() {
     const dpr = window.devicePixelRatio;
-    if (systemType === "gbc") {
-        gameWidth = 160;
-        gameHeight = 144;
-        gameStride = 256;
-        upscaleShader = 3;
+    const clientWidth = document.documentElement.clientWidth;
         integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
-        localStorage.setItem("screenSize", `0,0,${ gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
-    } else {
-        gameWidth = 240;
-        gameHeight = 160;
-        gameStride = 240;
-        upscaleShader = 2;
-        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
-        localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
-    }
-    if (mode === "2d") {
-        bufferCanvas.width = gameWidth;
-        bufferCanvas.height = gameHeight;
-        bufferCanvas.style.zoom = `${integerScaling / dpr}`;
+        bufferCanvas.style.transformOrigin = "top center";
         bufferCanvas.style.imageRendering = "pixelated";
         bufferCanvas.style.imageRendering = "crisp-edges";
         canvasContainer.style.width = `${gameWidth * (integerScaling / dpr)}px`;
@@ -293,29 +274,6 @@ function setupStyle(mode) {
         stateTitle.forEach(function(element) {
             element.classList.remove("fefs")
         });
-    } else if (mode === "webgl_full") {
-        bufferCanvas.width = clientWidth * upscaleFactor;
-        bufferCanvas.height = clientWidth * upscaleFactor * (gameHeight / gameWidth);
-        bufferCanvas.style.zoom = `${1 / upscaleFactor}`;
-        bufferCanvas.style.imageRendering = "";
-        canvasContainer.style.width = `${clientWidth}px`;
-        canvasContainer.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        textured.style.width = `${clientWidth}px`;
-        textured.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        imgShader.style.transform = `scale(${(clientWidth / gameWidth) / upscaleShader})`;
-        settingContainer.forEach(function(element) {
-            element.style.width = `${clientWidth}px`;
-            element.style.height = `${clientWidth * (gameHeight / gameWidth)}px`;
-        });
-        messageContainer.forEach(function(element) {
-            element.style.width = `${gameWidth}px`;
-            element.style.height = `${gameHeight}px`;
-            element.style.zoom = `${(clientWidth / gameWidth)}`;
-        });
-        stateTitle.forEach(function(element) {
-            element.classList.add("fefs")
-        });
-    }
     imgShader.style.width = `${gameWidth * upscaleShader}px`;
     imgShader.style.height = `${gameHeight * upscaleShader}px`;
     imgShader.style.transformOrigin = "top center";
