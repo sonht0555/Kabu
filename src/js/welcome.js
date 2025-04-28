@@ -51,8 +51,6 @@ async function inputGame(InputFile) {
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
         romList();
-        Main.setCoreSettings('audioSampleRate', 32000);
-        Main.setCoreSettings('audioBufferSize', 2048);
     },2000);
     romInput.addEventListener("change", function() {
         inputGame(romInput);
