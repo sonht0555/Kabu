@@ -8,8 +8,8 @@ let clientWidth;
 let upscaleShader = 3;
 let integerScaling
 let systemType;
-let gameWidth = 240;
-let gameHeight = 160;
+let gameWidth;
+let gameHeight;
 const bufferCanvas = document.getElementById("canvas");
 let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
 const errorLogElements = document.getElementsByClassName('errorLog');
@@ -252,7 +252,24 @@ function logMessage(type, message) {
 }
 function setupStyle() {
     const dpr = window.devicePixelRatio;
-    const clientWidth = document.documentElement.clientWidth;
+    clientWidth = document.documentElement.clientWidth;
+    if (gameName.slice(-3) === "gbc") {
+        gameWidth = 160;
+        gameHeight = 144;
+        gameStride = 256;
+        upscaleShader = 3;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${ gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
+        console.log(localStorage.getItem("screenSize"));
+    } else {
+        gameWidth = 240;
+        gameHeight = 160;
+        gameStride = 240;
+        upscaleShader = 3;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
+        console.log(localStorage.getItem("screenSize"));
+    }
         integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
         bufferCanvas.style.transformOrigin = "top center";
         bufferCanvas.style.imageRendering = "pixelated";

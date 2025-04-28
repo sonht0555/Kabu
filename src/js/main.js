@@ -37,10 +37,10 @@ async function statusShow() {
     document.addEventListener('pagehide', handleVisibilityChange);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleVisibilityChange);
-    restoreArea();
     setupStyle();
     setTimeout(() => {
         canvas.classList.remove("visible");
+        restoreArea();
     }, 300);
     shaderData();
     startTimer();
