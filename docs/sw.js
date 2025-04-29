@@ -1,4 +1,4 @@
-let revision = 'V5.95';
+let revision = 'V5.96';
 var urlsToCache = [
     '/',
     './img/favi.png',
@@ -10,6 +10,8 @@ var urlsToCache = [
     './server.py',
     './src/core/2.1.1/mgba.js',
     './src/core/2.1.1/mgba.wasm',
+    './src/core/2.1.2/mgba.js',
+    './src/core/2.1.2/mgba.wasm',
     './src/css/main.css',
     './src/font/04b.ttf',
     './src/font/04bf.woff',

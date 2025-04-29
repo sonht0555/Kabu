@@ -1,10 +1,26 @@
-import mGBA from "../core/2.1.1/mgba.js";
+import mGBA_1 from "../core/2.1.1/mgba.js";
+import mGBA_2 from "../core/2.1.2/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
+const versions = { 
+    "2.1.1": mGBA_1, 
+    "2.1.2": mGBA_2, 
+};
+let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
+let mGBA = versions[currentVersion]; 
+document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+document.getElementById("GBAver").addEventListener("click", () => {
+    const versionKeys = Object.keys(versions);
+    let index = versionKeys.indexOf(currentVersion);
+    currentVersion = versionKeys[(index + 1) % versionKeys.length];
+    localStorage.setItem("GBAver", currentVersion);
+    document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+    setTimeout(() => { window.location.reload(); }, 1000);
+});
 /*/ --------------- Initialization ----------- */
 const Module = {canvas: document.getElementById("canvas")};
 function initializeCore(coreInitFunction, module) {
