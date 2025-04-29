@@ -1,355 +1,212 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-      <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <meta name="apple-mobile-web-app-capable" content="none" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-      <link rel="stylesheet" type="text/css" href="/src/css/main.css" />
-      <link rel="apple-touch-icon" href="img/icon.png" />
-      <link rel="icon" href="img/favi.png" type="image/png" />
-      <link rel="manifest" href="manifest.json" />
-      <script src="/src/library/interact.js"></script>
-      <script src="/src/library/nip.js"></script>
-      <title>Kabu</title>
-      <script>
-       if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('Service Worker registered!', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            });
-            navigator.serviceWorker.addEventListener('message', function (event) {
-            console.log('Received message from Service Worker:', event.data);
-            if (event.data.msg === "Updating") {
-                appVer.textContent = event.data.msg
-                setTimeout(() => { window.location.reload(); }, 1000);
-                }
-            });
+<!-- saved from url=(0022)https://gba.44670.org/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Required meta tags -->
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height">
+    <link rel="apple-touch-icon" href="https://gba.44670.org/icon.png">
+    <link rel="manifest" href="https://gba.44670.org/manifest.json">
+    <title>44VBA</title>
+
+</head>
+
+<body data-new-gr-c-s-check-loaded="14.1233.0" data-gr-ext-installed="">
+    <style>
+        a,
+        a:visited {
+            color: white;
         }
-      </script>
-  </head>
-<body>
-    <!-- Layer Ingame -->
-    <div class="errorLog column"></div>
-    <div class="gap-15 column in-game disable" id="in-game">
-        <div class="target-boxes" id="target-boxes"></div>
-        <div class="gap-8 emu-display cw hw">
-            <div class="column">
-                <div class="bc canvas-top shu Gt-5"></div>
-                <div class="flex-1 cw">
-                    <div class="canvas-container cw hw" id="canvas-container">
-                        <div class="textured" id="textured" style="position: absolute;"></div>
-                        <canvas width="240" height="160" class="canvas" id="canvas" style="position: absolute;"></canvas>
-                        <div class="message-container column visible" id="stateList">
-                            <div class="flex-1"></div>
-                            <div class="flex-1"></div>
-                            <div class="flex-1"></div>
-                            <div class="flex-1 state-container" id ="state-container">
-                                <div class="flex-1 stateDiv" id="stateDiv01">
-                                    <div class="flex-1 stateInfo column cw">
-                                        <div class="stateTitle">[01]</div>
-                                        <div class="stateDate" id="dateState01"></div>
-                                    </div>
-                                </div>
-                                <div class="flex-1 stateDiv" id="stateDiv02">
-                                    <div class="flex-1 stateInfo column cw">
-                                        <div class="stateTitle">[02]</div>
-                                        <div class="stateDate" id="dateState02"></div>
-                                    </div>
-                                </div>
-                                <div class="flex-1 stateDiv" id="stateDiv03">
-                                    <div class="flex-1 stateInfo column cw">
-                                        <div class="stateTitle">[03]</div>
-                                        <div class="stateDate" id="dateState03"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="sha" id="img-shader" style="z-index: 23; pointer-events: none; position: absolute;"></div>
-                    </div>
-                    <div class="column message-container" id="">
-                        <div class="flex-1" id="areaSet"></div>
-                        <div class="flex-1" id=""></div>
-                    </div>
-                    <div class="setting-container visible" id="control-setting">
-                        <div class="flex-1 column control-setting shu Gt-5">
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Power</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-blank"></div>
-                                    <div id="box0" class="flex-1 box">Reboot</div>
-                                    <div class="cs-next"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Cheat</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-blank"></div>
-                                    <div id="box1" class="flex-1 box" contenteditable="false">Off</div>
-                                    <div class="cs-next"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Auto Sav</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box2" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Shader</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box3" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Shader Op</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box4" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Temp</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box5" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Temp Op</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box6" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Brightness</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box7" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Contrast</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box8" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Saturate</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box9" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex-1 cs-name">Sepia</div>
-                                <div class="flex-1 cs-detail">
-                                    <div class="cs-minus"></div>
-                                    <div id="box10" class="flex-1 box"></div>
-                                    <div class="cs-plus"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex-1"></div>
-                    </div>
-                    <div class="setting-container column visible" id="areaTrans">
-                        <div id="resizable-draggable">
-                            <div class="resizer bottom-right"></div>
-                            <div class="resizer top-left"></div> 
-                          </div>
-                    </div>
-                </div>
-                <div class="bc canvas-bot shu Gt-5">
-                    <svg width="49" height="8" viewBox="0 0 49 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect id ="led01" x="06" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led02" x="11" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        <rect id ="led03" x="16" y="5" width="2" height="3" fill="rgba(245, 232, 209, 0.14)"/>
-                        </svg>
-                </div>
-            </div>
-        </div>
-        <div class="between column bc emu-control gap-8" id="emu-control">
-            <div class="notification-container bc shu Gt-5"> 
-                <span id="noti-mess" style="position: absolute;">[_]...</span>
-                <div class="flex-1 inputContainer" style="height:20px;">
-                    <div id="inputText" class="inputText"></div>
-                </div> 
-                <span class="timer" id="timer">...</span>
-            </div>
-            <div class="gap-22 emu-menu" id="control-pad">
-                <div class="flex-1 gap-8" style="position:relative;">
-                    <div class="bc1 dpad-state" id="statePageButton"></div>
-                    <div class="bc1 flex-1 dpad-l" id="L"></div>
-                </div>
-                <div class="flex-1 gap-8" style="position:relative;">
-                    <div class="bc1 flex-1 dpad-r" id="R"></div>
-                    <div class="bc1 dpad-menu" id="menu-pad"></div>
-                </div>
-            </div>
-            <div class="flex-1 gap-22">
-                <div class="flex-1">
-                    <div class="flex-1 bc1 ch cw dpad">
-                        <div class="d-pad">
-                            <div class="ch">
-                                <div class="pad-ul" id="Up-left"></div>
-                            </div>
-                            <div class="flex-1 column">
-                                <div class="pad-ur" id="Up-right"></div>
-                                <div class="flex-1 column">
-                                    <div class="flex-1">
-                                        <div class="flex-1 ch cw pad-u" id="Up"></div>
-                                        <div class="flex-1 ch cw pad-r" id="Right"></div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex-1 ch cw pad-l" id="Left"></div>
-                                        <div class="flex-1 ch cw pad-d" id="Down"></div>
-                                    </div>
-                                </div>
-                                <div class="pad-dl" id="Down-left"></div>
-                            </div>
-                            <div class="ch">
-                                <div class="pad-dr" id="Down-right"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-1 column gap-8">
-                    <div class="flex-1" style="position: relative">
-                        <div class="flex-1 gap-8 bc1" id="A">
-                            <div class="flex-1 dpad-a"></div>
-                            <div class="dpad-blank"></div>
-                        </div>
-                        <div class="rewind" id="rewind"></div>
-                    </div>
-                    <div class="flex-1 gap-8">
-                        <div class="flex-1 bc1 dpad-b" id="B"></div>
-                        <div class="bc1 dpad-turbo" id="turbo"></div>
-                    </div>
-                    <div class="gap-8">
-                        <div class="flex-1 bc1 dpad-select" id="Select"></div>
-                        <div class="flex-1 bc1 dpad-start" id="Start"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="dynamic" id="dynamic">
+        html,
+        body {
+            position: fixed;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+            cursor: inherit;
+        }
 
+        body {
+
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Myriad Set Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        hr {
+            color: white;
+        }
+
+        button {
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            padding: .5em;
+        }
+
+        .vk-round {
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+
+        .vk {
+            color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.25);
+            position: absolute;
+            z-index: 1;
+            text-align: center;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .vk-hide {
+            background-color: transparent !important
+        }
+
+        .vk-touched {
+            background-color: rgba(255, 255, 255, 0.75) !important
+        }
+
+        .menu {
+            background: rgb(32, 43, 56);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+        }
+
+        #gba-canvas {
+            position: absolute;
+            z-index: -1;
+        }
+
+        #vk-layer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            touch-action: none;
+        }
+
+        #msg-layer {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            top: 40vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        textarea {
+            background: transparent;
+            color: #fff;
+            border: 2px solid white;
+
+        }
+
+        /* textarea placeholder */
+        textarea::placeholder {
+            color: #666;
+        }
+
+    </style>
+    <div id="pause-menu" class="menu" style="background: rgba(32,43,56,0.7);" hidden="">
+        <button onclick="setPauseMenu(false)"> ← Back </button>
+        <hr>
+        Savegame management:<br>
+        <button onclick="savBackupBtn()">Backup</button>
+        <input type="file" id="sav-file" onchange="savRestoreBtn()" hidden="">
+        <button onclick="$id(&#39;sav-file&#39;).click()">Restore</button>
+        <hr>
+        <label for="cfg-scale-mode">Screen filter:</label>
+        <select id="cfg-scale-mode">
+            <option value="0">Pixelated</option>
+            <option value="1">Smooth</option>
+            <option value="2">XBRZ</option>
+        </select><br>
+        <input type="checkbox" id="cfg-mute">
+        <label for="cfg-mute">Mute Sound</label><br>
+        <input type="checkbox" id="cfg-turbo">
+        <label for="cfg-turbo">Turbo mode</label><br>
+        <div id="div-cht">
+            Cheat Codes(backup your savegame before using it):<br>
+            <textarea id="txt-code" style="width:100%" rows="10" placeholder="Cheat code:
+GamesharkAdv: XXXXXXXX YYYYYYYY
+CodeBreaker: XXXXXXXX YYYY"></textarea><br>
+            <button onclick="chtSaveBtn()">Save Cheat Codes</button>
+        </div>
+        <hr>
+        Cloud Save:<span id="span-cloud-id"></span><br>
+        <button onclick="dpOnConnectButtonClicked()" id="btn-dp-connect">Connect Dropbox</button><br>
+        <button onclick="dpManualBtn(true)">↑ Upload</button>|<button onclick="dpManualBtn(false)">↓
+            Download</button><br>
+    </div>
+    <div id="welcome" class="menu">
+        <h1 id="title">44VBA</h1>
+        <hr>
+        <div id="wasm-loading" hidden="">
+            Loading, please wait...
+        </div>
+        <div id="select-rom">
+            <input type="file" id="romFile" onchange="onFileSelected()" hidden=""><p></p>
+            <button onclick="$id(&#39;romFile&#39;).click()" id="btn-choose">Choose File...</button>
+        </div>
+        <hr>
+        Ver. 20230107 | <a href="https://github.com/44670/44vba">GitHub</a>
+        <p>
+            Your files are processed locally and won't be uploaded to any server.<br>
+            This software should not be used to play games you have not legally obtained.<br>
+            "GBA", "Game Boy Advance" are trademarks of Nintendo Co.,Ltd, This site is not affiliated with Nintendo in
+            any way.
+        </p>
+        <p>
+            <a href="https://homebrewapps.xyz/">✨ Find Homebrew Games ✨</a>
+        </p>
+        <div id="ios-hint" hidden="">
+            Due to iOS limitations, please open this site(https://gba.44670.org) in <b>Safari</b>, and add it to your
+            <b>Home Screen</b> by <b>Share Menu</b> to continue.
+            <p style="text-align: center;">⬇⬇⬇</p>
         </div>
     </div>
-
-    <div class="between column localStorage disable" id="storage">
-        <div class="storage gap-10">
-            <div class="flex-1 home bc" id="backToHome"></div>
-            <label class="flex-1 upload-file bc" for="upLoadFile"></label>
-            <div class="flex-1 gap-10">
-                <div class="flex-1 cloud-restore" id="dropboxRestore"></div>
-                <div class="flex-1 cloud-backup" id="dropboxBackup"></div>
-            </div>
-            <div class="flex-1 cloud-dropbox" id="dropboxCloud"></div>
-            <input type="file" id="upLoadFile" hidden />
-        
-        </div>
-        <div class="column flex-disable mgba-storage" id="mgba-storage" style="overflow: auto;">
-            <div class="flex-1 rom-item">
-                <span class="flex-1" id="grapMode">...</span>
-                <span class="" id="GBAver">...</span>
-            </div>
-            <div id="romsFile" class="column"></div>
-            <div class="flex-1 rom-item">STATE file.</div>
-            <div id="statesFile" class="column"></div>
-            <div class="flex-1 rom-item">SAVE file.</div>
-            <div id="savesFile" class="column"></div>
-            <div class="flex-1 rom-item">CHEAT file.</div>
-            <div id="cheatsFile" class="column"></div>
-            <div class="flex-1 rom-item">SSHOT file.</div>
-            <div id="screenshotsFile" class="column"></div>
-        </div>
-        <div class="flex-1"></div>
+    <div id="msg-layer" hidden="">
+        <p id="msg-text">Gamepad disconnected.</p>
     </div>
-
-    <div class="between column intro" id="intro">
-        <div class="target-boxes" id="target-boxes"></div>
-        <div class="flex-1 ch column gap-8">
-            <label class="logo bc" id="openLocalStorage"></label>
-            <div class="gap-8 file-section">
-                <div class="flex-1 bc">
-                    <svg id="setAdjustment" width="46" height="100" viewBox="0 0 46 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="46" height="100" fill="" />
-                        <rect id="rect1" x="16" y="16" width="14" height="4" rx="0.6" fill="#F5E8D1" />
-                        <rect id="rect2" x="16" y="24" width="14" height="4" rx="0.6" fill="#F5E8D1" />
-                        <rect id="rect3" x="16" y="32" width="14" height="4" rx="0.6" fill="#F5E8D1" />
-                        <path d="M22 68H14V58H22V68ZM16 60V66H20V60H16Z" fill="#F5E8D1" />
-                        <path id="G0" opacity="0" d="M32 68H24V58H32V68ZM26 60V66H30V60H26Z" fill="#F5E8D1" />
-                        <path id="G1" opacity="0" d="M26 68V60H24V58H28V68H26Z" fill="#F5E8D1" />
-                        <path id="G2" opacity="0" d="M24 58H32V64H26V66H32V68H24V62H30V60H24V58Z" fill="#F5E8D1" />
-                        <path id="G3" opacity="1", d="M32 68H24V66H30V64H24V62H30V60H24V58H32V68Z" fill="#F5E8D1" />
-                        <g opacity="0.4">
-                            <path d="M14 76H22V84H16V86H14V76ZM20 82V78H16V82H20Z" fill="#F5E8D1" />
-                            <path d="M28 86H24V78H26V80H28V82H26V84H28V86Z" fill="#F5E8D1" />
-                            <path d="M30 86V84H32V86H30Z" fill="#F5E8D1" />
-                        </g>
-                    </svg>
-                </div>
-                <label for="fileInput" class="flex-1 bc select-file" id="fileInputLable"></label>
-                <input type="file" id="fileInput" hidden />
-            </div>
-        </div>
-        <div class="column rom-list flex-disable" id="rom-list"></div>
+    <div id="vk-layer" hidden="">
+        <div class="vk-rect vk" data-k="menu" style="top: 25px; left: 1290px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Menu</div>
+        <div class="vk-rect vk" data-k="turbo" style="top: 25px; left: 0px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">F.F.</div>
+        <div class="vk-rect vk" data-k="l" style="top: 75px; left: 0px; width: 150px; height: 50px; font-size: 35px; line-height: 50px;">L</div>
+        <div class="vk-rect vk" data-k="r" style="top: 75px; left: 1290px; width: 150px; height: 50px; font-size: 35px; line-height: 50px;">R</div>
+        <div class="vk-round vk" data-k="a" style="top: 175px; left: 1375px; width: 65px; height: 65px; font-size: 35px; line-height: 65px;">A</div>
+        <div class="vk-round vk" data-k="b" style="top: 200px; left: 1284px; width: 65px; height: 65px; font-size: 35px; line-height: 65px;">B</div>
+        <div class="vk-rect vk" data-k="select" style="top: 675px; left: 555px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Select</div>
+        <div class="vk-rect vk" data-k="start" style="top: 675px; left: 735px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Start</div>
+        <div class=" vk" data-k="left" style="top: 200px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">←</div>
+        <div class=" vk" data-k="right" style="top: 200px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">→</div>
+        <div class=" vk" data-k="up" style="top: 150px; left: 50px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">↑</div>
+        <div class=" vk" data-k="down" style="top: 250px; left: 50px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">↓</div>
+        <div class=" vk vk-hide" style="top: 150px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="ul"></div>
+        <div class=" vk vk-hide" style="top: 150px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="ur"></div>
+        <div class=" vk vk-hide" style="top: 250px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="dl"></div>
+        <div class=" vk vk-hide" style="top: 250px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="dr"></div>
     </div>
+    <canvas width="240" height="160" id="gba-canvas" style="width: 1020px; height: 680px; left: 210px; image-rendering: pixelated;"></canvas>
+    <script src="./pako.min.js"></script>
+    <script src="./localforage.js"></script>
+    <script src="./app.js"></script>
+    <script src="./44gba.js"></script>
 
-    <div class="firstLoading column cw ch">
-        <div class="flex-1"></div>
-        <span class=""></span></br>
-        <div class="">
-            <span style="opacity: 0.4" id="appVer"></span>
-            <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path id="path-1" opacity="0.4" d="M0 12V10H2V12H0Z" fill="#F5E8D1"/>
-                <path id="path-2" opacity="0.4" d="M4 12V10H6V12H4Z" fill="#F5E8D1"/>
-                <path id="path-3" opacity="0.4" d="M8 12V10H10V12H8Z" fill="#F5E8D1"/>
-            </svg>
-        </div>
-        <div class="flex-1">                        
-            <canvas width="240" height="160" class="canvas display-none" id="canvas-1"></canvas>
-        </div>
-    </div>
-
-    <div class="lockNoti column cw ch visible" id="lockNoti">
-        <div class="flex-1"></div>
-        <span class="" id="notiTitle"></span></br>
-        <span class="" id="notiDetail" style="opacity: 0.4"></span>
-        <div class="flex-1"></div>
-    </div>
-    <script>let gameVer = 'V4.81';</script>
-    <script type="" src="./src/js/global.js"></script> 
-    <script type="module" src="./src/js/main.js"></script> 
-    <script type="module" src="./src/js/welcome.js"></script> 
-    <script type="module" src="./src/js/gamepad.js"></script> 
-    <script type="module" src="./src/js/ocr.js"></script>
-    <script type="module" src="./src/js/setting.js"></script> 
-    <script type="module" src="./src/js/state.js"></script> 
-    <script type="module" src="./src/js/storage.js"></script> 
-    <script type="module" src="./src/js/cloud.js"></script>  
-    <script type="module" src="./src/js/shader.js"></script>  
-</body>
-
-</html> 
