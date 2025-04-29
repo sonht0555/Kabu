@@ -1,5 +1,6 @@
 import mGBA_1 from "../core/2.1.1/mgba.js";
 import mGBA_2 from "../core/2.1.2/mgba.js";
+import mGBA_3 from "../core/2.1.3/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
@@ -9,6 +10,7 @@ import {wrapContent} from "./state.js"
 const versions = { 
     "2.1.1": mGBA_1, 
     "2.1.2": mGBA_2, 
+    "2.1.3": mGBA_3, 
 };
 let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
 let mGBA = versions[currentVersion]; 
