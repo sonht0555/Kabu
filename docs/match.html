@@ -3,10 +3,14 @@
 <head>
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Color Match Editor – Save to Local</title>
   <style>
+    button, a, label {
+  touch-action: manipulation;
+}
     body {
       font-family: 'Press Start 2P', monospace;
       display: flex;
@@ -232,6 +236,15 @@
     createControls();
     loadImages();
     applyFilters();
+    let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+  const now = new Date().getTime();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
+
   </script>
 
 </body>
