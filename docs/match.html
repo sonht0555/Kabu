@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Match Editor – Save to Local</title>
+  <style>
+    body {
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: black;
+      color: #F5E8D1;
+      margin: 0px;
+      font-size: 12px;
+    }
+    .image-container {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .image-box {
+      width: 195px;
+      aspect-ratio: 3/2;
+      background-color: #252525;
+      background-size: cover;
+      background-position: center;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 80%;
+      margin-bottom: 20px;
+    }
+    .control-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .label {
+      flex: 1;
+    }
+    .buttons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .buttons button {
+      font-family: 'Press Start 2P', monospace;
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #252525;
+      border: 1px solid #252525;
+      border-radius: 2px;
+      color: #F5E8D1;
+    }
+    .buttons .value {
+      width: 50px;
+      text-align: center;
+    }
+    .reset-button {
+    font-family: 'Press Start 2P', monospace;
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #252525;
+      border: 1px solid #252525;
+      border-radius: 2px;
+      color: #F5E8D1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Color Match Editor</h1>
+
+  <div class="image-container">
+    <div id="beforeBox" class="image-box" title="Click to choose BEFORE image"></div>
+    <div id="afterBox" class="image-box" title="Click to choose AFTER image"></div>
+  </div>
+
+  <div class="controls" id="controls"></div>
+  <button class="reset-button" onclick="resetFilters()">Reset Filters</button>
+
+  <input id="imageInput" type="file" accept="image/*" style="display: none;" />
+
+  <script>
+    const beforeBox = document.getElementById('beforeBox');
+    const afterBox = document.getElementById('afterBox');
+    const imageInput = document.getElementById('imageInput');
+    const controlsDiv = document.getElementById('controls');
+    let targetBox = null;
+
+    const filters = [
+  { id: 'brightness', label: 'Brightness', min: 0, max: 200, step: 5, default: 100 },
+  { id: 'contrast', label: 'Contrast', min: 0, max: 200, step: 5, default: 100 },
+  { id: 'saturate', label: 'Saturation', min: 0, max: 200, step: 5, default: 100 },
+  { id: 'hue', label: 'Hue', min: 0, max: 360, step: 5, default: 0 },
+  { id: 'grayscale', label: 'Grayscale', min: 0, max: 100, step: 5, default: 0 },
+  { id: 'sepia', label: 'Sepia', min: 0, max: 100, step: 5, default: 0 },
+  { id: 'invert', label: 'Invert', min: 0, max: 100, step: 5, default: 0 },
+  { id: 'blur', label: 'Blur', min: 0, max: 10, step: 0.5, default: 0 }, // blur vẫn để nhỏ
+  { id: 'opacity', label: 'Opacity', min: 0, max: 100, step: 5, default: 100 },
+];
+
+    const values = {};
+
+    function saveFilterState() {
+      localStorage.setItem('filterValues', JSON.stringify(values));
+    }
+
+    function loadFilterState() {
+      const saved = localStorage.getItem('filterValues');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          filters.forEach(f => {
+            if (parsed.hasOwnProperty(f.id)) {
+              values[f.id] = parsed[f.id];
+            } else {
+              values[f.id] = f.default;
+            }
+          });
+        } catch (e) {
+          filters.forEach(f => values[f.id] = f.default);
+        }
+      } else {
+        filters.forEach(f => values[f.id] = f.default);
+      }
+    }
+
+    function createControls() {
+      filters.forEach(f => {
+        const group = document.createElement('div');
+        group.className = 'control-group';
+
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.innerText = f.label;
+
+        const buttons = document.createElement('div');
+        buttons.className = 'buttons';
+
+        const minus = document.createElement('button');
+        minus.innerText = '–';
+        minus.onclick = () => updateFilter(f.id, -f.step);
+
+        const plus = document.createElement('button');
+        plus.innerText = '+';
+        plus.onclick = () => updateFilter(f.id, f.step);
+
+        const valText = document.createElement('div');
+        valText.className = 'value';
+        valText.id = f.id + '_value';
+        valText.innerText = values[f.id];
+
+        buttons.appendChild(minus);
+        buttons.appendChild(valText);
+        buttons.appendChild(plus);
+
+        group.appendChild(label);
+        group.appendChild(buttons);
+        controlsDiv.appendChild(group);
+      });
+    }
+
+    function updateFilter(id, delta) {
+      const f = filters.find(f => f.id === id);
+      let v = values[id] + delta;
+      if (f.step < 1) v = Math.round(v * 10) / 10;
+      values[id] = Math.min(f.max, Math.max(f.min, v));
+      document.getElementById(id + '_value').innerText = values[id];
+      applyFilters();
+      saveFilterState(); // save on every change
+    }
+
+    function applyFilters() {
+      afterBox.style.filter = `
+        brightness(${values.brightness}%)
+        contrast(${values.contrast}%)
+        saturate(${values.saturate}%)
+        hue-rotate(${values.hue}deg)
+        grayscale(${values.grayscale}%)
+        sepia(${values.sepia}%)
+        invert(${values.invert}%)
+        blur(${values.blur}px)
+        opacity(${values.opacity}%)
+      `;
+    }
+
+    function resetFilters() {
+      filters.forEach(f => {
+        values[f.id] = f.default;
+        document.getElementById(f.id + '_value').innerText = f.default;
+      });
+      applyFilters();
+      saveFilterState();
+    }
+
+    beforeBox.addEventListener('click', () => { targetBox = beforeBox; imageInput.click(); });
+    afterBox.addEventListener('click', () => { targetBox = afterBox; imageInput.click(); });
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const dataURL = event.target.result;
+          targetBox.style.backgroundImage = `url(${dataURL})`;
+          const key = targetBox === beforeBox ? 'beforeImage' : 'afterImage';
+          localStorage.setItem(key, dataURL);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function loadImages() {
+      const before = localStorage.getItem('beforeImage');
+      const after = localStorage.getItem('afterImage');
+      if (before) beforeBox.style.backgroundImage = `url(${before})`;
+      if (after) afterBox.style.backgroundImage = `url(${after})`;
+    }
+
+    // init
+    loadFilterState();
+    createControls();
+    loadImages();
+    applyFilters();
+  </script>
+
+</body>
+</html>
