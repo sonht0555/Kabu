@@ -96,10 +96,15 @@
 
   <svg style="position: absolute; width: 0; height: 0;">
     <filter id="colorMatrixFilter">
+      <feComponentTransfer>
+        <feFuncR type="gamma" amplitude="1" exponent="1" offset="0"/>
+        <feFuncG type="gamma" amplitude="1" exponent="1" offset="0"/>
+        <feFuncB type="gamma" amplitude="1" exponent="1" offset="0"/>
+      </feComponentTransfer>
       <feColorMatrix type="matrix" values="1 0 0 0 0
-                                          0 1 0 0 0
-                                          0 0 1 0 0
-                                          0 0 0 1 0" />
+                                           0 1 0 0 0
+                                           0 0 1 0 0
+                                           0 0 0 1 0" />
     </filter>
   </svg>
 
@@ -116,6 +121,7 @@
       { id: 'saturate', label: 'Satu', min: 0, max: 200, step: 5, default: 100 },
       { id: 'grayscale', label: 'Gray', min: 0, max: 100, step: 5, default: 0 },
       { id: 'sepia', label: 'Sepi', min: 0, max: 100, step: 5, default: 0 },
+      { id: 'gamma', label: 'Gama', min: 0.1, max: 5.0, step: 0.1, default: 1.0 }
     ];
 
     const values = {};
@@ -133,11 +139,7 @@
         try {
           const parsed = JSON.parse(saved);
           filters.forEach(f => {
-            if (parsed.hasOwnProperty(f.id)) {
-              values[f.id] = parsed[f.id];
-            } else {
-              values[f.id] = f.default;
-            }
+            values[f.id] = parsed.hasOwnProperty(f.id) ? parsed[f.id] : f.default;
           });
         } catch (e) {
           filters.forEach(f => values[f.id] = f.default);
@@ -180,12 +182,8 @@
         valText.id = f.id + '_value';
         valText.innerText = values[f.id];
 
-        buttons.appendChild(minus);
-        buttons.appendChild(valText);
-        buttons.appendChild(plus);
-
-        group.appendChild(label);
-        group.appendChild(buttons);
+        buttons.append(minus, valText, plus);
+        group.append(label, buttons);
         controlsDiv.appendChild(group);
       });
 
@@ -211,27 +209,27 @@
         const val = document.createElement('div');
         val.className = 'value';
         val.id = `matrix_${i}`;
-        val.innerText = colorMatrix[i].toFixed(1);
+        val.innerText = colorMatrix[i].toFixed(2);
 
         buttons.append(minus, val, plus);
         group.append(title, buttons);
-        document.getElementById('controls').appendChild(group);
+        controlsDiv.appendChild(group);
       });
     }
 
     function updateFilter(id, delta) {
       const f = filters.find(f => f.id === id);
       let v = values[id] + delta;
-      if (f.step < 1) v = Math.round(v * 10) / 10;
+      v = Math.round(v * 100) / 100;
       values[id] = Math.min(f.max, Math.max(f.min, v));
       document.getElementById(id + '_value').innerText = values[id];
       applyFilters();
-      saveFilterState(); // save on every change
+      saveFilterState();
     }
 
     function updateMatrix(index, delta) {
       colorMatrix[index] = Math.max(-5, Math.min(5, colorMatrix[index] + delta));
-      document.getElementById(`matrix_${index}`).innerText = colorMatrix[index].toFixed(2); // Hiển thị 2 chữ số sau dấu phẩy
+      document.getElementById(`matrix_${index}`).innerText = colorMatrix[index].toFixed(2);
       applyColorMatrix();
       saveFilterState();
     }
@@ -246,17 +244,23 @@
         sepia(${values.sepia}%)
         url(#colorMatrixFilter)
       `;
+      applyColorMatrix(); // update gamma too
     }
 
     function applyColorMatrix() {
-      const values = `
+      const gamma = values.gamma || 1;
+      document.querySelector('#colorMatrixFilter feFuncR').setAttribute('exponent', gamma);
+      document.querySelector('#colorMatrixFilter feFuncG').setAttribute('exponent', gamma);
+      document.querySelector('#colorMatrixFilter feFuncB').setAttribute('exponent', gamma);
+
+      const matValues = `
         ${colorMatrix[0]} ${colorMatrix[1]} ${colorMatrix[2]} 0 0
         ${colorMatrix[3]} ${colorMatrix[4]} ${colorMatrix[5]} 0 0
         ${colorMatrix[6]} ${colorMatrix[7]} ${colorMatrix[8]} 0 0
         0 0 0 1 0
       `;
       const feColorMatrix = document.querySelector('#colorMatrixFilter feColorMatrix');
-      feColorMatrix.setAttribute('values', values);
+      feColorMatrix.setAttribute('values', matValues);
     }
 
     function resetFilters() {
@@ -286,11 +290,32 @@
     beforeBox.onclick = () => selectImageBox(beforeBox);
     afterBox.onclick = () => selectImageBox(afterBox);
     imageInput.addEventListener('change', handleImageUpload);
+    function handleImageUpload(event) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    if (targetBox) {
+      targetBox.style.backgroundImage = `url(${e.target.result})`;
+
+      // Lưu vào localStorage
+      const key = (targetBox === beforeBox) ? 'beforeImage' : 'afterImage';
+      localStorage.setItem(key, e.target.result);
+    }
+  };
+  reader.readAsDataURL(event.target.files[0]);
+}
+function restoreImages() {
+  const beforeImage = localStorage.getItem('beforeImage');
+  const afterImage = localStorage.getItem('afterImage');
+
+  if (beforeImage) beforeBox.style.backgroundImage = `url(${beforeImage})`;
+  if (afterImage) afterBox.style.backgroundImage = `url(${afterImage})`;
+}
+
 
     loadFilterState();
     createControls();
     applyFilters();
-    applyColorMatrix();
+    restoreImages(); // ← thêm dòng này
   </script>
 </body>
 </html>
