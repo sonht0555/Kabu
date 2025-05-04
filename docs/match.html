@@ -121,7 +121,7 @@
       { id: 'saturate', label: 'Satu', min: 0, max: 200, step: 5, default: 100 },
       { id: 'grayscale', label: 'Gray', min: 0, max: 100, step: 5, default: 0 },
       { id: 'sepia', label: 'Sepi', min: 0, max: 100, step: 5, default: 0 },
-      { id: 'gamma', label: 'Gama', min: 0.1, max: 5.0, step: 0.1, default: 1.0 }
+      { id: 'gamma', label: 'Gama', min: 0.1, max: 5.0, step: 0.01, default: 1.0 }
     ];
 
     const values = {};
@@ -200,11 +200,11 @@
 
         const minus = document.createElement('button');
         minus.innerText = '–';
-        minus.onclick = () => updateMatrix(i, -0.05);
+        minus.onclick = () => updateMatrix(i, -0.01);
 
         const plus = document.createElement('button');
         plus.innerText = '+';
-        plus.onclick = () => updateMatrix(i, 0.05);
+        plus.onclick = () => updateMatrix(i, 0.01);
 
         const val = document.createElement('div');
         val.className = 'value';
