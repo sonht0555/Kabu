@@ -9,8 +9,8 @@
   <title>Color Match Editor – Save to Local</title>
   <style>
     button, a, label {
-  touch-action: manipulation;
-}
+      touch-action: manipulation;
+    }
     body {
       font-family: 'Press Start 2P', monospace;
       display: flex;
@@ -38,7 +38,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      width: 80%;
+      width: 40%;
       margin-bottom: 20px;
     }
     .control-group {
@@ -68,7 +68,7 @@
       text-align: center;
     }
     .reset-button {
-    font-family: 'Press Start 2P', monospace;
+      font-family: 'Press Start 2P', monospace;
       margin-top: 10px;
       padding: 8px 12px;
       font-size: 12px;
@@ -94,6 +94,15 @@
 
   <input id="imageInput" type="file" accept="image/*" style="display: none;" />
 
+  <svg style="position: absolute; width: 0; height: 0;">
+    <filter id="colorMatrixFilter">
+      <feColorMatrix type="matrix" values="1 0 0 0 0
+                                          0 1 0 0 0
+                                          0 0 1 0 0
+                                          0 0 0 1 0" />
+    </filter>
+  </svg>
+
   <script>
     const beforeBox = document.getElementById('beforeBox');
     const afterBox = document.getElementById('afterBox');
@@ -102,21 +111,20 @@
     let targetBox = null;
 
     const filters = [
-  { id: 'brightness', label: 'Brightness', min: 0, max: 200, step: 5, default: 100 },
-  { id: 'contrast', label: 'Contrast', min: 0, max: 200, step: 5, default: 100 },
-  { id: 'saturate', label: 'Saturation', min: 0, max: 200, step: 5, default: 100 },
-  { id: 'hue', label: 'Hue', min: 0, max: 360, step: 5, default: 0 },
-  { id: 'grayscale', label: 'Grayscale', min: 0, max: 100, step: 5, default: 0 },
-  { id: 'sepia', label: 'Sepia', min: 0, max: 100, step: 5, default: 0 },
-  { id: 'invert', label: 'Invert', min: 0, max: 100, step: 5, default: 0 },
-  { id: 'blur', label: 'Blur', min: 0, max: 10, step: 0.5, default: 0 }, // blur vẫn để nhỏ
-  { id: 'opacity', label: 'Opacity', min: 0, max: 100, step: 5, default: 100 },
-];
+      { id: 'brightness', label: 'Brig', min: 0, max: 200, step: 5, default: 100 },
+      { id: 'contrast', label: 'Cont', min: 0, max: 200, step: 5, default: 100 },
+      { id: 'saturate', label: 'Satu', min: 0, max: 200, step: 5, default: 100 },
+      { id: 'grayscale', label: 'Gray', min: 0, max: 100, step: 5, default: 0 },
+      { id: 'sepia', label: 'Sepi', min: 0, max: 100, step: 5, default: 0 },
+    ];
 
     const values = {};
+    const matrixLabels = ['R→R', 'R→G', 'R→B', 'G→R', 'G→G', 'G→B', 'B→R', 'B→G', 'B→B'];
+    const colorMatrix = Array(9).fill(0).map((_, i) => (i % 4 === 0 ? 1 : 0)); // identity matrix
 
     function saveFilterState() {
       localStorage.setItem('filterValues', JSON.stringify(values));
+      localStorage.setItem('colorMatrix', JSON.stringify(colorMatrix));
     }
 
     function loadFilterState() {
@@ -136,6 +144,14 @@
         }
       } else {
         filters.forEach(f => values[f.id] = f.default);
+      }
+
+      const savedMatrix = localStorage.getItem('colorMatrix');
+      if (savedMatrix) {
+        try {
+          const parsedMatrix = JSON.parse(savedMatrix);
+          parsedMatrix.forEach((v, i) => colorMatrix[i] = v);
+        } catch (e) {}
       }
     }
 
@@ -172,6 +188,35 @@
         group.appendChild(buttons);
         controlsDiv.appendChild(group);
       });
+
+      matrixLabels.forEach((label, i) => {
+        const group = document.createElement('div');
+        group.className = 'control-group';
+
+        const title = document.createElement('div');
+        title.className = 'label';
+        title.innerText = label;
+
+        const buttons = document.createElement('div');
+        buttons.className = 'buttons';
+
+        const minus = document.createElement('button');
+        minus.innerText = '–';
+        minus.onclick = () => updateMatrix(i, -0.1);
+
+        const plus = document.createElement('button');
+        plus.innerText = '+';
+        plus.onclick = () => updateMatrix(i, 0.1);
+
+        const val = document.createElement('div');
+        val.className = 'value';
+        val.id = `matrix_${i}`;
+        val.innerText = colorMatrix[i].toFixed(1);
+
+        buttons.append(minus, val, plus);
+        group.append(title, buttons);
+        document.getElementById('controls').appendChild(group);
+      });
     }
 
     function updateFilter(id, delta) {
@@ -184,18 +229,33 @@
       saveFilterState(); // save on every change
     }
 
+    function updateMatrix(index, delta) {
+      colorMatrix[index] = Math.max(-5, Math.min(5, colorMatrix[index] + delta));
+      document.getElementById(`matrix_${index}`).innerText = colorMatrix[index].toFixed(1);
+      applyColorMatrix();
+      saveFilterState();
+    }
+
     function applyFilters() {
       afterBox.style.filter = `
         brightness(${values.brightness}%)
         contrast(${values.contrast}%)
         saturate(${values.saturate}%)
-        hue-rotate(${values.hue}deg)
         grayscale(${values.grayscale}%)
         sepia(${values.sepia}%)
-        invert(${values.invert}%)
-        blur(${values.blur}px)
-        opacity(${values.opacity}%)
+        url(#colorMatrixFilter)
       `;
+    }
+
+    function applyColorMatrix() {
+      const values = `
+        ${colorMatrix[0]} ${colorMatrix[1]} ${colorMatrix[2]} 0 0
+        ${colorMatrix[3]} ${colorMatrix[4]} ${colorMatrix[5]} 0 0
+        ${colorMatrix[6]} ${colorMatrix[7]} ${colorMatrix[8]} 0 0
+        0 0 0 1 0
+      `;
+      const feColorMatrix = document.querySelector('#colorMatrixFilter feColorMatrix');
+      feColorMatrix.setAttribute('values', values);
     }
 
     function resetFilters() {
@@ -207,45 +267,29 @@
       saveFilterState();
     }
 
-    beforeBox.addEventListener('click', () => { targetBox = beforeBox; imageInput.click(); });
-    afterBox.addEventListener('click', () => { targetBox = afterBox; imageInput.click(); });
-
-    imageInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const dataURL = event.target.result;
-          targetBox.style.backgroundImage = `url(${dataURL})`;
-          const key = targetBox === beforeBox ? 'beforeImage' : 'afterImage';
-          localStorage.setItem(key, dataURL);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    function loadImages() {
-      const before = localStorage.getItem('beforeImage');
-      const after = localStorage.getItem('afterImage');
-      if (before) beforeBox.style.backgroundImage = `url(${before})`;
-      if (after) afterBox.style.backgroundImage = `url(${after})`;
+    function handleImageUpload(event) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (targetBox) {
+          targetBox.style.backgroundImage = `url(${e.target.result})`;
+        }
+      };
+      reader.readAsDataURL(event.target.files[0]);
     }
 
-    // init
+    function selectImageBox(box) {
+      targetBox = box;
+      imageInput.click();
+    }
+
+    beforeBox.onclick = () => selectImageBox(beforeBox);
+    afterBox.onclick = () => selectImageBox(afterBox);
+    imageInput.addEventListener('change', handleImageUpload);
+
     loadFilterState();
     createControls();
-    loadImages();
     applyFilters();
-    let lastTouchEnd = 0;
-document.addEventListener('touchend', function (event) {
-  const now = new Date().getTime();
-  if (now - lastTouchEnd <= 300) {
-    event.preventDefault();
-  }
-  lastTouchEnd = now;
-}, false);
-
+    applyColorMatrix();
   </script>
-
 </body>
 </html>
