@@ -202,11 +202,11 @@
 
         const minus = document.createElement('button');
         minus.innerText = '–';
-        minus.onclick = () => updateMatrix(i, -0.1);
+        minus.onclick = () => updateMatrix(i, -0.05);
 
         const plus = document.createElement('button');
         plus.innerText = '+';
-        plus.onclick = () => updateMatrix(i, 0.1);
+        plus.onclick = () => updateMatrix(i, 0.05);
 
         const val = document.createElement('div');
         val.className = 'value';
@@ -231,10 +231,11 @@
 
     function updateMatrix(index, delta) {
       colorMatrix[index] = Math.max(-5, Math.min(5, colorMatrix[index] + delta));
-      document.getElementById(`matrix_${index}`).innerText = colorMatrix[index].toFixed(1);
+      document.getElementById(`matrix_${index}`).innerText = colorMatrix[index].toFixed(2); // Hiển thị 2 chữ số sau dấu phẩy
       applyColorMatrix();
       saveFilterState();
     }
+
 
     function applyFilters() {
       afterBox.style.filter = `
