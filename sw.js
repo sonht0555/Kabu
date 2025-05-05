@@ -1,10 +1,8 @@
-let revision = 'V6.14';
+let revision = 'V6.15';
 var urlsToCache = [
     '/',
     './img/favi.png',
     './img/icon.png',
-    './img/sprite.gif',
-    './img/textured.png',
     './index.html',
     './manifest.json',
     './server.py',
@@ -28,12 +26,6 @@ var urlsToCache = [
     './src/js/welcome.js',
     './src/library/interact.js',
     './src/library/nip.js',
-    './src/lut/lut.py',
-    './src/lut/lut64_none_4.0.bin',
-    './src/lut/lut64_cool_4.0.bin',
-    './src/lut/lut64_neutral_4.0.bin',
-    './src/lut/lut64_warm_4.0.bin',
-    './src/lut/lut_gba.py',
     './sw.js',
 ];
 
