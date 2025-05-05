@@ -33,9 +33,9 @@ initializeCore(mGBA, Module);
 let countAutoSave = 0;
 let countUpload = 0;
 const canvas = document.getElementById("canvas");
-const controlSetting = document.getElementById("control-setting");
 const loadingIcon = document.getElementById("loading-icon");
 let canSave = true;
+let visible = true;
 /* --------------- Function ------------------ */
 // System Tray
 function handleVisibilityChange(event) {
@@ -44,12 +44,20 @@ function handleVisibilityChange(event) {
         canvas.classList.add("visible");
         pauseGame();
     } else {
-        setTimeout(() => {
-            canvas.classList.remove("visible");
-        }, 500);
-        if (controlSetting.classList.contains("visible")) {
-            resumeGame();
+        if (!visible) return;
+        visible = false;
+        try {
+            setTimeout(() => {
+                canvas.classList.remove("visible");
+            }, 500);
+        } catch (error) {
+            console.error('Sync error:', error);
+        } finally {
+            setTimeout(() => {
+                visible = true;
+            }, 600);
         }
+        resumeGame();
     }
 }
 // Status In-game
