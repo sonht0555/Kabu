@@ -1,5 +1,4 @@
 var mGBA = (() => {
-  var _scriptName = import.meta.url;
   
   return (
 async function(moduleArg = {}) {
@@ -515,6 +514,8 @@ var quit_ = (status, toThrow) => {
   throw toThrow;
 };
 
+var _scriptName = import.meta.url;
+
 // `/` should be present at the end if `scriptDirectory` is not empty
 var scriptDirectory = '';
 function locateFile(path) {
@@ -531,26 +532,11 @@ var readAsync, readBinary;
 // Node.js workers are detected as a combination of ENVIRONMENT_IS_WORKER and
 // ENVIRONMENT_IS_NODE.
 if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
-  if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
-    scriptDirectory = self.location.href;
-  } else if (typeof document != 'undefined' && document.currentScript) { // web
-    scriptDirectory = document.currentScript.src;
-  }
-  // When MODULARIZE, this JS may be executed later, after document.currentScript
-  // is gone, so we saved it, and we use it here instead of any other info.
-  if (_scriptName) {
-    scriptDirectory = _scriptName;
-  }
-  // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
-  // otherwise, slice off the final part of the url to find the script directory.
-  // if scriptDirectory does not contain a slash, lastIndexOf will return -1,
-  // and scriptDirectory will correctly be replaced with an empty string.
-  // If scriptDirectory contains a query (starting with ?) or a fragment (starting with #),
-  // they are removed because they could contain a slash.
-  if (scriptDirectory.startsWith('blob:')) {
-    scriptDirectory = '';
-  } else {
-    scriptDirectory = scriptDirectory.slice(0, scriptDirectory.replace(/[?#].*/, '').lastIndexOf('/')+1);
+  try {
+    scriptDirectory = new URL('.', _scriptName).href; // includes trailing slash
+  } catch {
+    // Must be a `blob:` or `data:` URL (e.g. `blob:http://site.com/etc/etc`), we cannot
+    // infer anything from them.
   }
 
   {
@@ -673,14 +659,14 @@ var isFileURI = (filename) => filename.startsWith('file://');
 // end include: runtime_debug.js
 // include: memoryprofiler.js
 // end include: memoryprofiler.js
+var wasmModuleReceived;
+
 // include: runtime_pthread.js
 // Pthread Web Worker handling code.
 // This code runs only on pthread web workers and handles pthread setup
 // and communication with the main thread via postMessage.
 
 if (ENVIRONMENT_IS_PTHREAD) {
-  var wasmModuleReceived;
-
   // Thread-local guard variable for one-time init of the JS state
   var initializedJS = false;
 
@@ -807,13 +793,13 @@ function updateMemoryViews() {
 // check for full engine support (use string 'subarray' to avoid closure compiler confusion)
 
 function initMemory() {
-  if (ENVIRONMENT_IS_PTHREAD) return;
+  if ((ENVIRONMENT_IS_PTHREAD)) { return }
 
   if (Module['wasmMemory']) {
     wasmMemory = Module['wasmMemory'];
   } else
   {
-    var INITIAL_MEMORY = Module['INITIAL_MEMORY'] || 268435456
+    var INITIAL_MEMORY = Module['INITIAL_MEMORY'] || 268435456;
 
     /** @suppress {checkTypes} */
     wasmMemory = new WebAssembly.Memory({
@@ -862,7 +848,7 @@ function preMain() {
 }
 
 function postRun() {
-  if (ENVIRONMENT_IS_PTHREAD) return; // PThreads reuse the runtime from the main thread.
+  if ((ENVIRONMENT_IS_PTHREAD)) { return; } // PThreads reuse the runtime from the main thread.
 
   if (Module['postRun']) {
     if (typeof Module['postRun'] == 'function') Module['postRun'] = [Module['postRun']];
@@ -1070,7 +1056,7 @@ async function createWasm() {
     });
   }
 
-  if (ENVIRONMENT_IS_PTHREAD) {
+  if ((ENVIRONMENT_IS_PTHREAD)) {
     return new Promise((resolve) => {
       wasmModuleReceived = (module) => {
         // Instantiate from the module posted from the main thread.
@@ -2391,9 +2377,7 @@ async function createWasm() {
     };
   
   
-  var FS_createDataFile = (parent, name, fileData, canRead, canWrite, canOwn) => {
-      FS.createDataFile(parent, name, fileData, canRead, canWrite, canOwn);
-    };
+  var FS_createDataFile = (...args) => FS.createDataFile(...args);
   
   var preloadPlugins = [];
   var FS_handledByPreloadPlugin = (byteArray, fullname, finish, onerror) => {
@@ -11836,9 +11820,7 @@ async function createWasm() {
 PThread.init();;
 
   FS.createPreloadedFile = FS_createPreloadedFile;
-  FS.staticInit();
-  // Set module methods based on EXPORTED_RUNTIME_METHODS
-  ;
+  FS.staticInit();;
 
       // This error may happen quite a bit. To avoid overhead we reuse it (and
       // suffer a lack of stack info).
@@ -11866,6 +11848,8 @@ for (let i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));;
 // but before the wasm module is created.
 
 {
+  // With WASM_ESM_INTEGRATION this has to happen at the top level and not
+  // delayed until processModuleArgs.
   initMemory();
 
   // Begin ATMODULES hooks
