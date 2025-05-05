@@ -40,13 +40,13 @@ let canSave = true;
 // System Tray
 function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
-        Module.FSSync();
+        FSSync();
         canvas.classList.add("visible");
         pauseGame();
     } else {
         if (controlSetting.classList.contains("visible")) {
             resumeGame();
-            canvas.classList.add("visible");
+            canvas.classList.remove("visible");
         }
     }
 }
@@ -75,7 +75,7 @@ async function saveStatePeriodically() {
     await ledSave("#20A5A6");
     await Module.saveState(1);
     await screenShot(1);
-    await Module.FSSync();
+    await FSSync();
     console.log(`Auto save ${++countAutoSave} time(s)`);
 }
 // Auto Save In Cloud Every 1h
@@ -109,7 +109,7 @@ function startTimer() {
 export async function uploadGame(romName) {
     const file = romName.files[0];
     Module.uploadRom(file, () => {
-        Module.FSSync();
+        FSSync();
     });
 }
 export async function loadGame(romName) {
@@ -184,14 +184,14 @@ export function downloadFileInCloud(filepath) {
 export async function uploadFileInCloud(filepath) {
     Module.uploadAll(filepath, async () => {
         localStorageFile();
-        await Module.FSSync();
+        await FSSync();
     });
 }
 export async function uploadFile(filepath) {
     const file = filepath.files[0];
     Module.uploadAll(file, async () => {
         localStorageFile();
-        await Module.FSSync();
+        await FSSync();
     });
 }
 export async function editFile(filepath, filename, newFilename) {
