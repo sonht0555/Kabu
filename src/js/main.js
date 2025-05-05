@@ -44,9 +44,11 @@ function handleVisibilityChange(event) {
         canvas.classList.add("visible");
         pauseGame();
     } else {
+        setTimeout(() => {
+            canvas.classList.remove("visible");
+        }, 500);
         if (controlSetting.classList.contains("visible")) {
             resumeGame();
-            canvas.classList.remove("visible");
         }
     }
 }
