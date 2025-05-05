@@ -41,10 +41,12 @@ let canSave = true;
 function handleVisibilityChange(event) {
     if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
         Module.FSSync();
+        canvas.classList.add("visible");
         pauseGame();
     } else {
         if (controlSetting.classList.contains("visible")) {
             resumeGame();
+            canvas.classList.add("visible");
         }
     }
 }
@@ -58,6 +60,7 @@ async function statusShow() {
         canvas.classList.remove("visible");
         restoreArea();
     }, 300);
+    notiMessage(`Wasm_©${currentVersion}`, 2000);
     shaderData();
     startTimer();
     await gamepPad.turboF(parseInt(await getData(gameName, "1", "turboState")));
