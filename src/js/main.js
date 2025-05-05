@@ -49,13 +49,13 @@ function handleVisibilityChange(event) {
         try {
             setTimeout(() => {
                 canvas.classList.remove("visible");
-            }, 300);
+            }, 400);
         } catch (error) {
             console.error('Sync error:', error);
         } finally {
             setTimeout(() => {
                 visible = true;
-            }, 400);
+            }, 500);
         }
         resumeGame();
     }
