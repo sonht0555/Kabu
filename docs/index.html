@@ -29,7 +29,7 @@
             console.log('Received message from Service Worker:', event.data);
             if (event.data.msg === "Updating") {
                 appVer.textContent = event.data.msg
-                setTimeout(() => { window.location.reload(); }, 1000);
+                setTimeout(() => { window.location.href = window.location.pathname + '?t=' + Date.now(); }, 1000);
                 }
             });
         }
@@ -345,7 +345,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V6.24';</script>
+    <script>let gameVer = 'V6.25';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
