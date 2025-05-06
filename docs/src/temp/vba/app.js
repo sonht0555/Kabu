@@ -205,12 +205,19 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-const targetFPS = 60; 
-const interval = 1000;
+let lastFrameTimez = 0;
+const targetFPS = 60;
+const frameDuration = 1000 / targetFPS;
+
 function loop() {
-    emuLoop();
+    const now = performance.now();
+    if (now - lastFrameTimez >= frameDuration) {
+        emuLoop();
+        lastFrameTimez = now;
+    }
+    window.requestAnimationFrame(loop);
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    setInterval(loop, interval);
+    loop();
 });
