@@ -205,15 +205,15 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-let lastFrameTime = 0;
+let lastFrameTimez = 0;
 const targetFPS = 60;
 const frameDuration = 1000 / targetFPS;
 
 function loop() {
     const now = performance.now();
-    if (now - lastFrameTime >= frameDuration) {
+    if (now - lastFrameTimez >= frameDuration) {
         emuLoop();
-        lastFrameTime = now;
+        lastFrameTimez = now;
     }
     window.requestAnimationFrame(loop);
 }
