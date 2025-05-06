@@ -30,7 +30,7 @@ function processAudio(event) {
     var audioData0 = outputBuffer.getChannelData(0)
     var audioData1 = outputBuffer.getChannelData(1)
 
-    if ((!isRunning) || (fastForwardMode)) {
+    if ((!isRunning) || (fastForwardMode) || (turboMode)) {
         for (var i = 0; i < AUDIO_BLOCK_SIZE; i++) {
             audioData0[i] = 0
             audioData1[i] = 0
@@ -179,6 +179,19 @@ if (isRunning) {
     if (frameCnt % 60 == 0) {
         checkSave();
     }
+    if (frameCnt % 128 == 0) {
+        if (last128FrameTime) {
+            var diff = performance.now() - last128FrameTime
+            var frameInMs = diff / 128
+            var fps = -1
+            if (frameInMs > 0.001) {
+                fps = 1000 / frameInMs
+            }
+            document.getElementById('fps').textContent = fps
+        }
+        last128FrameTime = performance.now()
+    }
+    lastFrameTime = performance.now()
     Module._emuRunFrame(0);
     drawContext = canvas.getContext('2d');
     drawContext.putImageData(idata, 0, 0);
