@@ -19,6 +19,7 @@ var audioFifoHead = 0
 var audioFifoCnt = 0
 var lastCheckedSaveState = 0
 var turboMode = false
+var muteMode = false
 var fastForwardMode = false
 var isSaveSupported = true
 const fileInput = document.getElementById('romFile')
@@ -30,7 +31,7 @@ function processAudio(event) {
     var audioData0 = outputBuffer.getChannelData(0)
     var audioData1 = outputBuffer.getChannelData(1)
 
-    if ((!isRunning) || (fastForwardMode) || (turboMode)) {
+    if ((!isRunning) || (fastForwardMode) || (muteMode)) {
         for (var i = 0; i < AUDIO_BLOCK_SIZE; i++) {
             audioData0[i] = 0
             audioData1[i] = 0
@@ -193,12 +194,22 @@ if (isRunning) {
     }
     lastFrameTime = performance.now()
     Module._emuRunFrame(0);
+    if (fastForwardMode) {
+        Module._emuRunFrame(0);
+        Module._emuRunFrame(0);
+        Module._emuRunFrame(0);
+    } else if (turboMode) {
+        Module._emuRunFrame(0);
+    }
     drawContext = canvas.getContext('2d');
     drawContext.putImageData(idata, 0, 0);
 }
-window.requestAnimationFrame(emuLoop)
+}
+function loop() {
+    window.requestAnimationFrame(loop)
+    emuLoop()
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    emuLoop();
+    loop();
 });
