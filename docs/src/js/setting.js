@@ -3,7 +3,7 @@ import * as Main from './main.js';
 let selectedIndex = 0;
 let cheatX, stateAutoX, shaderX, opacityX, temperatureX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX;
 const boxes = document.querySelectorAll('.box');
-const sdValues = ['Sega', 'Crt', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'White_Line', 'Mess'];
+const sdValues = ['Sega', 'Crt', 'Brick', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'Leat', 'Mess'];
 const colorValues = ['Warm', 'Neutral', 'Cool', 'None'];
 const menuPad = document.getElementById("menu-pad");
 const stateList = document.getElementById("stateList");

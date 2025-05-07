@@ -338,6 +338,9 @@ label {
 .Crt::before {
   background: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4H0V3H2V4ZM4 4H3V2H4V4ZM1 2H0V0H1V2ZM4 1H2V0H4V1Z' fill='black'/%3E%3C/svg%3E%0A");
 }
+.Brick::before {
+  background: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3H2V4H0V2H1V3Z' fill='black'/%3E%3Cpath d='M4 4H3V3H4V4Z' fill='black'/%3E%3Cpath d='M4 2H3V1H2V0H4V2Z' fill='black'/%3E%3Cpath d='M1 1H0V0H1V1Z' fill='black'/%3E%3C/svg%3E%0A");
+}
 .Gt-1::before {
   background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 8L8 4V8H4Z' fill='black'/%3E%3Cpath d='M4 0L0 4V0L4 0Z' fill='black'/%3E%3Cpath d='M4 4L0 8V4H4Z' fill='black'/%3E%3Cpath d='M4 4L8 0V4H4Z' fill='black'/%3E%3C/svg%3E%0A");
 }
@@ -365,7 +368,7 @@ label {
 .GBA_Line::before {
   background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7 1H1V7H7V1ZM0 0V8H8V0H0Z' fill='black'/%3E%3C/svg%3E%0A");
 }
-.White_Line::before {
+.Leat::before {
   background: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 4L0 8V0L4 4Z' fill='black'/%3E%3Cpath d='M8 8L4 4L8 0V8Z' fill='black'/%3E%3C/svg%3E%0A");
 }
 .Mess::before {
