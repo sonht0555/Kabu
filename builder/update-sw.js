@@ -35,4 +35,4 @@ const updatedSwContent = swContent.replace(
 );
 fs.writeFileSync(swFile, updatedSwContent, 'utf8');
 console.log(`Updated urlsToCache in ${swFile}`);
-// node ./builder/update-cache-files.js
+// node ./builder/update-sw.js

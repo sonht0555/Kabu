@@ -1,1 +1,141 @@
-(function(_0x98c23,_0x1ae39f){const _0x2ff835=a0_0x35d8,_0x8c6bf9=_0x98c23();while(!![]){try{const _0x312470=parseInt(_0x2ff835(0x91))/0x1+parseInt(_0x2ff835(0xb6))/0x2+parseInt(_0x2ff835(0x8d))/0x3+-parseInt(_0x2ff835(0x90))/0x4+parseInt(_0x2ff835(0xa3))/0x5*(parseInt(_0x2ff835(0xa4))/0x6)+-parseInt(_0x2ff835(0xa7))/0x7+-parseInt(_0x2ff835(0x96))/0x8;if(_0x312470===_0x1ae39f)break;else _0x8c6bf9['push'](_0x8c6bf9['shift']());}catch(_0x529395){_0x8c6bf9['push'](_0x8c6bf9['shift']());}}}(a0_0x22ce,0x7e59c));import*as a0_0x23582d from'./main.js';let gl=null,program=null,texture=null,ctx2d=null,lut64=null,lut64Profile=null,imageDataObj=null,fs=null,vs=null;async function loadLUT64(){const _0x279890=a0_0x35d8;systemType=gameName[_0x279890(0x99)](-0x3);const _0x475e0a=(localStorage[_0x279890(0xc6)](gameName+_0x279890(0x9e))||_0x279890(0xb9))[_0x279890(0xc2)]();if(!lut64||lut64Profile!==_0x475e0a){const _0x9a8f23=_0x279890(0xc3)+_0x475e0a+'_4.0.bin';console['log'](_0x9a8f23);const _0x5569da=await fetch(_0x9a8f23),_0x928fcb=await _0x5569da[_0x279890(0xa1)]();lut64=new Uint8Array(_0x928fcb),lut64Profile=_0x475e0a;}}function setupWebGL_Shader(_0x29b684){const _0xad115b=a0_0x35d8;gl=bufferCanvas[_0xad115b(0xc7)]('webgl',{'alpha':![],'depth':![],'antialias':![],'premultipliedAlpha':![],'preserveDrawingBuffer':![],'powerPreference':'low-power'}),gl[_0xad115b(0xbd)](0x0,0x0,bufferCanvas[_0xad115b(0xa9)],bufferCanvas['height']);function _0x8c4ff1(_0x9fbcbb,_0x4eb1c4){const _0x582bdf=_0xad115b,_0x141371=gl[_0x582bdf(0xc0)](_0x9fbcbb);return gl['shaderSource'](_0x141371,_0x4eb1c4),gl[_0x582bdf(0xb4)](_0x141371),_0x141371;}vs='attribute\x20vec2\x20position;attribute\x20vec2\x20texcoord;varying\x20vec2\x20v_texcoord;void\x20main()\x20{gl_Position\x20=\x20vec4(position,\x200.0,\x201.0);v_texcoord\x20=\x20texcoord;}';if(_0x29b684===_0xad115b(0x9f))fs=_0xad115b(0x98);else _0x29b684==='webgl_full'&&(fs=_0xad115b(0x8b));const _0x6bae11=_0x8c4ff1(gl[_0xad115b(0xad)],vs),_0x1042f0=_0x8c4ff1(gl['FRAGMENT_SHADER'],fs);return program=gl['createProgram'](),gl[_0xad115b(0x94)](program,_0x6bae11),gl[_0xad115b(0x94)](program,_0x1042f0),gl['linkProgram'](program),gl[_0xad115b(0xa8)](program),program;}function setupTexture_Buffer(_0x301514){const _0x1c788c=a0_0x35d8;texture=gl[_0x1c788c(0xc1)](),gl[_0x1c788c(0xc8)](gl[_0x1c788c(0xc5)],texture),gl['texParameteri'](gl['TEXTURE_2D'],gl[_0x1c788c(0xbb)],gl[_0x1c788c(0xb0)]),gl[_0x1c788c(0xb8)](gl['TEXTURE_2D'],gl[_0x1c788c(0xa0)],gl[_0x1c788c(0xb0)]),gl[_0x1c788c(0xb8)](gl[_0x1c788c(0xc5)],gl[_0x1c788c(0xab)],gl[_0x1c788c(0xb3)]),gl[_0x1c788c(0xb8)](gl[_0x1c788c(0xc5)],gl[_0x1c788c(0x8e)],gl[_0x1c788c(0xb3)]);_0x301514===_0x1c788c(0xbf)&&(gl[_0x1c788c(0xac)](gl['getUniformLocation'](program,_0x1c788c(0x88)),gameWidth,gameHeight),gl[_0x1c788c(0xac)](gl[_0x1c788c(0x9d)](program,_0x1c788c(0xa2)),gl[_0x1c788c(0x9c)][_0x1c788c(0xa9)],gl[_0x1c788c(0x9c)][_0x1c788c(0x97)]),gl[_0x1c788c(0xca)](gl[_0x1c788c(0x9d)](program,_0x1c788c(0x8c)),gameWidth/gl[_0x1c788c(0x9c)][_0x1c788c(0xa9)]),gl[_0x1c788c(0xca)](gl[_0x1c788c(0x9d)](program,_0x1c788c(0x93)),gameHeight/gl[_0x1c788c(0x9c)][_0x1c788c(0x97)]));const _0x3efb3e=gl['createBuffer']();gl['bindBuffer'](gl[_0x1c788c(0xbc)],_0x3efb3e),gl['bufferData'](gl[_0x1c788c(0xbc)],new Float32Array([-0x1,-0x1,0x1,-0x1,-0x1,0x1,0x1,0x1]),gl[_0x1c788c(0x9b)]),gl[_0x1c788c(0x92)](gl['getAttribLocation'](program,_0x1c788c(0xaf)),0x2,gl[_0x1c788c(0xaa)],![],0x0,0x0),gl[_0x1c788c(0x89)](gl[_0x1c788c(0x9a)](program,_0x1c788c(0xaf)));const _0x30c29f=gl['createBuffer']();gl['bindBuffer'](gl[_0x1c788c(0xbc)],_0x30c29f),gl[_0x1c788c(0x95)](gl['ARRAY_BUFFER'],new Float32Array([0x0,0x1,0x1,0x1,0x0,0x0,0x1,0x0]),gl[_0x1c788c(0x9b)]),gl[_0x1c788c(0x92)](gl[_0x1c788c(0x9a)](program,'texcoord'),0x2,gl[_0x1c788c(0xaa)],![],0x0,0x0),gl[_0x1c788c(0x89)](gl[_0x1c788c(0x9a)](program,_0x1c788c(0xc4)));}function setup2DContext(){const _0x17c99c=a0_0x35d8;ctx2d=bufferCanvas[_0x17c99c(0xc7)]('2d'),ctx2d[_0x17c99c(0x8a)]=![];}async function renderPixel(_0x37b080){const _0x5a212d=a0_0x35d8,_0x26e258=a0_0x23582d[_0x5a212d(0xbe)]();if(!_0x26e258)return;await loadLUT64();const _0x3948a6=new Uint8ClampedArray(gameWidth*gameHeight*0x4);for(let _0x391706=0x0;_0x391706<gameHeight;_0x391706++){for(let _0x31d9a0=0x0;_0x31d9a0<gameWidth;_0x31d9a0++){const _0x1f32ab=_0x391706*gameStride+_0x31d9a0,_0x50ce70=(_0x391706*gameWidth+_0x31d9a0)*0x4,_0x46aa0f=_0x26e258[_0x1f32ab];if(lut64Profile===_0x5a212d(0xb9))_0x3948a6[_0x50ce70]=_0x46aa0f&0xff,_0x3948a6[_0x50ce70+0x1]=_0x46aa0f>>0x8&0xff,_0x3948a6[_0x50ce70+0x2]=_0x46aa0f>>0x10&0xff,_0x3948a6[_0x50ce70+0x3]=0xff;else{const _0x30ecb9=(_0x46aa0f&0xff)>>0x2,_0x2abf7f=(_0x46aa0f>>0x8&0xff)>>0x2,_0x3f7f26=(_0x46aa0f>>0x10&0xff)>>0x2,_0x32f3e7=(_0x30ecb9*0x40*0x40+_0x2abf7f*0x40+_0x3f7f26)*0x3;_0x3948a6[_0x50ce70]=lut64[_0x32f3e7],_0x3948a6[_0x50ce70+0x1]=lut64[_0x32f3e7+0x1],_0x3948a6[_0x50ce70+0x2]=lut64[_0x32f3e7+0x2],_0x3948a6[_0x50ce70+0x3]=0xff;}}}if(_0x37b080===_0x5a212d(0x9f))gl[_0x5a212d(0xa5)](gl[_0x5a212d(0xc5)],0x0,gl[_0x5a212d(0xb7)],gameWidth,gameHeight,0x0,gl[_0x5a212d(0xb7)],gl[_0x5a212d(0xb1)],_0x3948a6),gl[_0x5a212d(0xb2)](gl[_0x5a212d(0xc9)]),gl[_0x5a212d(0x8f)](gl[_0x5a212d(0xa6)],0x0,0x4);else _0x37b080==='2d'&&(!imageDataObj?imageDataObj=new ImageData(_0x3948a6,gameWidth,gameHeight):imageDataObj[_0x5a212d(0xae)][_0x5a212d(0xba)](_0x3948a6),ctx2d[_0x5a212d(0xb5)](0x0,0x0,bufferCanvas[_0x5a212d(0xa9)],bufferCanvas['height']),ctx2d['putImageData'](imageDataObj,0x0,0x0));requestAnimationFrame(()=>renderPixel(_0x37b080));}function a0_0x35d8(_0x1de06e,_0x4a8239){const _0x22ceb2=a0_0x22ce();return a0_0x35d8=function(_0x35d873,_0x468fff){_0x35d873=_0x35d873-0x88;let _0x1460bc=_0x22ceb2[_0x35d873];return _0x1460bc;},a0_0x35d8(_0x1de06e,_0x4a8239);}export async function switchRenderMode(_0x4ef9c6){const _0x1b9703=a0_0x35d8;systemType=gameName[_0x1b9703(0x99)](-0x3);if(_0x4ef9c6==='2d')setupStyle('2d'),setup2DContext(),renderPixel('2d');else{if(_0x4ef9c6===_0x1b9703(0x9f))setupStyle('2d'),setupWebGL_Shader('webgl'),setupTexture_Buffer(_0x1b9703(0x9f)),renderPixel('webgl');else _0x4ef9c6===_0x1b9703(0xbf)&&(setupStyle(_0x1b9703(0xbf)),setupWebGL_Shader(_0x1b9703(0xbf)),setupTexture_Buffer(_0x1b9703(0xbf)),renderPixel(_0x1b9703(0x9f)));}}function a0_0x22ce(){const _0x6688c5=['RGBA','texParameteri','none','set','TEXTURE_MIN_FILTER','ARRAY_BUFFER','viewport','getPixelData','webgl_full','createShader','createTexture','toLowerCase','./src/lut/lut64_','texcoord','TEXTURE_2D','getItem','getContext','bindTexture','COLOR_BUFFER_BIT','uniform1f','game_size','enableVertexAttribArray','imageSmoothingEnabled','precision\x20mediump\x20float;varying\x20vec2\x20v_texcoord;uniform\x20sampler2D\x20texSampler;uniform\x20vec2\x20game_size;uniform\x20vec2\x20render_size;uniform\x20float\x20smooth_width;uniform\x20float\x20smooth_height;vec4\x20interpolate_color(vec2\x20tex_coord){vec2\x20ip=floor(tex_coord*game_size-0.5)+0.5;vec2\x20residual=fract(tex_coord*game_size+0.5);ip/=game_size;vec4\x20v0=texture2D(texSampler,ip);vec4\x20v1=texture2D(texSampler,ip+vec2(1.0,0.0)/game_size);vec4\x20v2=texture2D(texSampler,ip+vec2(0.0,1.0)/game_size);vec4\x20v3=texture2D(texSampler,ip+vec2(1.0,1.0)/game_size);vec2\x20smooth_dim=vec2(smooth_width,smooth_height);if(fract(render_size.x/game_size.x)*game_size.x<0.01)smooth_dim.x=0.01;if(fract(render_size.y/game_size.y)*game_size.y<0.01)smooth_dim.y=0.01;vec2\x20alpha=vec2(smoothstep(0.5-smooth_dim.x*0.5,0.5+smooth_dim.x*0.5,residual.x),smoothstep(0.5-smooth_dim.y*0.5,0.5+smooth_dim.y*0.5,residual.y));return\x20mix(mix(v0,v1,alpha.x),mix(v2,v3,alpha.x),alpha.y);}void\x20main(){gl_FragColor=interpolate_color(v_texcoord);}','smooth_width','1205052WqeEoL','TEXTURE_WRAP_T','drawArrays','38888fTIRIP','867269mLzgUT','vertexAttribPointer','smooth_height','attachShader','bufferData','6284928HjvlVc','height','precision\x20mediump\x20float;varying\x20vec2\x20v_texcoord;uniform\x20sampler2D\x20texture;void\x20main()\x20{gl_FragColor\x20=\x20texture2D(texture,\x20v_texcoord);}','slice','getAttribLocation','STATIC_DRAW','canvas','getUniformLocation','_temperature','webgl','TEXTURE_MAG_FILTER','arrayBuffer','render_size','16630Bagyyx','72YIKuqi','texImage2D','TRIANGLE_STRIP','130956Fouqzl','useProgram','width','FLOAT','TEXTURE_WRAP_S','uniform2f','VERTEX_SHADER','data','position','NEAREST','UNSIGNED_BYTE','clear','CLAMP_TO_EDGE','compileShader','clearRect','45426wOftvF'];a0_0x22ce=function(){return _0x6688c5;};return a0_0x22ce();}
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+let gl = null, program = null, texture = null, ctx2d = null, lut64 = null, lut64Profile = null, imageDataObj = null, fs = null, vs = null;
+/* --------------- Function ------------------ */
+async function loadLUT64() {
+    systemType = gameName.slice(-3);
+    const temperature = (localStorage.getItem(`${gameName}_temperature`) || "none").toLowerCase();
+    if (!lut64 || lut64Profile !== temperature) {
+        const filename = `./src/lut/lut64_${temperature}_4.0.bin`
+        console.log(filename);
+        const res = await fetch(filename);
+        const buf = await res.arrayBuffer();
+        lut64 = new Uint8Array(buf);
+        lut64Profile = temperature;
+    }
+}
+// Setup Webgl
+function setupWebGL_Shader(mode) {
+    // Webgl setup
+    gl = bufferCanvas.getContext("webgl" , {alpha: false,depth: false,antialias: false,premultipliedAlpha: false,preserveDrawingBuffer: false,powerPreference: 'low-power',});
+    gl.viewport(0, 0, bufferCanvas.width, bufferCanvas.height);
+
+    // Shader setup
+    function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
+    }
+    vs = `attribute vec2 position;attribute vec2 texcoord;varying vec2 v_texcoord;void main() {gl_Position = vec4(position, 0.0, 1.0);v_texcoord = texcoord;}`;
+    if (mode === "webgl") {
+        fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texture;void main() {gl_FragColor = texture2D(texture, v_texcoord);}`;
+    } else if (mode === "webgl_full") {
+        fs = `precision mediump float;varying vec2 v_texcoord;uniform sampler2D texSampler;uniform vec2 game_size;uniform vec2 render_size;uniform float smooth_width;uniform float smooth_height;vec4 interpolate_color(vec2 tex_coord){vec2 ip=floor(tex_coord*game_size-0.5)+0.5;vec2 residual=fract(tex_coord*game_size+0.5);ip/=game_size;vec4 v0=texture2D(texSampler,ip);vec4 v1=texture2D(texSampler,ip+vec2(1.0,0.0)/game_size);vec4 v2=texture2D(texSampler,ip+vec2(0.0,1.0)/game_size);vec4 v3=texture2D(texSampler,ip+vec2(1.0,1.0)/game_size);vec2 smooth_dim=vec2(smooth_width,smooth_height);if(fract(render_size.x/game_size.x)*game_size.x<0.01)smooth_dim.x=0.01;if(fract(render_size.y/game_size.y)*game_size.y<0.01)smooth_dim.y=0.01;vec2 alpha=vec2(smoothstep(0.5-smooth_dim.x*0.5,0.5+smooth_dim.x*0.5,residual.x),smoothstep(0.5-smooth_dim.y*0.5,0.5+smooth_dim.y*0.5,residual.y));return mix(mix(v0,v1,alpha.x),mix(v2,v3,alpha.x),alpha.y);}void main(){gl_FragColor=interpolate_color(v_texcoord);}`
+    }
+    const vertexShader = createShader(gl.VERTEX_SHADER, vs);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fs);
+    program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+    return program;
+}
+// Setup Texture and Buffer
+function setupTexture_Buffer(mode) {
+    // Texture setup
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    if (mode === "webgl_full") {
+        gl.uniform2f(gl.getUniformLocation(program, "game_size"), gameWidth, gameHeight);
+        gl.uniform2f(gl.getUniformLocation(program, "render_size"), gl.canvas.width, gl.canvas.height);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_width"), gameWidth / gl.canvas.width);
+        gl.uniform1f(gl.getUniformLocation(program, "smooth_height"), gameHeight / gl.canvas.height);
+    }
+    // Buffer setup
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(gl.getAttribLocation(program, "position"), 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(gl.getAttribLocation(program, "position"));
+
+    const texcoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(gl.getAttribLocation(program, "texcoord"), 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(gl.getAttribLocation(program, "texcoord"));
+}
+// Setup 2D context
+function setup2DContext() {
+    ctx2d = bufferCanvas.getContext("2d");
+    ctx2d.imageSmoothingEnabled = false;
+}
+// Render Pixel
+async function renderPixel(mode) {
+    const pixelData = Main.getPixelData();
+    if (!pixelData) return;
+    await loadLUT64();
+    const imageData = new Uint8ClampedArray(gameWidth * gameHeight * 4);
+    for (let y = 0; y < gameHeight; y++) {
+        for (let x = 0; x < gameWidth; x++) {
+            const srcIndex = y * gameStride + x;
+            const destIndex = (y * gameWidth + x) * 4;
+            const color = pixelData[srcIndex];
+            if (lut64Profile === "none") {
+                imageData[destIndex]     = color & 0xFF;         // Red
+                imageData[destIndex + 1] = (color >> 8) & 0xFF;  // Green
+                imageData[destIndex + 2] = (color >> 16) & 0xFF; // Blue
+                imageData[destIndex + 3] = 255;                 // Alpha
+            } else {
+                const r = (color & 0xFF) >> 2;
+                const g = ((color >> 8) & 0xFF) >> 2;
+                const b = ((color >> 16) & 0xFF) >> 2;
+                const lutIndex = ((r * 64 * 64) + (g * 64) + b) * 3;
+                imageData[destIndex]     = lut64[lutIndex];
+                imageData[destIndex + 1] = lut64[lutIndex + 1];
+                imageData[destIndex + 2] = lut64[lutIndex + 2];
+                imageData[destIndex + 3] = 255;
+            }
+        }
+    }
+
+    if (mode === "webgl") {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gameWidth, gameHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    } else if (mode === "2d") {
+        if (!imageDataObj) {
+            imageDataObj = new ImageData(imageData, gameWidth, gameHeight);
+        } else {
+            imageDataObj.data.set(imageData);
+        }
+        ctx2d.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+        ctx2d.putImageData(imageDataObj, 0, 0);
+    }
+
+    requestAnimationFrame(() => renderPixel(mode));
+}
+// Switch Render Mode
+export async function switchRenderMode(mode) {
+    systemType = gameName.slice(-3)
+    if (mode === "2d") {
+        setupStyle("2d");
+        setup2DContext()
+        renderPixel("2d");
+    } else if (mode === "webgl") {
+        setupStyle("2d");
+        setupWebGL_Shader("webgl");
+        setupTexture_Buffer("webgl");
+        renderPixel("webgl");
+    } else if (mode === "webgl_full") {
+        setupStyle("webgl_full");
+        setupWebGL_Shader("webgl_full");
+        setupTexture_Buffer("webgl_full");
+        renderPixel("webgl");
+    }
+}

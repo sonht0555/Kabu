@@ -1,1 +1,339 @@
-const a0_0x5a37ec=a0_0x207b;(function(_0x541e3b,_0x3302ff){const _0x5c2259=a0_0x207b,_0x2aa1bd=_0x541e3b();while(!![]){try{const _0x14b7c9=-parseInt(_0x5c2259(0x116))/0x1*(-parseInt(_0x5c2259(0xf2))/0x2)+parseInt(_0x5c2259(0x130))/0x3+-parseInt(_0x5c2259(0x149))/0x4*(-parseInt(_0x5c2259(0xe4))/0x5)+parseInt(_0x5c2259(0x100))/0x6+-parseInt(_0x5c2259(0x141))/0x7*(parseInt(_0x5c2259(0xf4))/0x8)+parseInt(_0x5c2259(0x128))/0x9+-parseInt(_0x5c2259(0xd9))/0xa;if(_0x14b7c9===_0x3302ff)break;else _0x2aa1bd['push'](_0x2aa1bd['shift']());}catch(_0x48d85a){_0x2aa1bd['push'](_0x2aa1bd['shift']());}}}(a0_0x3ec5,0xd6929),appVer['textContent']=gameVer);let gameName;var messageTimeout;let stateAdj=0x1;var lockNotiTime;let clientWidth,upscaleShader=0x3,integerScaling,systemType,gameWidth,gameHeight;const bufferCanvas=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x15b));let opacity=parseFloat(localStorage[a0_0x5a37ec(0x169)]('opacity'))||0.1;const errorLogElements=document[a0_0x5a37ec(0xe0)](a0_0x5a37ec(0x103)),ingame=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x154)),input=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x14e)),romList=document['getElementById']('rom-list'),romInput=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x134)),setAdjustment=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x13e)),savedStateAdj=localStorage[a0_0x5a37ec(0x169)](a0_0x5a37ec(0x109)),rewind=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x16b)),ids=[a0_0x5a37ec(0x14e),a0_0x5a37ec(0x152),'stateDiv01','stateDiv02',a0_0x5a37ec(0x16c),a0_0x5a37ec(0x16e),a0_0x5a37ec(0x10c),a0_0x5a37ec(0x115),a0_0x5a37ec(0xdc)],touchedID=[a0_0x5a37ec(0x110),a0_0x5a37ec(0x13a),a0_0x5a37ec(0x16f),a0_0x5a37ec(0x11a),a0_0x5a37ec(0x148),a0_0x5a37ec(0x16b)],canvasContainer=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0x168)),imgShader=document['getElementById'](a0_0x5a37ec(0x142)),settingContainer=document['querySelectorAll'](a0_0x5a37ec(0xfa)),messageContainer=document['querySelectorAll'](a0_0x5a37ec(0xde)),stateTitle=document['querySelectorAll'](a0_0x5a37ec(0x151)),textured=document[a0_0x5a37ec(0x121)](a0_0x5a37ec(0xed));var dynamicZone=document['getElementById'](a0_0x5a37ec(0x126)),nippleOptions={'zone':dynamicZone,'color':a0_0x5a37ec(0x11b),'size':0x78},dynamic=nipplejs[a0_0x5a37ec(0x139)](nippleOptions);function positionAdjustment(_0x1527f3){const _0x3f220a=a0_0x5a37ec,_0x1edbcf=[{'paddingTop':_0x3f220a(0x11f),'rectOpacity':[0x1,0x1,0x1],'GOpacity':[0x0,0x0,0x0,0x1]},{'paddingTop':_0x3f220a(0x127),'rectOpacity':[0.4,0x1,0x1],'GOpacity':[0x0,0x0,0x1,0x0]},{'paddingTop':_0x3f220a(0x12d),'rectOpacity':[0.4,0.4,0x1],'GOpacity':[0x0,0x1,0x0,0x0]},{'paddingTop':'180px','rectOpacity':[0.4,0.4,0.4],'GOpacity':[0x1,0x0,0x0,0x0]}];if(_0x1527f3>=0x1&&_0x1527f3<=0x4){const _0x4164f7=_0x1edbcf[_0x1527f3-0x1];document[_0x3f220a(0x15d)]('.target-boxes')[_0x3f220a(0x167)](function(_0x114403,_0x350875){const _0x3c566e=_0x3f220a;_0x114403[_0x3c566e(0x135)][_0x3c566e(0x161)]('padding-top',_0x4164f7[_0x3c566e(0xe1)]);}),document[_0x3f220a(0x121)](_0x3f220a(0xff))[_0x3f220a(0x135)][_0x3f220a(0x161)](_0x3f220a(0xf3),_0x4164f7[_0x3f220a(0xfd)][0x0]),document[_0x3f220a(0x121)](_0x3f220a(0x140))['style'][_0x3f220a(0x161)](_0x3f220a(0xf3),_0x4164f7[_0x3f220a(0xfd)][0x1]),document[_0x3f220a(0x121)]('rect3')[_0x3f220a(0x135)][_0x3f220a(0x161)]('opacity',_0x4164f7[_0x3f220a(0xfd)][0x2]);for(let _0x451da8=0x0;_0x451da8<0x4;_0x451da8++){document[_0x3f220a(0x121)]('G'+_0x451da8)[_0x3f220a(0x135)]['setProperty'](_0x3f220a(0xf3),_0x4164f7[_0x3f220a(0x124)][_0x451da8]);}}}ingame['ontouchstart']=_0x4dddcd=>{const _0x100549=a0_0x5a37ec;_0x4dddcd[_0x100549(0x12b)]();},setAdjustment[a0_0x5a37ec(0x102)](a0_0x5a37ec(0xe2),function(){const _0x26c153=a0_0x5a37ec;stateAdj=stateAdj%0x4+0x1,positionAdjustment(stateAdj),localStorage['setItem'](_0x26c153(0x109),stateAdj);}),ids['forEach'](function(_0xfc1261){const _0xc81f03=a0_0x5a37ec;var _0x2174e3=document[_0xc81f03(0x121)](_0xfc1261);_0x2174e3&&_0x2174e3['setAttribute'](_0xc81f03(0x14c),_0xc81f03(0xe8));}),touchedID['forEach'](function(_0x45c973){const _0x56abf0=a0_0x5a37ec,_0x18cf38=document[_0x56abf0(0x121)](_0x45c973);if(_0x18cf38){if(_0x45c973===_0x56abf0(0x110)||_0x45c973===_0x56abf0(0x13a))_0x18cf38[_0x56abf0(0x102)](_0x56abf0(0x104),function(){const _0x1f2853=_0x56abf0;_0x18cf38[_0x1f2853(0x113)][_0x1f2853(0x157)](_0x1f2853(0xf5));}),_0x18cf38[_0x56abf0(0x102)](_0x56abf0(0xf7),function(){const _0x3d3661=_0x56abf0;_0x18cf38['classList'][_0x3d3661(0x108)]('touched-1');});else _0x45c973===_0x56abf0(0x16b)?(_0x18cf38[_0x56abf0(0x102)](_0x56abf0(0x104),function(){const _0x32ade7=_0x56abf0;_0x18cf38[_0x32ade7(0x113)]['add'](_0x32ade7(0x165));}),_0x18cf38[_0x56abf0(0x102)](_0x56abf0(0xf7),function(){const _0x47f103=_0x56abf0;_0x18cf38[_0x47f103(0x113)][_0x47f103(0x108)](_0x47f103(0x165));})):(_0x18cf38['addEventListener'](_0x56abf0(0x104),function(){const _0x22589c=_0x56abf0;_0x18cf38[_0x22589c(0x113)][_0x22589c(0x157)](_0x22589c(0x11c));}),_0x18cf38[_0x56abf0(0x102)](_0x56abf0(0xf7),function(){const _0x1e7fce=_0x56abf0;_0x18cf38[_0x1e7fce(0x113)][_0x1e7fce(0x108)](_0x1e7fce(0x11c));}));}}),interact(a0_0x5a37ec(0x14f))['resizable']({'edges':{'top':!![],'left':!![],'right':!![],'bottom':!![]},'modifiers':[interact[a0_0x5a37ec(0x120)][a0_0x5a37ec(0x133)]({'outer':'parent'}),interact['modifiers'][a0_0x5a37ec(0xea)]({'min':{'width':0x32,'height':0x14}})],'listeners':{'move'(_0x519e8f){const _0x2593a2=a0_0x5a37ec,_0xf4bece=_0x519e8f['target'],_0x41b6b1=(parseFloat(_0xf4bece['getAttribute']('data-x'))||0x0)+_0x519e8f[_0x2593a2(0x14b)][_0x2593a2(0x11e)],_0x58b936=(parseFloat(_0xf4bece[_0x2593a2(0x156)](_0x2593a2(0x12e)))||0x0)+_0x519e8f[_0x2593a2(0x14b)]['top'];_0xf4bece[_0x2593a2(0x135)]['width']=_0x519e8f[_0x2593a2(0xf1)]['width']+'px',_0xf4bece[_0x2593a2(0x135)]['height']=_0x519e8f['rect']['height']+'px',_0xf4bece[_0x2593a2(0x135)]['transform']='translate('+_0x41b6b1+'px,\x20'+_0x58b936+'px)',_0xf4bece[_0x2593a2(0x14d)](_0x2593a2(0x125),_0x41b6b1),_0xf4bece[_0x2593a2(0x14d)]('data-y',_0x58b936),localStorage[_0x2593a2(0x143)](gameName+_0x2593a2(0x12a),_0x41b6b1['toFixed'](0x0)+','+_0x58b936[_0x2593a2(0xfb)](0x0)+','+_0x519e8f[_0x2593a2(0xf1)]['width'][_0x2593a2(0xfb)](0x0)+','+_0x519e8f[_0x2593a2(0xf1)][_0x2593a2(0x138)][_0x2593a2(0xfb)](0x0)),console[_0x2593a2(0x15e)](localStorage[_0x2593a2(0x169)](gameName+_0x2593a2(0x12a)));}}});function restoreArea(){const _0x726a0a=a0_0x5a37ec,_0x30f8ac=localStorage[_0x726a0a(0x169)](gameName+_0x726a0a(0x12a))||localStorage['getItem'](_0x726a0a(0x107));if(_0x30f8ac){const [_0x51d1c3,_0x138616,_0x10301f,_0x1415a7]=_0x30f8ac[_0x726a0a(0x118)](',')[_0x726a0a(0x160)](Number),_0x1e8fc5=document[_0x726a0a(0x121)](_0x726a0a(0x105));areaTrans=document[_0x726a0a(0x121)](_0x726a0a(0xfc)),areaTrans['offsetWidth']<_0x10301f?_0x1e8fc5['style'][_0x726a0a(0x12c)]=areaTrans[_0x726a0a(0xf9)]+'px':_0x1e8fc5[_0x726a0a(0x135)][_0x726a0a(0x12c)]=_0x10301f+'px',areaTrans['offsetHeight']<_0x1415a7?_0x1e8fc5['style'][_0x726a0a(0x138)]=areaTrans['offsetHeight']+'px':_0x1e8fc5[_0x726a0a(0x135)][_0x726a0a(0x138)]=_0x1415a7+'px',_0x1e8fc5[_0x726a0a(0x135)][_0x726a0a(0xdd)]=_0x726a0a(0x132)+_0x51d1c3+'px,\x20'+_0x138616+_0x726a0a(0x13f),_0x1e8fc5[_0x726a0a(0x14d)]('data-x',_0x51d1c3),_0x1e8fc5['setAttribute']('data-y',_0x138616);}}async function delay(_0x8db827){return new Promise(_0x25c8db=>setTimeout(_0x25c8db,_0x8db827));}async function led(_0x442629){const _0x28dae1=a0_0x5a37ec;try{const _0xaf8cbe=[{'id':'led01','color':_0x28dae1(0x16a)},{'id':_0x28dae1(0xdf),'color':_0x28dae1(0x16a)},{'id':_0x28dae1(0xec),'color':_0x28dae1(0x16a)}];if(_0x442629>=0x1&&_0x442629<=_0xaf8cbe[_0x28dae1(0x123)]){const _0x58ef73=_0x28dae1(0x10f);_0xaf8cbe[_0x28dae1(0x167)]((_0x43452a,_0xea6326)=>{const _0x80b9e9=_0x28dae1;document['getElementById'](_0x43452a['id'])[_0x80b9e9(0x135)][_0x80b9e9(0x12f)]=_0xea6326+0x1===_0x442629?_0x58ef73:_0x43452a[_0x80b9e9(0x117)];});}}catch(_0xaea0f2){console[_0x28dae1(0x162)](_0x28dae1(0x101),_0xaea0f2);}}function formatDateTime(_0x238097){const _0x5cfaa0=a0_0x5a37ec,_0x224074=new Date(_0x238097),_0x5cd3fa=String(_0x224074[_0x5cfaa0(0xe3)]())['padStart'](0x2,'0'),_0x4093c0=String(_0x224074[_0x5cfaa0(0x145)]())[_0x5cfaa0(0x106)](0x2,'0'),_0x1d21c0=_0x224074[_0x5cfaa0(0xe6)](),_0x5b2c6a=_0x224074[_0x5cfaa0(0xf0)]()+0x1;return _0x5cd3fa+':'+_0x4093c0+'\x20'+_0x1d21c0+'.'+_0x5b2c6a;}async function fileToBase64(_0x3f5edb){const _0x7bb0ef=a0_0x5a37ec,_0x3aff65=new Blob([_0x3f5edb],{'type':_0x7bb0ef(0x112)}),_0x598e31=await new Promise((_0x153ce2,_0x51a9ab)=>{const _0x2ac75d=_0x7bb0ef,_0x4c36ea=new FileReader();_0x4c36ea[_0x2ac75d(0x144)]=()=>{const _0xec1df2=_0x2ac75d;_0x153ce2(_0x4c36ea[_0xec1df2(0x159)]);},_0x4c36ea[_0x2ac75d(0x13c)]=_0x51a9ab,_0x4c36ea[_0x2ac75d(0x119)](_0x3aff65);});return _0x598e31;}async function lockNoti(_0x58522a,_0x3dc241,_0xc39318){const _0x128981=a0_0x5a37ec,_0xc0425c=document[_0x128981(0x121)]('lockNoti'),_0x1e55ff=document[_0x128981(0x121)]('notiTitle'),_0x1b0ced=document['getElementById']('notiDetail');lockNotiTime&&clearTimeout(lockNotiTime),_0x1e55ff[_0x128981(0x147)]=_0x58522a,_0x1b0ced[_0x128981(0x147)]=_0x3dc241,_0xc0425c[_0x128981(0x113)][_0x128981(0x108)](_0x128981(0xdb)),lockNotiTime=setTimeout(()=>{const _0x27f237=_0x128981;_0xc0425c[_0x27f237(0x113)]['add'](_0x27f237(0xdb));},_0xc39318);}function logMessage(_0x2b5f07,_0x510ccf){const _0x30426e=a0_0x5a37ec;if(errorLogElements[_0x30426e(0x123)]>0x0){const _0x45aa4b=errorLogElements[0x0],_0x36ec20=document[_0x30426e(0x150)]('div');_0x36ec20[_0x30426e(0x10a)]='['+_0x2b5f07+']\x20'+_0x510ccf+'\x0a---\x0a',_0x45aa4b['appendChild'](_0x36ec20),_0x45aa4b[_0x30426e(0xf6)]=_0x45aa4b[_0x30426e(0x15c)],setTimeout(()=>{const _0x1f1957=_0x30426e;_0x36ec20&&_0x36ec20[_0x1f1957(0x166)]&&_0x36ec20[_0x1f1957(0x166)][_0x1f1957(0xfe)](_0x36ec20);},0xea60);}}function setupStyle(){const _0x44136b=a0_0x5a37ec,_0x2ab79e=window[_0x44136b(0x11d)];clientWidth=document[_0x44136b(0x155)][_0x44136b(0x16d)],gameName['slice'](-0x3)===_0x44136b(0xe9)?(gameWidth=0xa0,gameHeight=0x90,gameStride=0x100,upscaleShader=0x3,integerScaling=Math['floor'](clientWidth*_0x2ab79e/gameWidth),localStorage[_0x44136b(0x143)](_0x44136b(0x107),_0x44136b(0xf8)+gameWidth*(integerScaling/_0x2ab79e)+','+gameHeight*(integerScaling/_0x2ab79e)),console[_0x44136b(0x15e)](localStorage[_0x44136b(0x169)](_0x44136b(0x107)))):(gameWidth=0xf0,gameHeight=0xa0,gameStride=0xf0,upscaleShader=0x3,integerScaling=Math['floor'](clientWidth*_0x2ab79e/gameWidth),localStorage[_0x44136b(0x143)](_0x44136b(0x107),_0x44136b(0xf8)+gameWidth*(integerScaling/_0x2ab79e)+','+gameHeight*(integerScaling/_0x2ab79e)),console[_0x44136b(0x15e)](localStorage[_0x44136b(0x169)](_0x44136b(0x107)))),integerScaling=Math[_0x44136b(0x10d)](clientWidth*_0x2ab79e/gameWidth),bufferCanvas[_0x44136b(0x135)][_0x44136b(0x15f)]=_0x44136b(0x163),bufferCanvas['style']['imageRendering']='pixelated',bufferCanvas[_0x44136b(0x135)][_0x44136b(0x111)]=_0x44136b(0x129),canvasContainer[_0x44136b(0x135)][_0x44136b(0x12c)]=gameWidth*(integerScaling/_0x2ab79e)+'px',canvasContainer['style'][_0x44136b(0x138)]=gameHeight*(integerScaling/_0x2ab79e)+'px',textured[_0x44136b(0x135)][_0x44136b(0x12c)]=gameWidth*(integerScaling/_0x2ab79e)+'px',textured[_0x44136b(0x135)][_0x44136b(0x138)]=gameHeight*(integerScaling/_0x2ab79e)+'px',imgShader[_0x44136b(0x135)][_0x44136b(0xdd)]=_0x44136b(0x136)+integerScaling/_0x2ab79e/upscaleShader+')',settingContainer['forEach'](function(_0x52358b){const _0x17b3ad=_0x44136b;_0x52358b[_0x17b3ad(0x135)]['width']=gameWidth*(integerScaling/_0x2ab79e)+'px',_0x52358b['style']['height']=gameHeight*(integerScaling/_0x2ab79e)+'px';}),messageContainer[_0x44136b(0x167)](function(_0x22e985){const _0x4840de=_0x44136b;_0x22e985[_0x4840de(0x135)][_0x4840de(0x12c)]=gameWidth+'px',_0x22e985[_0x4840de(0x135)]['height']=gameHeight+'px',_0x22e985[_0x4840de(0x135)]['zoom']=''+integerScaling/_0x2ab79e;}),stateTitle['forEach'](function(_0x40af25){const _0x16461f=_0x44136b;_0x40af25[_0x16461f(0x113)][_0x16461f(0x108)](_0x16461f(0xef));}),imgShader[_0x44136b(0x135)]['width']=gameWidth*upscaleShader+'px',imgShader[_0x44136b(0x135)][_0x44136b(0x138)]=gameHeight*upscaleShader+'px',imgShader[_0x44136b(0x135)]['transformOrigin']=_0x44136b(0x163),imgShader[_0x44136b(0x135)][_0x44136b(0x161)](_0x44136b(0x137),upscaleShader+_0x44136b(0x13b)+upscaleShader+'px');}window['onerror']=function(_0x18fb3a,_0x38dd4c,_0x154e30){const _0x3c2160=a0_0x5a37ec,_0x5db58b=_0x38dd4c?_0x38dd4c[_0x3c2160(0x118)]('/')[_0x3c2160(0x10e)]():_0x3c2160(0x146),_0x27aa62=_0x18fb3a[_0x3c2160(0x164)](/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i,''),_0x3dc9cf=_0x3c2160(0x131)+_0x154e30+_0x3c2160(0x122)+_0x5db58b+_0x3c2160(0x158)+_0x27aa62+'.';return logMessage('Error',_0x3dc9cf),![];};const originalConsoleError=console[a0_0x5a37ec(0x162)];function a0_0x207b(_0x4235f5,_0x283d55){const _0x3ec52c=a0_0x3ec5();return a0_0x207b=function(_0x207b00,_0x31204e){_0x207b00=_0x207b00-0xd9;let _0x153ef5=_0x3ec52c[_0x207b00];return _0x153ef5;},a0_0x207b(_0x4235f5,_0x283d55);}console['error']=function(..._0x192728){const _0x3efeb4=a0_0x5a37ec;originalConsoleError[_0x3efeb4(0x114)](console,_0x192728),logMessage('Err',_0x192728[_0x3efeb4(0xeb)]('\x20'));};const originalConsoleWarn=console[a0_0x5a37ec(0xee)];console[a0_0x5a37ec(0xee)]=function(..._0x485946){const _0x4a536e=a0_0x5a37ec;originalConsoleWarn[_0x4a536e(0x114)](console,_0x485946),logMessage(_0x4a536e(0xe7),_0x485946[_0x4a536e(0xeb)]('\x20'));},document['addEventListener'](a0_0x5a37ec(0x10b),function(){const _0x3313ca=a0_0x5a37ec;savedStateAdj!==null&&(stateAdj=parseInt(savedStateAdj),positionAdjustment(stateAdj)),[_0x3313ca(0xf7),_0x3313ca(0xe2)][_0x3313ca(0x167)](_0x512c93=>{const _0x490e34=_0x3313ca;romInput['addEventListener'](_0x490e34(0x15a),()=>{const _0xec5dc8=_0x490e34;fileInput[_0xec5dc8(0xe5)][_0xec5dc8(0x123)]>0x0&&(gameName=fileInput['files'][0x0][_0xec5dc8(0xda)],console['log'](gameName),localStorage[_0xec5dc8(0x143)]('lastGameName',gameName));}),romList[_0x490e34(0x102)](_0x512c93,_0x359341=>{const _0x466945=_0x490e34,_0x4ea321=_0x359341[_0x466945(0x13d)];_0x4ea321[_0x466945(0x113)][_0x466945(0x14a)]('game-item')&&(gameName=_0x4ea321['textContent'],console['log'](gameName),localStorage[_0x466945(0x143)](_0x466945(0x153),gameName));});});});function a0_0x3ec5(){const _0x123013=['ontouchstart','setAttribute','inputText','#resizable-draggable','createElement','.stateTitle,\x20.stateDate','stateDiv00','lastGameName','in-game','documentElement','getAttribute','add','\x20|\x20','result','change','canvas','scrollHeight','querySelectorAll','log','transformOrigin','map','setProperty','error','top\x20center','replace','touched-2','parentNode','forEach','canvas-container','getItem','rgba(245,\x20232,\x20209,\x200.14)','rewind','stateDiv03','clientWidth','stateDiv04','openLocalStorage','16078510eDBsCo','name','visible','stateDiv07','transform','.message-container','led02','getElementsByClassName','paddingTop','click','getHours','7124790WTQhST','files','getDate','Warn','event.stopPropagation()','gbc','restrictSize','join','led03','textured','warn','fefs','getMonth','rect','28deDhUY','opacity','35592xlubFH','touched-1','scrollTop','touchend','0,0,','offsetWidth','.setting-container','toFixed','areaTrans','rectOpacity','removeChild','rect1','4143480DqJgeK','Error\x20Led:','addEventListener','errorLog','touchstart','resizable-draggable','padStart','screenSize','remove','stateAdj','innerText','DOMContentLoaded','stateDiv05','floor','pop','#20A5A6','saveStateButton','imageRendering','image/png','classList','apply','stateDiv06','10699TubiBZ','color','split','readAsDataURL','upLoadFile','#2F2F2F','touched','devicePixelRatio','left','0px','modifiers','getElementById',']\x20../','length','GOpacity','data-x','dynamic','60px','1085445OUxQwp','crisp-edges','_setArea','preventDefault','width','120px','data-y','fill','1650480vnxEhs','[Err]\x20[','translate(','restrictEdges','fileInput','style','scale(','--bg-size','height','create','loadStateButton','px\x20','onerror','target','setAdjustment','px)','rect2','707inWYJW','img-shader','setItem','onloadend','getMinutes','unknown\x20source','textContent','backToHome','4UXBpfd','contains','deltaRect'];a0_0x3ec5=function(){return _0x123013;};return a0_0x3ec5();}
+/* --------------- Declaration --------------- */
+appVer.textContent = gameVer
+let gameName;
+var messageTimeout;
+let stateAdj = 1;
+var lockNotiTime;
+let clientWidth;
+let upscaleShader = 3;
+let integerScaling
+let systemType;
+let gameWidth;
+let gameHeight;
+const bufferCanvas = document.getElementById("canvas");
+let opacity = parseFloat(localStorage.getItem("opacity")) || 0.1;
+const errorLogElements = document.getElementsByClassName('errorLog');
+const ingame = document.getElementById("in-game");
+const input = document.getElementById("inputText");
+const romList = document.getElementById("rom-list");
+const romInput = document.getElementById("fileInput");
+const setAdjustment = document.getElementById("setAdjustment");
+const savedStateAdj = localStorage.getItem("stateAdj");
+const rewind = document.getElementById("rewind")
+const ids = ['inputText', 'stateDiv00', 'stateDiv01', 'stateDiv02', 'stateDiv03', 'stateDiv04', 'stateDiv05', 'stateDiv06', 'stateDiv07', ];
+const touchedID = ['saveStateButton', 'loadStateButton', 'openLocalStorage', 'upLoadFile', 'backToHome', 'rewind'];
+const canvasContainer = document.getElementById("canvas-container")
+const imgShader = document.getElementById("img-shader")
+const settingContainer = document.querySelectorAll(".setting-container")
+const messageContainer = document.querySelectorAll(".message-container")
+const stateTitle = document.querySelectorAll(".stateTitle, .stateDate")
+const textured = document.getElementById("textured")
+/* --------------- Function ------------------ */
+// Joy Stick
+var dynamicZone = document.getElementById("dynamic");
+var nippleOptions = {
+    zone: dynamicZone,
+    color: "#2F2F2F",
+    size: 120
+};
+var dynamic = nipplejs.create(nippleOptions);
+// Position Adjustment
+function positionAdjustment(stateAdj) {
+    const states = [{
+            paddingTop: "0px",
+            rectOpacity: [1, 1, 1],
+            GOpacity: [0, 0, 0, 1]
+        },
+        {
+            paddingTop: "60px",
+            rectOpacity: [0.4, 1, 1],
+            GOpacity: [0, 0, 1, 0]
+        },
+        {
+            paddingTop: "120px",
+            rectOpacity: [0.4, 0.4, 1],
+            GOpacity: [0, 1, 0, 0]
+        },
+        {
+            paddingTop: "180px",
+            rectOpacity: [0.4, 0.4, 0.4],
+            GOpacity: [1, 0, 0, 0]
+        }
+    ];
+    if (stateAdj >= 1 && stateAdj <= 4) {
+        const state = states[stateAdj - 1];
+        document.querySelectorAll(".target-boxes").forEach(function(element, index) {
+            element.style.setProperty("padding-top", state.paddingTop);
+        });
+        document.getElementById("rect1").style.setProperty("opacity", state.rectOpacity[0]);
+        document.getElementById("rect2").style.setProperty("opacity", state.rectOpacity[1]);
+        document.getElementById("rect3").style.setProperty("opacity", state.rectOpacity[2]);
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`G${i}`).style.setProperty("opacity", state.GOpacity[i]);
+        }
+    }
+}
+// Disable Touched
+ingame.ontouchstart = (e) => {
+    e.preventDefault();
+}
+// Button Change Adjustment
+setAdjustment.addEventListener("click", function() {
+    stateAdj = (stateAdj % 4) + 1;
+    positionAdjustment(stateAdj);
+    localStorage.setItem("stateAdj", stateAdj);
+})
+// Enable Some Button stopPropagation
+ids.forEach(function(id) {
+    var element = document.getElementById(id);
+    if (element) {
+        element.setAttribute("ontouchstart", "event.stopPropagation()");
+    }
+})
+// Hover Style Enable
+touchedID.forEach(function(id) {
+    const button = document.getElementById(id);
+    if (button) {
+        if (id === 'saveStateButton' || id === 'loadStateButton') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-1");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-1");
+            });
+        } else if (id === 'rewind') {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched-2");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched-2");
+            });
+        } else {
+            button.addEventListener("touchstart", function() {
+                button.classList.add("touched");
+            });
+            button.addEventListener("touchend", function() {
+                button.classList.remove("touched");
+            });
+        }
+    }
+});
+// Resize Area Translate
+interact('#resizable-draggable')
+    .resizable({
+        edges: {
+            top: true,
+            left: true,
+            right: true,
+            bottom: true
+        },
+        modifiers: [
+            interact.modifiers.restrictEdges({
+                outer: 'parent'
+            }),
+            interact.modifiers.restrictSize({
+                min: {
+                    width: 50,
+                    height: 20
+                }
+            })
+        ],
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.deltaRect.left;
+                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
+                target.style.width = event.rect.width + 'px';
+                target.style.height = event.rect.height + 'px';
+                target.style.transform = `translate(${x}px, ${y}px)`;
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+                localStorage.setItem(`${gameName}_setArea`, `${x.toFixed(0)},${y.toFixed(0)},${event.rect.width.toFixed(0)},${event.rect.height.toFixed(0)}`);
+                console.log(localStorage.getItem(`${gameName}_setArea`));
+            }
+        }
+    });
+// Restore Area Translate
+function restoreArea() {
+    const savedState = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize")
+    if (savedState) {
+        const [x, y, width, height] = savedState.split(',').map(Number);
+        const target = document.getElementById('resizable-draggable');
+        areaTrans = document.getElementById("areaTrans");
+        if (areaTrans.offsetWidth < width) {
+            target.style.width = areaTrans.offsetWidth + 'px';
+        } else {
+            target.style.width = width + 'px';
+        }
+        if (areaTrans.offsetHeight < height) {
+            target.style.height = areaTrans.offsetHeight + 'px';
+        } else {
+            target.style.height = height + 'px';
+        }
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
+}
+// Delay Time
+async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+// Led
+async function led(slotStateNumbers) {
+    try {
+        const ledInfo = [
+            { id: "led01", color: "rgba(245, 232, 209, 0.14)" },
+            { id: "led02", color: "rgba(245, 232, 209, 0.14)" },
+            { id: "led03", color: "rgba(245, 232, 209, 0.14)" },
+        ];
+
+        if (slotStateNumbers >= 1 && slotStateNumbers <= ledInfo.length) {
+            const activeColor = "#20A5A6";
+            ledInfo.forEach((led, index) => {
+                document.getElementById(led.id).style.fill = (index + 1 === slotStateNumbers) ? activeColor : led.color;
+            });
+        }
+    } catch (error) {
+        console.error("Error Led:", error);
+    }
+}
+// Format Date Time
+function formatDateTime(milliseconds) {
+    const date = new Date(milliseconds);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    return `${hours}:${minutes} ${day}.${month}`;
+}
+// File to 64base 
+async function fileToBase64(data) {
+    const blob = new Blob([data], { type: 'image/png' });
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+    return base64;
+}
+// Lock Notification
+ async function lockNoti(title, detail, second) {
+    const lockNoti = document.getElementById("lockNoti");
+    const notiTitle = document.getElementById("notiTitle");
+    const notiDetail = document.getElementById("notiDetail");
+    if (lockNotiTime) {
+        clearTimeout(lockNotiTime);
+    }
+    notiTitle.textContent = title;
+    notiDetail.textContent = detail;
+    lockNoti.classList.remove("visible");
+    lockNotiTime = setTimeout(() => {
+        lockNoti.classList.add("visible");
+    }, second);
+}
+// log Message
+function logMessage(type, message) {
+    if (errorLogElements.length > 0) {
+        const errorLogElement = errorLogElements[0];
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `[${type}] ${message}\n---\n`;
+        errorLogElement.appendChild(messageElement);
+        errorLogElement.scrollTop = errorLogElement.scrollHeight;
+        setTimeout(() => {
+            if (messageElement && messageElement.parentNode) {
+                messageElement.parentNode.removeChild(messageElement);
+            }
+        }, 60000);
+    }
+}
+function setupStyle() {
+    const dpr = window.devicePixelRatio;
+    clientWidth = document.documentElement.clientWidth;
+    if (gameName.slice(-3) === "gbc") {
+        gameWidth = 160;
+        gameHeight = 144;
+        gameStride = 256;
+        upscaleShader = 3;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${ gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
+        console.log(localStorage.getItem("screenSize"));
+    } else {
+        gameWidth = 240;
+        gameHeight = 160;
+        gameStride = 240;
+        upscaleShader = 3;
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        localStorage.setItem("screenSize", `0,0,${gameWidth*(integerScaling/dpr)},${gameHeight*(integerScaling/dpr)}`)
+        console.log(localStorage.getItem("screenSize"));
+    }
+        integerScaling = (Math.floor((clientWidth * dpr) / gameWidth));
+        bufferCanvas.style.transformOrigin = "top center";
+        bufferCanvas.style.imageRendering = "pixelated";
+        bufferCanvas.style.imageRendering = "crisp-edges";
+        canvasContainer.style.width = `${gameWidth * (integerScaling / dpr)}px`;
+        canvasContainer.style.height = `${gameHeight * (integerScaling / dpr)}px`;
+        textured.style.width = `${gameWidth * (integerScaling / dpr)}px`;
+        textured.style.height = `${gameHeight * (integerScaling / dpr)}px`;
+        imgShader.style.transform = `scale(${integerScaling / dpr/  upscaleShader})`;
+        settingContainer.forEach(function(element) {
+            element.style.width = `${gameWidth * (integerScaling / dpr)}px`;
+            element.style.height = `${gameHeight * (integerScaling / dpr)}px`;
+        });
+        messageContainer.forEach(function(element) {
+            element.style.width = `${gameWidth}px`;
+            element.style.height = `${gameHeight}px`;
+            element.style.zoom = `${integerScaling / dpr}`;
+        });
+        stateTitle.forEach(function(element) {
+            element.classList.remove("fefs")
+        });
+    imgShader.style.width = `${gameWidth * upscaleShader}px`;
+    imgShader.style.height = `${gameHeight * upscaleShader}px`;
+    imgShader.style.transformOrigin = "top center";
+    imgShader.style.setProperty('--bg-size', `${upscaleShader}px ${upscaleShader}px`);
+}
+window.onerror = function (message, source, lineno) {
+    const fileName = source ? source.split('/').pop() : 'unknown source';
+    const cleanMessage = message.replace(/^(Uncaught\s(?:ReferenceError|Error|TypeError|SyntaxError|RangeError):?\s*)/i, '');
+    const errorMessage = `[Err] [${lineno}] ../${fileName} | ${cleanMessage}.`;
+    logMessage("Error", errorMessage);
+    return false;
+};
+const originalConsoleError = console.error;
+console.error = function (...args) {
+    originalConsoleError.apply(console, args);
+    logMessage("Err", args.join(" "));
+};
+const originalConsoleWarn = console.warn;
+console.warn = function (...args) {
+    originalConsoleWarn.apply(console, args);
+    logMessage("Warn", args.join(" "));
+};
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    if (savedStateAdj !== null) {
+        stateAdj = parseInt(savedStateAdj);
+        positionAdjustment(stateAdj);
+    }
+    ["touchend","click"].forEach(eventType => {
+        romInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                gameName = fileInput.files[0].name;
+                console.log(gameName);
+                localStorage.setItem("lastGameName",gameName)
+            }
+        })
+        romList.addEventListener(eventType, (event) => {
+            const clickedElement = event.target;
+            if (clickedElement.classList.contains("game-item")) {
+            gameName = clickedElement.textContent;
+            console.log(gameName);
+            localStorage.setItem("lastGameName",gameName)
+        }
+        })
+    });
+})

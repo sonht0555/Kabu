@@ -1,1 +1,429 @@
-const a0_0x2f7159=a0_0x2c56;(function(_0x213230,_0x15a63e){const _0x2ffade=a0_0x2c56,_0x3a9c9d=_0x213230();while(!![]){try{const _0x56e77b=-parseInt(_0x2ffade(0x124))/0x1+parseInt(_0x2ffade(0x113))/0x2+parseInt(_0x2ffade(0xfa))/0x3+parseInt(_0x2ffade(0x139))/0x4*(parseInt(_0x2ffade(0x174))/0x5)+-parseInt(_0x2ffade(0x127))/0x6*(-parseInt(_0x2ffade(0x140))/0x7)+-parseInt(_0x2ffade(0xfb))/0x8+-parseInt(_0x2ffade(0x138))/0x9;if(_0x56e77b===_0x15a63e)break;else _0x3a9c9d['push'](_0x3a9c9d['shift']());}catch(_0x30fc87){_0x3a9c9d['push'](_0x3a9c9d['shift']());}}}(a0_0xba3a,0x6cfbf));import a0_0x3d55f3 from'../core/2.1.1/mgba.js';import a0_0x3820c1 from'../core/2.1.2/mgba.js';import*as a0_0x2d404f from'./gamepad.js';import{localStorageFile}from'./storage.js';import{dpUploadFile}from'./cloud.js';import{shaderData}from'./setting.js';import{wrapContent}from'./state.js';const versions={'2.1.1':a0_0x3d55f3,'2.1.2':a0_0x3820c1};let currentVersion=localStorage[a0_0x2f7159(0x172)](a0_0x2f7159(0x173))||'2.1.1',mGBA=versions[currentVersion];document[a0_0x2f7159(0x14e)]('GBAver')[a0_0x2f7159(0x151)]=a0_0x2f7159(0x159)+currentVersion,document['getElementById'](a0_0x2f7159(0x173))[a0_0x2f7159(0x16e)]('click',()=>{const _0x45b006=a0_0x2f7159,_0x480dfa=Object[_0x45b006(0x14a)](versions);let _0x16e15e=_0x480dfa[_0x45b006(0x108)](currentVersion);currentVersion=_0x480dfa[(_0x16e15e+0x1)%_0x480dfa[_0x45b006(0x132)]],localStorage[_0x45b006(0x16c)]('GBAver',currentVersion),document[_0x45b006(0x14e)](_0x45b006(0x173))['textContent']=_0x45b006(0x159)+currentVersion,setTimeout(()=>{const _0x59faf=_0x45b006;window[_0x59faf(0x143)]['reload']();},0x3e8);});const Module={'canvas':document['getElementById'](a0_0x2f7159(0x15d))};function initializeCore(_0x2ef9f8,_0x3bcc45){const _0x41063c=a0_0x2f7159;_0x2ef9f8(_0x3bcc45)[_0x41063c(0x11d)](function(_0x53bb69){const _0x5869ca=_0x41063c;_0x53bb69[_0x5869ca(0xfd)]();});}initializeCore(mGBA,Module);let countAutoSave=0x0,countUpload=0x0;const canvas=document['getElementById']('canvas'),loadingIcon=document[a0_0x2f7159(0x14e)](a0_0x2f7159(0x16f));let canSave=!![],visible=!![];function handleVisibilityChange(_0x3d57a8){const _0x2b3b4b=a0_0x2f7159;if(document['visibilityState']===_0x2b3b4b(0x12c)||_0x3d57a8?.[_0x2b3b4b(0x13f)]===_0x2b3b4b(0x150)||_0x3d57a8?.[_0x2b3b4b(0x136)])FSSync(),canvas[_0x2b3b4b(0x11f)]['add'](_0x2b3b4b(0x13d)),pauseGame();else{if(!visible)return;visible=![];try{setTimeout(()=>{const _0x44b704=_0x2b3b4b;canvas['classList'][_0x44b704(0xfc)](_0x44b704(0x13d));},0x12c);}catch(_0x109cb1){console[_0x2b3b4b(0x12a)](_0x2b3b4b(0x11a),_0x109cb1);}finally{setTimeout(()=>{visible=!![];},0x190);}resumeGame();}}async function statusShow(){const _0x24d909=a0_0x2f7159;document[_0x24d909(0x16e)](_0x24d909(0x169),handleVisibilityChange),document[_0x24d909(0x16e)]('visibilitychange',handleVisibilityChange),window[_0x24d909(0x16e)](_0x24d909(0x150),handleVisibilityChange),setupStyle(),setTimeout(()=>{const _0x5e95e2=_0x24d909;canvas[_0x5e95e2(0x11f)][_0x5e95e2(0xfc)](_0x5e95e2(0x13d)),restoreArea();},0x12c),notiMessage(_0x24d909(0x159)+currentVersion,0x7d0),shaderData(),startTimer(),await a0_0x2d404f[_0x24d909(0x176)](parseInt(await getData(gameName,'1',_0x24d909(0x142)))),await delay(0xc8),await Module['SDL2'](),await delay(0x320),await led(parseInt(await getData(gameName,'1',_0x24d909(0x146)))),await wrapContent();}async function saveStatePeriodically(){const _0x5509a6=a0_0x2f7159;await ledSave('#20A5A6'),await Module[_0x5509a6(0x111)](0x1),await screenShot(0x1),await FSSync(),console[_0x5509a6(0x137)](_0x5509a6(0x177)+ ++countAutoSave+_0x5509a6(0x102));}async function saveStateInCloud(){const _0x4ab3a7=a0_0x2f7159,_0x1e3b7a=gameName[_0x4ab3a7(0x15e)](/\.(zip|gb|gbc|gba)$/,_0x4ab3a7(0x141)),_0x187ae3=localStorage[_0x4ab3a7(0x172)](_0x4ab3a7(0x147));navigator[_0x4ab3a7(0x14f)]&&(_0x187ae3&&(await ledSave(_0x4ab3a7(0x15b)),await delay(0x3e8),await dpUploadFile(_0x1e3b7a,Module[_0x4ab3a7(0x158)](_0x4ab3a7(0x12e)+_0x1e3b7a),_0x4ab3a7(0x15c)),await lockNoti('','Cloud\x20upload\x20'+ ++countUpload+_0x4ab3a7(0x102),0x7d0)));}function startTimer(){let [_0x21f353,_0x58279b,_0x44b557,_0x2c178a,_0x56527a]=[0x0,0x0,0x0,0x0,0x0];setInterval(()=>{const _0x4d5d22=a0_0x2c56;_0x44b557++,_0x2c178a++,_0x56527a++;if(_0x44b557===0x3c)[_0x44b557,_0x58279b]=[0x0,_0x58279b+0x1];if(_0x58279b===0x3c)[_0x58279b,_0x21f353]=[0x0,_0x21f353+0x1];document['getElementById']('timer')['textContent']=_0x21f353+'h'+_0x58279b[_0x4d5d22(0x13c)]()[_0x4d5d22(0xfe)](0x2,'0')+'.'+_0x44b557[_0x4d5d22(0x13c)]()[_0x4d5d22(0xfe)](0x2,'0');_0x2c178a===0x3c&&(saveStatePeriodically(),_0x2c178a=0x0);;_0x56527a===0x708&&(saveStateInCloud(),_0x56527a=0x0);;},0x3e8);}export async function uploadGame(_0x52f8d7){const _0x58d14a=a0_0x2f7159,_0x4feced=_0x52f8d7[_0x58d14a(0x134)][0x0];Module['uploadRom'](_0x4feced,()=>{FSSync();});}export async function loadGame(_0x40a2ea){const _0x570f3a=a0_0x2f7159,_0x53a458=_0x40a2ea['replace'](/\.(gba|gbc|gb|zip)$/,'.ss1'),_0x6a460f=Module[_0x570f3a(0x16a)](_0x570f3a(0x128))['filter'](_0x56b1a9=>_0x56b1a9!=='.'&&_0x56b1a9!=='..');intro[_0x570f3a(0x11f)]['add'](_0x570f3a(0x118)),errorLogElements[0x0][_0x570f3a(0x133)]['bottom']='0',ingame[_0x570f3a(0x11f)][_0x570f3a(0xfc)](_0x570f3a(0x118));_0x6a460f['includes'](_0x53a458)?(await Module[_0x570f3a(0x110)]('/data/games/'+_0x40a2ea),confirm(_0x570f3a(0x160))&&(await delay(0x64),await Module[_0x570f3a(0x10a)](0x1))):await Module[_0x570f3a(0x110)](_0x570f3a(0x131)+_0x40a2ea);if(_0x40a2ea['endsWith']('.gbc')||_0x40a2ea[_0x570f3a(0x14d)]('.gb'))document[_0x570f3a(0xff)]('.stateImg')[_0x570f3a(0x170)](function(_0x571f62){const _0x108193=_0x570f3a;_0x571f62[_0x108193(0x11f)][_0x108193(0x114)](_0x108193(0x11c)),console[_0x108193(0x137)](_0x108193(0x10c));});else(_0x40a2ea[_0x570f3a(0x14d)](_0x570f3a(0x149))||_0x40a2ea[_0x570f3a(0x14d)](_0x570f3a(0x14b)))&&(document['getElementById'](_0x570f3a(0x144))['style'][_0x570f3a(0x13b)]=_0x570f3a(0x120),document['getElementById']('state-container')[_0x570f3a(0x133)]['gap']=_0x570f3a(0x130),document[_0x570f3a(0xff)](_0x570f3a(0x154))[_0x570f3a(0x170)](function(_0x2e6ff1){const _0x4ea812=_0x570f3a;_0x2e6ff1[_0x4ea812(0x133)][_0x4ea812(0x11b)]='4px\x205px\x202px\x205px';}));await statusShow();}export async function saveState(_0x20ea50){const _0xe6783b=a0_0x2f7159;if(!canSave)return;canSave=![];try{await Module[_0xe6783b(0x111)](_0x20ea50),await loadding();}catch(_0x586aef){console[_0xe6783b(0x12a)](_0xe6783b(0x11a),_0x586aef);}finally{setTimeout(()=>{canSave=!![];},0x7d0);}}export async function loadState(_0x31b6c2){const _0x14f4b9=a0_0x2f7159;await Module[_0x14f4b9(0x10a)](_0x31b6c2);}function a0_0xba3a(){const _0xa54f77=['\x20:\x20','substring','disable','now','Sync\x20error:','padding','gbcs','then','createObjectURL','classList','54px','setCoreSettings','download','led02','759974ktcaOE','map','concat','9066DXkDKf','states','listRoms','error','.png','hidden','listScreenshots','/data/states/','/data/screenshots/','2px','/data/games/','length','style','files','charCodeAt','persisted','log','2112489YvPkpe','423044SGaZTT','FSSync','paddingRight','toString','visible','trim','type','1673iKbXff','.ss1','turboState','location','state-container','application/octet-stream','slotStateSaved','uId','opacity','.gba','keys','.zip','buttonPress','endsWith','getElementById','onLine','beforeunload','textContent','createElement','\x20|\x20','.stateInfo','toggleRewind','pauseGame','resumeGame','downloadFile','Wasm_©','autoLoadCheats','#E0C068','state','canvas','replace','uploadAll','Do\x20you\x20want\x20to\x20load\x20save\x20state?','inputText','saveTime','fill','[_]\x20Paused!','led0','rgba(245,\x20232,\x20209,\x200.14)','join','href','pagehide','listFiles','SDL2','setItem','listSaves','addEventListener','loading-icon','forEach','Error\x20ledSave:','getItem','GBAver','15iVKcWo','getPixelData','turboF','Auto\x20save\x20','filter','1631916oQeyml','4455808iaDxCt','remove','FSInit','padStart','querySelectorAll','noti-mess','click','\x20time(s)','0.4','fileSize','tEXtComment\x00','encode','[_]\x20Resumed!','indexOf','function','loadState','led03','element.style.aspectRatio','body','appendChild','split','loadGame','saveState','led01','1551372LEGfen','add','screenshot'];a0_0xba3a=function(){return _0xa54f77;};return a0_0xba3a();}function a0_0x2c56(_0x3d8812,_0x7f5274){const _0xba3a8a=a0_0xba3a();return a0_0x2c56=function(_0x2c56a1,_0x5d6c12){_0x2c56a1=_0x2c56a1-0xf9;let _0x27eb11=_0xba3a8a[_0x2c56a1];return _0x27eb11;},a0_0x2c56(_0x3d8812,_0x7f5274);}export async function downloadFile(_0x267c29,_0x2bd37f){const _0x65890c=a0_0x2f7159,_0x766d78=Module[_0x65890c(0x158)](_0x267c29),_0x5e44b1=document[_0x65890c(0x152)]('a');document[_0x65890c(0x10d)][_0x65890c(0x10e)](_0x5e44b1),_0x5e44b1[_0x65890c(0x122)]=_0x2bd37f;const _0x5f1b52=new Blob([_0x766d78],{'type':_0x65890c(0x145)});_0x5e44b1[_0x65890c(0x168)]=URL[_0x65890c(0x11e)](_0x5f1b52),_0x5e44b1[_0x65890c(0x101)](),URL['revokeObjectURL'](_0x5f1b52),_0x5e44b1[_0x65890c(0xfc)]();}export function downloadFileInCloud(_0x158f43){const _0x2100c7=a0_0x2f7159;try{const _0x24a155=Module[_0x2100c7(0x158)](_0x158f43);return _0x24a155;}catch(_0x217d2b){return null;}}export async function uploadFileInCloud(_0x1585f8){const _0x206c68=a0_0x2f7159;Module[_0x206c68(0x15f)](_0x1585f8,async()=>{localStorageFile(),await FSSync();});}export async function uploadFile(_0x4c2156){const _0x1cb27c=a0_0x2f7159,_0x32752b=_0x4c2156[_0x1cb27c(0x134)][0x0];Module['uploadAll'](_0x32752b,async()=>{localStorageFile(),await FSSync();});}export async function editFile(_0x3ece3e,_0x38d298,_0x3e8e0a){await Module['editFileName'](_0x3ece3e,_0x38d298,_0x3e8e0a);}export async function deleteFile(_0x51549d){const _0xceaa98=a0_0x2f7159;try{return await Module['deleteFile'](_0x51549d),!![];}catch(_0x313f31){return console[_0xceaa98(0x12a)](_0x51549d),null;}}export function listFiles(_0x44629e){const _0x10588b=a0_0x2f7159,_0x4d130f=Module[_0x10588b(0x16a)](_0x44629e)['filter'](_0x5dbd51=>_0x5dbd51!=='.'&&_0x5dbd51!=='..');return _0x4d130f;}export function getPixelData(){const _0x3296bd=a0_0x2f7159,_0x3d1a3d=Module[_0x3296bd(0x175)]();return _0x3d1a3d;}export function listGame(){const _0x4fa11a=a0_0x2f7159,_0x70edfb=Module[_0x4fa11a(0x129)]()[_0x4fa11a(0xf9)](_0xfb3ae5=>_0xfb3ae5!=='.'&&_0xfb3ae5!=='..');return _0x70edfb;}export function listSave(){const _0x4fadb2=a0_0x2f7159,_0x187c93=Module[_0x4fadb2(0x16d)]()[_0x4fadb2(0xf9)](_0x24954c=>_0x24954c!=='.'&&_0x24954c!=='..');return _0x187c93;}export function listState(){const _0x355742=a0_0x2f7159,_0x1a5418=Module['listStates']()[_0x355742(0xf9)](_0xf3804d=>_0xf3804d!=='.'&&_0xf3804d!=='..');return _0x1a5418;}export function listCheat(){const _0x6c658f=a0_0x2f7159,_0x1ef597=Module['listCheats']()[_0x6c658f(0xf9)](_0x581f58=>_0x581f58!=='.'&&_0x581f58!=='..');return _0x1ef597;}export function listScreenshot(){const _0x140501=a0_0x2f7159,_0x3a8a4c=Module[_0x140501(0x12d)]()[_0x140501(0xf9)](_0x3d36d6=>_0x3d36d6!=='.'&&_0x3d36d6!=='..');return _0x3a8a4c;}export function fileSize(_0x5897d3){const _0xac3048=a0_0x2f7159,_0x10a535=Module[_0xac3048(0x104)](_0x5897d3);return _0x10a535;}export async function resumeGame(){const _0x49e3f6=a0_0x2f7159;await Module[_0x49e3f6(0x157)](),Module['SDL2'](),notiMessage(_0x49e3f6(0x107),0x7d0);}export async function pauseGame(){const _0x370264=a0_0x2f7159;Module['pauseGame'](),Module[_0x370264(0x16b)](),notiMessage(_0x370264(0x164),0x7d0);}export async function loadding(){const _0x43e406=a0_0x2f7159;await Module[_0x43e406(0x156)](),loadingIcon[_0x43e406(0x11f)][_0x43e406(0xfc)]('visible'),await delay(0x3e8),loadingIcon[_0x43e406(0x11f)]['add'](_0x43e406(0x13d)),await delay(0xc8),await Module[_0x43e406(0x157)](),Module[_0x43e406(0x16b)]();}export async function buttonPress(_0x34f500){const _0x4f82fe=a0_0x2f7159;Module[_0x4f82fe(0x14c)](_0x34f500);}export async function buttonUnpress(_0x33f014){Module['buttonUnpress'](_0x33f014);}export async function screenShot(_0x541a0c){const _0x21f521=a0_0x2f7159,_0x105278=gameName[_0x21f521(0x15e)](/\.(gba|gbc|gb|zip)$/,'_'+_0x541a0c+'.png'),_0x50ad2a=await getData(gameName,_0x541a0c,'All')||'';console[_0x21f521(0x137)](_0x50ad2a),await Module[_0x21f521(0x115)](_0x105278),await setData(gameName,_0x541a0c,_0x21f521(0x162),formatDateTime(Date[_0x21f521(0x119)]()),_0x50ad2a);}export async function dowloadScreenShot(_0x149af8){const _0x3dc19c=a0_0x2f7159;try{const _0x23a9bc=await fileToBase64(Module[_0x3dc19c(0x158)](_0x149af8));return _0x23a9bc;}catch{}}export async function captureOCR(_0x511c76){const _0x161414=a0_0x2f7159;Module['screenshot'](_0x511c76);const _0x23766f=Module[_0x161414(0x158)](_0x161414(0x12f)+_0x511c76);return _0x23766f;}export async function setFastForwardMultiplier(_0x22befa){Module['setFastForwardMultiplier'](_0x22befa);}export async function uploadCheats(_0x3b2502){const _0x4844fd=a0_0x2f7159;Module[_0x4844fd(0x15a)](),Module[_0x4844fd(0x15f)](_0x3b2502,async()=>{});}export function setVolume(_0x4d0851){Module['setVolume'](_0x4d0851);}export async function setData(_0x3cf27e,_0x533414,_0x578497,_0x41c93a,_0x40d9dd=''){const _0x34f710=a0_0x2f7159,_0x5895cd=_0x3cf27e[_0x34f710(0x15e)](/\.(gba|gbc|gb|zip|cheats)$/,''),_0x47ab24=_0x34f710(0x12f)+_0x5895cd+'_'+_0x533414+'.png';let _0x28f0f9;try{_0x28f0f9=await fileToBase64(Module[_0x34f710(0x158)](_0x47ab24));}catch(_0x521880){await Module[_0x34f710(0x115)](_0x5895cd+'_'+_0x533414+_0x34f710(0x12b)),await delay(0xc8),_0x28f0f9=await fileToBase64(Module['downloadFile'](_0x47ab24));}let _0x300277=atob(_0x28f0f9[_0x34f710(0x10f)](',')[0x1]),_0x5d6c12=_0x34f710(0x105),_0x397e59=_0x300277[_0x34f710(0x108)](_0x5d6c12),_0x20acc1={};if(_0x397e59!==-0x1||_0x40d9dd['trim']()!==''){let _0x569c70=_0x397e59!==-0x1?_0x300277[_0x34f710(0x117)](_0x397e59+_0x5d6c12[_0x34f710(0x132)]):_0x40d9dd,_0x56e8b3=/(\w+)\s*:\s*([^|]*)/g,_0x4f1375;while((_0x4f1375=_0x56e8b3['exec'](_0x569c70))!==null){_0x20acc1[_0x4f1375[0x1]['trim']()]=_0x4f1375[0x2][_0x34f710(0x13e)]();}_0x397e59!==-0x1&&(_0x300277=_0x300277[_0x34f710(0x117)](0x0,_0x397e59));}_0x20acc1[_0x578497]=_0x41c93a;let _0x5ae570=Object['entries'](_0x20acc1)['map'](([_0x5d5d98,_0x2ff5ca])=>_0x5d5d98+_0x34f710(0x116)+_0x2ff5ca)[_0x34f710(0x167)](_0x34f710(0x153)),_0x442703=new TextEncoder()[_0x34f710(0x106)](_0x5d6c12+'\x20'+_0x5ae570),_0x12c292=new Uint8Array([..._0x300277][_0x34f710(0x125)](_0x8551d6=>_0x8551d6[_0x34f710(0x135)](0x0))[_0x34f710(0x126)]([..._0x442703])),_0x561ad7=new File([new Blob([_0x12c292],{'type':'image/png'})],_0x5895cd+'_'+_0x533414+_0x34f710(0x12b),{'type':'image/png'});Module['uploadAll'](_0x561ad7,async()=>{});}export async function getData(_0x225cad,_0x127077,_0x5291d8){const _0x918024=a0_0x2f7159;try{const _0x38b0a2=_0x225cad[_0x918024(0x15e)](/\.(gba|gbc|gb|zip|cheats)$/,''),_0x5cac54=_0x918024(0x12f)+_0x38b0a2+'_'+_0x127077+_0x918024(0x12b);let _0x629d58;try{_0x629d58=await fileToBase64(Module[_0x918024(0x158)](_0x5cac54));}catch(_0x59fee9){return null;}let _0x1e2d95=atob(_0x629d58[_0x918024(0x10f)](',')[0x1]),_0xfda61b=_0x918024(0x105),_0x4a6448=_0x1e2d95[_0x918024(0x108)](_0xfda61b);if(_0x4a6448!==-0x1){let _0x411e24=_0x1e2d95[_0x918024(0x117)](_0x4a6448+_0xfda61b[_0x918024(0x132)]);if(_0x5291d8==='All')return _0x411e24[_0x918024(0x13e)]();let _0x2ad0ce=new RegExp(_0x5291d8+'\x5cs*:\x5cs*(.*?)\x5cs*(?=\x5c||$)'),_0x57249a=_0x411e24['match'](_0x2ad0ce);if(_0x57249a)return _0x57249a[0x1][_0x918024(0x13e)]();}}catch(_0x6c7b9){return console[_0x918024(0x12a)]({'romName':_0x225cad,'slot':_0x127077,'type':_0x5291d8}),null;}}export async function ledSave(_0x5dd998){const _0xf29289=a0_0x2f7159,_0xd16777=parseInt(await getData(gameName,'1',_0xf29289(0x146))),_0x4cd257=_0xd16777===0x2?_0xf29289(0x123):_0xd16777===0x3?_0xf29289(0x10b):_0xf29289(0x112);try{for(let _0x1a2527=0x1;_0x1a2527<=0x3;_0x1a2527++){document['getElementById']('led0'+_0x1a2527)[_0xf29289(0x133)][_0xf29289(0x163)]=_0xf29289(0x166);}await delay(0x3e8);for(let _0x2c771c=0x1;_0x2c771c<=0x3;_0x2c771c++){document[_0xf29289(0x14e)](_0xf29289(0x165)+_0x2c771c)[_0xf29289(0x133)][_0xf29289(0x163)]=_0xf29289(0x166);}document[_0xf29289(0x14e)](_0x4cd257)[_0xf29289(0x133)]['fill']=_0x5dd998;}catch(_0x55845e){console[_0xf29289(0x12a)](_0xf29289(0x171),_0x55845e);}};export async function notiMessage(_0x1be986,_0x208ad7,_0x2a126c=![]){const _0x9f1327=a0_0x2f7159;var _0x12f079=document['getElementById'](_0x9f1327(0x100));document[_0x9f1327(0x14e)](_0x9f1327(0x161))[_0x9f1327(0x151)]='';const _0x2c88c8=parseInt(await getData(gameName,'1','slotStateSaved'))||0x0;_0x12f079[_0x9f1327(0x133)][_0x9f1327(0x148)]===_0x9f1327(0x103)&&(clearTimeout(messageTimeout),_0x12f079[_0x9f1327(0x133)][_0x9f1327(0x148)]='0'),_0x12f079['textContent']=_0x1be986,_0x12f079[_0x9f1327(0x133)][_0x9f1327(0x148)]=_0x9f1327(0x103),messageTimeout=setTimeout(()=>{const _0x3d4f93=_0x9f1327;_0x12f079[_0x3d4f93(0x151)]='['+_0x2c88c8+']\x20'+gameName[_0x3d4f93(0x117)](0x0,gameName['lastIndexOf']('.')),_0x12f079[_0x3d4f93(0x133)]['opacity']='0.4';},_0x208ad7),_0x2a126c&&(canvas[_0x9f1327(0x11f)][_0x9f1327(0x114)](_0x9f1327(0x13d)),setTimeout(()=>{const _0x58856d=_0x9f1327;canvas[_0x58856d(0x11f)][_0x58856d(0xfc)](_0x58856d(0x13d));},0x258));}let canSync=!![];export async function FSSync(){const _0x27b73b=a0_0x2f7159;if(!canSync)return;canSync=![];try{await Module[_0x27b73b(0x13a)]();}catch(_0x3c0b49){console[_0x27b73b(0x12a)](_0x27b73b(0x11a),_0x3c0b49);}finally{setTimeout(()=>{canSync=!![];},0xbb8);}}export const rewind=_0x67f4eb=>Module[a0_0x2f7159(0x155)]?.(_0x67f4eb)||null;export function setCoreSettings(_0x4ed6a4,_0x2c54fa){const _0x19eabd=a0_0x2f7159;if(typeof Module['setCoreSettings']===_0x19eabd(0x109))Module[_0x19eabd(0x121)](_0x4ed6a4,_0x2c54fa);else return null;}
+import mGBA_1 from "../core/2.1.1/mgba.js";
+import mGBA_2 from "../core/2.1.2/mgba.js";
+import * as gamepPad from './gamepad.js';
+import {localStorageFile} from "./storage.js";
+import {dpUploadFile} from "./cloud.js";
+import {shaderData} from "./setting.js"
+import {wrapContent} from "./state.js"
+/*/ ----------------- Switch Ver ------------- */
+const versions = { 
+    "2.1.1": mGBA_1, 
+    "2.1.2": mGBA_2, 
+};
+let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
+let mGBA = versions[currentVersion]; 
+document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+document.getElementById("GBAver").addEventListener("click", () => {
+    const versionKeys = Object.keys(versions);
+    let index = versionKeys.indexOf(currentVersion);
+    currentVersion = versionKeys[(index + 1) % versionKeys.length];
+    localStorage.setItem("GBAver", currentVersion);
+    document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
+    setTimeout(() => { window.location.reload(); }, 1000);
+});
+/*/ --------------- Initialization ----------- */
+const Module = {canvas: document.getElementById("canvas")};
+function initializeCore(coreInitFunction, module) {
+    coreInitFunction(module).then(function(module) {
+        module.FSInit();
+    });
+}
+initializeCore(mGBA, Module);
+/* --------------- Declaration --------------- */
+let countAutoSave = 0;
+let countUpload = 0;
+const canvas = document.getElementById("canvas");
+const loadingIcon = document.getElementById("loading-icon");
+let canSave = true;
+let visible = true;
+/* --------------- Function ------------------ */
+// System Tray
+function handleVisibilityChange(event) {
+    if (document.visibilityState === 'hidden' || event?.type === 'beforeunload' || event?.persisted) {
+        FSSync();
+        canvas.classList.add("visible");
+        pauseGame();
+    } else {
+        if (!visible) return;
+        visible = false;
+        try {
+            setTimeout(() => {
+                canvas.classList.remove("visible");
+            }, 300);
+        } catch (error) {
+            console.error('Sync error:', error);
+        } finally {
+            setTimeout(() => {
+                visible = true;
+            }, 400);
+        }
+        resumeGame();
+    }
+}
+// Status In-game
+async function statusShow() {
+    document.addEventListener('pagehide', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleVisibilityChange);
+    setupStyle();
+    setTimeout(() => {
+        canvas.classList.remove("visible");
+        restoreArea();
+    }, 300);
+    notiMessage(`Wasm_©${currentVersion}`, 2000);
+    shaderData();
+    startTimer();
+    await gamepPad.turboF(parseInt(await getData(gameName, "1", "turboState")));
+    await delay(200);
+    await Module.SDL2();
+    await delay(800);
+    await led(parseInt(await getData(gameName, "1", "slotStateSaved")));
+    await wrapContent();
+}
+// Auto Save Every 1m
+async function saveStatePeriodically() {
+    await ledSave("#20A5A6");
+    await Module.saveState(1);
+    await screenShot(1);
+    await FSSync();
+    console.log(`Auto save ${++countAutoSave} time(s)`);
+}
+// Auto Save In Cloud Every 1h
+async function saveStateInCloud() {
+    const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, ".ss1")
+    const uId = localStorage.getItem("uId");
+    if (navigator.onLine) {
+        if (uId) {
+            await ledSave("#E0C068");
+            await delay(1000);
+            await dpUploadFile(stateName, Module.downloadFile(`/data/states/${stateName}`),"state");
+            await lockNoti("", `Cloud upload ${++countUpload} time(s)`, 2000)
+        }
+    }
+}
+// Time In-game
+function startTimer() {
+    let [hours, minutes, seconds, count1, count2] = [0, 0, 0, 0, 0];
+    setInterval(() => {
+        seconds++;
+        count1++;
+        count2++;
+        if (seconds === 60)[seconds, minutes] = [0, minutes + 1];
+        if (minutes === 60)[minutes, hours] = [0, hours + 1];
+        document.getElementById("timer").textContent = `${hours}h${minutes.toString().padStart(2, '0')}.${seconds.toString().padStart(2, '0')}`;
+        if (count1 === 60) {saveStatePeriodically();count1 = 0};
+        if (count2 === 1800) {saveStateInCloud(); count2=0};
+    }, 1000);
+}
+/* --------------- Export Function --------------- */
+export async function uploadGame(romName) {
+    const file = romName.files[0];
+    Module.uploadRom(file, () => {
+        FSSync();
+    });
+}
+export async function loadGame(romName) {
+    const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss1");
+    const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
+    intro.classList.add("disable");
+    errorLogElements[0].style.bottom = "0";
+    ingame.classList.remove("disable");
+    // check save state in local
+    if (statesList.includes(stateName)) {
+        await Module.loadGame(`/data/games/${romName}`);
+        if (confirm("Do you want to load save state?")) {
+            await delay(100);
+            await Module.loadState(1);
+        }
+    } else {
+        await Module.loadGame(`/data/games/${romName}`);
+    }
+    // show status ingame
+        if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
+            document.querySelectorAll(".stateImg").forEach(function(element) {
+                element.classList.add("gbcs")
+                console.log("element.style.aspectRatio");
+            });
+        } else if (romName.endsWith(".gba") || romName.endsWith(".zip")) {
+            document.getElementById("state-container").style.paddingRight = `54px`;
+            document.getElementById("state-container").style.gap = `2px`;
+            document.querySelectorAll(".stateInfo").forEach(function(element) {
+                element.style.padding = `4px 5px 2px 5px`;
+            });
+        }
+    await statusShow();
+}
+export async function saveState(slot) {
+    if (!canSave) return;
+    canSave = false;
+    try {
+        await Module.saveState(slot);
+        await loadding();
+    } catch (error) {
+        console.error('Sync error:', error);
+    } finally {
+        setTimeout(() => {
+            canSave = true;
+        }, 2000);
+    }
+}
+export async function loadState(slot) {
+    await Module.loadState(slot);
+}
+export async function downloadFile(filepath, filename) {
+    const save = Module.downloadFile(filepath);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.download = filename;
+    const blob = new Blob([save], {
+        type: "application/octet-stream",
+    });
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    URL.revokeObjectURL(blob);
+    a.remove();
+}
+export function downloadFileInCloud(filepath) {
+    try {
+        const data = Module.downloadFile(filepath);
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+export async function uploadFileInCloud(filepath) {
+    Module.uploadAll(filepath, async () => {
+        localStorageFile();
+        await FSSync();
+    });
+}
+export async function uploadFile(filepath) {
+    const file = filepath.files[0];
+    Module.uploadAll(file, async () => {
+        localStorageFile();
+        await FSSync();
+    });
+}
+export async function editFile(filepath, filename, newFilename) {
+    await Module.editFileName(filepath, filename, newFilename);
+}
+export async function deleteFile(filepath) {
+    try {
+        await Module.deleteFile(filepath);
+        return true;
+    } catch (error) {
+        console.error(filepath)
+        return null;
+    }
+}
+export function listFiles(name) {
+    const result = Module.listFiles(name).filter((file) => file !== "." && file !== "..");
+    return result;
+}
+
+export function getPixelData() {
+    const result = Module.getPixelData();
+    return result;
+}
+
+export function listGame() {
+    const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
+    return result;
+}
+export function listSave() {
+    const result = Module.listSaves().filter((file) => file !== "." && file !== "..");
+    return result;
+}
+export function listState() {
+    const result = Module.listStates().filter((file) => file !== "." && file !== "..");
+    return result;
+}
+export function listCheat() {
+    const result = Module.listCheats().filter((file) => file !== "." && file !== "..");
+    return result;
+}
+export function listScreenshot() {
+    const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
+    return result;
+}
+export function fileSize(filePart) {
+    const result = Module.fileSize(filePart)
+    return result;
+}
+export async function resumeGame() {
+    await Module.resumeGame();
+    Module.SDL2();
+    notiMessage("[_] Resumed!", 2000);
+}
+export async function pauseGame() {
+    Module.pauseGame();
+    Module.SDL2();
+    notiMessage("[_] Paused!", 2000);
+}
+export async function loadding() {
+    await Module.pauseGame();
+    loadingIcon.classList.remove("visible");
+    await delay(1000);
+    loadingIcon.classList.add("visible");
+    await delay(200);
+    await Module.resumeGame();
+    Module.SDL2();
+}
+export async function buttonPress(key) {
+    Module.buttonPress(key)
+}
+export async function buttonUnpress(key) {
+    Module.buttonUnpress(key)
+}
+export async function screenShot(saveSlot) {
+    const pngName = gameName.replace(/\.(gba|gbc|gb|zip)$/, `_${saveSlot}.png`);
+    const backupText = await getData(gameName, saveSlot, "All") || "";
+    console.log(backupText);
+    await Module.screenshot(pngName);
+    await setData(gameName, saveSlot, "saveTime", formatDateTime(Date.now()),backupText);
+}
+export async function dowloadScreenShot(file) {
+    try {
+        const base64 = await fileToBase64(Module.downloadFile(file));
+        return base64;
+    } catch {}
+}
+export async function captureOCR(name) {
+    Module.screenshot(name);
+    const file = Module.downloadFile(`/data/screenshots/${name}`);
+    return file;
+}
+export async function setFastForwardMultiplier(number) {
+    Module.setFastForwardMultiplier(number);
+}
+export async function uploadCheats(file) {
+        Module.autoLoadCheats();
+        Module.uploadAll(file, async () => {
+    });
+}
+export function setVolume(number) {
+    Module.setVolume(number);
+}
+export async function setData(romName, slot, type, text, string = "") {
+    const gameName = romName.replace(/\.(gba|gbc|gb|zip|cheats)$/, "");
+    const filePath = `/data/screenshots/${gameName}_${slot}.png`;
+    let base64;
+    try {
+        base64 = await fileToBase64(Module.downloadFile(filePath));
+    } catch (error) {
+        await Module.screenshot(`${gameName}_${slot}.png`);
+        await delay(200);
+        base64 = await fileToBase64(Module.downloadFile(filePath));
+    }
+    let byteCharacters = atob(base64.split(',')[1]);
+    let textMarker = `tEXtComment\x00`;
+    let textStart = byteCharacters.indexOf(textMarker);
+    let saveData = {};
+    if (textStart !== -1 || string.trim() !== "") {
+        let textData = textStart !== -1 
+            ? byteCharacters.substring(textStart + textMarker.length) 
+            : string;
+        let regex = /(\w+)\s*:\s*([^|]*)/g;
+        let match;
+        while ((match = regex.exec(textData)) !== null) {
+            saveData[match[1].trim()] = match[2].trim();
+        }
+    
+        if (textStart !== -1) {
+            byteCharacters = byteCharacters.substring(0, textStart);
+        }
+    }
+    saveData[type] = text;
+    let saveString = Object.entries(saveData)
+        .map(([key, value]) => `${key} : ${value}`)
+        .join(" | ");
+    let textChunk = new TextEncoder().encode(`${textMarker} ${saveString}`);
+    let newArray = new Uint8Array([...byteCharacters].map(c => c.charCodeAt(0)).concat([...textChunk]));
+    let file = new File([new Blob([newArray], { type: "image/png" })], `${gameName}_${slot}.png`, { type: "image/png" });
+    Module.uploadAll(file, async () => {
+    });
+}
+export async function getData(romName, slot, type) {
+    try {
+        const gameName = romName.replace(/\.(gba|gbc|gb|zip|cheats)$/, "");
+        const filePath = `/data/screenshots/${gameName}_${slot}.png`;
+        let base64;
+        try {
+            base64 = await fileToBase64(Module.downloadFile(filePath));
+        } catch (error) {
+            return null;
+        }
+        let byteCharacters = atob(base64.split(',')[1]);
+        let textMarker = "tEXtComment\x00";
+        let textStart = byteCharacters.indexOf(textMarker);
+        if (textStart !== -1) {
+            let textData = byteCharacters.substring(textStart + textMarker.length);
+            if (type === "All") return textData.trim();
+            let regex = new RegExp(`${type}\\s*:\\s*(.*?)\\s*(?=\\||$)`);
+            let match = textData.match(regex);
+            if (match) return match[1].trim();
+        }
+    } catch (error) {
+        console.error({romName, slot, type})
+        return null;
+    }
+}
+export async function ledSave(color) {
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved"));
+    const ledId = slotState === 2 ? "led02" : slotState === 3 ? "led03" : "led01";
+    try {
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
+        }
+        await delay(1000);
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById("led0" + i).style.fill = "rgba(245, 232, 209, 0.14)";
+        }
+        document.getElementById(ledId).style.fill = color;
+    } catch (error) {
+        console.error("Error ledSave:", error);
+    }
+};
+export async function notiMessage(messageContent, second, showCanvas = false) {
+    var message = document.getElementById("noti-mess");
+    document.getElementById("inputText").textContent = ""
+    const slotState = parseInt(await getData(gameName, "1", "slotStateSaved")) || 0;
+    if (message.style.opacity === "0.4") {
+        clearTimeout(messageTimeout);
+        message.style.opacity = "0";
+    }
+    message.textContent = messageContent;
+    message.style.opacity = "0.4";
+    messageTimeout = setTimeout(() => {
+        message.textContent = `[${slotState}] ${gameName.substring(0, gameName.lastIndexOf('.'))}`;
+        message.style.opacity = "0.4";
+    }, second);
+    if (showCanvas) {
+        canvas.classList.add("visible");
+        setTimeout(() => {
+            canvas.classList.remove("visible");
+        }, 600);
+    }
+}
+let canSync = true;
+export async function FSSync() {
+    if (!canSync) return;
+    canSync = false;
+    try {
+        await Module.FSSync();
+    } catch (error) {
+        console.error('Sync error:', error);
+    } finally {
+        setTimeout(() => {
+            canSync = true;
+        }, 3000);
+    }
+}
+export const rewind = (type) => Module.toggleRewind?.(type) || null;
+export function setCoreSettings(type, number) {
+    if (typeof Module.setCoreSettings === "function") {
+        Module.setCoreSettings(type, number);
+    } else {
+        return null;
+    }
+}

@@ -16,6 +16,8 @@ for file in $SRC_DIR/css/*.css; do
   cleancss -o "$Js_DIR/css/$filename" "$file"
 done
 
+clear
+
 # Increment revision in sw.js
 revision=$(grep "let revision =" ./sw.js | sed "s/.*'V//;s/'.*//")
 major_version=$(echo $revision | cut -d'.' -f1)
@@ -58,17 +60,10 @@ else
 fi
 
 # Copy static files
-cp ./index.html ./manifest.json ./sw.js ./CNAME ./_headers $Docs_DIR/
-mkdir -p $Docs_DIR/img
-cp ./img/* $Docs_DIR/img/
-mkdir -p $Docs_DIR/src/font/
-cp ./src/font/* $Docs_DIR/src/font/
-mkdir -p $Docs_DIR/src/core/
-cp -r ./src/core/* $Docs_DIR/src/core/
-mkdir -p $Docs_DIR/src/library/
-cp ./src/library/* $Docs_DIR/src/library/
+cp ./index.html ./manifest.json ./sw.js ./_headers $Docs_DIR/
+mkdir -p $Docs_DIR/src/
+cp -r ./src/* $Docs_DIR/src/
 git add . && git commit -m "--- Build $Vers ---" && git push origin main
-clear
 echo "╔═════════════════════╗"
 echo "║ --- Build $Vers --- ║"
 echo "╚═════════════════════╝"

@@ -1,1 +1,270 @@
-const a0_0x352f6a=a0_0x56e7;(function(_0x5b1d16,_0x2d1ec7){const _0x47d610=a0_0x56e7,_0x1b8189=_0x5b1d16();while(!![]){try{const _0x245e1b=-parseInt(_0x47d610(0x187))/0x1+parseInt(_0x47d610(0x166))/0x2*(parseInt(_0x47d610(0x18f))/0x3)+parseInt(_0x47d610(0x177))/0x4+-parseInt(_0x47d610(0x174))/0x5*(-parseInt(_0x47d610(0x16d))/0x6)+-parseInt(_0x47d610(0x156))/0x7+parseInt(_0x47d610(0x163))/0x8*(parseInt(_0x47d610(0x167))/0x9)+-parseInt(_0x47d610(0x168))/0xa*(parseInt(_0x47d610(0x162))/0xb);if(_0x245e1b===_0x2d1ec7)break;else _0x1b8189['push'](_0x1b8189['shift']());}catch(_0x14e73a){_0x1b8189['push'](_0x1b8189['shift']());}}}(a0_0x2ca9,0x4196e));import*as a0_0x52dd5e from'./main.js';var scrollAmount=0x0,scrollSpeed=0.5,runCount=0x0;let isFunctionARunning=![];var maxRunCount=0x2;let clickTurbo=0x0,clickTimeout;const inputText=document['getElementById'](a0_0x352f6a(0x17d)),turbo=document[a0_0x352f6a(0x15b)]('turbo'),ID=['A','B','R','L'];async function getImage(){const _0x2dba92=a0_0x352f6a;turbo[_0x2dba92(0x160)][_0x2dba92(0x173)](_0x2dba92(0x146));try{const _0x5d6bf7=gameName[_0x2dba92(0x18b)](/\.(gba|gbc|gb|zip)$/,_0x2dba92(0x17f)),_0x549cf3=await a0_0x52dd5e[_0x2dba92(0x154)](_0x5d6bf7),_0xa6e44b=new Blob([_0x549cf3],{'type':'image/png'}),_0x1de66e=await new Promise((_0x310769,_0x252a5f)=>{const _0x333951=_0x2dba92,_0x4cc9f2=new FileReader();_0x4cc9f2[_0x333951(0x181)]=()=>_0x310769(_0x4cc9f2['result']),_0x4cc9f2['onerror']=_0x252a5f,_0x4cc9f2[_0x333951(0x153)](_0xa6e44b);}),_0x55096a=new Image();_0x55096a[_0x2dba92(0x165)]=_0x1de66e,_0x55096a[_0x2dba92(0x188)]=async()=>{const _0x3e16c9=_0x2dba92,_0x15e791=document[_0x3e16c9(0x15c)](_0x3e16c9(0x17a)),_0x56f243=_0x15e791[_0x3e16c9(0x15f)]('2d'),_0x28a8d0=0x4;let _0x20c216;gameName[_0x3e16c9(0x150)]('.gbc')||gameName['endsWith'](_0x3e16c9(0x189))?_0x20c216=0x3/0x6:_0x20c216=0x3/0x4;const _0x437e02=localStorage[_0x3e16c9(0x149)](gameName+'_setArea')||localStorage[_0x3e16c9(0x149)](_0x3e16c9(0x191)),[_0x163078,_0x4a8255,_0x57d631,_0x4f8523]=_0x437e02[_0x3e16c9(0x169)](',')[_0x3e16c9(0x159)](Number);_0x15e791[_0x3e16c9(0x183)]=_0x57d631*_0x20c216*_0x28a8d0,_0x15e791[_0x3e16c9(0x170)]=_0x4f8523*_0x20c216*_0x28a8d0,_0x56f243[_0x3e16c9(0x179)](_0x55096a,_0x163078*_0x20c216,_0x4a8255*_0x20c216,_0x57d631*_0x20c216,_0x4f8523*_0x20c216,0x0,0x0,_0x57d631*_0x20c216*_0x28a8d0,_0x4f8523*_0x20c216*_0x28a8d0);const _0x501991=_0x15e791['toDataURL'](_0x3e16c9(0x18c))['split'](',')[0x1],_0x22e07a=localStorage[_0x3e16c9(0x149)]('ApiAzure');console[_0x3e16c9(0x185)](_0x22e07a),_0x22e07a?azureServer(_0x501991):freeServer(_0x501991);};}catch(_0x3ffa92){inputText['textContent']=_0x3ffa92[_0x2dba92(0x14c)];}clickTimeout&&clearTimeout(clickTimeout),clickTimeout=setTimeout(()=>{const _0x520450=_0x2dba92;document[_0x520450(0x15b)](_0x520450(0x17d))[_0x520450(0x14a)]='',a0_0x52dd5e[_0x520450(0x171)]('',0x0);},0x7530);}async function freeServer(_0x2c06b1){const _0x276be6=a0_0x352f6a;document['getElementById'](_0x276be6(0x18d))[_0x276be6(0x14a)]='';let _0x7906c9=0x0;const _0x4785cb=setInterval(()=>{const _0x4f8710=_0x276be6;_0x7906c9+=0x1,_0x7906c9<=0x64&&(inputText[_0x4f8710(0x14a)]=_0x4f8710(0x158)+_0x7906c9+'%');},0x64);try{const _0x310648=dataURItoBlob(_0x2c06b1),_0x1bd123=new FormData();_0x1bd123[_0x276be6(0x175)](_0x276be6(0x16f),_0x310648,'image.png'),_0x1bd123[_0x276be6(0x175)]('user',_0x276be6(0x178));let _0x34a8f1;try{_0x34a8f1=await fetch(_0x276be6(0x148),{'method':_0x276be6(0x16e),'body':_0x1bd123,'headers':{'Origin':window['location']['origin'],'X-Requested-With':_0x276be6(0x16c),'User-Agent':navigator['userAgent']}});if(!_0x34a8f1['ok'])throw new Error(_0x276be6(0x14d)+_0x34a8f1[_0x276be6(0x161)]);}catch(_0x47dc40){console[_0x276be6(0x16a)](_0x276be6(0x17e)),window[_0x276be6(0x184)]['href']=_0x276be6(0x18a);return;}const _0x152419=await _0x34a8f1[_0x276be6(0x155)]();if(_0x152419[_0x276be6(0x14b)]===_0x276be6(0x17c))throw new Error(_0x152419[_0x276be6(0x17c)][_0x276be6(0x14c)]);transLogic(_0x152419['text']);}catch(_0x29c55b){inputText[_0x276be6(0x14a)]=_0x29c55b['message'];}finally{clearInterval(_0x4785cb),isFunctionARunning=![];}}async function azureServer(_0x2fc14a){const _0x4eb362=a0_0x352f6a;document[_0x4eb362(0x15b)](_0x4eb362(0x18d))['textContent']='',inputText[_0x4eb362(0x14a)]=_0x4eb362(0x158);const _0x2e19a5=localStorage['getItem']('ApiAzure');let [_0x2a6f06,_0x18fbf8]=_0x2e19a5[_0x4eb362(0x169)](',');try{const _0x4d54b8=await fetch(_0x18fbf8+'imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01',{'method':_0x4eb362(0x16e),'headers':{'Ocp-Apim-Subscription-Key':_0x2a6f06,'Content-Type':'application/octet-stream'},'body':dataURItoBlob(_0x2fc14a)}),_0x119fbb=await _0x4d54b8['json']();if(!_0x4d54b8['ok']||_0x119fbb[_0x4eb362(0x14b)]==='error'){const _0x22d356=_0x4d54b8['ok']?_0x119fbb['error'][_0x4eb362(0x14c)]:_0x4d54b8['status']===0x1f4?_0x4eb362(0x186):(await _0x4d54b8['json']())[_0x4eb362(0x17c)][_0x4eb362(0x14c)];throw new Error(_0x22d356);}const _0x35f4e5=_0x119fbb['readResult']['blocks'][0x0],_0x493d52=_0x35f4e5[_0x4eb362(0x143)]||[],_0x3e44fa=_0x493d52['map'](_0x4fc736=>_0x4fc736[_0x4eb362(0x190)])[_0x4eb362(0x152)]('\x0a');transLogic(_0x3e44fa);}catch(_0x4cb440){inputText['textContent']=_0x4cb440[_0x4eb362(0x14c)];}finally{isFunctionARunning=![];}}async function translateText(_0x2d9fce,_0x221022,_0x562077){const _0xb0d946=a0_0x352f6a,_0x2f1b2b=_0x2d9fce[_0xb0d946(0x18b)](/[\r\n]+/g,',\x20')[_0xb0d946(0x18b)](/([!?.,])\s*,\s*/g,_0xb0d946(0x145))['replace'](/[^\p{L}\p{N}\s.,;'"?!()]+/gu,'')['replace'](/ {2,}/g,'\x20')['trim']();var _0x4ca699=_0xb0d946(0x151)+_0x221022+_0xb0d946(0x176)+_0x562077+_0xb0d946(0x142)+encodeURIComponent(_0x2f1b2b);try{const _0x5623dd=await fetch(_0x4ca699);if(!_0x5623dd['ok']){if(_0x5623dd[_0xb0d946(0x161)]===0x1f4)throw new Error('Internal\x20Server\x20Error');else{const _0x573cc3=await _0x5623dd[_0xb0d946(0x155)](),_0x563ae9=new Error(_0x573cc3[_0xb0d946(0x17c)]['message']);_0x563ae9[_0xb0d946(0x172)]=_0x573cc3[_0xb0d946(0x17c)][_0xb0d946(0x172)];throw _0x563ae9;}}const _0x412739=await _0x5623dd[_0xb0d946(0x155)]();if(Array[_0xb0d946(0x14e)](_0x412739)&&_0x412739['length']>0x0&&Array['isArray'](_0x412739[0x0])){var _0xba9623=_0x412739[0x0][_0xb0d946(0x159)](_0x559e5b=>_0x559e5b[0x0])['join']('\x20');return document[_0xb0d946(0x15b)](_0xb0d946(0x18d))[_0xb0d946(0x14a)]='',inputText['textContent']='.._\x20'+_0xba9623[_0xb0d946(0x18b)](/ {2,}/g,'\x20'),setTimeout(()=>{startAutoScroll();},0x7d0),_0xba9623[_0xb0d946(0x18b)](/ {2,}/g,'\x20');}else return document[_0xb0d946(0x15b)](_0xb0d946(0x18d))[_0xb0d946(0x14a)]='',inputText[_0xb0d946(0x14a)]='.._\x20'+_0x412739,_0x412739;}catch(_0x32dbf1){inputText[_0xb0d946(0x14a)]=_0x32dbf1[_0xb0d946(0x14c)];throw _0x32dbf1;}}async function autoScroll(){const _0x2a2185=a0_0x352f6a;var _0x2fc3a2=inputText[_0x2a2185(0x17b)]-inputText[_0x2a2185(0x164)];if(runCount>=maxRunCount)return;scrollAmount+=scrollSpeed,(scrollAmount>=_0x2fc3a2||scrollAmount<=0x0)&&(scrollSpeed=-scrollSpeed,runCount++),inputText['scrollLeft']=scrollAmount,requestAnimationFrame(autoScroll);}async function startAutoScroll(){scrollAmount=0x0,runCount=0x0,scrollSpeed=0.5,autoScroll();}async function detectLanguage(_0x5068d9){const _0x8265ef=a0_0x352f6a;var _0x42c1d3=_0x8265ef(0x14f)+encodeURIComponent(_0x5068d9);try{const _0x44b30f=await fetch(_0x42c1d3),_0x3e072f=await _0x44b30f[_0x8265ef(0x155)]();var _0x1252c7=_0x3e072f[0x8][0x0][0x0];return _0x1252c7;}catch(_0x48917e){console['error'](_0x8265ef(0x15a),_0x48917e);throw _0x48917e;}}function a0_0x56e7(_0x5c8f97,_0xbd8dce){const _0x2ca9de=a0_0x2ca9();return a0_0x56e7=function(_0x56e7b7,_0x882fe2){_0x56e7b7=_0x56e7b7-0x142;let _0x28db1b=_0x2ca9de[_0x56e7b7];return _0x28db1b;},a0_0x56e7(_0x5c8f97,_0xbd8dce);}async function transLogic(_0x909a0f){const _0x38923d='en';if(_0x38923d===null){const _0x112c1e=await detectLanguage(_0x909a0f),_0x130206=await translateText(_0x909a0f,_0x112c1e,'en');return translateText(_0x130206,'en','vi');}else{if(_0x38923d==='en')return translateText(_0x909a0f,'en','vi');else{const _0xf24eab=await translateText(_0x909a0f,_0x38923d,'en');return translateText(_0xf24eab,'en','vi');}}}function dataURItoBlob(_0x43dd45){const _0x5da212=a0_0x352f6a,_0x53e78a=atob(_0x43dd45),_0x312844=new ArrayBuffer(_0x53e78a[_0x5da212(0x15e)]),_0x1d35e4=new Uint8Array(_0x312844);for(let _0x4ce736=0x0;_0x4ce736<_0x53e78a[_0x5da212(0x15e)];_0x4ce736++){_0x1d35e4[_0x4ce736]=_0x53e78a[_0x5da212(0x157)](_0x4ce736);}return new Blob([_0x312844],{'type':_0x5da212(0x18c)});}function a0_0x2ca9(){const _0x258f0f=['message','HTTP\x20Error:\x20','isArray','https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=ld&q=','endsWith','https://translate.googleapis.com/translate_a/single?client=gtx&sl=','join','readAsDataURL','captureOCR','json','158228qRQnKu','charCodeAt','.._\x20','map','Error\x20detecting\x20language:','getElementById','createElement','visible','length','getContext','classList','status','198GHIFXT','1400528PNsUOr','clientWidth','src','9094kxISTV','18UIEMHH','651290OfiDig','split','warn','addEventListener','XMLHttpRequest','2918946XoOfvO','POST','image','height','notiMessage','code','add','5eFyCTT','append','&tl=','1119600Trsfif','00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2','drawImage','canvas','scrollWidth','error','inputText','Cors-controlers\x20have\x20not\x20been\x20activated.','.png','remove','onloadend','DOMContentLoaded','width','location','log','500\x20Internal\x20Server\x20Error','112190CyVItZ','onload','.gb','https://cors-anywhere.herokuapp.com/corsdemo','replace','image/png','noti-mess','toggle','303exCyPQ','text','screenSize','&dt=t&q=','lines','forEach','$1\x20','turbo-ocr','touchend','https://cors-anywhere.herokuapp.com/http://158.160.66.115:40000/image_to_text','getItem','textContent','type'];a0_0x2ca9=function(){return _0x258f0f;};return a0_0x2ca9();}document['addEventListener'](a0_0x352f6a(0x182),function(){const _0x9eb890=a0_0x352f6a;ID[_0x9eb890(0x144)](function(_0x2221f3){const _0x46f5c1=_0x9eb890,_0x11a2c4=document['getElementById'](_0x2221f3);_0x11a2c4&&_0x11a2c4[_0x46f5c1(0x16b)]('touchstart',function(){const _0x56d9fa=_0x46f5c1;!isFunctionARunning&&turbo[_0x56d9fa(0x160)][_0x56d9fa(0x180)](_0x56d9fa(0x146));});}),[_0x9eb890(0x147)]['forEach'](_0x412cf2=>{const _0x446aa2=_0x9eb890;turbo['addEventListener'](_0x412cf2,()=>{clickTurbo++,clearTimeout(clickTimeout),clickTimeout=setTimeout(()=>{clickTurbo===0x1&&(!isFunctionARunning&&(isFunctionARunning=!![],getImage())),clickTurbo=0x0;},0x12c);}),areaSet[_0x446aa2(0x16b)](_0x412cf2,()=>{const _0x4a1740=_0x446aa2;areaTrans['classList'][_0x4a1740(0x18e)](_0x4a1740(0x15d));});});});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+var scrollAmount = 0;
+var scrollSpeed = 0.5;
+var runCount = 0;
+let isFunctionARunning = false;
+var maxRunCount = 2;
+let clickTurbo = 0
+let clickTimeout;
+const inputText = document.getElementById("inputText");
+const turbo = document.getElementById("turbo");
+const ID = ['A', 'B', 'R', 'L'];
+/* --------------- Function ------------------ */
+async function getImage() {
+    turbo.classList.add('turbo-ocr');
+    try {
+        const screenshotName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".png");
+        const file = await Main.captureOCR(screenshotName);
+        const blob = new Blob([file], {
+            type: 'image/png'
+        });
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+        const img = new Image();
+        img.src = base64;
+        img.onload = async () =>  {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const resolutionFactor = 4;
+            let generalRatio;
+            if (gameName.endsWith(".gbc") || gameName.endsWith(".gb")) {
+                generalRatio = 3/6
+            } else {
+                generalRatio = 3/4;
+            }
+            const setArea = localStorage.getItem(`${gameName}_setArea`) || localStorage.getItem("screenSize");
+            const [cropX, cropY, cropWidth, cropHeight] = setArea.split(',').map(Number);
+            canvas.width = cropWidth * generalRatio * resolutionFactor;
+            canvas.height = cropHeight * generalRatio * resolutionFactor;
+            ctx.drawImage(
+                img,
+                cropX * generalRatio,                               
+                cropY * generalRatio,                               
+                cropWidth * generalRatio,                           
+                cropHeight * generalRatio,                          
+                0,                                                  
+                0,                                                  
+                cropWidth * generalRatio * resolutionFactor,       
+                cropHeight * generalRatio * resolutionFactor        
+            );
+            const base64data = canvas.toDataURL("image/png").split(',')[1];
+            const ApiAzure = localStorage.getItem("ApiAzure");
+            console.log(ApiAzure);
+            if (ApiAzure) {
+                azureServer(base64data);
+            } else {
+                freeServer(base64data);
+            }
+        };
+    } catch (error) {
+        inputText.textContent = error.message;
+    }
+    if (clickTimeout) {
+        clearTimeout(clickTimeout);
+    }
+    clickTimeout = setTimeout(() => {
+        document.getElementById("inputText").textContent = ""
+        Main.notiMessage("", 0);
+    }, 30000);
+}
+async function freeServer(base64data) {
+    document.getElementById("noti-mess").textContent = ""
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 1;
+        if (progress <= 100) {
+            inputText.textContent = `.._ ${progress}%`;
+        }
+    }, 100);
+
+    try {
+        const imageBlob = dataURItoBlob(base64data);
+        const formData = new FormData();
+        formData.append("image", imageBlob, "image.png");
+        formData.append("user", "00c7b1f2-0d6b-4e7b-9b0b-0b6c00c7b1f2");
+        let response;
+        try {
+            response = await fetch("https://cors-anywhere.herokuapp.com/http://158.160.66.115:40000/image_to_text", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Origin': window.location.origin,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'User-Agent': navigator.userAgent
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+
+        } catch (fetchError) {
+            console.warn("Cors-controlers have not been activated.");
+            window.location.href = "https://cors-anywhere.herokuapp.com/corsdemo";
+            return;
+        }
+        const data = await response.json();
+        if (data.type === "error") {
+            throw new Error(data.error.message);
+        }
+        transLogic(data.text);
+
+    } catch (error) {
+        inputText.textContent = error.message;
+    } finally {
+        clearInterval(interval);
+        isFunctionARunning = false;
+    }
+}
+async function azureServer(base64data) {
+    document.getElementById("noti-mess").textContent = ""
+    inputText.textContent = '.._ ';
+    const ApiAzure = localStorage.getItem("ApiAzure");
+    let [apiKey, endpoint] = ApiAzure.split(',');
+    try {
+        const response = await fetch(`${endpoint}imageanalysis:analyze?features=caption,read&model-version=latest&api-version=2024-02-01`, {
+            method: 'POST',
+            headers: {
+                'Ocp-Apim-Subscription-Key': apiKey,
+                'Content-Type': 'application/octet-stream',
+            },
+            body: dataURItoBlob(base64data)
+        });
+        const data = await response.json();
+        if (!response.ok || data.type === "error") {
+            const errorMessage = response.ok ? data.error.message : (response.status === 500 ? "500 Internal Server Error" : (await response.json()).error.message);
+            throw new Error(errorMessage);
+        }
+        const readResult = data.readResult.blocks[0];
+        const lines = readResult.lines || [];
+        const text = lines.map(line => line.text).join('\n');
+        transLogic(text);
+    } catch (error) {
+        inputText.textContent = error.message;
+    } finally {
+        isFunctionARunning = false;
+    }
+}
+async function translateText(textContent, sourceLang, targetLang) {
+    const cleanData = textContent.replace(/[\r\n]+/g, ', ').replace(/([!?.,])\s*,\s*/g, '$1 ').replace(/[^\p{L}\p{N}\s.,;'"?!()]+/gu, '').replace(/ {2,}/g, ' ').trim();
+    var apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=` + encodeURIComponent(cleanData);
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            if (response.status === 500) {
+                throw new Error("Internal Server Error");
+            } else {
+                const errorData = await response.json();
+                const error = new Error(errorData.error.message);
+                error.code = errorData.error.code;
+                throw error;
+            }
+        }
+        const result = await response.json();
+        if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+            var translatedText = result[0].map(sentence => sentence[0]).join(' ');
+            document.getElementById("noti-mess").textContent = ""
+            inputText.textContent = `.._ ${translatedText.replace(/ {2,}/g, ' ')}`;
+            setTimeout(() => {
+                startAutoScroll();
+            }, 2000);
+            return translatedText.replace(/ {2,}/g, ' ');
+        } else {
+            document.getElementById("noti-mess").textContent = ""
+            inputText.textContent = `.._ ${result}`;
+            return result;
+        }
+    } catch (error) {
+        inputText.textContent = error.message;
+        throw error;
+    }
+}
+async function autoScroll() {
+    var maxScroll = inputText.scrollWidth - inputText.clientWidth;
+    if (runCount >= maxRunCount) return;
+    scrollAmount += scrollSpeed;
+    if (scrollAmount >= maxScroll || scrollAmount <= 0) {
+        scrollSpeed = -scrollSpeed;
+        runCount++;
+    }
+    inputText.scrollLeft = scrollAmount;
+    requestAnimationFrame(autoScroll);
+}
+async function startAutoScroll() {
+    scrollAmount = 0;
+    runCount = 0;
+    scrollSpeed = 0.5;
+    autoScroll();
+}
+async function detectLanguage(textContent) {
+    var apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=ld&q=" + encodeURIComponent(textContent);
+    try {
+        const response = await fetch(apiUrl);
+        const result = await response.json();
+        var detectedLanguage = result[8][0][0];
+        return detectedLanguage;
+    } catch (error) {
+        console.error("Error detecting language:", error);
+        throw error;
+    }
+}
+async function transLogic(textContent) {
+    const gameLang = "en"
+    if (gameLang === null) {
+        const lang = await detectLanguage(textContent);
+        const intermediateText = await translateText(textContent, lang, 'en');
+        return translateText(intermediateText, 'en', 'vi');
+    } else if (gameLang === "en") {
+        return translateText(textContent, "en", "vi");
+    } else {
+        const intermediateText = await translateText(textContent, gameLang, 'en');
+        return translateText(intermediateText, 'en', 'vi');
+    }
+}
+function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI);
+    const buffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(buffer);
+    for (let i = 0; i < byteString.length; i++) {
+        intArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([buffer], {
+        type: 'image/png'
+    });
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    ID.forEach(function(id) {
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener("touchstart", function() {
+                if (!isFunctionARunning) {
+                    turbo.classList.remove('turbo-ocr');
+                }
+            });
+        }
+    });
+    ["touchend"].forEach(eventType => {
+        turbo.addEventListener(eventType, () => {
+            clickTurbo++;
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                if (clickTurbo === 1) {
+                    if (!isFunctionARunning) {
+                        isFunctionARunning = true;
+                        getImage();
+                    }
+                }
+                clickTurbo = 0;
+            }, 300);
+        });
+        areaSet.addEventListener(eventType, () => {
+            areaTrans.classList.toggle("visible");
+        })
+    });
+})

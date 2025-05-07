@@ -1,1 +1,153 @@
-const a0_0x12e8b8=a0_0x22b4;(function(_0x18e82e,_0x16ddcd){const _0x421263=a0_0x22b4,_0x54ebbf=_0x18e82e();while(!![]){try{const _0x4ae31d=parseInt(_0x421263(0x116))/0x1*(parseInt(_0x421263(0x10b))/0x2)+-parseInt(_0x421263(0x145))/0x3+-parseInt(_0x421263(0x12c))/0x4+parseInt(_0x421263(0x144))/0x5+-parseInt(_0x421263(0x13e))/0x6*(-parseInt(_0x421263(0x128))/0x7)+-parseInt(_0x421263(0x109))/0x8+-parseInt(_0x421263(0x131))/0x9;if(_0x4ae31d===_0x16ddcd)break;else _0x54ebbf['push'](_0x54ebbf['shift']());}catch(_0x423bde){_0x54ebbf['push'](_0x54ebbf['shift']());}}}(a0_0xde96,0xe62d4));function a0_0xde96(){const _0x52500e=['add','savesFile','YiB','ZiB','listFiles','getElementById','firstChild','disable','Edit\x20filename','/data/games/','saves','length','confirm','actionDiv','uId','home','10841397CzKRPi','showModal','mib','close','3815228arZxKB','TiB','createElement','_dateState','Delete\x20this\x20file?','12995136tCevEh','editFile','appendChild','flex-1','storage','_imageState','cheats','onclose','KiB','MiB','games','abs','lastChild','6hInJWY','/data/cheats/','onclick','deleteFile','remove','statesFile','5706525mCFXlQ','1740069GhDMLx','GiB','.gba','EiB','active','click','span','removeItem','rom-item','toFixed','screenshotsFile','uploadFile','prompt','DOMContentLoaded','mgba-storage','/data/saves/','opacity0','2881592uzmLUo','replace','2epboLb','gap-16','classList','/data/states/','textContent','rename','dialog','addEventListener','screenshots','slice','download','1590661PvpfAe','div'];a0_0xde96=function(){return _0x52500e;};return a0_0xde96();}import*as a0_0x80dcc8 from'./main.js';const mgbaStorage=document[a0_0x12e8b8(0x11d)](a0_0x12e8b8(0x106)),savesFile=document[a0_0x12e8b8(0x11d)](a0_0x12e8b8(0x119)),romsFile=document[a0_0x12e8b8(0x11d)]('romsFile'),statesFile=document[a0_0x12e8b8(0x11d)](a0_0x12e8b8(0x143)),screenshotsFile=document[a0_0x12e8b8(0x11d)](a0_0x12e8b8(0x102));function humanFileSize(_0x1b02ac,_0x474e36=![],_0x5da8fc=0x1){const _0x401a7e=a0_0x12e8b8,_0x5766dd=_0x474e36?0x3e8:0x400,_0x3f05d4=_0x474e36?['kB','MB','GB','TB','PB','EB','ZB','YB']:[_0x401a7e(0x139),_0x401a7e(0x13a),_0x401a7e(0x146),_0x401a7e(0x12d),'PiB',_0x401a7e(0x148),_0x401a7e(0x11b),_0x401a7e(0x11a)];let _0xb344e8=-0x1;do{_0x1b02ac/=_0x5766dd,++_0xb344e8;}while(Math[_0x401a7e(0x13c)](_0x1b02ac)>=_0x5766dd&&_0xb344e8<_0x3f05d4[_0x401a7e(0x123)]-0x1);return _0x1b02ac[_0x401a7e(0x101)](_0x5da8fc)+'\x20'+_0x3f05d4[_0xb344e8];}function createElementStorage(_0x2e14ea,_0x1cc3a1,_0x456e82){const _0x6bc7d7=a0_0x12e8b8,_0x4a3d25=document[_0x6bc7d7(0x12e)](_0x6bc7d7(0x117));_0x4a3d25[_0x6bc7d7(0x10d)][_0x6bc7d7(0x118)](_0x6bc7d7(0x134),'rom-item','rom'),_0x2e14ea[_0x6bc7d7(0x133)](_0x4a3d25);const _0x453430=document[_0x6bc7d7(0x12e)](_0x6bc7d7(0xfe));_0x453430['textContent']=_0x1cc3a1,_0x453430['classList']['add'](_0x6bc7d7(0x134)),_0x4a3d25[_0x6bc7d7(0x133)](_0x453430),_0x453430[_0x6bc7d7(0x140)]=()=>{const _0x32abe1=_0x6bc7d7,_0xb9f22f=document[_0x32abe1(0x12e)](_0x32abe1(0x111));_0xb9f22f[_0x32abe1(0x138)]=()=>_0xb9f22f[_0x32abe1(0x142)](),_0x2e14ea[_0x32abe1(0x133)](_0xb9f22f);const _0x392d3c=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x392d3c[_0x32abe1(0x10d)]['add'](_0x32abe1(0x135),'right','gap-10'),_0xb9f22f[_0x32abe1(0x133)](_0x392d3c);const _0x34c9af=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x34c9af[_0x32abe1(0x10d)][_0x32abe1(0x118)](_0x32abe1(0x127),'bc','flex-1'),_0x392d3c['appendChild'](_0x34c9af);const _0x59c117=document['createElement']('div');_0x59c117[_0x32abe1(0x10d)][_0x32abe1(0x118)]('flex-1'),_0x392d3c[_0x32abe1(0x133)](_0x59c117);const _0x34fb2e=document['createElement'](_0x32abe1(0x117));_0x34fb2e['classList']['add']('flex-1'),_0x392d3c[_0x32abe1(0x133)](_0x34fb2e);const _0x3090cd=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x3090cd[_0x32abe1(0x10d)][_0x32abe1(0x118)]('flex-1'),_0x392d3c[_0x32abe1(0x133)](_0x3090cd),mgbaStorage['classList'][_0x32abe1(0x118)]('opacity0'),_0x34c9af[_0x32abe1(0x140)]=()=>{const _0x267ecd=_0x32abe1;_0xb9f22f[_0x267ecd(0x12b)](),_0xb9f22f[_0x267ecd(0x142)](),mgbaStorage['classList'][_0x267ecd(0x142)](_0x267ecd(0x108));};const _0x4ac70b=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x4ac70b[_0x32abe1(0x10d)][_0x32abe1(0x118)]('flex-1',_0x32abe1(0x100),'hw','cw'),_0x4ac70b[_0x32abe1(0x10f)]=_0x1cc3a1,_0xb9f22f[_0x32abe1(0x133)](_0x4ac70b);const _0x1d5cec=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x1d5cec[_0x32abe1(0x10d)][_0x32abe1(0x118)](_0x32abe1(0x125),'hw','cw',_0x32abe1(0x10c)),_0xb9f22f[_0x32abe1(0x133)](_0x1d5cec);const _0xe0e353=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0xe0e353[_0x32abe1(0x10d)]['add'](_0x32abe1(0x115),'bc'),_0x1d5cec[_0x32abe1(0x133)](_0xe0e353),_0xe0e353['onclick']=()=>{a0_0x80dcc8['downloadFile'](_0x456e82,_0x1cc3a1);};const _0xa29222=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0xa29222[_0x32abe1(0x10d)][_0x32abe1(0x118)]('delete','bc'),_0x1d5cec['appendChild'](_0xa29222),_0xa29222[_0x32abe1(0x140)]=async()=>{const _0x2e49f4=_0x32abe1;if(window[_0x2e49f4(0x124)](_0x2e49f4(0x130)+_0x1cc3a1)){const _0x35996f=_0x1cc3a1[_0x2e49f4(0x10a)](/\....$/,_0x2e49f4(0x147));a0_0x80dcc8[_0x2e49f4(0x141)](_0x456e82),localStorage['removeItem'](_0x35996f+_0x2e49f4(0x12f)+_0x1cc3a1[_0x2e49f4(0x114)](-0x1)),localStorage[_0x2e49f4(0xff)](_0x35996f+_0x2e49f4(0x136)+_0x1cc3a1[_0x2e49f4(0x114)](-0x1)),localStorageFile(),_0xb9f22f[_0x2e49f4(0x12b)](),_0xb9f22f[_0x2e49f4(0x142)](),mgbaStorage[_0x2e49f4(0x10d)][_0x2e49f4(0x142)]('opacity0');}};const _0x31aa46=document[_0x32abe1(0x12e)](_0x32abe1(0x117));_0x31aa46[_0x32abe1(0x10d)]['add'](_0x32abe1(0x110),'bc'),_0x1d5cec[_0x32abe1(0x133)](_0x31aa46),_0x31aa46['onclick']=async()=>{const _0x27e2db=_0x32abe1,_0x463d85=window[_0x27e2db(0x104)](_0x27e2db(0x120),_0x1cc3a1);_0x463d85!==null&&(a0_0x80dcc8[_0x27e2db(0x132)](_0x456e82,_0x1cc3a1,_0x463d85),localStorageFile(),_0xb9f22f[_0x27e2db(0x12b)](),_0xb9f22f[_0x27e2db(0x142)](),mgbaStorage['classList'][_0x27e2db(0x142)](_0x27e2db(0x108)));},_0xb9f22f[_0x32abe1(0x129)]();};const _0x37f1e0=document[_0x6bc7d7(0x12e)]('span');_0x37f1e0['textContent']=humanFileSize(a0_0x80dcc8['fileSize'](_0x456e82)),_0x37f1e0['classList'][_0x6bc7d7(0x118)](_0x6bc7d7(0x12a)),_0x4a3d25[_0x6bc7d7(0x133)](_0x37f1e0);}function a0_0x22b4(_0x549b6e,_0x4fced1){const _0xde9665=a0_0xde96();return a0_0x22b4=function(_0x22b4a8,_0xc60aad){_0x22b4a8=_0x22b4a8-0xfc;let _0xf2273f=_0xde9665[_0x22b4a8];return _0xf2273f;},a0_0x22b4(_0x549b6e,_0x4fced1);}export function localStorageFile(){const _0x10db31=a0_0x12e8b8,_0x383798=a0_0x80dcc8[_0x10db31(0x11c)](_0x10db31(0x13b)),_0x2ef46e=a0_0x80dcc8[_0x10db31(0x11c)](_0x10db31(0x122)),_0x4472ba=a0_0x80dcc8[_0x10db31(0x11c)]('states'),_0x240f82=a0_0x80dcc8[_0x10db31(0x11c)](_0x10db31(0x137)),_0x3298dd=a0_0x80dcc8[_0x10db31(0x11c)](_0x10db31(0x113)),_0xa4db94=[romsFile,savesFile,statesFile,cheatsFile,screenshotsFile];for(const _0x1872db of _0xa4db94){while(_0x1872db[_0x10db31(0x11e)]){_0x1872db[_0x10db31(0x13d)][_0x10db31(0x142)]();}}for(const _0x191dfa of _0x383798){createElementStorage(romsFile,_0x191dfa,_0x10db31(0x121)+_0x191dfa);}for(const _0x1ff757 of _0x4472ba){createElementStorage(statesFile,_0x1ff757,_0x10db31(0x10e)+_0x1ff757);}for(const _0x1abb31 of _0x2ef46e){createElementStorage(savesFile,_0x1abb31,_0x10db31(0x107)+_0x1abb31);}for(const _0x157f72 of _0x240f82){createElementStorage(cheatsFile,_0x157f72,_0x10db31(0x13f)+_0x157f72);}for(const _0x59b8ce of _0x3298dd){createElementStorage(screenshotsFile,_0x59b8ce,'/data/screenshots/'+_0x59b8ce);}}document['addEventListener'](a0_0x12e8b8(0x105),function(){const _0x496007=a0_0x12e8b8;upLoadFile[_0x496007(0x112)]('change',function(){const _0x1c789f=_0x496007;a0_0x80dcc8[_0x1c789f(0x103)](upLoadFile);}),openLocalStorage['addEventListener'](_0x496007(0xfd),function(){const _0x9b077=_0x496007,_0x15123f=localStorage['getItem'](_0x9b077(0x126));storage[_0x9b077(0x10d)][_0x9b077(0x142)](_0x9b077(0x11f)),intro[_0x9b077(0x10d)][_0x9b077(0x118)]('disable'),ingame[_0x9b077(0x10d)]['add'](_0x9b077(0x11f)),_0x15123f===null||_0x15123f===''?(dropboxRestore[_0x9b077(0x10d)][_0x9b077(0x142)](_0x9b077(0xfc)),dropboxBackup[_0x9b077(0x10d)][_0x9b077(0x142)](_0x9b077(0xfc)),dropboxCloud[_0x9b077(0x10d)][_0x9b077(0x142)]('active')):(dropboxRestore[_0x9b077(0x10d)][_0x9b077(0x118)](_0x9b077(0xfc)),dropboxBackup[_0x9b077(0x10d)][_0x9b077(0x118)]('active'),dropboxCloud[_0x9b077(0x10d)][_0x9b077(0x118)]('active'));}),setTimeout(()=>{localStorageFile();},0xbb8);});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+const mgbaStorage = document.getElementById("mgba-storage");
+const savesFile = document.getElementById("savesFile");
+const romsFile = document.getElementById("romsFile");
+const statesFile = document.getElementById("statesFile");
+const screenshotsFile = document.getElementById("screenshotsFile");
+/* --------------- Function ------------------ */
+function humanFileSize(bytes, si = false, dp = 1) {
+    const thresh = si ? 1e3 : 1024;
+    const units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    let u = -1;
+    do {
+        bytes /= thresh;
+        ++u;
+    } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+    return bytes.toFixed(dp) + ' ' + units[u];
+}
+function createElementStorage(parent, fileName, filePart) {
+    const Name = document.createElement("div");
+    Name.classList.add("flex-1", "rom-item", "rom");
+    parent.appendChild(Name);
+    const span = document.createElement("span");
+    span.textContent = fileName;
+    span.classList.add("flex-1");
+    Name.appendChild(span);
+    span.onclick = () => {
+        const dialog = document.createElement("dialog");
+        dialog.onclose = () => dialog.remove();
+        parent.appendChild(dialog);
+        const back = document.createElement("div");
+        back.classList.add("storage", "right", "gap-10");
+        dialog.appendChild(back);
+        const closeButton = document.createElement("div");
+        closeButton.classList.add("home", "bc", "flex-1");
+        back.appendChild(closeButton);
+        const blank1 = document.createElement("div");
+        blank1.classList.add("flex-1");
+        back.appendChild(blank1);
+        const blank2 = document.createElement("div");
+        blank2.classList.add("flex-1");
+        back.appendChild(blank2);
+        const blank3 = document.createElement("div");
+        blank3.classList.add("flex-1");
+        back.appendChild(blank3);
+        mgbaStorage.classList.add("opacity0");
+        closeButton.onclick = () => {
+            dialog.close();
+            dialog.remove();
+            mgbaStorage.classList.remove("opacity0");
+        };
+        const Name = document.createElement("div");
+        Name.classList.add("flex-1", "rom-item", "hw", "cw");
+        Name.textContent = fileName;
+        dialog.appendChild(Name);
+        const actionDiv = document.createElement("div");
+        actionDiv.classList.add("actionDiv", "hw", "cw", "gap-16");
+        dialog.appendChild(actionDiv);
+        const downloadButton = document.createElement("div");
+        downloadButton.classList.add("download", "bc");
+        actionDiv.appendChild(downloadButton);
+        downloadButton.onclick = () => {
+            Main.downloadFile(filePart, fileName);
+        };
+        const deleteButton = document.createElement("div");
+        deleteButton.classList.add("delete", "bc");
+        actionDiv.appendChild(deleteButton);
+        deleteButton.onclick = async () => {
+            if (window.confirm("Delete this file?" + fileName)) {
+                const romName = fileName.replace(/\....$/, ".gba");
+                Main.deleteFile(filePart);
+                localStorage.removeItem(`${romName}_dateState${fileName.slice(-1)}`);
+                localStorage.removeItem(`${romName}_imageState${fileName.slice(-1)}`);
+                localStorageFile();
+                dialog.close();
+                dialog.remove();
+                mgbaStorage.classList.remove("opacity0");
+            }
+        };
+        const renameButton = document.createElement("div");
+        renameButton.classList.add("rename", "bc");
+        actionDiv.appendChild(renameButton);
+        renameButton.onclick = async () => {
+            const newFilename = window.prompt("Edit filename", fileName);
+            if (newFilename !== null) {
+                Main.editFile(filePart, fileName, newFilename);
+                localStorageFile();
+                dialog.close();
+                dialog.remove();
+                mgbaStorage.classList.remove("opacity0");
+            }
+        };
+        dialog.showModal();
+    }
+    const mib = document.createElement("span");
+    mib.textContent = humanFileSize(Main.fileSize(filePart));
+    mib.classList.add("mib");
+    Name.appendChild(mib);
+}
+export function localStorageFile() {
+    const listRoms = Main.listFiles("games");
+    const listSaves = Main.listFiles("saves");
+    const listStates = Main.listFiles("states");
+    const listCheats = Main.listFiles("cheats");
+    const listScreenshots = Main.listFiles("screenshots");
+    const refreshList = [romsFile, savesFile, statesFile, cheatsFile, screenshotsFile];
+    for (const refresh of refreshList) {
+        while (refresh.firstChild) {
+            refresh.lastChild.remove();
+        }
+    }
+    for (const romsName of listRoms) {
+        createElementStorage(romsFile, romsName, `/data/games/${romsName}`);
+    }
+    for (const statesName of listStates) {
+        createElementStorage(statesFile, statesName, `/data/states/${statesName}`);
+    }
+    for (const savesName of listSaves) {
+        createElementStorage(savesFile, savesName, `/data/saves/${savesName}`)
+    }
+    for (const cheatsName of listCheats) {
+        createElementStorage(cheatsFile, cheatsName, `/data/cheats/${cheatsName}`)
+    }
+    for (const screenshotsName of listScreenshots) {
+        createElementStorage(screenshotsFile, screenshotsName, `/data/screenshots/${screenshotsName}`)
+    }
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    upLoadFile.addEventListener("change", function() {
+        Main.uploadFile(upLoadFile);
+    })
+    //Buton Open Local Storage
+    openLocalStorage.addEventListener("click", function() {
+        const uId = localStorage.getItem("uId");
+        storage.classList.remove("disable");
+        intro.classList.add("disable");
+        ingame.classList.add("disable");
+    
+        if (uId === null || uId === "") {
+            dropboxRestore.classList.remove("active");
+            dropboxBackup.classList.remove("active");
+            dropboxCloud.classList.remove("active");
+        } else {
+            dropboxRestore.classList.add("active");
+            dropboxBackup.classList.add("active");
+            dropboxCloud.classList.add("active");
+        }
+    })
+    setTimeout(() => {
+        localStorageFile();
+    },3000);
+})

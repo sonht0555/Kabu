@@ -7,7 +7,7 @@
     "theme_color": "#000000", 
     "description": "Kabu",
     "icons": [{
-      "src": "img/icon.png",
+      "src": "./src/img/icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }]

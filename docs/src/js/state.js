@@ -1,1 +1,103 @@
-const a0_0xa6abbc=a0_0x2044;(function(_0x53de56,_0x36391a){const _0x2c211d=a0_0x2044,_0x137e8c=_0x53de56();while(!![]){try{const _0xd8eeb=-parseInt(_0x2c211d(0xae))/0x1+parseInt(_0x2c211d(0xc2))/0x2*(parseInt(_0x2c211d(0xb4))/0x3)+-parseInt(_0x2c211d(0xad))/0x4+parseInt(_0x2c211d(0xc1))/0x5*(parseInt(_0x2c211d(0xba))/0x6)+parseInt(_0x2c211d(0xd2))/0x7+-parseInt(_0x2c211d(0xb1))/0x8+-parseInt(_0x2c211d(0xac))/0x9*(-parseInt(_0x2c211d(0xc4))/0xa);if(_0xd8eeb===_0x36391a)break;else _0x137e8c['push'](_0x137e8c['shift']());}catch(_0x1927ee){_0x137e8c['push'](_0x137e8c['shift']());}}}(a0_0x4384,0x7ba84));import*as a0_0x36e73a from'./main.js';const stateDivs=document[a0_0xa6abbc(0xc6)](a0_0xa6abbc(0xd5));async function LoadstateInPage(_0x497695,_0x278e3c,_0x26fe10,_0x5ee9c8){const _0xce25ad=a0_0xa6abbc,_0x317291=await a0_0x36e73a[_0xce25ad(0xbf)](gameName,'1',_0xce25ad(0xb2)),_0x5aaf10=document[_0xce25ad(0xcf)](_0x5ee9c8),_0x2a345e=await a0_0x36e73a['getData'](gameName,_0x497695,_0xce25ad(0xbd));document[_0xce25ad(0xcf)](_0x26fe10)['textContent']=_0x2a345e||'__',parseInt(_0x317291)===parseInt(_0x497695)?_0x5aaf10['classList'][_0xce25ad(0xd1)](_0xce25ad(0xb5)):_0x5aaf10[_0xce25ad(0xd8)][_0xce25ad(0xc9)](_0xce25ad(0xb5));}function a0_0x4384(){const _0x3c526e=['forEach','pauseGame','contains','style','2598QqLgDm',']\x20Loaded\x20State','deleteFile','saveTime','selected','getData','DOMContentLoaded','2420ZMfUgl','632ZcOSWz',']\x20deleted?','70avnCgQ','addEventListener','querySelectorAll','resumeGame','textContent','remove','toggle','notiMessage','setData','state0','visible','getElementById','.png','add','1275169vgVoYN','#Left','replace','.stateDiv','length','stateDiv0','classList','setProperty','touchend','active','pointer-events','removeProperty','menu-pad','1541277CnLAYF','1165852qwXsTg','22665sptOJq','dateState0','none','7086832UuFSsq','slotStateSaved','selectedIndex','1101axlKwc','stated'];a0_0x4384=function(){return _0x3c526e;};return a0_0x4384();}export async function wrapContent(){const _0x173323=a0_0xa6abbc;let _0x238259=parseInt(await a0_0x36e73a[_0x173323(0xbf)](gameName,'1',_0x173323(0xb3)))||0x1;const _0xd91bd1=async()=>{const _0x28f035=_0x173323;stateDivs[_0x28f035(0xb6)]((_0x5b9425,_0x1c185f)=>{const _0x36960c=_0x28f035;_0x1c185f+0x1===_0x238259?_0x5b9425[_0x36960c(0xd8)][_0x36960c(0xd1)](_0x36960c(0xbe)):_0x5b9425[_0x36960c(0xd8)][_0x36960c(0xc9)](_0x36960c(0xbe));}),await a0_0x36e73a[_0x28f035(0xcc)](gameName,'1',_0x28f035(0xb3),_0x238259);};_0xd91bd1(),['touchend']['forEach'](_0x58fefa=>{const _0x32c297=_0x173323;document[_0x32c297(0xc6)](_0x32c297(0xd3))[_0x32c297(0xb6)](_0x2048ff=>{_0x2048ff['addEventListener'](_0x58fefa,()=>{const _0x2ae09b=a0_0x2044;statePageButton[_0x2ae09b(0xd8)][_0x2ae09b(0xb8)](_0x2ae09b(0xdb))&&_0x238259>0x1&&(_0x238259--,_0xd91bd1());});}),document['querySelectorAll']('#Right')[_0x32c297(0xb6)](_0x1b59dc=>{const _0x3454d7=_0x32c297;_0x1b59dc[_0x3454d7(0xc5)](_0x58fefa,()=>{const _0xa9ec0=_0x3454d7;statePageButton[_0xa9ec0(0xd8)][_0xa9ec0(0xb8)](_0xa9ec0(0xdb))&&_0x238259<stateDivs[_0xa9ec0(0xd6)]&&(_0x238259++,_0xd91bd1());});}),document[_0x32c297(0xcf)]('A')[_0x32c297(0xc5)](_0x58fefa,async()=>{const _0x19c0e4=_0x32c297;statePageButton['classList'][_0x19c0e4(0xb8)](_0x19c0e4(0xdb))&&(document['getElementById']('stateDiv0'+_0x238259)[_0x19c0e4(0xd8)]['contains']('selected')&&(stateList['classList'][_0x19c0e4(0xca)](_0x19c0e4(0xce)),statePageButton[_0x19c0e4(0xd8)]['toggle']('active'),document[_0x19c0e4(0xcf)](_0x19c0e4(0xde))['style'][_0x19c0e4(0xdd)]('pointer-events'),led(_0x238259),await a0_0x36e73a['loadState'](_0x238259),await a0_0x36e73a['setData'](gameName,'1',_0x19c0e4(0xb2),_0x238259),await a0_0x36e73a[_0x19c0e4(0xc7)](),await delay(0x64),await a0_0x36e73a[_0x19c0e4(0xcb)]('['+_0x238259+_0x19c0e4(0xbb),0x5dc)));}),document[_0x32c297(0xcf)]('B')[_0x32c297(0xc5)](_0x58fefa,async()=>{const _0x47c320=_0x32c297;if(statePageButton[_0x47c320(0xd8)]['contains'](_0x47c320(0xdb))){if(document[_0x47c320(0xcf)](_0x47c320(0xd7)+_0x238259)['classList'][_0x47c320(0xb8)]('selected')){if(confirm('Do\x20you\x20want\x20slot\x20['+_0x238259+_0x47c320(0xc3))){const _0x2e0eb9=gameName['replace'](/\.(zip|gb|gbc|gba)$/,'.ss'+_0x238259),_0x353d05=gameName[_0x47c320(0xd4)](/\.(zip|gb|gbc|gba)$/,'');await a0_0x36e73a['deleteFile']('/data/states/'+_0x2e0eb9),await delay(0xc8),await a0_0x36e73a[_0x47c320(0xbc)]('/data/screenshots/'+_0x353d05+'_'+_0x238259+_0x47c320(0xd0)),document[_0x47c320(0xcf)](_0x47c320(0xaf)+_0x238259)[_0x47c320(0xc8)]='__';}}}});});}function a0_0x2044(_0x40f57f,_0x51fe2c){const _0x4384ca=a0_0x4384();return a0_0x2044=function(_0x2044d9,_0x227710){_0x2044d9=_0x2044d9-0xac;let _0x2c4030=_0x4384ca[_0x2044d9];return _0x2c4030;},a0_0x2044(_0x40f57f,_0x51fe2c);}document[a0_0xa6abbc(0xc5)](a0_0xa6abbc(0xc0),function(){const _0x3fc664=a0_0xa6abbc;[_0x3fc664(0xda)][_0x3fc664(0xb6)](_0x4c0543=>{statePageButton['addEventListener'](_0x4c0543,()=>{const _0x37f11e=a0_0x2044;for(let _0x4dce4d=0x1;_0x4dce4d<=0x3;_0x4dce4d++){LoadstateInPage(_0x4dce4d,_0x37f11e(0xcd)+_0x4dce4d,_0x37f11e(0xaf)+_0x4dce4d,_0x37f11e(0xd7)+_0x4dce4d);}stateList[_0x37f11e(0xd8)][_0x37f11e(0xca)](_0x37f11e(0xce)),statePageButton[_0x37f11e(0xd8)]['toggle']('active'),stateList[_0x37f11e(0xd8)][_0x37f11e(0xb8)](_0x37f11e(0xce))?(document['getElementById'](_0x37f11e(0xde))[_0x37f11e(0xb9)]['removeProperty']('pointer-events'),a0_0x36e73a['resumeGame']()):(document[_0x37f11e(0xcf)]('menu-pad')['style'][_0x37f11e(0xd9)](_0x37f11e(0xdc),_0x37f11e(0xb0),'important'),a0_0x36e73a[_0x37f11e(0xb7)]());});});});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+const stateDivs = document.querySelectorAll('.stateDiv');
+//const noneImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg2MFY0MEgwVjBaIiBmaWxsPSIjMTYxNjE2Ii8+CjxwYXRoIG9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNCAxNkgyNlYyNEgzNFYxNlpNMzMgMTdIMzJWMThIMzFWMTlIMzBWMjBIMjlWMjFIMjhWMjJIMjdWMjNIMzNWMTdaIiBmaWxsPSIjRkZGRkY1Ii8+Cjwvc3ZnPgo=';
+/* --------------- Function ------------------ */
+// Load States
+async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
+    const localSlot = await Main.getData(gameName, "1", "slotStateSaved");
+    const stateDiv = document.getElementById(stateDivs);
+    //const pngName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `_${saveSlot}.png`);
+    //const imageData = await Main.dowloadScreenShot(`/data/screenshots/${pngName}`) || noneImage;
+    const timeData = await Main.getData(gameName, saveSlot, "saveTime");
+    document.getElementById(dateState).textContent = timeData || "__";
+    if (parseInt(localSlot) === parseInt(saveSlot)) {
+        stateDiv.classList.add('stated');
+    } else {
+        stateDiv.classList.remove('stated');
+    }
+}
+export async function wrapContent () {
+    let selectedIndex = parseInt(await Main.getData(gameName, "1", "selectedIndex")) || 1;
+    const updateSelectionState = async () => {
+        stateDivs.forEach((stateDiv, index) => {
+            if (index + 1 === selectedIndex) {
+                stateDiv.classList.add('selected');
+            } else {
+                stateDiv.classList.remove('selected');
+            }
+        });
+        await Main.setData(gameName, "1", "selectedIndex", selectedIndex);
+    };
+    updateSelectionState(); 
+    ["touchend"].forEach(eventType => {
+        document.querySelectorAll('#Left').forEach(button => {
+            button.addEventListener(eventType, () => {
+                if (statePageButton.classList.contains("active") && selectedIndex > 1) {
+                    selectedIndex--;
+                    updateSelectionState();
+                }
+            });
+        });
+
+        document.querySelectorAll('#Right').forEach(button => {
+            button.addEventListener(eventType, () => {
+                if (statePageButton.classList.contains("active") && selectedIndex < stateDivs.length) {
+                    selectedIndex++;
+                    updateSelectionState();
+                }
+            });
+        });
+
+        document.getElementById('A').addEventListener(eventType, async () => {
+            if (statePageButton.classList.contains("active")) {
+                if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
+                    stateList.classList.toggle("visible");
+                    statePageButton.classList.toggle("active");
+                    document.getElementById("menu-pad").style.removeProperty("pointer-events");
+                    led(selectedIndex);
+                    await Main.loadState(selectedIndex);
+                    await Main.setData(gameName, "1", "slotStateSaved", selectedIndex);
+                    await Main.resumeGame();
+                    await delay(100);
+                    await Main.notiMessage(`[${selectedIndex}] Loaded State`, 1500);
+                }
+            }
+        });
+
+        document.getElementById('B').addEventListener(eventType, async () => {
+            if (statePageButton.classList.contains("active")) {
+                if (document.getElementById(`stateDiv0${selectedIndex}`).classList.contains('selected')) {
+                    if (confirm(`Do you want slot [${selectedIndex}] deleted?`)) {
+                        const stateName = gameName.replace(/\.(zip|gb|gbc|gba)$/, `.ss${selectedIndex}`);
+                        const screenShotName = gameName.replace(/\.(zip|gb|gbc|gba)$/, "");
+                        await Main.deleteFile(`/data/states/${stateName}`);
+                        await delay(200);
+                        await Main.deleteFile(`/data/screenshots/${screenShotName}_${selectedIndex}.png`);
+                        document.getElementById(`dateState0${selectedIndex}`).textContent = "__";
+                    }
+                }
+            }
+        });
+    });
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    ["touchend"].forEach(eventType => {
+        //Buton Open Save States Page
+        statePageButton.addEventListener(eventType, () => {
+            for (let i = 1; i <= 3; i++) {
+                LoadstateInPage(i, `state0${i}`, `dateState0${i}`, `stateDiv0${i}`);
+            }
+            stateList.classList.toggle("visible");
+            statePageButton.classList.toggle("active");
+            if (stateList.classList.contains("visible")) {
+                document.getElementById("menu-pad").style.removeProperty("pointer-events");
+                Main.resumeGame();
+            } else {
+                document.getElementById("menu-pad").style.setProperty("pointer-events", "none", "important");
+                Main.pauseGame();
+            }
+        });
+    });
+});

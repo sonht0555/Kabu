@@ -1,1 +1,69 @@
-const a0_0x262113=a0_0x11c1;(function(_0xed8ddb,_0x30610a){const _0x43302f=a0_0x11c1,_0xb221e=_0xed8ddb();while(!![]){try{const _0x322a78=parseInt(_0x43302f(0x173))/0x1+-parseInt(_0x43302f(0x181))/0x2+-parseInt(_0x43302f(0x179))/0x3*(-parseInt(_0x43302f(0x175))/0x4)+-parseInt(_0x43302f(0x18a))/0x5+parseInt(_0x43302f(0x174))/0x6*(-parseInt(_0x43302f(0x18c))/0x7)+parseInt(_0x43302f(0x190))/0x8*(-parseInt(_0x43302f(0x17c))/0x9)+parseInt(_0x43302f(0x178))/0xa;if(_0x322a78===_0x30610a)break;else _0xb221e['push'](_0xb221e['shift']());}catch(_0xf516c6){_0xb221e['push'](_0xb221e['shift']());}}}(a0_0x5758,0x286b3));import*as a0_0xc573bf from'./main.js';const romlist=document[a0_0x262113(0x19b)](a0_0x262113(0x19c)),romInput=document[a0_0x262113(0x19b)](a0_0x262113(0x177));function a0_0x5758(){const _0x1bd0a1=['change','includes','firstChild','getElementById','rom-list','65637DktqyJ','6WGgBFg','16BLKxWk','listFiles','fileInput','3302140yGqbqo','137847JIwXik','DOMContentLoaded','files','27zAWNsf','classList','lastGameName','parse','setItem','139764JiajWo','name','game-item','add','flex-1','recentGames','removeChild','createElement','click','8350IfyoqA','push','763707hWuqwC','getItem','disable','onclick','622504wkPwVe','innerHTML','games','addEventListener','forEach','remove','stringify','filter'];a0_0x5758=function(){return _0x1bd0a1;};return a0_0x5758();}function a0_0x11c1(_0x49d873,_0x1719fa){const _0x5758d3=a0_0x5758();return a0_0x11c1=function(_0x11c1d5,_0x161b9d){_0x11c1d5=_0x11c1d5-0x173;let _0xe3c53e=_0x5758d3[_0x11c1d5];return _0xe3c53e;},a0_0x11c1(_0x49d873,_0x1719fa);}async function romList(){const _0x478666=a0_0x262113,_0x28af1f=await a0_0xc573bf[_0x478666(0x176)](_0x478666(0x192)),_0x33cc93=localStorage[_0x478666(0x18d)](_0x478666(0x17e))||null;let _0x63b2da=JSON[_0x478666(0x17f)](localStorage[_0x478666(0x18d)]('recentGames'))||[],_0x18053b=[];_0x33cc93&&_0x28af1f[_0x478666(0x199)](_0x33cc93)&&_0x18053b[_0x478666(0x18b)](_0x33cc93),_0x63b2da[_0x478666(0x194)](_0x56e201=>{const _0x3fc1eb=_0x478666;_0x56e201!==_0x33cc93&&_0x28af1f[_0x3fc1eb(0x199)](_0x56e201)&&_0x18053b['push'](_0x56e201);}),_0x28af1f[_0x478666(0x194)](_0x3f42d1=>{const _0x209693=_0x478666;!_0x18053b[_0x209693(0x199)](_0x3f42d1)&&_0x18053b[_0x209693(0x18b)](_0x3f42d1);}),romlist[_0x478666(0x191)]='',_0x18053b[_0x478666(0x194)](_0x6844fd=>{const _0x46d5a7=_0x478666,_0x597a44=document[_0x46d5a7(0x188)]('div');_0x597a44[_0x46d5a7(0x17d)][_0x46d5a7(0x184)](_0x46d5a7(0x185),_0x46d5a7(0x183)),_0x597a44['textContent']=_0x6844fd,_0x597a44[_0x46d5a7(0x18f)]=()=>{updateRecentGames(_0x6844fd),a0_0xc573bf['loadGame'](_0x6844fd),romList();},romlist['appendChild'](_0x597a44);});}function updateRecentGames(_0x35f4d2){const _0x26484b=a0_0x262113;let _0x4a14db=JSON[_0x26484b(0x17f)](localStorage[_0x26484b(0x18d)](_0x26484b(0x186)))||[];_0x4a14db=_0x4a14db[_0x26484b(0x197)](_0x440630=>_0x440630!==_0x35f4d2),_0x4a14db['unshift'](_0x35f4d2),localStorage['setItem'](_0x26484b(0x186),JSON[_0x26484b(0x196)](_0x4a14db)),localStorage[_0x26484b(0x180)](_0x26484b(0x17e),_0x35f4d2);}async function inputGame(_0x4bdc81){const _0x30e8d9=a0_0x262113,_0x348c58=_0x4bdc81[_0x30e8d9(0x17b)][0x0][_0x30e8d9(0x182)];await a0_0xc573bf['uploadGame'](romInput),await delay(0x1f4),await a0_0xc573bf['loadGame'](_0x348c58);}document[a0_0x262113(0x193)](a0_0x262113(0x17a),function(){const _0x2983ed=a0_0x262113;setTimeout(()=>{romList();},0x7d0),romInput[_0x2983ed(0x193)](_0x2983ed(0x198),function(){inputGame(romInput);}),backToHome[_0x2983ed(0x193)](_0x2983ed(0x189),function(){const _0x2b13ee=_0x2983ed;storage[_0x2b13ee(0x17d)][_0x2b13ee(0x184)]('disable'),intro[_0x2b13ee(0x17d)][_0x2b13ee(0x195)](_0x2b13ee(0x18e)),ingame[_0x2b13ee(0x17d)][_0x2b13ee(0x184)](_0x2b13ee(0x18e));while(romlist[_0x2b13ee(0x19a)]){romlist[_0x2b13ee(0x187)](romlist[_0x2b13ee(0x19a)]);}setTimeout(()=>{romList();},0x64);});});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+const romlist = document.getElementById("rom-list");
+const romInput = document.getElementById("fileInput");
+/* --------------- Function ------------------ */
+async function romList() {
+    const gameList = await Main.listFiles("games");
+    const lastGameName = localStorage.getItem("lastGameName") || null;
+    let recentGames = JSON.parse(localStorage.getItem("recentGames")) || [];
+    let sortedGameList = [];
+    if (lastGameName && gameList.includes(lastGameName)) {
+        sortedGameList.push(lastGameName);
+    }
+    recentGames.forEach(game => {
+        if (game !== lastGameName && gameList.includes(game)) {
+            sortedGameList.push(game);
+        }
+    });
+    gameList.forEach(game => {
+        if (!sortedGameList.includes(game)) {
+            sortedGameList.push(game);
+        }
+    });
+    romlist.innerHTML = "";
+    sortedGameList.forEach(gameName => {
+        const div = document.createElement("div");
+        div.classList.add("flex-1", "game-item");
+        div.textContent = gameName;
+        div.onclick = () => {
+            updateRecentGames(gameName);
+            Main.loadGame(gameName);
+            romList();
+        };
+        romlist.appendChild(div);
+    });
+}
+function updateRecentGames(gameName) {
+    let recentGames = JSON.parse(localStorage.getItem("recentGames")) || [];
+    recentGames = recentGames.filter(name => name !== gameName);
+    recentGames.unshift(gameName);
+    localStorage.setItem("recentGames", JSON.stringify(recentGames));
+    localStorage.setItem("lastGameName", gameName);
+}
+async function inputGame(InputFile) {
+    const gameName = InputFile.files[0].name;
+    await Main.uploadGame(romInput);
+    await delay(500);
+    await Main.loadGame(gameName);
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
+        romList();
+    },2000);
+    romInput.addEventListener("change", function() {
+        inputGame(romInput);
+    })
+    backToHome.addEventListener("click", function() {
+        storage.classList.add("disable");
+        intro.classList.remove("disable");
+        ingame.classList.add("disable");
+        while (romlist.firstChild) {
+            romlist.removeChild(romlist.firstChild);
+        }
+        setTimeout(() => {
+            romList();
+        },100);
+    })
+});

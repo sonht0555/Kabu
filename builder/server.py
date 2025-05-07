@@ -8,6 +8,6 @@ class COIHandler(SimpleHTTPRequestHandler):
 
 PORT = 9000
 httpd = HTTPServer(("0.0.0.0", PORT), COIHandler)
-print(f"🚀 Server đang chạy tại: http://localhost:{PORT}")
+print(f"🚀 Server is running: http://localhost:{PORT}")
 httpd.serve_forever()
-# Chạy server bằng lệnh: python server.py
+# python3 ./builder/server.py

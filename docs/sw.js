@@ -1,11 +1,10 @@
-let revision = 'V6.35';
+let revision = 'V6.36';
 var urlsToCache = [
     '/',
-    './img/favi.png',
-    './img/icon.png',
+    './README.md',
+    './_headers',
     './index.html',
     './manifest.json',
-    './server.py',
     './src/core/2.1.1/mgba.js',
     './src/core/2.1.1/mgba.wasm',
     './src/core/2.1.2/mgba.js',
@@ -13,7 +12,9 @@ var urlsToCache = [
     './src/css/main.css',
     './src/font/04b.ttf',
     './src/font/04bf.woff',
-    './src/font/Tuson.ttf',
+    './src/font/tuson.ttf',
+    './src/img/favi.png',
+    './src/img/icon.png',
     './src/js/cloud.js',
     './src/js/gamepad.js',
     './src/js/global.js',
@@ -26,7 +27,7 @@ var urlsToCache = [
     './src/js/welcome.js',
     './src/library/interact.js',
     './src/library/nip.js',
-    './sw.js',
+    './sw.js'
 ];
 
 self.addEventListener('install', function (event) {

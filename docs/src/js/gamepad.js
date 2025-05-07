@@ -1,1 +1,282 @@
-const a0_0x1e5815=a0_0x54e6;function a0_0x43fa(){const _0x3c0f17=['ledSave','Down-right','now','identifier','move','8GdVWgx','toLowerCase','includes','add','setData','rewind','clientY','apiKey,endpoint','4044186HVupyz','169848QcRMro','touchcancel','distance','clientX','forEach','elementFromPoint','5705ksJmBO','buttonPress','delete','split','getElementById','touchend','touches','turbo-fast','classList','Select','touchmove','setItem','startsWith','Left','Up-left','offsetWidth','remove','closest','Up-right','[_]\x20Loaded.','buttonUnpress','1180450TuZNsR','684965vGsVzC','loadState','Right','saveState','Rewind_..','[_]\x202x\x20Speed','screenShot','type','addEventListener','slotStateSaved','changedTouches','Down','[_]\x201x\x20Speed','[_]\x20Volume:\x20','getBoundingClientRect','angle','setFastForwardMultiplier','set','1522470nBGZBR','setVolume','ApiAzure','Resumed!','[id]','touched','notiMessage','387947DDEdvv','left','getData','turbo','touch','has','#20A5A6','pointerdown',']\x20Saved.','stateAuto','length','Down-left','get','1192rTiOdW'];a0_0x43fa=function(){return _0x3c0f17;};return a0_0x43fa();}(function(_0x1334f9,_0x1cfc9a){const _0x5f47ba=a0_0x54e6,_0x1f5924=_0x1334f9();while(!![]){try{const _0x46a72f=-parseInt(_0x5f47ba(0xd5))/0x1+-parseInt(_0x5f47ba(0xbb))/0x2+parseInt(_0x5f47ba(0xce))/0x3+parseInt(_0x5f47ba(0x97))/0x4*(parseInt(_0x5f47ba(0xbc))/0x5)+-parseInt(_0x5f47ba(0xa0))/0x6+-parseInt(_0x5f47ba(0xa6))/0x7*(-parseInt(_0x5f47ba(0xe2))/0x8)+parseInt(_0x5f47ba(0x9f))/0x9;if(_0x46a72f===_0x1cfc9a)break;else _0x1f5924['push'](_0x1f5924['shift']());}catch(_0x36312b){_0x1f5924['push'](_0x1f5924['shift']());}}}(a0_0x43fa,0x546b9));function a0_0x54e6(_0x5e93e8,_0x3bf82c){const _0x43fa10=a0_0x43fa();return a0_0x54e6=function(_0x54e69e,_0xf09931){_0x54e69e=_0x54e69e-0x97;let _0x329e79=_0x43fa10[_0x54e69e];return _0x329e79;},a0_0x54e6(_0x5e93e8,_0x3bf82c);}import*as a0_0x1347e0 from'./main.js';let clickState=0x0,clickTimeout,clickTurbo=0x0,turboState=0x1,volumeLevels=[0x1,0x0,0.25,0.5,0.75],volumeIndex=0x0;const turboButton=document[a0_0x1e5815(0xaa)](a0_0x1e5815(0xd8));function buttonPress(_0x171b31,_0x4ab04c){const _0x246474=a0_0x1e5815;if(_0x171b31[_0x246474(0x99)]('-')){const [_0x173799,_0x122f54]=_0x171b31[_0x246474(0x98)]()[_0x246474(0xa9)]('-');_0x4ab04c?a0_0x1347e0[_0x246474(0xa7)](_0x173799):a0_0x1347e0[_0x246474(0xba)](_0x173799),_0x4ab04c?a0_0x1347e0['buttonPress'](_0x122f54):a0_0x1347e0[_0x246474(0xba)](_0x122f54);}else _0x4ab04c?a0_0x1347e0[_0x246474(0xa7)](_0x171b31[_0x246474(0x98)]()):a0_0x1347e0['buttonUnpress'](_0x171b31[_0x246474(0x98)]());}async function saveState(_0x3c0952){const _0x672bc8=a0_0x1e5815;await a0_0x1347e0[_0x672bc8(0xbf)](_0x3c0952),await a0_0x1347e0[_0x672bc8(0xc2)](_0x3c0952);}async function loadState(_0x10ea01){const _0x18cba4=a0_0x1e5815;await a0_0x1347e0[_0x18cba4(0xbd)](_0x10ea01);}export async function turboF(_0x8b1da8){const _0x3d5183=a0_0x1e5815;if(_0x8b1da8===0x1)a0_0x1347e0[_0x3d5183(0xd4)](_0x3d5183(0xc8),0x5dc),turboButton['classList'][_0x3d5183(0xb6)]('turbo-medium'),turboButton[_0x3d5183(0xae)][_0x3d5183(0xb6)](_0x3d5183(0xad)),a0_0x1347e0[_0x3d5183(0xcc)](0x1);else{if(_0x8b1da8===0x2)a0_0x1347e0[_0x3d5183(0xd4)](_0x3d5183(0xc1),0x5dc),turboButton[_0x3d5183(0xae)][_0x3d5183(0x9a)]('turbo-medium'),turboButton[_0x3d5183(0xae)][_0x3d5183(0xb6)]('turbo-fast'),a0_0x1347e0[_0x3d5183(0xcc)](0x2);else _0x8b1da8===0x3&&(a0_0x1347e0[_0x3d5183(0xd4)]('[_]\x204x\x20Speed',0x5dc),turboButton[_0x3d5183(0xae)]['remove']('turbo-medium'),turboButton[_0x3d5183(0xae)][_0x3d5183(0x9a)](_0x3d5183(0xad)),a0_0x1347e0['setFastForwardMultiplier'](0x4));}}document['addEventListener']('DOMContentLoaded',function(){const _0x4260b4=a0_0x1e5815,_0x698e52=['Up',_0x4260b4(0xc7),_0x4260b4(0xb3),_0x4260b4(0xbe),'Up-left',_0x4260b4(0xb8),_0x4260b4(0xe0),_0x4260b4(0xe4)],_0x5abb28=['A','B','Start',_0x4260b4(0xaf),'L','R'];let _0x14f269=new Map(),_0x28f4fa=new Map();function _0x327a9b(_0x1b2305,_0x441fa7){const _0x54149f=_0x4260b4;if(!_0x1b2305)return;buttonPress(_0x1b2305,_0x441fa7);const _0x212cde=document[_0x54149f(0xaa)](_0x1b2305);_0x212cde&&(_0x441fa7?_0x212cde[_0x54149f(0xae)][_0x54149f(0x9a)](_0x54149f(0xd3)):_0x212cde[_0x54149f(0xae)]['remove']('touched'));}function _0x301e5e(_0x311065){const _0x1a5203=_0x4260b4,_0x573920=document[_0x1a5203(0xa5)](_0x311065[_0x1a5203(0xa3)],_0x311065[_0x1a5203(0x9d)]),_0x311bd6=_0x573920?.[_0x1a5203(0xb7)](_0x1a5203(0xd2));return _0x311bd6?_0x311bd6['id']:null;}document[_0x4260b4(0xc4)]('touchstart',_0xadd9b=>{const _0x4fcf61=_0x4260b4;for(let _0x4e3e58 of _0xadd9b['changedTouches']){const _0x11a087=_0x301e5e(_0x4e3e58);if(!_0x11a087)continue;if(_0x698e52[_0x4fcf61(0x99)](_0x11a087))_0x14f269[_0x4fcf61(0xda)](_0x4e3e58[_0x4fcf61(0xe6)])&&_0x327a9b(_0x14f269[_0x4fcf61(0xe1)](_0x4e3e58['identifier']),![]),_0x14f269[_0x4fcf61(0xcd)](_0x4e3e58[_0x4fcf61(0xe6)],_0x11a087),_0x327a9b(_0x11a087,!![]);else _0x5abb28['includes'](_0x11a087)&&(_0x28f4fa[_0x4fcf61(0xda)](_0x4e3e58[_0x4fcf61(0xe6)])&&_0x327a9b(_0x28f4fa['get'](_0x4e3e58['identifier']),![]),_0x28f4fa[_0x4fcf61(0xcd)](_0x4e3e58[_0x4fcf61(0xe6)],_0x11a087),_0x327a9b(_0x11a087,!![]));}}),document[_0x4260b4(0xc4)](_0x4260b4(0xb0),_0x401eb4=>{const _0x76a78d=_0x4260b4;for(let _0x2b71de of _0x401eb4[_0x76a78d(0xc6)]){const _0xe6609c=_0x301e5e(_0x2b71de);if(!_0xe6609c)continue;if(_0x698e52[_0x76a78d(0x99)](_0xe6609c))_0x14f269[_0x76a78d(0xda)](_0x2b71de['identifier'])&&_0x14f269[_0x76a78d(0xe1)](_0x2b71de[_0x76a78d(0xe6)])!==_0xe6609c&&(_0x327a9b(_0x14f269[_0x76a78d(0xe1)](_0x2b71de['identifier']),![]),_0x14f269[_0x76a78d(0xcd)](_0x2b71de[_0x76a78d(0xe6)],_0xe6609c),_0x327a9b(_0xe6609c,!![]));else _0x5abb28[_0x76a78d(0x99)](_0xe6609c)&&(_0x28f4fa[_0x76a78d(0xda)](_0x2b71de[_0x76a78d(0xe6)])&&_0x28f4fa[_0x76a78d(0xe1)](_0x2b71de[_0x76a78d(0xe6)])!==_0xe6609c&&(_0x327a9b(_0x28f4fa['get'](_0x2b71de['identifier']),![]),_0x28f4fa['set'](_0x2b71de[_0x76a78d(0xe6)],_0xe6609c),_0x327a9b(_0xe6609c,!![])));}}),document[_0x4260b4(0xc4)](_0x4260b4(0xab),_0x471e7d=>{const _0x29743b=_0x4260b4;for(let _0x34bd58 of _0x471e7d[_0x29743b(0xc6)]){_0x14f269[_0x29743b(0xda)](_0x34bd58[_0x29743b(0xe6)])&&(_0x327a9b(_0x14f269[_0x29743b(0xe1)](_0x34bd58['identifier']),![]),_0x14f269[_0x29743b(0xa8)](_0x34bd58[_0x29743b(0xe6)])),_0x28f4fa[_0x29743b(0xda)](_0x34bd58[_0x29743b(0xe6)])&&(_0x327a9b(_0x28f4fa[_0x29743b(0xe1)](_0x34bd58[_0x29743b(0xe6)]),![]),_0x28f4fa[_0x29743b(0xa8)](_0x34bd58[_0x29743b(0xe6)]));}}),document[_0x4260b4(0xc4)](_0x4260b4(0xa1),_0x56b339=>{const _0x5539a6=_0x4260b4;for(let _0x574dcc of _0x56b339[_0x5539a6(0xc6)]){_0x14f269['has'](_0x574dcc[_0x5539a6(0xe6)])&&(_0x327a9b(_0x14f269[_0x5539a6(0xe1)](_0x574dcc[_0x5539a6(0xe6)]),![]),_0x14f269[_0x5539a6(0xa8)](_0x574dcc['identifier'])),_0x28f4fa[_0x5539a6(0xda)](_0x574dcc[_0x5539a6(0xe6)])&&(_0x327a9b(_0x28f4fa[_0x5539a6(0xe1)](_0x574dcc[_0x5539a6(0xe6)]),![]),_0x28f4fa[_0x5539a6(0xa8)](_0x574dcc[_0x5539a6(0xe6)]));}});let _0x3e4bfb='';const _0xb9c10a=(_0x456f02,_0x15d3c2)=>{const _0x125be3=_0x4260b4,_0x2bf408=_0x456f02['split']('-');_0x2bf408[_0x125be3(0xa4)](_0x13ff77=>{const _0x2691f9=_0x125be3;_0x15d3c2?a0_0x1347e0['buttonPress'](_0x13ff77):a0_0x1347e0[_0x2691f9(0xba)](_0x13ff77);});};dynamic['on'](_0x4260b4(0xe7),(_0x55e01b,_0x4ba01e)=>{const _0x373059=_0x4260b4;if(!_0x4ba01e||_0x4ba01e[_0x373059(0xa2)]<0xa)return;const _0xabe49f=_0x4ba01e[_0x373059(0xcb)]['degree'];let _0x156dff='';if(_0xabe49f>=337.5||_0xabe49f<22.5)_0x156dff=_0x373059(0xbe);else{if(_0xabe49f>=22.5&&_0xabe49f<67.5)_0x156dff='Up-right';else{if(_0xabe49f>=67.5&&_0xabe49f<112.5)_0x156dff='Up';else{if(_0xabe49f>=112.5&&_0xabe49f<157.5)_0x156dff=_0x373059(0xb4);else{if(_0xabe49f>=157.5&&_0xabe49f<202.5)_0x156dff=_0x373059(0xb3);else{if(_0xabe49f>=202.5&&_0xabe49f<247.5)_0x156dff=_0x373059(0xe0);else{if(_0xabe49f>=247.5&&_0xabe49f<292.5)_0x156dff=_0x373059(0xc7);else _0xabe49f>=292.5&&_0xabe49f<337.5&&(_0x156dff=_0x373059(0xe4));}}}}}}_0x156dff!==_0x3e4bfb&&(_0xb9c10a(_0x3e4bfb,![]),_0xb9c10a(_0x156dff,!![]),_0x3e4bfb=_0x156dff);}),dynamic['on']('end',()=>{_0xb9c10a(_0x3e4bfb,![]),_0x3e4bfb='';});});let lastSaveTime=0x0;['touchend'][a0_0x1e5815(0xa4)](_0x570577=>{const _0x13457f=a0_0x1e5815,_0x36b6a5=document[_0x13457f(0xaa)]('R');_0x36b6a5[_0x13457f(0xc4)](_0x570577,async _0x42dd5f=>{const _0x4615f9=_0x13457f;let _0x318a85=0x0,_0x59c751=_0x36b6a5[_0x4615f9(0xb5)];if(_0x42dd5f['type']['startsWith'](_0x4615f9(0xd9))){const _0x47a6b5=_0x42dd5f[_0x4615f9(0xac)][0x0]||_0x42dd5f[_0x4615f9(0xc6)][0x0],_0x17cdce=_0x36b6a5[_0x4615f9(0xca)]();_0x318a85=_0x47a6b5[_0x4615f9(0xa3)]-_0x17cdce[_0x4615f9(0xd6)];}else{const _0x375c27=_0x36b6a5[_0x4615f9(0xca)]();_0x318a85=_0x42dd5f[_0x4615f9(0xa3)]-_0x375c27[_0x4615f9(0xd6)];}if(_0x318a85>_0x59c751/0x4)return;const _0xeb4c96=Date[_0x4615f9(0xe5)]();if(_0xeb4c96-lastSaveTime<0x3e8)return;clickState++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{const _0x5bedab=_0x4615f9;if(clickState===0x2){lastSaveTime=Date[_0x5bedab(0xe5)]();const _0x539681=await a0_0x1347e0[_0x5bedab(0xd7)](gameName,'1',_0x5bedab(0xde))||await a0_0x1347e0[_0x5bedab(0x9b)](gameName,'1',_0x5bedab(0xde),'On'),_0x770e2d=_0x539681==='On'?parseInt(await a0_0x1347e0[_0x5bedab(0xd7)](gameName,'1',_0x5bedab(0xc5))%0x3)+0x1||0x1:parseInt(await a0_0x1347e0[_0x5bedab(0xd7)](gameName,'1',_0x5bedab(0xc5)))||0x1;await delay(0x64),await saveState(_0x770e2d),await delay(0x32),await a0_0x1347e0[_0x5bedab(0x9b)](gameName,'1','slotStateSaved',_0x770e2d),await delay(0x32),await a0_0x1347e0[_0x5bedab(0xe3)](_0x5bedab(0xdb)),await delay(0x32),await a0_0x1347e0[_0x5bedab(0xd4)]('['+(_0x539681==='On'?_0x770e2d:'?')+_0x5bedab(0xdd),_0x539681==='On'?0x7d0:0x3e8);}else{if(clickState===0x3){volumeIndex=(volumeIndex+0x1)%volumeLevels[_0x5bedab(0xdf)];let _0x573ec1=volumeLevels[volumeIndex];a0_0x1347e0[_0x5bedab(0xcf)](_0x573ec1),a0_0x1347e0[_0x5bedab(0xd4)](_0x5bedab(0xc9)+_0x573ec1*0x64+'%',0x3e8);}}clickState=0x0;},0x12c);});const _0x1564e0=document['getElementById']('L');_0x1564e0[_0x13457f(0xc4)](_0x570577,async _0x4c966d=>{const _0x5e1bae=_0x13457f;let _0x157df3=0x0,_0x11e22d=_0x1564e0[_0x5e1bae(0xb5)];if(_0x4c966d[_0x5e1bae(0xc3)][_0x5e1bae(0xb2)](_0x5e1bae(0xd9))){const _0xf2dbf8=_0x4c966d[_0x5e1bae(0xac)][0x0]||_0x4c966d['changedTouches'][0x0],_0x769d41=_0x1564e0[_0x5e1bae(0xca)]();_0x157df3=_0xf2dbf8[_0x5e1bae(0xa3)]-_0x769d41[_0x5e1bae(0xd6)];}else{const _0x2daf33=_0x1564e0[_0x5e1bae(0xca)]();_0x157df3=_0x4c966d[_0x5e1bae(0xa3)]-_0x2daf33[_0x5e1bae(0xd6)];}if(_0x157df3<_0x11e22d*0x3/0x4)return;clickState++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{const _0xd2d477=_0x5e1bae;if(clickState===0x2){const _0x862066=await a0_0x1347e0[_0xd2d477(0xd7)](gameName,'1',_0xd2d477(0xc5))||0x1;loadState(_0x862066),a0_0x1347e0[_0xd2d477(0xd4)](_0xd2d477(0xb9),0x3e8),await delay(0x32),await a0_0x1347e0['ledSave'](_0xd2d477(0xdb));}else{if(clickState===0x3){let _0x5b9375=localStorage['getItem'](_0xd2d477(0xd0)),_0x315b6d=prompt(_0xd2d477(0x9e),_0x5b9375);_0x315b6d!==null&&_0x315b6d!==''&&localStorage[_0xd2d477(0xb1)]('ApiAzure',_0x315b6d);}}clickState=0x0;},0x12c);}),turboButton['addEventListener'](_0x570577,async()=>{clickTurbo++,clearTimeout(clickTimeout),clickTimeout=setTimeout(async()=>{const _0x5402ba=a0_0x54e6;clickTurbo===0x2&&(turboState=turboState%0x3+0x1,turboF(turboState),await a0_0x1347e0[_0x5402ba(0x9b)](gameName,'1','turboState',turboState)),clickTurbo=0x0;},0x12c);}),rewind[_0x13457f(0xc4)](_0x13457f(0xdc),()=>{const _0xbe9cc0=_0x13457f;a0_0x1347e0[_0xbe9cc0(0x9c)](!![]),a0_0x1347e0['notiMessage'](_0xbe9cc0(0xc0),0x4e20);}),rewind[_0x13457f(0xc4)]('pointerup',()=>{const _0x4038f2=_0x13457f;a0_0x1347e0[_0x4038f2(0x9c)](![]),a0_0x1347e0[_0x4038f2(0xd4)](_0x4038f2(0xd1),0x3e8);});});
+import * as Main from './main.js';
+/* --------------- Declaration --------------- */
+let clickState = 0;
+let clickTimeout;
+let clickTurbo = 0
+let turboState = 1;
+let volumeLevels = [1, 0, 0.25, 0.5, 0.75];
+let volumeIndex = 0;
+const turboButton = document.getElementById("turbo");
+/* --------------- Function --------------- */
+function buttonPress(buttonName, isPress) {
+    if (buttonName.includes("-")) {
+        const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
+        isPress ? Main.buttonPress(primaryButton) : Main.buttonUnpress(primaryButton);
+        isPress ? Main.buttonPress(secondaryButton) : Main.buttonUnpress(secondaryButton);
+    } else {
+        isPress ? Main.buttonPress(buttonName.toLowerCase()) : Main.buttonUnpress(buttonName.toLowerCase());
+    }
+}
+// Save State
+async function saveState(slot) {
+    await Main.saveState(slot);
+    await Main.screenShot(slot);
+}
+// Load State
+async function loadState(slot) {
+    await Main.loadState(slot);
+}
+// Turbo
+export async function turboF(turboState) {
+    if (turboState === 1) {
+        Main.notiMessage("[_] 1x Speed", 1500);
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
+        Main.setFastForwardMultiplier(1);
+    } else if (turboState === 2) {
+        Main.notiMessage("[_] 2x Speed", 1500);
+        turboButton.classList.add("turbo-medium");
+        turboButton.classList.remove("turbo-fast");
+        Main.setFastForwardMultiplier(2);
+    } else if (turboState === 3) {
+        Main.notiMessage("[_] 4x Speed", 1500);
+        turboButton.classList.remove("turbo-medium");
+        turboButton.classList.add("turbo-fast");
+        Main.setFastForwardMultiplier(4);
+    }
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
+    const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
+    let activeDpadTouches = new Map();
+    let activeOtherTouches = new Map();
+
+    function handleButtonPress(buttonId, isPressed) {
+        if (!buttonId) return;
+        buttonPress(buttonId, isPressed);
+        const element = document.getElementById(buttonId);
+        if (element) {
+            if (isPressed) {
+                element.classList.add('touched');
+            } else {
+                element.classList.remove('touched');
+            }
+        }
+    }
+    
+    function getButtonIdFromTouch(touch) {
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const button = element?.closest("[id]");
+        return button ? button.id : null;
+    }
+    
+    document.addEventListener("touchstart", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier)) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                }
+                activeDpadTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier)) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                }
+                activeOtherTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            }
+        }
+    });
+
+    document.addEventListener("touchmove", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier) && activeDpadTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                    activeDpadTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier) && activeOtherTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                    activeOtherTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            }
+        }
+    });
+    
+    document.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+    document.addEventListener("touchcancel", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+     // Joy Stick
+    let currentDirection = '';
+    const updateButtonState = (direction, isPressed) => {
+        const directions = direction.split('-');
+        directions.forEach(dir => {
+            if (isPressed) {
+                Main.buttonPress(dir);
+            } else {
+                Main.buttonUnpress(dir);
+            }
+        });
+    };
+    dynamic.on('move', (evt, data) => {
+        if (!data || data.distance < 10) return;
+        const angle = data.angle.degree;
+        let dpadDirection = '';
+        if (angle >= 337.5 || angle < 22.5) {
+            dpadDirection = 'Right';
+        } else if (angle >= 22.5 && angle < 67.5) {
+            dpadDirection = 'Up-right';
+        } else if (angle >= 67.5 && angle < 112.5) {
+            dpadDirection = 'Up';
+        } else if (angle >= 112.5 && angle < 157.5) {
+            dpadDirection = 'Up-left';
+        } else if (angle >= 157.5 && angle < 202.5) {
+            dpadDirection = 'Left';
+        } else if (angle >= 202.5 && angle < 247.5) {
+            dpadDirection = 'Down-left';
+        } else if (angle >= 247.5 && angle < 292.5) {
+            dpadDirection = 'Down';
+        } else if (angle >= 292.5 && angle < 337.5) {
+            dpadDirection = 'Down-right';
+        }
+        if (dpadDirection !== currentDirection) {
+            updateButtonState(currentDirection, false);
+            updateButtonState(dpadDirection, true);
+            currentDirection = dpadDirection;
+        }
+    });
+    dynamic.on('end', () => {
+        updateButtonState(currentDirection, false);
+        currentDirection = '';
+    });
+});
+let lastSaveTime = 0;
+["touchend"].forEach(eventType => {
+    // Save State Button
+    const er = document.getElementById("R");
+    er.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = er.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = er.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = er.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX > width / 4) return;
+        const now = Date.now();
+        if (now - lastSaveTime < 1000) return;
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                lastSaveTime = Date.now();
+                const autoStateCheck = await Main.getData(gameName, "1", "stateAuto") || await Main.setData(gameName, "1", "stateAuto", "On");
+                const slotStateNumbers = autoStateCheck === "On"
+                    ? (parseInt(await Main.getData(gameName, "1", "slotStateSaved") % 3) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
+                await delay(100);
+                await saveState(slotStateNumbers);
+                await delay(50);
+                await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
+                await delay(50);
+                //canvas.classList.add('glitch-effect');
+                //setTimeout(() => {
+                //    canvas.classList.remove('glitch-effect');
+                //}, 300);
+                await Main.ledSave("#20A5A6");
+                await delay(50);
+                await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
+                
+            } else if (clickState === 3) {
+                volumeIndex = (volumeIndex + 1) % volumeLevels.length;
+                let newVolume = volumeLevels[volumeIndex];
+                Main.setVolume(newVolume);
+                Main.notiMessage(`[_] Volume: ${newVolume * 100}%`, 1000);
+            }  
+            clickState = 0;
+        }, 300);
+    });
+    // Load State Button
+    const el = document.getElementById("L");
+    el.addEventListener(eventType, async (event) => {
+        let clickX = 0;
+        let width = el.offsetWidth;
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+            const rect = el.getBoundingClientRect();
+            clickX = touch.clientX - rect.left;
+        } else {
+            const rect = el.getBoundingClientRect();
+            clickX = event.clientX - rect.left;
+        }
+        if (clickX < (width * 3) / 4) return;
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                const slotStateNumbers = await Main.getData(gameName, "1", "slotStateSaved") || 1;
+                loadState(slotStateNumbers);
+                Main.notiMessage(`[_] Loaded.`, 1000);
+                await delay(50);
+                await Main.ledSave("#20A5A6");
+            } else if (clickState === 3) {
+                let setApiAzure = localStorage.getItem("ApiAzure");
+                let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
+                if (ApiAzure !== null && ApiAzure !== "") {
+                    localStorage.setItem("ApiAzure", ApiAzure);                
+                }
+            }
+            clickState = 0;
+        }, 300);
+    });
+    // Turbo Button
+    turboButton.addEventListener(eventType, async () => {
+        clickTurbo++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickTurbo === 2) {
+                turboState = (turboState % 3) + 1;
+                turboF(turboState);
+                await Main.setData(gameName, "1", "turboState", turboState)
+            }
+            clickTurbo = 0;
+        }, 300);
+    });
+    rewind.addEventListener("pointerdown", () => { Main.rewind(true); Main.notiMessage(`Rewind_..`, 20000);});
+    rewind.addEventListener("pointerup", () => { Main.rewind(false);  Main.notiMessage(`Resumed!`, 1000);});
+})

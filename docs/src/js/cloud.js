@@ -1,1 +1,290 @@
-var a0_0x5be380=a0_0x3513;(function(_0x5f57d5,_0x34cf2e){var _0x27a896=a0_0x3513,_0x242fda=_0x5f57d5();while(!![]){try{var _0x3e3dff=parseInt(_0x27a896(0x14d))/0x1+parseInt(_0x27a896(0x15c))/0x2+parseInt(_0x27a896(0x165))/0x3+parseInt(_0x27a896(0x13a))/0x4+-parseInt(_0x27a896(0x112))/0x5+parseInt(_0x27a896(0x15d))/0x6+-parseInt(_0x27a896(0x13e))/0x7*(parseInt(_0x27a896(0x132))/0x8);if(_0x3e3dff===_0x34cf2e)break;else _0x242fda['push'](_0x242fda['shift']());}catch(_0x1f9b8b){_0x242fda['push'](_0x242fda['shift']());}}}(a0_0x4a50,0x7a94c));import*as a0_0x410975 from'./main.js';import{localStorageFile}from'./storage.js';var clientId='knh3uz2mx2hp2eu',clientSecret=a0_0x5be380(0x127);function authorizeWithDropbox(){var _0x5e878d=a0_0x5be380,_0x26cc17=window[_0x5e878d(0x150)][_0x5e878d(0x149)]['split']('?')[0x0],_0x2d43c3='code',_0x425cc5=_0x5e878d(0x15a),_0x42ad8b='https://www.dropbox.com/oauth2/authorize?client_id='+clientId+_0x5e878d(0x141)+_0x2d43c3+_0x5e878d(0x164)+_0x425cc5+_0x5e878d(0x16b)+encodeURIComponent(_0x26cc17);window[_0x5e878d(0x150)][_0x5e878d(0x149)]=_0x42ad8b;}function handleDropboxCallback(){var _0x24a81e=a0_0x5be380,_0x3eceb7=getUrlParameter('code');_0x3eceb7?(getAccessToken(_0x3eceb7),console['log'](_0x24a81e(0x147),_0x3eceb7)):console['log'](_0x24a81e(0x152));}function a0_0x3513(_0x194389,_0x10f15e){var _0x4a5088=a0_0x4a50();return a0_0x3513=function(_0x3513be,_0x4bcb86){_0x3513be=_0x3513be-0x112;var _0x375a6d=_0x4a5088[_0x3513be];return _0x375a6d;},a0_0x3513(_0x194389,_0x10f15e);}function getUrlParameter(_0x109de9){var _0x4ec2f1=a0_0x5be380;_0x109de9=_0x109de9[_0x4ec2f1(0x15e)](/[\[]/,'\x5c[')[_0x4ec2f1(0x15e)](/[\]]/,'\x5c]');var _0x26ae52=new RegExp('[\x5c?&#]'+_0x109de9+'=([^&#]*)'),_0x5c7621=_0x26ae52[_0x4ec2f1(0x11e)](location['search']);return _0x5c7621===null?'':decodeURIComponent(_0x5c7621[0x1]['replace'](/\+/g,'\x20'));}function getAccessToken(_0x52cf26){var _0x238d2e=a0_0x5be380,_0x5afb23=_0x238d2e(0x121),_0x1761cc=window[_0x238d2e(0x150)]['href'][_0x238d2e(0x14f)]('?')[0x0],_0x4865ad=new XMLHttpRequest();_0x4865ad['open']('POST',_0x238d2e(0x163)),_0x4865ad[_0x238d2e(0x166)]('Content-Type','application/x-www-form-urlencoded'),_0x4865ad[_0x238d2e(0x156)]=function(){var _0x4d4a73=_0x238d2e;if(_0x4865ad[_0x4d4a73(0x113)]===0xc8){var _0x187547=JSON['parse'](_0x4865ad[_0x4d4a73(0x14b)]),_0xe0cdeb=_0x187547['access_token'],_0x4a4898=_0x187547[_0x4d4a73(0x125)],_0x1a112e=_0x187547[_0x4d4a73(0x14a)];localStorage[_0x4d4a73(0x168)]('accessToken',_0xe0cdeb),localStorage[_0x4d4a73(0x168)](_0x4d4a73(0x14c),_0x4a4898),localStorage[_0x4d4a73(0x168)](_0x4d4a73(0x11b),_0x1a112e);}else console[_0x4d4a73(0x12c)](_0x4d4a73(0x157));},_0x4865ad['send']('code='+_0x52cf26+_0x238d2e(0x12b)+_0x5afb23+'&client_id='+clientId+_0x238d2e(0x162)+clientSecret+_0x238d2e(0x16b)+encodeURIComponent(_0x1761cc));}export async function dpCreateFolder(_0x62542a){var _0x241770=a0_0x5be380;const _0x49e0eb=localStorage[_0x241770(0x16a)](_0x241770(0x11b));let _0x2168ac=localStorage[_0x241770(0x16a)](_0x241770(0x151));const _0xc1ecd8='/'+_0x49e0eb+'/'+_0x62542a,_0x1584dc=JSON[_0x241770(0x15f)]({'path':_0xc1ecd8,'autorename':![]});for(let _0x4b0d48=0x0;_0x4b0d48<0x2;_0x4b0d48++){try{const _0x12c5c8=await fetch('https://api.dropboxapi.com/2/files/create_folder_v2',{'method':_0x241770(0x129),'headers':{'Authorization':_0x241770(0x128)+_0x2168ac,'Content-Type':'application/json'},'body':_0x1584dc});if(_0x12c5c8['status']===0x191){const _0xa29cce=await dpRefreshToken();if(!_0xa29cce)throw new Error(_0x241770(0x154));_0x2168ac=localStorage[_0x241770(0x16a)](_0x241770(0x151));continue;}if(_0x12c5c8[_0x241770(0x113)]===0x199)return{'message':_0x241770(0x11c),'path':_0x62542a};if(!_0x12c5c8['ok'])throw new Error(_0x241770(0x122)+_0x62542a);const _0x46d8fb=await _0x12c5c8['json']();return await lockNoti(_0x241770(0x123),'',0xbb8),_0x46d8fb;}catch(_0x4d7925){if(_0x4b0d48===0x1)throw _0x4d7925;}}return![];}export async function dpRefreshToken(){var _0x3c4ca5=a0_0x5be380;if(!localStorage['getItem'](_0x3c4ca5(0x14c)))throw _0x3c4ca5(0x15b);try{const _0x5e8bc2=await fetch(_0x3c4ca5(0x119),{'method':'POST','headers':{'Content-Type':_0x3c4ca5(0x145)},'body':_0x3c4ca5(0x137)+localStorage['getItem']('refreshToken')+_0x3c4ca5(0x160)}),_0x3d651b=await _0x5e8bc2[_0x3c4ca5(0x142)]();if(!_0x3d651b[_0x3c4ca5(0x153)])return localStorage[_0x3c4ca5(0x168)](_0x3c4ca5(0x151),_0x3d651b[_0x3c4ca5(0x126)]),await lockNoti(_0x3c4ca5(0x144),'',0xbb8),await delay(0x3e8),!![];else alert(_0x3d651b[_0x3c4ca5(0x134)]||_0x3c4ca5(0x139));}catch(_0x2631cd){console[_0x3c4ca5(0x153)](_0x3c4ca5(0x118),_0x2631cd);}return![];}export async function dpUploadFile(_0x4a2ccd,_0x5bef94,_0x34af4c){var _0x4f283b=a0_0x5be380;const _0x1a0468=localStorage[_0x4f283b(0x16a)](_0x4f283b(0x11b));var _0x435f92=JSON[_0x4f283b(0x15f)]({'autorename':!![],'mode':'overwrite','mute':!![],'strict_conflict':![],'path':'/'+_0x1a0468+'/'+_0x34af4c+'/'+_0x4a2ccd}),_0x12b2b6=new Blob([_0x5bef94],{'type':_0x4f283b(0x11d)});for(var _0x14ec60=0x0;_0x14ec60<0x2;_0x14ec60++){var _0x3c9cdf=await fetch(_0x4f283b(0x146),{'method':'POST','headers':{'Authorization':_0x4f283b(0x128)+localStorage[_0x4f283b(0x16a)]('accessToken'),'Dropbox-API-Arg':_0x435f92,'Content-Type':_0x4f283b(0x11d)},'body':_0x12b2b6});if(_0x3c9cdf[_0x4f283b(0x113)]!=0xc8){if(_0x3c9cdf[_0x4f283b(0x113)]==0x191){var _0x3b649d=await dpRefreshToken();if(!_0x3b649d)throw _0x4f283b(0x154);continue;}else throw _0x4f283b(0x138)+_0x3c9cdf[_0x4f283b(0x113)];}else{var _0x2fcbab=await _0x3c9cdf[_0x4f283b(0x142)]();return console[_0x4f283b(0x12c)]('Kabu\x20storage\x20↦\x20Cloud\x20◆',_0x4a2ccd),_0x2fcbab;}}return![];}export async function dpDownloadFile(_0x2fe242,_0x302f66){var _0x5dd075=a0_0x5be380;const _0x36d1f2=localStorage[_0x5dd075(0x16a)](_0x5dd075(0x11b));var _0x313601=JSON[_0x5dd075(0x15f)]({'path':'/'+_0x36d1f2+'/'+_0x302f66+'/'+_0x2fe242});for(var _0x28b80c=0x0;_0x28b80c<0x2;_0x28b80c++){var _0x37990a=await fetch('https://content.dropboxapi.com/2/files/download',{'method':_0x5dd075(0x129),'headers':{'Authorization':_0x5dd075(0x128)+localStorage[_0x5dd075(0x16a)](_0x5dd075(0x151)),'Dropbox-API-Arg':_0x313601}});if(_0x37990a[_0x5dd075(0x113)]!=0xc8){if(_0x37990a['status']==0x191){var _0x167755=await dpRefreshToken();if(!_0x167755)throw _0x5dd075(0x154);continue;}else throw _0x5dd075(0x12e)+_0x37990a[_0x5dd075(0x113)];}const _0x3db509=new File([await _0x37990a['blob']()],_0x2fe242);return console['log'](_0x5dd075(0x124),_0x3db509[_0x5dd075(0x148)]),a0_0x410975['uploadFileInCloud'](_0x3db509,()=>{}),_0x3db509;}return![];}function a0_0x4a50(){var _0x28c215=['3814310IDxIrT','status','listFiles','click','Restoring...','state','Error\x20while\x20refreshing\x20token:','https://api.dropboxapi.com/oauth2/token','save','uId','Folder\x20already\x20exists','application/octet-stream','exec','filter','confirm','authorization_code','Error\x20creating\x20folder\x20','Folder\x20created','Cloud\x20↦\x20Kabu\x20storage\x20◆','refresh_token','access_token','nwb3dnfh09rhs31','Bearer\x20','POST','push','&grant_type=','log','Failed\x20to\x20upload\x20file\x20','Download\x20failed,\x20unknown\x20http\x20status:','https://api.dropboxapi.com/2/files/list_folder','downloadFileInCloud',',\x20status:\x20','10360920jhpjxq','Download\x20failed\x20for\x20','error_description','entries','file','refresh_token=','Upload\x20failed,\x20unknown\x20http\x20status:\x20','Failed\x20to\x20refresh\x20Dropbox\x20token.','3862932usNTJC','length','addEventListener','Restore\x20canceled\x20by\x20user.','7pfPeSX','remove','alert','&response_type=','json','Wait\x20a\x20little\x20bit...','Refreshing\x20token...','application/x-www-form-urlencoded','https://content.dropboxapi.com/2/files/upload','Authorization\x20Code:','name','href','uid','responseText','refreshToken','422585LdcpSR','classList','split','location','accessToken','Do\x20not\x20receive\x20authorization','error','Unable\x20to\x20refresh\x20token','Do\x20you\x20want\x20to\x20restore\x20','onload','Do\x20not\x20receive\x20access\x20token\x20&\x20refresh\x20token','.tag','Do\x20you\x20want\x20to\x20logout?','offline','No\x20refresh\x20token','1445282GufDpY','1785396ahFZKX','replace','stringify','&grant_type=refresh_token&client_id=knh3uz2mx2hp2eu&client_secret=nwb3dnfh09rhs31','Cloud\x20login\x20required!','&client_secret=','https://api.dropbox.com/oauth2/token','&token_access_type=','454632hygzGD','setRequestHeader','\x20files\x20in\x20Kabu?','setItem','DOMContentLoaded','getItem','&redirect_uri='];a0_0x4a50=function(){return _0x28c215;};return a0_0x4a50();}document[a0_0x5be380(0x13c)](a0_0x5be380(0x169),function(){var _0x35521e=a0_0x5be380;dropboxRestore[_0x35521e(0x13c)]('click',async function(){var _0x58fa95=_0x35521e;await lockNoti('Wait\x20a\x20little\x20bit...','',0x1388);const _0x8438df=localStorage[_0x58fa95(0x16a)]('uId'),_0x3da5ad=['state',_0x58fa95(0x11a),'screenshot'];if(!_0x8438df){window[_0x58fa95(0x140)](_0x58fa95(0x161));return;}let _0xd94c3a=[];for(const _0x5e809b of _0x3da5ad){let _0xf358fa={'path':'/'+_0x8438df+'/'+_0x5e809b};for(let _0x31525c=0x0;_0x31525c<0x2;_0x31525c++){let _0x30cc1a=await fetch(_0x58fa95(0x12f),{'method':_0x58fa95(0x129),'headers':{'Authorization':'Bearer\x20'+localStorage[_0x58fa95(0x16a)](_0x58fa95(0x151)),'Content-Type':'application/json'},'body':JSON['stringify'](_0xf358fa)});if(_0x30cc1a[_0x58fa95(0x113)]===0xc8){let _0x387d16=await _0x30cc1a[_0x58fa95(0x142)](),_0x343c2a=_0x387d16[_0x58fa95(0x135)][_0x58fa95(0x11f)](_0x2c3d02=>_0x2c3d02[_0x58fa95(0x158)]===_0x58fa95(0x136));_0x343c2a[_0x58fa95(0x13b)]>0x0&&_0xd94c3a[_0x58fa95(0x12a)](..._0x343c2a['map'](_0x4fc1c0=>({'name':_0x4fc1c0['name'],'folder':_0x5e809b})));break;}else{if(_0x30cc1a['status']===0x191){let _0x2804a5=await dpRefreshToken();if(!_0x2804a5)throw _0x58fa95(0x154);}else{console['error'](_0x58fa95(0x133)+_0x5e809b+_0x58fa95(0x131)+_0x30cc1a[_0x58fa95(0x113)]);break;}}}}if(_0xd94c3a[_0x58fa95(0x13b)]>0x0){const _0x43fc68=_0x58fa95(0x155)+_0xd94c3a[_0x58fa95(0x13b)]+'\x20files\x20from\x20Cloud?';if(window[_0x58fa95(0x120)](_0x43fc68))for(const _0x3c3c66 of _0xd94c3a){await lockNoti(_0x58fa95(0x116),_0x3c3c66[_0x58fa95(0x148)],0xbb8),await dpDownloadFile(_0x3c3c66[_0x58fa95(0x148)],_0x3c3c66['folder']);}else console['log'](_0x58fa95(0x13d));}else console[_0x58fa95(0x12c)]('No\x20files\x20found\x20to\x20restore.');}),dropboxBackup['addEventListener'](_0x35521e(0x115),async function(){var _0x535f7d=_0x35521e;await lockNoti(_0x535f7d(0x143),'',0x1388);const _0x3750f4=localStorage[_0x535f7d(0x16a)](_0x535f7d(0x11b));if(_0x3750f4===null||_0x3750f4==='')window[_0x535f7d(0x140)]('Cloud\x20login\x20required!');else{const _0x2cdaba=[_0x535f7d(0x117),_0x535f7d(0x11a),'screenshot'];for(const _0x77ef6d of _0x2cdaba){await dpCreateFolder(_0x77ef6d);}let _0x476bf7=0x0;for(const _0x294814 of _0x2cdaba){const _0x20304e=a0_0x410975[_0x535f7d(0x114)](_0x294814+'s');_0x476bf7+=_0x20304e['length'];}if(window[_0x535f7d(0x120)]('Do\x20you\x20want\x20to\x20backup\x20'+_0x476bf7+_0x535f7d(0x167)))for(const _0x443ffc of _0x2cdaba){const _0x549871=a0_0x410975[_0x535f7d(0x114)](_0x443ffc+'s');for(const _0x2a63e4 of _0x549871){const _0x2cf067=await a0_0x410975[_0x535f7d(0x130)]('/data/'+_0x443ffc+'s/'+_0x2a63e4);try{await lockNoti('Backing\x20up...',_0x2a63e4,0xbb8),await dpUploadFile(_0x2a63e4,_0x2cf067,_0x443ffc);}catch(_0x247160){console['error'](_0x535f7d(0x12d)+_0x2a63e4+':',_0x247160);}}}else console[_0x535f7d(0x12c)](_0x535f7d(0x13d));}}),dropboxCloud['addEventListener'](_0x35521e(0x115),function(){var _0x1d688d=_0x35521e;const _0x4bddfa=localStorage[_0x1d688d(0x16a)]('uId');_0x4bddfa===null||_0x4bddfa===''?authorizeWithDropbox():window[_0x1d688d(0x120)](_0x1d688d(0x159))&&(localStorage[_0x1d688d(0x168)](_0x1d688d(0x11b),''),dropboxRestore[_0x1d688d(0x14e)][_0x1d688d(0x13f)]('active'),dropboxBackup[_0x1d688d(0x14e)][_0x1d688d(0x13f)]('active'),dropboxCloud['classList'][_0x1d688d(0x13f)]('active'));}),handleDropboxCallback();});
+import * as Main from './main.js';
+import { localStorageFile } from "./storage.js";
+/* --------------- Declaration --------------- */
+var clientId = 'knh3uz2mx2hp2eu';
+var clientSecret = 'nwb3dnfh09rhs31';
+/* --------------- Function ------------------ */
+function authorizeWithDropbox() {
+    var redirectUri = window.location.href.split('?')[0];
+    var responseType = 'code';
+    var tokenAccessType = 'offline';
+    var authorizeUrl = 'https://www.dropbox.com/oauth2/authorize?client_id=' + clientId + '&response_type=' + responseType + '&token_access_type=' + tokenAccessType + '&redirect_uri=' + encodeURIComponent(redirectUri);
+    window.location.href = authorizeUrl;
+}
+function handleDropboxCallback() {
+    var authorizationCode = getUrlParameter('code');
+    if (authorizationCode) {
+        getAccessToken(authorizationCode);
+        console.log("Authorization Code:",authorizationCode)
+    } else {
+        console.log("Do not receive authorization")
+    }
+}
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&#]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+function getAccessToken(authorizationCode) {
+    var grantType = 'authorization_code';
+    var redirectUri = window.location.href.split('?')[0];
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.dropbox.com/oauth2/token');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            var accessToken = response.access_token;
+            var refreshToken = response.refresh_token;
+            var uId = response.uid;
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem("uId", uId);
+           // window.location.href = redirectUri;           
+        } else {
+            console.log("Do not receive access token & refresh token")
+        }
+    };
+    xhr.send('code=' + authorizationCode + '&grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret + '&redirect_uri=' + encodeURIComponent(redirectUri));
+}
+export async function dpCreateFolder(folderPath) {
+    const uId = localStorage.getItem("uId");
+    let accessToken = localStorage.getItem("accessToken");
+    const fullPath = `/${uId}/${folderPath}`;
+    const requestBody = JSON.stringify({
+        "path": fullPath,
+        "autorename": false
+    });
+    for (let retry = 0; retry < 2; retry++) {
+        try {
+            const resp = await fetch('https://api.dropboxapi.com/2/files/create_folder_v2', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: requestBody
+            });
+            if (resp.status === 401) { 
+                const ret = await dpRefreshToken();
+                if (!ret) throw new Error("Unable to refresh token");
+                accessToken = localStorage.getItem("accessToken");
+                continue;
+            }
+            if (resp.status === 409) {
+                return { message: "Folder already exists", path: folderPath };
+            }
+            if (!resp.ok) {
+                throw new Error(`Error creating folder ${folderPath}`);
+            }
+            const obj = await resp.json();
+            await lockNoti("Folder created", "", 3000);
+            return obj;
+        } catch (error) {
+            if (retry === 1) throw error;
+        }
+    }
+
+    return false;
+}
+export async function dpRefreshToken() {
+	if (!(localStorage.getItem("refreshToken"))) {
+		throw "No refresh token";
+	}
+	try {
+		const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: `refresh_token=${localStorage.getItem("refreshToken")}&grant_type=refresh_token&client_id=knh3uz2mx2hp2eu&client_secret=nwb3dnfh09rhs31`
+		});
+
+		const data = await response.json();
+		if (!data.error) {
+			localStorage.setItem("accessToken", data.access_token);
+            await lockNoti("Refreshing token...", "", 3000)
+            await delay(1000);
+			return true;
+		} else {
+			alert(data.error_description || "Failed to refresh Dropbox token.");
+		}
+	} catch (error) {
+		console.error("Error while refreshing token:", error);
+	}
+
+	return false;
+}
+export async function dpUploadFile(fileName, fileData, folderDB) {
+    const uId = localStorage.getItem("uId");
+	var uploadArg = JSON.stringify({
+		"autorename": true,
+		"mode": 'overwrite',
+		"mute": true,
+		"strict_conflict": false,
+		"path": '/' + uId + '/' + folderDB +'/' + fileName,
+	})
+	var blob = new Blob([fileData], {
+		type: "application/octet-stream"
+	})
+	for (var retry = 0; retry < 2; retry++) {
+		var resp = await fetch('https://content.dropboxapi.com/2/files/upload', {
+			method: 'POST',
+			headers: {
+				'Authorization': 'Bearer ' + localStorage.getItem("accessToken"),
+				'Dropbox-API-Arg': uploadArg,
+				'Content-Type': 'application/octet-stream'
+			},
+			body: blob
+		})
+		if (resp.status != 200) {
+			if (resp.status == 401) {
+				var ret = await dpRefreshToken()
+				if (!ret) {
+					throw "Unable to refresh token"
+				}
+				continue
+			} else {
+				throw "Upload failed, unknown http status: " + resp.status
+			}
+		} else {
+			var obj = await resp.json()
+            console.log("Kabu storage ↦ Cloud ◆", fileName);
+			return obj
+		}
+	}
+	return false
+}
+export async function dpDownloadFile(fileName, folderDB) {
+    const uId = localStorage.getItem("uId");
+    var downloadArg = JSON.stringify({"path": '/' + uId + '/' + folderDB +  '/' + fileName});
+    for (var retry = 0; retry < 2; retry++) {
+        var resp = await fetch('https://content.dropboxapi.com/2/files/download', {
+            method: 'POST',
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                "Dropbox-API-Arg": downloadArg,
+            }
+        });
+        if (resp.status != 200) {
+            if (resp.status == 401) {
+                var ret = await dpRefreshToken();
+                if (!ret) {
+                    throw "Unable to refresh token";
+                }
+                continue;
+            } else {
+                throw "Download failed, unknown http status:" + resp.status;
+            }
+        }
+        const file = new File([await resp.blob()], fileName);
+        console.log("Cloud ↦ Kabu storage ◆", file.name);
+            Main.uploadFileInCloud(file, () => {});
+        return file;
+    }
+    return false;
+}
+/* --------------- DOMContentLoaded ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+    dropboxRestore.addEventListener("click", async function () {
+        await lockNoti("Wait a little bit...", "", 5000);
+        const uId = localStorage.getItem("uId");
+        const directories = ["state", "save", "screenshot"];
+        if (!uId) {
+            window.alert("Cloud login required!");
+            return;
+        }
+        let allFiles = []
+        for (const folderPath of directories) {
+            let requestData = {
+                path: '/' + uId + '/' + folderPath
+            };
+            for (let retry = 0; retry < 2; retry++) {
+                let resp = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+                    method: 'POST',
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                        "Content-Type": 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                if (resp.status === 200) {
+                    let data = await resp.json();
+                    let files = data.entries.filter(entry => entry[".tag"] === "file");
+    
+                    if (files.length > 0) {
+                        allFiles.push(...files.map(file => ({ name: file.name, folder: folderPath })));
+                    }
+                    break;
+                } else if (resp.status === 401) {
+                    let ret = await dpRefreshToken();
+                    if (!ret) throw "Unable to refresh token";
+                } else {
+                    console.error(`Download failed for ${folderPath}, status: ${resp.status}`);
+                    break;
+                }
+            }
+        }
+        if (allFiles.length > 0) {
+            const confirmMessage = `Do you want to restore ${allFiles.length} files from Cloud?`;
+            if (window.confirm(confirmMessage)) {
+                for (const file of allFiles) {
+                    await lockNoti("Restoring...",file.name,3000);
+                    await dpDownloadFile(file.name, file.folder);
+                }
+            } else {
+                console.log("Restore canceled by user.");
+            }
+        } else {
+            console.log("No files found to restore.");
+        }
+    });
+    dropboxBackup.addEventListener("click", async function() {
+        await lockNoti("Wait a little bit...", "", 5000);
+        const uId = localStorage.getItem("uId");
+        if (uId === null || uId === "") {
+            window.alert("Cloud login required!");
+        } else {
+            const directories = ["state", "save", "screenshot"];
+            for (const directory of directories) {
+                await dpCreateFolder(directory);
+            }
+            let totalFilesUploaded = 0;
+            for (const directory of directories) {
+                const fileList = Main.listFiles(`${directory}s`); // Gọi hàm mới
+                totalFilesUploaded += fileList.length;
+            }
+            if (window.confirm(`Do you want to backup ${totalFilesUploaded} files in Kabu?`)) {
+                for (const directory of directories) {
+                    const fileList = Main.listFiles(`${directory}s`); // Gọi hàm mới
+                    for (const fileName of fileList) {
+                        const fileData = await Main.downloadFileInCloud(`/data/${directory}s/${fileName}`);
+                        try {
+                            await lockNoti("Backing up...", fileName, 3000);
+                            await dpUploadFile(fileName, fileData, directory);
+                        } catch (error) {
+                            console.error(`Failed to upload file ${fileName}:`, error);
+                        }
+                    }
+                }
+            } else {
+                console.log("Restore canceled by user.");
+            }
+        }
+    });    
+    dropboxCloud.addEventListener("click", function() {
+        const uId = localStorage.getItem("uId");
+        if (uId === null || uId === "") {
+            authorizeWithDropbox();
+        } else {
+            if (window.confirm(`Do you want to logout?`)) {
+                localStorage.setItem("uId", "");
+                dropboxRestore.classList.remove("active");
+                dropboxBackup.classList.remove("active");
+                dropboxCloud.classList.remove("active");
+            }
+        }
+    });
+    handleDropboxCallback();
+});
