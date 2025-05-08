@@ -185,7 +185,9 @@ worker.onmessage = (e) => {
         emuLoop();
     }
 };
-
+document.body.ontouchstart = (e) => {
+    e.preventDefault();
+}
 worker.postMessage('start');
 
 document.addEventListener('visibilitychange', () => {
