@@ -196,7 +196,7 @@ function startLoop() {
     if (isRunnings) return;
     isRunnings = true;
     lastTime = performance.now();
-    intervalId = setInterval(loop, 1000 / 60); // ~60fps
+    intervalId = setInterval(loop, 1000 / 120); // ~60fps
 }
 
 // Dừng vòng lặp
