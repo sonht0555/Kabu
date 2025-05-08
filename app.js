@@ -178,46 +178,31 @@ if (isRunning) {
 }
 const fpsDiv = document.getElementById('fps');
 
-// Cấu hình
-const timestep = 1000 / 60; // 60Hz = 16.666...ms
-let accumulator = 0;
-let lastTime = performance.now();
+const worker = new Worker('loop.js');
 
-function loop(now) {
-    const deltaTime = now - lastTime;
-    lastTime = now;
-
-    // Thống kê
-    let logicCount = 0;
-
-    // Giới hạn delta để tránh nhảy khung khi tab bị treo/tạm dừng
-    const cappedDelta = Math.min(deltaTime, 250);
-
-    accumulator += cappedDelta;
-
-    // Update logic với bước cố định (fixed timestep)
-    while (accumulator >= timestep) {
-        const emuStart = performance.now();
-        emuLoop(); // gọi logic game giả lập ở đây
-        const emuEnd = performance.now();
-
-        accumulator -= timestep;
-        logicCount++;
+worker.onmessage = (e) => {
+    if (e.data === 'tick') {
+        emuLoop(); // xử lý logic giả lập
     }
+};
 
-    // (Tuỳ chọn) Render frame ở đây nếu muốn (vì logic có thể chạy >1 lần)
-    // render();
+worker.postMessage('start');
 
-    // Hiển thị thông tin debug
-    const deltaRAF = now - lastTime;
-    const fps = 1000 / deltaTime;
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        worker.postMessage('stop');
+        isRunning = false;
+    } else {
+        worker.postMessage('start');
+        isRunning = true;
+    }
+});
 
-    fpsDiv.textContent = 
-        `FPS: ${fps.toFixed(1)}, ΔrAF: ${deltaTime.toFixed(2)} ms, ` +
-        `emuLoop(60): ${logicCount}×${timestep.toFixed(1)}ms`;
 
-    requestAnimationFrame(loop);
-}
+
+
+
+
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
@@ -259,7 +244,6 @@ function buttonPress(buttonName, isPress) {
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    loop();
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
