@@ -179,7 +179,7 @@ if (isRunning) {
 const fpsDiv = document.getElementById('fps');
 
 // Cấu hình
-const timestep = 1000 / 120; // 60Hz = 16.666...ms
+const timestep = 1000 / 240; // 60Hz = 16.666...ms
 let accumulator = 0;
 let lastTime = performance.now();
 
@@ -214,7 +214,7 @@ function loop(now) {
 
     fpsDiv.textContent = 
         `FPS: ${fps.toFixed(1)}, ΔrAF: ${deltaTime.toFixed(2)} ms, ` +
-        `emuLoop(120): ${logicCount}×${timestep.toFixed(1)}ms`;
+        `emuLoop(240): ${logicCount}×${timestep.toFixed(1)}ms`;
 
     requestAnimationFrame(loop);
 }
