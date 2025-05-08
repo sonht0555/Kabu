@@ -10,6 +10,7 @@ const wasmSaveBufLen = 0x20000 + 0x2000
 var tmpSaveBuf = new Uint8Array(wasmSaveBufLen)
 var frameCnt = 0
 var last128FrameTime = 0
+var lastFrameTime = 0
 var frameSkip = 0
 var audioFifoHead = 0
 var audioFifoCnt = 0
@@ -176,33 +177,18 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-const STEP = 1 / 60; // Mỗi bước logic dài 1/60 giây (~16.67ms)
-let accumulator = 0;
-let lastTime = performance.now();
-let lastFrameTime = lastTime;
-
+lastFrameTime = performance.now();
 function loop() {
     const frameStart = performance.now();
 
-    // Tính delta thời gian giữa 2 lần rAF
-    let delta = (frameStart - lastTime) / 1000; // đơn vị giây
-    lastTime = frameStart;
-
-    // Giới hạn delta nếu bị treo tab hoặc giật
-    if (delta > 0.25) delta = 0.25;
-
-    accumulator += delta;
-
-    // Gọi emuLoop() theo step cố định
+    // Gọi vào WebAssembly (thay thế bằng call thực tế của bạn)
     const emuStart = performance.now();
-    while (accumulator >= STEP) {
-        emuLoop(STEP); // logic update, truyền thời gian cố định nếu cần
-        accumulator -= STEP;
-    }
+    emuLoop(); // hoặc Module.ccall(...) tùy bạn dùng
     const emuEnd = performance.now();
+
     const frameEnd = performance.now();
 
-    // Tính và hiển thị chỉ số hiệu suất
+    // Tính toán các chỉ số
     const emuDuration = emuEnd - emuStart;
     const frameDuration = frameEnd - frameStart;
     const deltaRAF = frameStart - lastFrameTime;
@@ -210,15 +196,15 @@ function loop() {
 
     lastFrameTime = frameStart;
 
+    // Hiển thị ra div
     document.getElementById('fps').textContent =
-        `FPS:        ${fps.toFixed(1)}\n` +
-        `ΔrAF:       ${deltaRAF.toFixed(2)} ms\n` +
-        `Loop:    ${emuDuration.toFixed(2)} ms\n` +
-        `Frame:      ${frameDuration.toFixed(2)} ms`;
+        `FPS:        ${fps.toFixed(1)},` +
+        `ΔrAF:       ${deltaRAF.toFixed(2)} ms, ` +
+        `emuLoop:    ${emuDuration.toFixed(2)} ms, ` +
+        `Frame: ${frameDuration.toFixed(2)} ms`;
 
     requestAnimationFrame(loop);
 }
-
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
