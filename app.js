@@ -10,7 +10,6 @@ const wasmSaveBufLen = 0x20000 + 0x2000
 var tmpSaveBuf = new Uint8Array(wasmSaveBufLen)
 var frameCnt = 0
 var last128FrameTime = 0
-var lastFrameTime = 0
 var frameSkip = 0
 var audioFifoHead = 0
 var audioFifoCnt = 0
@@ -177,31 +176,45 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-lastFrameTime = performance.now();
-function loop() {
-    const frameStart = performance.now();
+const fpsDiv = document.getElementById('fps');
 
-    // Gọi vào WebAssembly (thay thế bằng call thực tế của bạn)
-    const emuStart = performance.now();
-    emuLoop(); // hoặc Module.ccall(...) tùy bạn dùng
-    const emuEnd = performance.now();
+// Cấu hình
+const timestep = 1000 / 60; // 60Hz = 16.666...ms
+let accumulator = 0;
+let lastTime = performance.now();
 
-    const frameEnd = performance.now();
+function loop(now) {
+    const deltaTime = now - lastTime;
+    lastTime = now;
 
-    // Tính toán các chỉ số
-    const emuDuration = emuEnd - emuStart;
-    const frameDuration = frameEnd - frameStart;
-    const deltaRAF = frameStart - lastFrameTime;
-    const fps = 1000 / deltaRAF;
+    // Thống kê
+    let logicCount = 0;
 
-    lastFrameTime = frameStart;
+    // Giới hạn delta để tránh nhảy khung khi tab bị treo/tạm dừng
+    const cappedDelta = Math.min(deltaTime, 250);
 
-    // Hiển thị ra div
-    document.getElementById('fps').textContent =
-        `FPS:        ${fps.toFixed(1)},` +
-        `ΔrAF:       ${deltaRAF.toFixed(2)} ms, ` +
-        `emuLoop:    ${emuDuration.toFixed(2)} ms, ` +
-        `Frame: ${frameDuration.toFixed(2)} ms`;
+    accumulator += cappedDelta;
+
+    // Update logic với bước cố định (fixed timestep)
+    while (accumulator >= timestep) {
+        const emuStart = performance.now();
+        emuLoop(); // gọi logic game giả lập ở đây
+        const emuEnd = performance.now();
+
+        accumulator -= timestep;
+        logicCount++;
+    }
+
+    // (Tuỳ chọn) Render frame ở đây nếu muốn (vì logic có thể chạy >1 lần)
+    // render();
+
+    // Hiển thị thông tin debug
+    const deltaRAF = now - lastTime;
+    const fps = 1000 / deltaTime;
+
+    fpsDiv.textContent = 
+        `FPS: ${fps.toFixed(1)}, ΔrAF: ${deltaTime.toFixed(2)} ms, ` +
+        `emuLoop: ${logicCount}×${timestep.toFixed(1)}ms`;
 
     requestAnimationFrame(loop);
 }
