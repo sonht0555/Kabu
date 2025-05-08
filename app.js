@@ -186,6 +186,17 @@ worker.onmessage = (e) => {
     }
 };
 
+worker.postMessage('start');
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        worker.postMessage('stop');
+        isRunning = false;
+    } else {
+        worker.postMessage('start');
+        isRunning = true;
+    }
+});
 
 let vkState = 0;
 const keyMask = {
