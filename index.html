@@ -2,7 +2,7 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
     <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8" />
     <link rel="apple-touch-icon" href="img/icon.png" />
     <link rel="icon" href="./icon.png" type="image/png" />
@@ -18,19 +18,22 @@
       background: black;
       color: #F5E8D1;
       margin: 0px;
-      font-size: 12px;
+      font-size: 11px;
       font-family: monospace;
     }
     div {
         flex: 1;
         text-align: center;
         display: flex;
+        font-family: monospace;
     }
     button, label {
+    font-family: monospace;
     margin: 10px 4px;
+    font-size: 11px;
     background: #252525;
     border: 0;
-    padding: 8px 0px 7px 0px;
+    padding: 8px 0px 8px 0px;
     color: #fff;
     border-radius: 2px;
     width: 86px;
@@ -39,12 +42,14 @@
     canvas {
     width: 320px;
     height: 213.333px;
+    border-radius: 2px;
+    margin: 8px;
     }
 </style>
 <body>
     <input type="file" id="romFile" onchange="loadGameFromInput()" hidden>
     <canvas width="240" height="160" id="canvas" style="image-rendering: pixelated;"></canvas>
-    <div id="fps" style="padding: 8px;"></div>
+    <div id="fps"></div>
     <div style="margin-top: 40px;"> 
         <button id="Up">Up</button>
         <button id="Down">Down</button>
@@ -60,8 +65,8 @@
     <div>
         <button id="Select">Select</button>
         <button id="Start">Start</button>
-        <button id="">...</button>
-        <label for="romFile">Load</label>
+        <label>-</label>
+        <label for="romFile">-</label>
     </div>
         
     <script src="./app.js"></script>

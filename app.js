@@ -328,3 +328,18 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+document.addEventListener('touchstart', function preventZoom(e) {
+    if (e.touches.length > 1) {
+        e.preventDefault(); // Ngăn pinch zoom
+    }
+}, { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function preventDoubleTapZoom(e) {
+    const now = new Date().getTime();
+    if (now - lastTouchEnd <= 300) {
+        e.preventDefault(); // Ngăn double-tap zoom
+    }
+    lastTouchEnd = now;
+}, false);
