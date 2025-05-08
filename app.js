@@ -1,7 +1,4 @@
 var wasmAudioBuf, wasmSaveBuf, gameID, romFileName, drawContext, idata, imgFrameBuffer, scriptProcessor, audioContext
-var keyState = {};
-const keyList = ["a", "b", "select", "start", "right", "left", 'up', 'down', 'r', 'l'];
-var keyb = 0
 const AUDIO_BLOCK_SIZE = 1024
 const AUDIO_FIFO_MAXLEN = 4900
 var audioFifo0 = new Int16Array(AUDIO_FIFO_MAXLEN)
@@ -131,7 +128,6 @@ function loadGameFromInput() {
     var fileReader = new FileReader();
     fileReader.onload = function (event) {
         var arrayBuffer = event.target.result;
-        isRunning = false;
         var u8 = new Uint8Array(arrayBuffer);
         gameID = "";
         for (var i = 0xAC; i < 0xB2; i++) {
@@ -142,37 +138,30 @@ function loadGameFromInput() {
         Module._emuLoadROM(u8.length);
         loadSave();
         Module._emuResetCpu();
-        isRunning = true;
     };
     fileReader.readAsArrayBuffer(file);
 }
 function loadSave() {
-    const base64 = null;
-    if (base64) {
-        wasmSaveBuf.set(base64ToUint8Array(base64));
-        console.log(base64ToUint8Array(base64))
-        isRunning = true
-    } else {
-        isRunning = false
-    }
-    Module._emuResetCpu()
-    lastCheckedSaveState = 0
-    Module._emuUpdateSavChangeFlag()
+    const base64 = localStorage.getItem("AW_2 Black Hole Return.sav");
+    wasmSaveBuf.set(base64ToUint8Array(base64));
     console.log(base64)
+    console.log("load done")
+        Module._emuResetCpu()
+        lastCheckedSaveState = 0
+        Module._emuUpdateSavChangeFlag()
+        setTimeout(() => {isRunning = true}, 500);
 }
 function checkSave() {
     if (!isRunning) return;
     const state = Module._emuUpdateSavChangeFlag();
     if ((lastCheckedSaveState === 1) && (state === 0)) {
-        console.log('Auto saving, please wait...');
-        const gameName = "AW_2 Black Hole Return.gba";
-        const saveName = gameName.replace(/\.(gba|gbc|gb)$/, ".sav");
+        console.log('Auto saving...');
         tmpSaveBuf.set(wasmSaveBuf);
         setTimeout(() => {
-            const base64String = uint8ArrayToBase64(wasmSaveBuf);
-            localStorage.setItem(saveName, base64String);
-            console.log('Auto saved:', base64String);
-        }, 600);
+            const base64String = uint8ArrayToBase64(tmpSaveBuf);
+            localStorage.setItem("AW_2 Black Hole Return.sav", base64String);
+            console.log('Saved!');
+        }, 500);
     }
     lastCheckedSaveState = state;
 }
@@ -195,38 +184,147 @@ if (isRunning) {
         last128FrameTime = performance.now()
     }
     lastFrameTime = performance.now()
-    Module._emuRunFrame(0);
-    if (fastForwardMode) {
-        Module._emuRunFrame(0);
-        Module._emuRunFrame(0);
-        Module._emuRunFrame(0);
-    } else if (turboMode) {
-        Module._emuRunFrame(0);
-    }
+    Module._emuRunFrame(vkState);
+    console.log(vkState)
     drawContext = canvas.getContext('2d');
     drawContext.putImageData(idata, 0, 0);
 }
 }
-let lastFrameTimez = 0;
-const targetFPS = 60;
-const frameDuration = 1000 / targetFPS;
-
 function loop() {
-    const now = performance.now();
-    if (now - lastFrameTimez >= frameDuration) {
-        emuLoop();
-        lastFrameTimez = now;
-    }
+    emuLoop();
     window.requestAnimationFrame(loop);
 }
-function handleTouch(event) {
+
+let vkState = 0;
+const keyMask = {
+    a: 1,       // 1
+    b: 2,       // 2
+    select: 4,  // 4
+    start: 8,   // 8
+    right: 16,   // 16
+    left: 32,    // 32
+    up: 64,     // 64
+    down: 128,    // 128
+    r: 256,       // 256
+    l: 512        // 512
+  };
+function buttonPresss(key) {
+  if (keyMask[key]) {
+    vkState |= keyMask[key];
     tryInitSound();
+  }
+}
+function buttonUnpresss(key) {
+  if (keyMask[key]) {
+    vkState &= ~keyMask[key];
+  }
 }
 
-['touchstart', 'touchmove', 'touchend', 'touchcancel', 'touchenter', 'touchleave'].forEach((val) => {
-    window.addEventListener(val, handleTouch)
-})
+
+
+
+
+
+function buttonPress(buttonName, isPress) {
+    if (buttonName.includes("-")) {
+        const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
+        isPress ? buttonPresss(primaryButton) : buttonUnpresss(primaryButton);
+        isPress ? buttonPresss(secondaryButton) : buttonUnpresss(secondaryButton);
+    } else {
+        isPress ? buttonPresss(buttonName.toLowerCase()) : buttonUnpresss(buttonName.toLowerCase());
+    }
+}
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
     loop();
+    const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
+    const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
+    let activeDpadTouches = new Map();
+    let activeOtherTouches = new Map();
+
+    function handleButtonPress(buttonId, isPressed) {
+        if (!buttonId) return;
+        buttonPress(buttonId, isPressed);
+        const element = document.getElementById(buttonId);
+        if (element) {
+            if (isPressed) {
+                element.classList.add('touched');
+            } else {
+                element.classList.remove('touched');
+            }
+        }
+    }
+    
+    function getButtonIdFromTouch(touch) {
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const button = element?.closest("[id]");
+        return button ? button.id : null;
+    }
+    
+    document.addEventListener("touchstart", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier)) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                }
+                activeDpadTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier)) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                }
+                activeOtherTouches.set(touch.identifier, buttonId);
+                handleButtonPress(buttonId, true);
+            }
+        }
+    });
+
+    document.addEventListener("touchmove", (event) => {
+        for (let touch of event.changedTouches) {
+            const buttonId = getButtonIdFromTouch(touch);
+            if (!buttonId) continue;
+            
+            if (dpadButtons.includes(buttonId)) {
+                if (activeDpadTouches.has(touch.identifier) && activeDpadTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                    activeDpadTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            } else if (otherButtons.includes(buttonId)) {
+                if (activeOtherTouches.has(touch.identifier) && activeOtherTouches.get(touch.identifier) !== buttonId) {
+                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                    activeOtherTouches.set(touch.identifier, buttonId);
+                    handleButtonPress(buttonId, true);
+                }
+            }
+        }
+    });
+    
+    document.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
+    
+    document.addEventListener("touchcancel", (event) => {
+        for (let touch of event.changedTouches) {
+            if (activeDpadTouches.has(touch.identifier)) {
+                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
+                activeDpadTouches.delete(touch.identifier);
+            }
+            if (activeOtherTouches.has(touch.identifier)) {
+                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
+                activeOtherTouches.delete(touch.identifier);
+            }
+        }
+    });
 });

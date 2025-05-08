@@ -19,37 +19,51 @@
       color: #F5E8D1;
       margin: 0px;
       font-size: 12px;
+      font-family: monospace;
+    }
+    div {
+        flex: 1;
+        text-align: center;
+        display: flex;
+    }
+    button, label {
+    margin: 10px 4px;
+    background: #252525;
+    border: 0;
+    padding: 8px 0px 7px 0px;
+    color: #fff;
+    border-radius: 2px;
+    width: 86px;
+    text-align: center;
+    }
+    canvas {
+    width: 320px;
+    height: 213.333px;
     }
 </style>
 <body>
-    <div id="welcome" class="menu">
-        <div id="select-rom">
-            <input type="file" id="romFile" onchange="loadGameFromInput()"><p></p>
-        </div>
-    </div>
-    <div id="msg-layer">
-        <p id="msg-text"></p>
-    </div>
-    <div id="vk-layer" hidden="">
-        <div class="" data-k="menu">Menu</div>
-        <div class="vk" data-k="turbo">F.F.</div>
-        <div class="vk" data-k="l">L</div>
-        <div class="vk" data-k="r">R</div>
-        <div class="vk" data-k="a">A</div>
-        <div class="vk" data-k="b">B</div>
-        <div class="vk" data-k="select">Select</div>
-        <div class="vk" data-k="start">Start</div>
-        <div class="vk" data-k="left">←</div>
-        <div class="vk" data-k="right">→</div>
-        <div class="vk" data-k="up">↑</div>
-        <div class="vk" data-k="down">↓</div>
-        <div class="vk" data-k="ul"></div>
-        <div class="vk" data-k="ur"></div>
-        <div class="vk" data-k="dl"></div>
-        <div class="vk" data-k="dr"></div>
-    </div>
-    <div id="fps"></div>
+    <input type="file" id="romFile" onchange="loadGameFromInput()" hidden>
     <canvas width="240" height="160" id="canvas" style="image-rendering: pixelated;"></canvas>
+    <div id="fps" style="padding: 8px;"></div>
+    <div style="margin-top: 40px;"> 
+        <button id="Up">Up</button>
+        <button id="Down">Down</button>
+        <button id="Left">Left</button>
+        <button id="Right">Right</button> 
+    </div>
+    <div>
+        <button id="L">L</button>
+        <button id="R">R</button>
+        <button id="A">A</button>
+        <button id="B">B</button>
+    </div>
+    <div>
+        <button id="Select">Select</button>
+        <button id="Start">Start</button>
+        <button id="">...</button>
+        <label for="romFile">Load</label>
+    </div>
+        
     <script src="./app.js"></script>
     <script src="./vba.js"></script>
 
