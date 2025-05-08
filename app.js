@@ -182,25 +182,9 @@ const worker = new Worker('loop.js');
 
 worker.onmessage = (e) => {
     if (e.data === 'tick') {
-        emuLoop(); // xử lý logic giả lập
+        emuLoop();
     }
 };
-
-worker.postMessage('start');
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        worker.postMessage('stop');
-        isRunning = false;
-    } else {
-        worker.postMessage('start');
-        isRunning = true;
-    }
-});
-
-
-
-
 
 
 let vkState = 0;
@@ -227,12 +211,6 @@ function buttonUnpresss(key) {
     vkState &= ~keyMask[key];
   }
 }
-
-
-
-
-
-
 function buttonPress(buttonName, isPress) {
     if (buttonName.includes("-")) {
         const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
