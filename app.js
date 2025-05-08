@@ -18,6 +18,8 @@ var frameSkip = 0
 var audioFifoHead = 0
 var audioFifoCnt = 0
 var lastCheckedSaveState = 0
+var turboInterval = -1
+var lowLatencyMode = false
 var turboMode = false
 var muteMode = false
 var fastForwardMode = false
@@ -217,6 +219,13 @@ function loop() {
     }
     window.requestAnimationFrame(loop);
 }
+function handleTouch(event) {
+    tryInitSound();
+}
+
+['touchstart', 'touchmove', 'touchend', 'touchcancel', 'touchenter', 'touchleave'].forEach((val) => {
+    window.addEventListener(val, handleTouch)
+})
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
     loop();
