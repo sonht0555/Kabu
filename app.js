@@ -171,30 +171,40 @@ if (isRunning) {
     if (frameCnt % 60 == 0) {
         checkSave();
     }
-    if (frameCnt % 128 == 0) {
-        if (last128FrameTime) {
-            var diff = performance.now() - last128FrameTime
-            var frameInMs = diff / 128
-            var fps = -1
-            if (frameInMs > 0.001) {
-                fps = 1000 / frameInMs
-            }
-            document.getElementById('fps').textContent = fps
-        }
-        last128FrameTime = performance.now()
-    }
-    lastFrameTime = performance.now()
     Module._emuRunFrame(vkState);
     console.log(vkState)
     drawContext = canvas.getContext('2d');
     drawContext.putImageData(idata, 0, 0);
 }
 }
+lastFrameTime = performance.now();
 function loop() {
-    emuLoop();
-    window.requestAnimationFrame(loop);
-}
+    const frameStart = performance.now();
 
+    // Gọi vào WebAssembly (thay thế bằng call thực tế của bạn)
+    const emuStart = performance.now();
+    emuLoop(); // hoặc Module.ccall(...) tùy bạn dùng
+    const emuEnd = performance.now();
+
+    const frameEnd = performance.now();
+
+    // Tính toán các chỉ số
+    const emuDuration = emuEnd - emuStart;
+    const frameDuration = frameEnd - frameStart;
+    const deltaRAF = frameStart - lastFrameTime;
+    const fps = 1000 / deltaRAF;
+
+    lastFrameTime = frameStart;
+
+    // Hiển thị ra div
+    document.getElementById('fps').textContent =
+        `FPS:        ${fps.toFixed(1)},` +
+        `ΔrAF:       ${deltaRAF.toFixed(2)} ms, ` +
+        `emuLoop:    ${emuDuration.toFixed(2)} ms, ` +
+        `Frame: ${frameDuration.toFixed(2)} ms`;
+
+    requestAnimationFrame(loop);
+}
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
