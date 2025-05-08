@@ -176,48 +176,52 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-const fpsDiv = document.getElementById('fps');
-
-// Cấu hình
-const timestep = 1000 / 60; // 60Hz = 16.666...ms
-let accumulator = 0;
+let intervalId = null;
 let lastTime = performance.now();
+let isRunnings = false;
 
-function loop(now) {
-    const deltaTime = now - lastTime;
+function loop() {
+    const now = performance.now();
+    const delta = now - lastTime;
     lastTime = now;
 
-    // Thống kê
-    let logicCount = 0;
+    // Nếu quá lâu (tab vừa resume), bỏ qua frame
+    if (delta > 100) return;
 
-    // Giới hạn delta để tránh nhảy khung khi tab bị treo/tạm dừng
-    const cappedDelta = Math.min(deltaTime, 250);
-
-    accumulator += cappedDelta;
-
-    // Update logic với bước cố định (fixed timestep)
-    while (accumulator >= timestep) {
-        const emuStart = performance.now();
-        emuLoop(); // gọi logic game giả lập ở đây
-        const emuEnd = performance.now();
-
-        accumulator -= timestep;
-        logicCount++;
-    }
-
-    // (Tuỳ chọn) Render frame ở đây nếu muốn (vì logic có thể chạy >1 lần)
-    // render();
-
-    // Hiển thị thông tin debug
-    const deltaRAF = now - lastTime;
-    const fps = 1000 / deltaTime;
-
-    fpsDiv.textContent = 
-        `FPS: ${fps.toFixed(1)}, ΔrAF: ${deltaTime.toFixed(2)} ms, ` +
-        `emuLoop(60): ${logicCount}×${timestep.toFixed(1)}ms`;
-
-    requestAnimationFrame(loop);
+    emuLoop(); // gọi logic chính của emulator
 }
+
+// Bắt đầu vòng lặp
+function startLoop() {
+    if (isRunnings) return;
+    isRunnings = true;
+    lastTime = performance.now();
+    intervalId = setInterval(loop, 1000 / 60); // ~60fps
+}
+
+// Dừng vòng lặp
+function stopLoop() {
+    if (!isRunnings) return;
+    isRunnings = false;
+    clearInterval(intervalId);
+    intervalId = null;
+}
+
+// Tự động pause / resume khi chuyển tab
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        stopLoop();
+        isRunning = false
+        console.log("pause")
+    } else {
+        startLoop();
+        isRunning = true
+        console.log("resume")
+    }
+});
+
+
+
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
@@ -259,7 +263,7 @@ function buttonPress(buttonName, isPress) {
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    requestAnimationFrame(emuLoop);
+    startLoop();
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
