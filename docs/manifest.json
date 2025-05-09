@@ -1,14 +1,16 @@
 {
-    "name": "Kabu",
-    "short_name": "Kabu",
-    "start_url": ".",
-    "display": "fullscreen",
-    "background_color": "#000000",
-    "theme_color": "#000000", 
-    "description": "Kabu",
-    "icons": [{
-      "src": "./src/img/icon.png",
+  "name": "Kabu",
+  "short_name": "Kabu",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Kabu",
+  "icons": [
+    {
+      "src": "/src/img/icon.png",
       "sizes": "512x512",
       "type": "image/png"
-    }]
+    }
+  ]
 }

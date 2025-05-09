@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-      <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <meta name="apple-mobile-web-app-capable" content="none" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-      <link rel="stylesheet" type="text/css" href="/src/css/main.css" />
-      <link rel="apple-touch-icon" href="./src/img/icon.png" />
-      <link rel="icon" href="./src/img/icon.png" type="image/png" />
-      <link rel="manifest" href="manifest.json" />
-      <script src="/src/library/interact.js"></script>
-      <script src="/src/library/nip.js"></script>
-      <title>Kabu</title>
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kabu" />
+    
+    <link rel="stylesheet" type="text/css" href="/src/css/main.css" />
+    <link rel="apple-touch-icon" href="/src/img/icon.png" />
+    <link rel="icon" href="/src/img/icon.png" type="image/png" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <script src="/src/library/interact.js"></script>
+    <script src="/src/library/nip.js"></script>
+    
+    <title>Kabu</title>
       <script>
        if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -345,7 +350,7 @@
         <span class="" id="notiDetail" style="opacity: 0.4"></span>
         <div class="flex-1"></div>
     </div>
-    <script>let gameVer = 'V6.41';</script>
+    <script>let gameVer = 'V6.42';</script>
     <script type="" src="./src/js/global.js"></script> 
     <script type="module" src="./src/js/main.js"></script> 
     <script type="module" src="./src/js/welcome.js"></script> 
