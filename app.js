@@ -190,10 +190,7 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-function loop() {
-    emuLoop();
-    window.requestAnimationFrame(loop);
-}
+
 
 let vkState = 0;
 const keyMask = {
@@ -219,12 +216,6 @@ function buttonUnpresss(key) {
     vkState &= ~keyMask[key];
   }
 }
-
-
-
-
-
-
 function buttonPress(buttonName, isPress) {
     if (buttonName.includes("-")) {
         const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
@@ -235,8 +226,14 @@ function buttonPress(buttonName, isPress) {
     }
 }
 // --- DOMContentLoaded ---
+const worker = new Worker('loop.js');
+worker.onmessage = function(e) {
+    if (e.data === 'tick') {
+        emuLoop();
+    }
+};
+worker.postMessage('start');
 document.addEventListener("DOMContentLoaded", function() {
-    loop();
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
@@ -343,3 +340,8 @@ document.addEventListener('touchend', function preventDoubleTapZoom(e) {
     }
     lastTouchEnd = now;
 }, false);
+
+// Ngăn kính lúp trên iOS khi giữ lâu (dùng contextmenu)
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
