@@ -8,12 +8,12 @@ function loop() {
 }
 
 onmessage = (e) => {
-    if (e.data === 'start') {
-        if (!running) {
-            running = true;
-            requestAnimationFrame(loop);
-        }
-    } else if (e.data === 'stop') {
+    if (e.data === 'resume') {
+        running = true;
+    } else if (e.data === 'pause') {
         running = false;
+    } else if (e.data === 'start') {
+        if (!running) return;
+        loop()
     }
 };

@@ -180,26 +180,6 @@ const fpsDiv = document.getElementById('fps');
 
 const worker = new Worker('loop.js');
 
-worker.onmessage = (e) => {
-    if (e.data === 'tick') {
-        emuLoop();
-    }
-};
-document.body.ontouchstart = (e) => {
-    e.preventDefault();
-}
-worker.postMessage('start');
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        worker.postMessage('stop');
-        isRunning = false;
-    } else {
-        worker.postMessage('start');
-        isRunning = true;
-    }
-});
-
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
@@ -234,7 +214,24 @@ function buttonPress(buttonName, isPress) {
     }
 }
 // --- DOMContentLoaded ---
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        worker.postMessage('pause');
+        isRunning = false;
+    } else {
+        worker.postMessage('resume');
+        isRunning = true;
+    }
+});
 document.addEventListener("DOMContentLoaded", function() {
+    if (isRunning) {
+        worker.onmessage = (e) => {
+            if (e.data === 'tick') {
+                emuLoop();
+            }
+        };
+        worker.postMessage('start');
+    }
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
@@ -327,17 +324,24 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-document.addEventListener('touchstart', function preventZoom(e) {
+// Ngăn pinch-zoom (dùng 2 ngón)
+document.addEventListener('touchstart', function preventPinchZoom(e) {
     if (e.touches.length > 1) {
-        e.preventDefault(); // Ngăn pinch zoom
+        e.preventDefault();
     }
 }, { passive: false });
 
+// Ngăn double-tap zoom
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function preventDoubleTapZoom(e) {
     const now = new Date().getTime();
     if (now - lastTouchEnd <= 300) {
-        e.preventDefault(); // Ngăn double-tap zoom
+        e.preventDefault();
     }
     lastTouchEnd = now;
 }, false);
+
+// Ngăn kính lúp trên iOS khi giữ lâu (dùng contextmenu)
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});

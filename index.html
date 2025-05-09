@@ -1,31 +1,55 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="apple-mobile-web-app-capable" content="none" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
     <link rel="apple-touch-icon" href="img/icon.png" />
     <link rel="icon" href="./icon.png" type="image/png" />
     <link rel="manifest" href="./manifest.json" />
     <title>Vba</title>
 </head>
 <style>
+    body,
+    html {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    cursor: default !important;
+    -webkit-user-drag: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+    }
+    :where(body),
+    :where(html) {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    cursor: default !important;
+    -webkit-user-drag: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+    }
     body {
-      font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: black;
-      color: #F5E8D1;
-      margin: 0px;
-      font-size: 11px;
-      font-family: monospace;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: black;
+    color: #F5E8D1;
+    margin: 0px;
+    font-size: 11px;
+    font-family: monospace;
     }
     div {
-        flex: 1;
-        text-align: center;
-        display: flex;
-        font-family: monospace;
+    flex: 1;
+    text-align: center;
+    display: flex;
+    font-family: monospace;
     }
     button, label {
     font-family: monospace;
@@ -65,7 +89,7 @@
     <div>
         <button id="Select">Select</button>
         <button id="Start">Start</button>
-        <label>8</label>
+        <label>9</label>
         <label for="romFile">-</label>
     </div>
         
