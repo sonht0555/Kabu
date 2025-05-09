@@ -10,6 +10,7 @@ const wasmSaveBufLen = 0x20000 + 0x2000
 var tmpSaveBuf = new Uint8Array(wasmSaveBufLen)
 var frameCnt = 0
 var last128FrameTime = 0
+var lastFrameTime = 0
 var frameSkip = 0
 var audioFifoHead = 0
 var audioFifoCnt = 0
@@ -165,21 +166,35 @@ function checkSave() {
     lastCheckedSaveState = state;
 }
 function emuLoop() {
-    if (isRunning) {
-        frameCnt++
-        if (frameCnt % 60 == 0) {
-            checkSave();
-        }
-        Module._emuRunFrame(vkState);
-        console.log(vkState)
-        drawContext = canvas.getContext('2d');
-        drawContext.putImageData(idata, 0, 0);
+if (isRunning) {
+    frameCnt++
+    if (frameCnt % 60 == 0) {
+        checkSave();
     }
+    if (frameCnt % 128 == 0) {
+        if (last128FrameTime) {
+            var diff = performance.now() - last128FrameTime
+            var frameInMs = diff / 128
+            var fps = -1
+            if (frameInMs > 0.001) {
+                fps = 1000 / frameInMs
+            }
+            document.getElementById('fps').textContent = fps
+        }
+        last128FrameTime = performance.now()
+    }
+    lastFrameTime = performance.now()
+    Module._emuRunFrame(vkState);
+    console.log(vkState)
+    drawContext = canvas.getContext('2d');
+    drawContext.putImageData(idata, 0, 0);
+}
 }
 function loop() {
     emuLoop();
-    requestAnimationFrame(loop);
+    window.requestAnimationFrame(loop);
 }
+
 let vkState = 0;
 const keyMask = {
     a: 1,       // 1
@@ -204,6 +219,12 @@ function buttonUnpresss(key) {
     vkState &= ~keyMask[key];
   }
 }
+
+
+
+
+
+
 function buttonPress(buttonName, isPress) {
     if (buttonName.includes("-")) {
         const [primaryButton, secondaryButton] = buttonName.toLowerCase().split("-");
@@ -215,9 +236,7 @@ function buttonPress(buttonName, isPress) {
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    if (isRunning) {
-        loop();
-    }
+    loop();
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
@@ -310,24 +329,17 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// Ngăn pinch-zoom (dùng 2 ngón)
-document.addEventListener('touchstart', function preventPinchZoom(e) {
+document.addEventListener('touchstart', function preventZoom(e) {
     if (e.touches.length > 1) {
-        e.preventDefault();
+        e.preventDefault(); // Ngăn pinch zoom
     }
 }, { passive: false });
 
-// Ngăn double-tap zoom
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function preventDoubleTapZoom(e) {
     const now = new Date().getTime();
     if (now - lastTouchEnd <= 300) {
-        e.preventDefault();
+        e.preventDefault(); // Ngăn double-tap zoom
     }
     lastTouchEnd = now;
 }, false);
-
-// Ngăn kính lúp trên iOS khi giữ lâu (dùng contextmenu)
-document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
