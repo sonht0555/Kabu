@@ -192,7 +192,7 @@ if (isRunning) {
 }
 function loop() {
     emuLoop();
-    requestAnimationFrame(loop);
+    window.requestAnimationFrame(loop);
 }
 
 let vkState = 0;
