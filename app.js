@@ -165,16 +165,20 @@ function checkSave() {
     lastCheckedSaveState = state;
 }
 function emuLoop() {
-if (isRunning) {
-    frameCnt++
-    if (frameCnt % 60 == 0) {
-        checkSave();
+    if (isRunning) {
+        frameCnt++
+        if (frameCnt % 60 == 0) {
+            checkSave();
+        }
+        Module._emuRunFrame(vkState);
+        console.log(vkState)
+        drawContext = canvas.getContext('2d');
+        drawContext.putImageData(idata, 0, 0);
     }
-    Module._emuRunFrame(vkState);
-    console.log(vkState)
-    drawContext = canvas.getContext('2d');
-    drawContext.putImageData(idata, 0, 0);
 }
+function loop() {
+    emuLoop();
+    requestAnimationFrame(loop);
 }
 let vkState = 0;
 const keyMask = {
@@ -211,7 +215,9 @@ function buttonPress(buttonName, isPress) {
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    requestAnimationFrame(emuLoop);
+    if (isRunning) {
+        loop();
+    }
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
