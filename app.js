@@ -190,10 +190,6 @@ if (isRunning) {
     drawContext.putImageData(idata, 0, 0);
 }
 }
-function loop() {
-    emuLoop();
-    window.requestAnimationFrame(loop);
-}
 
 let vkState = 0;
 const keyMask = {
@@ -236,7 +232,7 @@ function buttonPress(buttonName, isPress) {
 }
 // --- DOMContentLoaded ---
 document.addEventListener("DOMContentLoaded", function() {
-    loop();
+    window.requestAnimationFrame(emuLoop);
     const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
     const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
     let activeDpadTouches = new Map();
