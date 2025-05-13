@@ -291,6 +291,7 @@ export async function dowloadScreenShot(file) {
 export async function captureOCR(name) {
     Module.screenshot(name);
     const file = Module.downloadFile(`/data/screenshots/${name}`);
+    await Module.deleteFile(`/data/screenshots/${name}`);
     return file;
 }
 export async function setFastForwardMultiplier(number) {
