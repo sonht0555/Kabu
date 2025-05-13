@@ -27,7 +27,7 @@ async function romList() {
         const div = document.createElement("div");
         div.classList.add("flex-1", "game-item");
         div.textContent = gameName;
-        div.onclick = () => {
+        div.onclick = async () => {
             updateRecentGames(gameName);
             Main.loadGame(gameName);
             romList();

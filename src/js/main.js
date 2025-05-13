@@ -6,12 +6,14 @@ import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
+let VBA;
 const versions = { 
     "2.1.1": mGBA_1, 
     "2.1.2": mGBA_2, 
+    "2.1.3": VBA,
 };
 let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
-let mGBA = versions[currentVersion]; 
+let Mode = versions[currentVersion]; 
 document.getElementById("GBAver").textContent = `Wasm_©${currentVersion}`;
 document.getElementById("GBAver").addEventListener("click", () => {
     const versionKeys = Object.keys(versions);
@@ -28,7 +30,16 @@ function initializeCore(coreInitFunction, module) {
         module.FSInit();
     });
 }
-initializeCore(mGBA, Module);
+if (Mode === mGBA_1) {
+    initializeCore(mGBA_1, Module);
+    console.log("mGBA 2.1.1 loaded");
+} else if (Mode === mGBA_2) {
+    initializeCore(mGBA_2, Module);
+    console.log("mGBA 2.1.2 loaded");
+} else {
+    console.log("VBA loaded");
+    loop();
+}
 /* --------------- Declaration --------------- */
 let countAutoSave = 0;
 let countUpload = 0;
@@ -124,7 +135,7 @@ export async function uploadGame(romName) {
 }
 export async function loadGame(romName) {
     const stateName = romName.replace(/\.(gba|gbc|gb|zip)$/, ".ss1");
-    const statesList = Module.listFiles("states").filter((file) => file !== "." && file !== "..");
+    const statesList = await listFiles("states");
     intro.classList.add("disable");
     errorLogElements[0].style.bottom = "0";
     ingame.classList.remove("disable");
@@ -136,7 +147,11 @@ export async function loadGame(romName) {
             await Module.loadState(1);
         }
     } else {
-        await Module.loadGame(`/data/games/${romName}`);
+        if (Mode === VBA) {
+            loadGame(romName);
+        } else {
+            await Module.loadGame(`/data/games/${romName}`);
+        }
     }
     // show status ingame
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
@@ -203,22 +218,6 @@ export async function uploadFile(filepath) {
         localStorageFile();
         await FSSync();
     });
-}
-export async function editFile(filepath, filename, newFilename) {
-    await Module.editFileName(filepath, filename, newFilename);
-}
-export async function deleteFile(filepath) {
-    try {
-        await Module.deleteFile(filepath);
-        return true;
-    } catch (error) {
-        console.error(filepath)
-        return null;
-    }
-}
-export function listFiles(name) {
-    const result = Module.listFiles(name).filter((file) => file !== "." && file !== "..");
-    return result;
 }
 
 export function getPixelData() {

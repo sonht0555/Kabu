@@ -15,7 +15,6 @@ var fastForwardMode = false
 let vkState = 0
 var frameCnt = 0
 const fileInput = document.getElementById('romFile')
-const canvas = document.getElementById('canvas')
 const saveButton = document.getElementById('saveStateButton');
 const loadButton = document.getElementById('loadStateButton');
 
@@ -211,137 +210,49 @@ function buttonPress(buttonName, isPress) {
         isPress ? buttonPresss(buttonName.toLowerCase()) : buttonUnpresss(buttonName.toLowerCase());
     }
 }
-// --- DOMContentLoaded ---
-document.addEventListener("DOMContentLoaded", function() {
-    loop();
-    const dpadButtons = ["Up", "Down", "Left", "Right", "Up-left", "Up-right", "Down-left", "Down-right"];
-    const otherButtons = ["A", "B", "Start", "Select", "L", "R"];
-    let activeDpadTouches = new Map();
-    let activeOtherTouches = new Map();
+async function loadGame(gameName) {
+    try {
+        // Mở kết nối tới IndexedDB
+        const request = indexedDB.open('/data');
+        request.onsuccess = async (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction('FILE_DATA', 'readonly');
+            const objectStore = transaction.objectStore('FILE_DATA');
 
-    function handleButtonPress(buttonId, isPressed) {
-        if (!buttonId) return;
-        buttonPress(buttonId, isPressed);
-        const element = document.getElementById(buttonId);
-        if (element) {
-            if (isPressed) {
-                element.classList.add('touched');
-            } else {
-                element.classList.remove('touched');
-            }
-        }
-    }
-    
-    function getButtonIdFromTouch(touch) {
-        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-        const button = element?.closest("[id]");
-        return button ? button.id : null;
-    }
-    
-    document.addEventListener("touchstart", (event) => {
-        for (let touch of event.changedTouches) {
-            const buttonId = getButtonIdFromTouch(touch);
-            if (!buttonId) continue;
-            if (dpadButtons.includes(buttonId)) {
-                if (activeDpadTouches.has(touch.identifier)) {
-                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
-                }
-                activeDpadTouches.set(touch.identifier, buttonId);
-                handleButtonPress(buttonId, true);
-            } else if (otherButtons.includes(buttonId)) {
-                if (activeOtherTouches.has(touch.identifier)) {
-                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
-                }
-                activeOtherTouches.set(touch.identifier, buttonId);
-                handleButtonPress(buttonId, true);
-            }
-        }
-    });
+            // Lấy file từ IndexedDB
+            const getRequest = objectStore.get(`/data/games/${gameName}`);
+            getRequest.onsuccess = (e) => {
+                const file = e.target.result;
+                tryInitSound();
+                if (file) {
+                    const u8 = new Uint8Array(file.contents || file);
+                    gameID = "";
 
-    document.addEventListener("touchmove", (event) => {
-        for (let touch of event.changedTouches) {
-            const buttonId = getButtonIdFromTouch(touch);
-            if (!buttonId) continue;
-            
-            if (dpadButtons.includes(buttonId)) {
-                if (activeDpadTouches.has(touch.identifier) && activeDpadTouches.get(touch.identifier) !== buttonId) {
-                    handleButtonPress(activeDpadTouches.get(touch.identifier), false);
-                    activeDpadTouches.set(touch.identifier, buttonId);
-                    handleButtonPress(buttonId, true);
+                    // Lấy gameID từ ROM
+                    for (let i = 0xAC; i < 0xB2; i++) {
+                        gameID += String.fromCharCode(u8[i]);
+                    }
+                    console.log('gameID', gameID);
+
+                    // Nạp ROM vào bộ nhớ
+                    Module.HEAPU8.set(u8, romBuffer);
+                    Module._emuLoadROM(u8.length);
+                    loadSave();
+                    Module._emuResetCpu();
+                } else {
+                    console.error(`Game "${gameName}" not found in IndexedDB.`);
                 }
-            } else if (otherButtons.includes(buttonId)) {
-                if (activeOtherTouches.has(touch.identifier) && activeOtherTouches.get(touch.identifier) !== buttonId) {
-                    handleButtonPress(activeOtherTouches.get(touch.identifier), false);
-                    activeOtherTouches.set(touch.identifier, buttonId);
-                    handleButtonPress(buttonId, true);
-                }
-            }
-        }
-    });
-    
-    document.addEventListener("touchend", (event) => {
-        for (let touch of event.changedTouches) {
-            if (activeDpadTouches.has(touch.identifier)) {
-                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
-                activeDpadTouches.delete(touch.identifier);
-            }
-            if (activeOtherTouches.has(touch.identifier)) {
-                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
-                activeOtherTouches.delete(touch.identifier);
-            }
-        }
-    });
-    
-    document.addEventListener("touchcancel", (event) => {
-        for (let touch of event.changedTouches) {
-            if (activeDpadTouches.has(touch.identifier)) {
-                handleButtonPress(activeDpadTouches.get(touch.identifier), false);
-                activeDpadTouches.delete(touch.identifier);
-            }
-            if (activeOtherTouches.has(touch.identifier)) {
-                handleButtonPress(activeOtherTouches.get(touch.identifier), false);
-                activeOtherTouches.delete(touch.identifier);
-            }
-        }
-    });
-});
-//----------------------------------------------------------------------------------------------------------------------
-// Sử dụng các hàm trên cho saveButton và loadButton
-saveButton.addEventListener('click', function() {
-    const saveStateBufferPtr = Module._malloc(2000000);
-    const actualSize = Module._emuSaveState(saveStateBufferPtr, 2000000);
-    const saveStateDataCopy = new Uint8Array(Module.HEAPU8.buffer, saveStateBufferPtr, actualSize).slice();
-    Module._free(saveStateBufferPtr);
-    writeToIndexedDB('/data/states/game.ss1', saveStateDataCopy);
-});
-loadButton.addEventListener('click', async function() {
-    const saveStateData = await readFromIndexedDB('/data/states/game.ss1');
-    const dataSize = saveStateData.length;
-    const loadStateBufferPtr = Module._malloc(dataSize);
-    Module.HEAPU8.set(saveStateData, loadStateBufferPtr);
-    Module._emuLoadState(loadStateBufferPtr, dataSize);
-    Module._free(loadStateBufferPtr);
-});
-function loadfile(filePart) {
-    const request = indexedDB.open('/data');
-    request.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains('FILE_DATA')) {
-            db.createObjectStore('FILE_DATA');
-        }
-    };
-    indexedDB.open('/data').onsuccess = (e) => {
-        const db = e.target.result;
-        const range = IDBKeyRange.bound(filePart, filePart + '\uffff');
-        db.transaction('FILE_DATA', 'readonly').objectStore('FILE_DATA').openCursor(range).onsuccess = (e) => {
-            const cursor = e.target.result;
-            if (cursor) {
-                const key = cursor.key;
-                console.log(key.substring(key.lastIndexOf('/') + 1));
-                cursor.continue();
-            }
+            };
+
+            getRequest.onerror = (e) => {
+                console.error('Error loading game from IndexedDB:', e.target.error);
+            };
         };
-    };
+
+        request.onerror = (e) => {
+            console.error('Error opening IndexedDB:', e.target.error);
+        };
+    } catch (error) {
+        console.error('Error in loadGame function:', error);
+    }
 }
-loadfile('/data/states/');
-//----------------------------------------------------------------------------------------------------------------------

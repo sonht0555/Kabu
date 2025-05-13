@@ -334,7 +334,6 @@ function listFiles(filePart) {
                 if (cursor) {
                     const key = cursor.key;
                     const fileName = key.substring(key.lastIndexOf('/') + 1);
-                    // Lọc bỏ trường hợp fileName === filePart (ví dụ: 'games')
                     if (fileName && fileName !== filePart) {
                         files.push(fileName);
                     }
@@ -352,7 +351,6 @@ function listFiles(filePart) {
         };
     });
 }
-// File Size
 function sizeFiles(filePart) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('/data');

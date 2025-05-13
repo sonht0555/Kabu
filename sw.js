@@ -1,4 +1,4 @@
-let revision = 'V6.45';
+let revision = 'V6.46';
 var urlsToCache = [
     '/',
     './README.md',
@@ -9,12 +9,15 @@ var urlsToCache = [
     './src/core/2.1.1/mgba.wasm',
     './src/core/2.1.2/mgba.js',
     './src/core/2.1.2/mgba.wasm',
+    './src/core/vba/vba.js',
+    './src/core/vba/vba.wasm',
     './src/css/main.css',
     './src/font/04b.ttf',
     './src/font/04bf.woff',
     './src/font/tuson.ttf',
     './src/img/favi.png',
     './src/img/icon.png',
+    './src/js/app.js',
     './src/js/cloud.js',
     './src/js/gamepad.js',
     './src/js/global.js',
