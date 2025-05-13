@@ -16,7 +16,7 @@ function humanFileSize(bytes, si = false, dp = 1) {
     } while (Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(dp) + ' ' + units[u];
 }
-function createElementStorage(parent, fileName, filePart) {
+async function createElementStorage(parent, fileName, filePart) {
     const Name = document.createElement("div");
     Name.classList.add("flex-1", "rom-item", "rom");
     parent.appendChild(Name);
@@ -60,7 +60,7 @@ function createElementStorage(parent, fileName, filePart) {
         downloadButton.classList.add("download", "bc");
         actionDiv.appendChild(downloadButton);
         downloadButton.onclick = () => {
-            Main.downloadFile(filePart, fileName);
+            downloadFiles(filePart, fileName);
         };
         const deleteButton = document.createElement("div");
         deleteButton.classList.add("delete", "bc");
@@ -68,7 +68,7 @@ function createElementStorage(parent, fileName, filePart) {
         deleteButton.onclick = async () => {
             if (window.confirm("Delete this file?" + fileName)) {
                 const romName = fileName.replace(/\....$/, ".gba");
-                Main.deleteFile(filePart);
+                deleteFiles(filePart);
                 localStorage.removeItem(`${romName}_dateState${fileName.slice(-1)}`);
                 localStorage.removeItem(`${romName}_imageState${fileName.slice(-1)}`);
                 localStorageFile();
@@ -83,7 +83,7 @@ function createElementStorage(parent, fileName, filePart) {
         renameButton.onclick = async () => {
             const newFilename = window.prompt("Edit filename", fileName);
             if (newFilename !== null) {
-                Main.editFile(filePart, fileName, newFilename);
+                editFiles(filePart, newFilename);
                 localStorageFile();
                 dialog.close();
                 dialog.remove();
@@ -93,16 +93,16 @@ function createElementStorage(parent, fileName, filePart) {
         dialog.showModal();
     }
     const mib = document.createElement("span");
-    mib.textContent = humanFileSize(Main.fileSize(filePart));
+    mib.textContent = humanFileSize(await sizeFiles(filePart));
     mib.classList.add("mib");
     Name.appendChild(mib);
 }
-export function localStorageFile() {
-    const listRoms = Main.listFiles("games");
-    const listSaves = Main.listFiles("saves");
-    const listStates = Main.listFiles("states");
-    const listCheats = Main.listFiles("cheats");
-    const listScreenshots = Main.listFiles("screenshots");
+export async function localStorageFile() {
+    const listRoms   = await listFiles("games");
+    const listSaves  = await listFiles("saves");
+    const listStates = await listFiles("states");
+    const listCheats = await listFiles("cheats");
+    const listScreenshots = await listFiles("screenshots");
     const refreshList = [romsFile, savesFile, statesFile, cheatsFile, screenshotsFile];
     for (const refresh of refreshList) {
         while (refresh.firstChild) {

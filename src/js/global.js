@@ -313,6 +313,134 @@ console.warn = function (...args) {
     originalConsoleWarn.apply(console, args);
     logMessage("Warn", args.join(" "));
 };
+// List File
+function listFiles(filePart) {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('/data');
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('FILE_DATA')) {
+                db.createObjectStore('FILE_DATA');
+            }
+        };
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const range = IDBKeyRange.bound(`/data/${filePart}`, `/data/${filePart}` + '\uffff');
+            const transaction = db.transaction('FILE_DATA', 'readonly');
+            const objectStore = transaction.objectStore('FILE_DATA');
+            const files = [];
+            objectStore.openCursor(range).onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    const key = cursor.key;
+                    const fileName = key.substring(key.lastIndexOf('/') + 1);
+                    // Lọc bỏ trường hợp fileName === filePart (ví dụ: 'games')
+                    if (fileName && fileName !== filePart) {
+                        files.push(fileName);
+                    }
+                    cursor.continue();
+                } else {
+                    resolve(files);
+                }
+            };
+            objectStore.openCursor(range).onerror = (e) => {
+                reject(e);
+            };
+        };
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
+}
+// File Size
+function sizeFiles(filePart) {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('/data');
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const transaction = db.transaction('FILE_DATA', 'readonly');
+            const objectStore = transaction.objectStore('FILE_DATA');
+            const getRequest = objectStore.get(filePart);
+            getRequest.onsuccess = (e) => {
+                const file = e.target.result;
+                if (!file) {
+                    resolve(null);
+                } else if (file.size !== undefined) {
+                    resolve(file.size);
+                } else if (file.contents && file.contents.byteLength !== undefined) {
+                    resolve(file.contents.byteLength);
+                } else if (file.data && file.data.size !== undefined) {
+                    resolve(file.data.size);
+                } else if (file.byteLength !== undefined) {
+                    resolve(file.byteLength);
+                } else {
+                    resolve(null);
+                }
+            };
+            getRequest.onerror = (e) => {
+                reject(e);
+            };
+        };
+        request.onerror = (e) => {
+            reject(e);
+        };
+    });
+}
+function editFiles(filePart, newName) {
+    const lastSlash = filePart.lastIndexOf('/');
+    const newKey = filePart.substring(0, lastSlash + 1) + newName;
+    return new Promise((resolve, reject) => {
+        const dbRequest = indexedDB.open('/data');
+        dbRequest.onsuccess = (e) => {
+            const db = e.target.result;
+            const transaction = db.transaction('FILE_DATA', 'readwrite');
+            const store = transaction.objectStore('FILE_DATA');
+            store.get(filePart).onsuccess = (event) => {
+                const data = event.target.result;
+                if (data) {
+                    store.put(data, newKey).onsuccess = () => {
+                        store.delete(filePart).onsuccess = () => {
+                            resolve();
+                        };
+                    };
+                } else {
+                    resolve();
+                }
+            };
+        };
+        dbRequest.onerror = reject;
+    });
+}
+function deleteFiles(fileKey) {
+    return new Promise((resolve, reject) => {
+        const dbRequest = indexedDB.open('/data');
+        dbRequest.onsuccess = (e) => {
+            const db = e.target.result;
+            const transaction = db.transaction('FILE_DATA', 'readwrite');
+            const store = transaction.objectStore('FILE_DATA');
+            store.delete(fileKey).onsuccess = () => resolve();
+            store.delete(fileKey).onerror = reject;
+        };
+        dbRequest.onerror = reject;
+    });
+}
+function downloadFiles(fileKey, fileName) {
+    const request = indexedDB.open('/data');
+    request.onsuccess = ({ target: { result: db } }) => {
+        db.transaction('FILE_DATA', 'readonly')
+            .objectStore('FILE_DATA')
+            .get(fileKey).onsuccess = ({ target: { result: file } }) => {
+                if (file) {
+                    const blob = new Blob([file.contents || file], { type: 'application/octet-stream' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                }
+            };
+    };
+};
 /* --------------- DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", function() {
     if (savedStateAdj !== null) {
