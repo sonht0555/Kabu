@@ -1,5 +1,6 @@
 import mGBA_1 from "../core/2.1.1/mgba.js";
 import mGBA_2 from "../core/2.1.2/mgba.js";
+import VBA_1  from "../js/vbas.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
@@ -10,7 +11,7 @@ let VBA;
 const versions = { 
     "2.1.1": mGBA_1, 
     "2.1.2": mGBA_2, 
-    "2.1.3": VBA,
+    "2.1.3": VBA_1,
 };
 let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
 let Mode = versions[currentVersion]; 
@@ -24,18 +25,20 @@ document.getElementById("GBAver").addEventListener("click", () => {
     setTimeout(() => { window.location.reload(); }, 1000);
 });
 /*/ --------------- Initialization ----------- */
-const Module = {canvas: document.getElementById("canvas")};
-function initializeCore(coreInitFunction, module) {
-    coreInitFunction(module).then(function(module) {
-        module.FSInit();
+let Module = null;
+function initializeCore(coreInitFunction) {
+    const coreInstance = { canvas: document.getElementById("canvas") };
+    return coreInitFunction(coreInstance).then((core) => {
+        core.FSInit();
+        Module = core;
     });
 }
 if (Mode === mGBA_1) {
-    initializeCore(mGBA_1, Module);
+    initializeCore(mGBA_1);
     console.log("mGBA 2.1.1 loaded");
 } else if (Mode === mGBA_2) {
-    initializeCore(mGBA_2, Module);
-    console.log("mGBA 2.1.2 loaded");
+    initializeCore(mGBA_2);
+    console.log("vbas 2.1.2 loaded");
 } else {
     console.log("VBA loaded");
     loop();
@@ -46,6 +49,7 @@ let countUpload = 0;
 const canvas = document.getElementById("canvas");
 const loadingIcon = document.getElementById("loading-icon");
 let canSave = true;
+let canSync = true;
 let visible = true;
 /* --------------- Function ------------------ */
 // System Tray
@@ -219,36 +223,6 @@ export async function uploadFile(filepath) {
         await FSSync();
     });
 }
-
-export function getPixelData() {
-    const result = Module.getPixelData();
-    return result;
-}
-
-export function listGame() {
-    const result = Module.listRoms().filter((file) => file !== "." && file !== "..");
-    return result;
-}
-export function listSave() {
-    const result = Module.listSaves().filter((file) => file !== "." && file !== "..");
-    return result;
-}
-export function listState() {
-    const result = Module.listStates().filter((file) => file !== "." && file !== "..");
-    return result;
-}
-export function listCheat() {
-    const result = Module.listCheats().filter((file) => file !== "." && file !== "..");
-    return result;
-}
-export function listScreenshot() {
-    const result = Module.listScreenshots().filter((file) => file !== "." && file !== "..");
-    return result;
-}
-export function fileSize(filePart) {
-    const result = Module.fileSize(filePart)
-    return result;
-}
 export async function resumeGame() {
     await Module.resumeGame();
     Module.SDL2();
@@ -405,7 +379,6 @@ export async function notiMessage(messageContent, second, showCanvas = false) {
         }, 600);
     }
 }
-let canSync = true;
 export async function FSSync() {
     if (!canSync) return;
     canSync = false;
