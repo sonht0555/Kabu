@@ -1,17 +1,14 @@
 import mGBA_1 from "../core/2.1.1/mgba.js";
 import mGBA_2 from "../core/2.1.2/mgba.js";
-import VBA_1  from "../js/vbas.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
 import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
-let VBA;
 const versions = { 
     "2.1.1": mGBA_1, 
     "2.1.2": mGBA_2, 
-    "2.1.3": VBA_1,
 };
 let currentVersion = localStorage.getItem("GBAver") || "2.1.1";
 let Mode = versions[currentVersion]; 
@@ -32,17 +29,8 @@ function initializeCore(coreInitFunction) {
         core.FSInit();
         Module = core;
     });
-}
-if (Mode === mGBA_1) {
-    initializeCore(mGBA_1);
-    console.log("mGBA 2.1.1 loaded");
-} else if (Mode === mGBA_2) {
-    initializeCore(mGBA_2);
-    console.log("vbas 2.1.2 loaded");
-} else {
-    console.log("VBA loaded");
-    loop();
-}
+}    
+initializeCore(Mode);
 /* --------------- Declaration --------------- */
 let countAutoSave = 0;
 let countUpload = 0;
