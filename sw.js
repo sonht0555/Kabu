@@ -1,4 +1,4 @@
-let revision = 'V6.55';
+let revision = 'V6.56';
 var urlsToCache = [
     '/',
     './README.md',
@@ -7,8 +7,8 @@ var urlsToCache = [
     './manifest.json',
     './src/core/3.1.58/mgba.js',
     './src/core/3.1.58/mgba.wasm',
-    './src/core/4.0.4/mgba.js',
-    './src/core/4.0.4/mgba.wasm',
+    './src/core/4.0.8/mgba.js',
+    './src/core/4.0.8/mgba.wasm',
     './src/css/main.css',
     './src/font/04b.ttf',
     './src/font/04bf.woff',
