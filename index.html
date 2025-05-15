@@ -1,212 +1,262 @@
 <!DOCTYPE html>
-<!-- saved from url=(0022)https://gba.44670.org/ -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Required meta tags -->
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height">
-    <link rel="apple-touch-icon" href="https://gba.44670.org/icon.png">
-    <link rel="manifest" href="https://gba.44670.org/manifest.json">
-    <title>44VBA</title>
+<html lang="en">
 
-</head>
-
-<body data-new-gr-c-s-check-loaded="14.1233.0" data-gr-ext-installed="">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        a,
-        a:visited {
-            color: white;
-        }
-
-        html,
         body {
-            position: fixed;
-            overflow: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            touch-action: none;
-            cursor: inherit;
-        }
-
-        body {
-
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 0;
+            background-color: #0e0b2a;
+            font-family: 'Arial', sans-serif;
+            color: #e0e0e0;
             margin: 0;
-            width: 100vw;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            font-family: 'Myriad Set Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
         }
 
-        hr {
-            color: white;
-        }
-
-        button {
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            padding: .5em;
-        }
-
-        .vk-round {
-            text-align: center;
-            vertical-align: middle;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-
-        .vk {
-            color: rgba(0, 0, 0, 0.2);
-            background-color: rgba(255, 255, 255, 0.25);
+        #canvas {
             position: absolute;
-            z-index: 1;
-            text-align: center;
-            vertical-align: middle;
-            display: inline-block;
-        }
-
-        .vk-hide {
-            background-color: transparent !important
-        }
-
-        .vk-touched {
-            background-color: rgba(255, 255, 255, 0.75) !important
-        }
-
-        .menu {
-            background: rgb(32, 43, 56);
-            position: absolute;
-            left: 0;
             top: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 999;
-        }
-
-        #gba-canvas {
-            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: block;
             z-index: -1;
         }
 
-        #vk-layer {
-            position: absolute;
-            left: 0;
-            top: 0;
+        #home {
+            background-color: rgba(20, 16, 50, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            display: block;
+        }
+
+        .inputs {
+            margin: 20px 0;
+            display: inline-block;
+            position: relative;
+        }
+
+        .inputs label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #d1d1f0;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .inputs input[type="file"] {
+            opacity: 0;
             width: 100%;
             height: 100%;
-            z-index: 3;
-            touch-action: none;
-        }
-
-        #msg-layer {
             position: absolute;
+            top: 0;
             left: 0;
-            width: 100%;
-            top: 40vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2;
+            cursor: pointer;
         }
 
-        textarea {
-            background: transparent;
-            color: #fff;
-            border: 2px solid white;
-
+        .inputs label::after {
+            content: 'Browse';
+            display: inline-block;
+            background-color: #4a3e7b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            cursor: pointer;
         }
 
-        /* textarea placeholder */
-        textarea::placeholder {
-            color: #666;
+        .inputs label:hover::after {
+            background-color: #615090;
         }
 
+        #settings {
+            margin-top: 20px;
+            background-color: rgba(30, 26, 70, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        #settings h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: #c4c4e0;
+        }
+
+        #settings label {
+            margin-right: 10px;
+            color: #e0e0f0;
+            font-size: 1rem;
+        }
+
+        #settings select {
+            background-color: #3a3478;
+            color: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .info {
+            border-radius: 50%;
+            background-color: #4a3e7b;
+            position: absolute;
+            z-index: 4;
+            left: 10px;
+            top: 10px;
+            text-align: center;
+            width: 35px;
+            height: 35px;
+            border: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info:hover {
+            background-color: #615090;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .info::before {
+            content: "i";
+            color: #e0e0e5;
+            font-size: 1.5rem;
+            line-height: 50px;
+            display: block;
+            font-weight: bold;
+        }
+
+        #panel {
+            border-radius: 10px;
+            background-color: #615090;
+            position: absolute;
+            z-index: 3;
+            top: 52.5px;
+            left: 10px;
+            padding: 15px;
+            text-align: left;
+            display: none;
+            width: 260px;
+            height: auto;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            color: #f0f0f5;
+            transform: scale(0.8);
+            opacity: 0;
+            transform-origin: top left;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        #panel.show {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #panel p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.5rem;
+        }
     </style>
-    <div id="pause-menu" class="menu" style="background: rgba(32,43,56,0.7);" hidden="">
-        <button onclick="setPauseMenu(false)"> ← Back </button>
-        <hr>
-        Savegame management:<br>
-        <button onclick="savBackupBtn()">Backup</button>
-        <input type="file" id="sav-file" onchange="savRestoreBtn()" hidden="">
-        <button onclick="$id(&#39;sav-file&#39;).click()">Restore</button>
-        <hr>
-        <label for="cfg-scale-mode">Screen filter:</label>
-        <select id="cfg-scale-mode">
-            <option value="0">Pixelated</option>
-            <option value="1">Smooth</option>
-            <option value="2">XBRZ</option>
-        </select><br>
-        <input type="checkbox" id="cfg-mute">
-        <label for="cfg-mute">Mute Sound</label><br>
-        <input type="checkbox" id="cfg-turbo">
-        <label for="cfg-turbo">Turbo mode</label><br>
-        <div id="div-cht">
-            Cheat Codes(backup your savegame before using it):<br>
-            <textarea id="txt-code" style="width:100%" rows="10" placeholder="Cheat code:
-GamesharkAdv: XXXXXXXX YYYYYYYY
-CodeBreaker: XXXXXXXX YYYY"></textarea><br>
-            <button onclick="chtSaveBtn()">Save Cheat Codes</button>
-        </div>
-        <hr>
-        Cloud Save:<span id="span-cloud-id"></span><br>
-        <button onclick="dpOnConnectButtonClicked()" id="btn-dp-connect">Connect Dropbox</button><br>
-        <button onclick="dpManualBtn(true)">↑ Upload</button>|<button onclick="dpManualBtn(false)">↓
-            Download</button><br>
-    </div>
-    <div id="welcome" class="menu">
-        <h1 id="title">44VBA</h1>
-        <hr>
-        <div id="wasm-loading" hidden="">
-            Loading, please wait...
-        </div>
-        <div id="select-rom">
-            <input type="file" id="romFile" onchange="onFileSelected()" hidden=""><p></p>
-            <button onclick="$id(&#39;romFile&#39;).click()" id="btn-choose">Choose File...</button>
-        </div>
-        <hr>
-        Ver. 20230107 | <a href="https://github.com/44670/44vba">GitHub</a>
-        <p>
-            Your files are processed locally and won't be uploaded to any server.<br>
-            This software should not be used to play games you have not legally obtained.<br>
-            "GBA", "Game Boy Advance" are trademarks of Nintendo Co.,Ltd, This site is not affiliated with Nintendo in
-            any way.
-        </p>
-        <p>
-            <a href="https://homebrewapps.xyz/">✨ Find Homebrew Games ✨</a>
-        </p>
-        <div id="ios-hint" hidden="">
-            Due to iOS limitations, please open this site(https://gba.44670.org) in <b>Safari</b>, and add it to your
-            <b>Home Screen</b> by <b>Share Menu</b> to continue.
-            <p style="text-align: center;">⬇⬇⬇</p>
-        </div>
-    </div>
-    <div id="msg-layer" hidden="">
-        <p id="msg-text">Gamepad disconnected.</p>
-    </div>
-    <div id="vk-layer" hidden="">
-        <div class="vk-rect vk" data-k="menu" style="top: 25px; left: 1290px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Menu</div>
-        <div class="vk-rect vk" data-k="turbo" style="top: 25px; left: 0px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">F.F.</div>
-        <div class="vk-rect vk" data-k="l" style="top: 75px; left: 0px; width: 150px; height: 50px; font-size: 35px; line-height: 50px;">L</div>
-        <div class="vk-rect vk" data-k="r" style="top: 75px; left: 1290px; width: 150px; height: 50px; font-size: 35px; line-height: 50px;">R</div>
-        <div class="vk-round vk" data-k="a" style="top: 175px; left: 1375px; width: 65px; height: 65px; font-size: 35px; line-height: 65px;">A</div>
-        <div class="vk-round vk" data-k="b" style="top: 200px; left: 1284px; width: 65px; height: 65px; font-size: 35px; line-height: 65px;">B</div>
-        <div class="vk-rect vk" data-k="select" style="top: 675px; left: 555px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Select</div>
-        <div class="vk-rect vk" data-k="start" style="top: 675px; left: 735px; width: 150px; height: 25px; font-size: 35px; line-height: 25px;">Start</div>
-        <div class=" vk" data-k="left" style="top: 200px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">←</div>
-        <div class=" vk" data-k="right" style="top: 200px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">→</div>
-        <div class=" vk" data-k="up" style="top: 150px; left: 50px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">↑</div>
-        <div class=" vk" data-k="down" style="top: 250px; left: 50px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;">↓</div>
-        <div class=" vk vk-hide" style="top: 150px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="ul"></div>
-        <div class=" vk vk-hide" style="top: 150px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="ur"></div>
-        <div class=" vk vk-hide" style="top: 250px; left: 0px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="dl"></div>
-        <div class=" vk vk-hide" style="top: 250px; left: 100px; width: 50px; height: 50px; font-size: 35px; line-height: 50px;" data-k="dr"></div>
-    </div>
-    <canvas width="240" height="160" id="gba-canvas" style="width: 1020px; height: 680px; left: 210px; image-rendering: pixelated;"></canvas>
-    <script src="./pako.min.js"></script>
-    <script src="./localforage.js"></script>
-    <script src="./app.js"></script>
-    <script src="./vba.js"></script>
+</head>
 
+<body>
+    <button class="info" id="info" onclick="openInfo()"></button>
+    <div id="panel">
+        <p>Info for users, like controller mappings and keyboard mappings</p>
+    </div>
+    
+    <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    
+    <script type='text/javascript'>
+        var Module = {
+            canvas: (function() { return document.getElementById('canvas'); })()    
+        };
+    </script>
+    
+    <script src="snesweb.js"></script>
+
+    <div id="home">
+        <div class="inputs">
+            <label for="rom">Choose an SNES ROM: </label>
+            <input type="file" id="rom" name="rom" />
+        </div>
+        
+        <!-- Settings template (e.g., canvas filtering) -->
+        <!-- <div id="settings">
+            <h3>Emulator Settings</h3>
+            <label for="filtering">Canvas Filtering</label>
+            <select id="filtering">
+                <option value="pixelated">Pixelated</option>
+                <option value="smooth">Smooth</option>
+            </select>
+        -->
+        </div>
+    </div>
+
+    <script>
+        async function loadrom(){
+            let raw = document.getElementById("rom").files[0];
+            console.log(raw.name)
+            const rom = new Uint8Array(await raw.arrayBuffer());
+            var loadRom = Module.cwrap('loadRawRom', null, ['number', 'number', 'string']);
+            
+            const ptr = Module._malloc(rom.length);
+            Module.HEAPU8.set(rom, ptr);
+            loadRom(ptr, rom.length, raw.name)
+            Module._free(ptr);
+            let home = document.getElementById('home');
+            home.style.display = 'none';
+        }
+
+        /* Canvas filtering settings example
+        function updateSettings() {
+            let canvas = document.getElementById('canvas');
+            let filter = document.getElementById('filtering').value;
+            
+            if filter = "pixelated" {
+                canvas.style.imageRendering = 'pixelated';
+            } else {
+                canvas.style.imageRendering = 'smooth';
+            }
+            
+            console.log(Updated canvas filtering to ${filtering}!);
+        }
+        */
+        
+        document.getElementById('rom').addEventListener('change', function() {
+            loadrom();
+            /* updateSettings(); */
+        });
+
+        function openInfo() {
+            let panel = document.getElementById('panel');
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                setTimeout(() => {
+                    panel.style.display = 'none';
+                }, 300); // Matches the transition duration
+            } else {
+                panel.style.display = 'block';
+                setTimeout(() => {
+                    panel.classList.add('show');
+                }, 10); // Allows the panel to render before starting the animation
+            }
+        }
+    </script>
+</body>
+</html>
