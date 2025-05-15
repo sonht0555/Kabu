@@ -77,7 +77,7 @@ var ENVIRONMENT_IS_PTHREAD = ENVIRONMENT_IS_WORKER && self.name == 'em-pthread';
 };
 
 // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
+Module.SDL2 = () => {Module["SDL2"].audioContext.resume();};
 Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
 Module.deleteFile = (filepath) => FS.unlink(filepath);
 Module.fileSize = (filepath) => FS.stat(filepath).size;

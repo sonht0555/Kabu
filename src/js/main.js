@@ -218,7 +218,6 @@ export async function resumeGame() {
 }
 export async function pauseGame() {
     Module.pauseGame();
-    Module.SDL2();
     notiMessage("[_] Paused!", 2000);
 }
 export async function loadding() {
@@ -228,7 +227,6 @@ export async function loadding() {
     loadingIcon.classList.add("visible");
     await delay(200);
     await Module.resumeGame();
-    Module.SDL2();
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)
