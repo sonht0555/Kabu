@@ -378,6 +378,15 @@ export async function FSSync() {
         }, 3000);
     }
 }
+export async function deleteFile(filepath) {
+    try {
+        await Module.deleteFile(filepath);
+        return true;
+    } catch (error) {
+        console.error(filepath)
+        return null;
+    }
+}
 export async function quickReload() {
     Module.quickReload();
 }
