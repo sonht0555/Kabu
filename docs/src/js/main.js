@@ -378,6 +378,9 @@ export async function FSSync() {
         }, 3000);
     }
 }
+export async function quickReload() {
+    Module.quickReload();
+}
 export const rewind = (type) => Module.toggleRewind?.(type) || null;
 export function setCoreSettings(type, number) {
     if (typeof Module.setCoreSettings === "function") {

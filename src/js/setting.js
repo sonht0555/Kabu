@@ -1,10 +1,9 @@
 import * as Main from './main.js';
 /* --------------- Declaration --------------- */
 let selectedIndex = 0;
-let cheatX, stateAutoX, shaderX, opacityX, temperatureX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX;
+let cheatX, stateAutoX, shaderX, opacityX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX;
 const boxes = document.querySelectorAll('.box');
 const sdValues = ['Sega', 'Crt', 'Brick', 'Gt-1', 'Gt-2', 'Gt-3', 'Gt-4', 'Gt-5', 'Gt-6', 'Lcd', 'GBC_Line', 'GBA_Line', 'Leat', 'Mess'];
-const colorValues = ['Warm', 'Neutral', 'Cool', 'None'];
 const menuPad = document.getElementById("menu-pad");
 const stateList = document.getElementById("stateList");
 const loadingIcon = document.getElementById("loading-icon");
@@ -12,25 +11,23 @@ const controlSetting = document.getElementById("control-setting");
 const SDL2ID = ['A', 'B', 'R', 'L', 'Up', 'Down', 'Left', 'Right'];
 const imgShader = document.getElementById('img-shader');
 export async function shaderData() {
-    cheatX = await Main.getData(gameName, "1", "cheatCode") || "xx xxx";
-    box1.textContent = cheatX;
     stateAutoX = await Main.getData(gameName, "1", "stateAuto") || "On";
     box2.textContent = stateAutoX;
-    shaderX = await Main.getData(gameName, "1", "shader") || "Lcd"
+    shaderX = await Main.getData(gameName, "1", "shader") || "Crt"
     box3.textContent = shaderX;
-    opacityX = await Main.getData(gameName, "1", "opacity") || 0.8;
+    opacityX = await Main.getData(gameName, "1", "opacity") || 1.0;
     box4.textContent = opacityX;
-    temperatureX = localStorage.getItem(`${gameName}_temperature`) || "None";
-    box5.textContent = temperatureX;
+    cheatX = await Main.getData(gameName, "1", "cheatCode") || "xx xxx";
+    box5.textContent = cheatX;
     grayscaleX = await Main.getData(gameName, "1", "grayscale") || 0.0;
     box6.textContent = grayscaleX;
     brightnessX = await Main.getData(gameName, "1", "brightness") || 0.8;
     box7.textContent = brightnessX;
-    contrastX = await Main.getData(gameName, "1", "contrast") || 1.0;
+    contrastX = await Main.getData(gameName, "1", "contrast") || 1.2;
     box8.textContent = contrastX;
-    saturateX = await Main.getData(gameName, "1", "saturate") || 1.0;
+    saturateX = await Main.getData(gameName, "1", "saturate") || 0.8;
     box9.textContent = saturateX;
-    sepiaX = await Main.getData(gameName, "1", "sepia") || 0.0;
+    sepiaX = await Main.getData(gameName, "1", "sepia") || 0.2;
     box10.textContent = sepiaX;
     imgShader.classList.add(shaderX);
     imgShader.style.setProperty('--before-opacity', opacityX);
@@ -38,7 +35,7 @@ export async function shaderData() {
     stateList.style.filter   = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
     imgShader.style.filter   = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
     canvas.style.filter      = `brightness(${brightnessX}) contrast(${contrastX}) saturate(${saturateX}) sepia(${sepiaX}) grayscale(${grayscaleX})`;
-    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, temperatureX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX});
+    console.log({gameName, cheatX, stateAutoX, shaderX, opacityX, grayscaleX, brightnessX, contrastX, saturateX, sepiaX});
 }
 /* --------------- Function ------------------ */
 // Right
@@ -95,6 +92,12 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('A').addEventListener(eventType, async () => {
             if (menuPad.classList.contains("active")) {
                 if (document.getElementById('box0').classList.contains('selected')) {
+                    controlSetting.classList.add("visible");
+                    menuPad.classList.remove("active");
+                    await Main.resumeGame();
+                    await Main.quickReload();
+                }
+                if (document.getElementById('box1').classList.contains('selected')) {
                     ingame.classList.add("disable");
                     await lockNoti("", "Relaunch...", 1000);
                     Main.FSSync();
@@ -108,8 +111,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     // navigator.serviceWorker.controller.postMessage({
                     //     type: 'DELETE_CACHE'
                     // });
-                }              
-                if (document.getElementById('box1').classList.contains('selected')) {
+                }               
+                if (document.getElementById('box5').classList.contains('selected')) {
                     const cheatName = gameName.replace(/\.(gba|gbc|gb|zip)$/, ".cheats");
                     let data = await Main.downloadFileInCloud(`/data/cheats/${cheatName}`) ?? new TextEncoder().encode("");
                     let textData = new TextDecoder().decode(data);
@@ -182,17 +185,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (document.getElementById('box4').classList.contains('selected')) {
                     Right('box4', 1, 0.1, 'opacity', 'opacity');
                 }
-                if (document.getElementById('box5').classList.contains('selected')) {
-                    let box5 = document.getElementById('box5');
-                    let currentIndex = colorValues.indexOf(box5.textContent);
-                    if (currentIndex < colorValues.length - 1) {
-                        box5.textContent = colorValues[currentIndex + 1];
-                    } else {
-                        box5.textContent = colorValues[0];
-                    }
-                    let currentColorValues = box5.textContent;
-                    localStorage.setItem(`${gameName}_temperature`, currentColorValues)
-                }
                 if (document.getElementById('box6').classList.contains('selected')) {
                     Right('box6', 1, 0.05, 'grayscale', 'grayscale');
                 }
@@ -245,17 +237,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (document.getElementById('box4').classList.contains('selected')) {
                     Left('box4', 0, 0.1, 'opacity', 'opacity');
-                }
-                if (document.getElementById('box5').classList.contains('selected')) {
-                    let box5 = document.getElementById('box5');
-                    let currentIndex = colorValues.indexOf(box5.textContent);
-                    if (currentIndex > 0) {
-                        box5.textContent = colorValues[currentIndex - 1];
-                    } else {
-                        box5.textContent = colorValues[colorValues.length - 1];
-                    }
-                    let currentColorValues = box5.textContent;
-                    localStorage.setItem(`${gameName}_temperature`, currentColorValues)
                 }
                 if (document.getElementById('box6').classList.contains('selected')) {
                     Left('box6', 0, 0.05, 'grayscale', 'grayscale');
