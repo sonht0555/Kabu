@@ -1259,7 +1259,7 @@ async function createWasm() {
         }
       },
   initMainThread() {
-        var pthreadPoolSize = 5;
+        var pthreadPoolSize = 3;
         // Start loading up the Worker pool, if requested.
         while (pthreadPoolSize--) {
           PThread.allocateUnusedWorker();
