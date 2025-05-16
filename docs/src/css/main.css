@@ -11,8 +11,8 @@
   src: url("/src/font/04bf.woff");
 }
 @font-face {
-  font-family: "Tuson";
-  src: url("/src/font/tuson.ttf");
+  font-family: "mother";
+  src: url("/src/font/mother.ttf");
 }
 body,
 html {
@@ -751,7 +751,7 @@ dialog .rom-item {
 .input-container {
   /*display: flex;*/
   padding: 0px 4px 0px 4px;
-  font-family: "tuson";
+  font-family: "mother";
   font-size: 8px;
   color: #f5e8d1;
   border-radius: 0px;
@@ -1121,7 +1121,7 @@ rect {
 }
 .inputContainer {
   height: 20px;
-  font-family: tuson;
+  font-family: "mother";
   overflow: hidden;
   padding-left: 6px;
   opacity: 0.4;
