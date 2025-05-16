@@ -7,6 +7,8 @@ let turboState = 1;
 let volumeLevels = [1, 0, 0.25, 0.5, 0.75];
 let volumeIndex = 0;
 const turboButton = document.getElementById("turbo");
+const saveStateButton = document.getElementById("saveStateButton");
+const loadStateButton = document.getElementById("loadStateButton");
 /* --------------- Function --------------- */
 function buttonPress(buttonName, isPress) {
     if (buttonName.includes("-")) {
@@ -203,26 +205,7 @@ let lastSaveTime = 0;
         clickState++;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
-            if (clickState === 2) {
-                lastSaveTime = Date.now();
-                const autoStateCheck = await Main.getData(gameName, "1", "stateAuto") || await Main.setData(gameName, "1", "stateAuto", "On");
-                const slotStateNumbers = autoStateCheck === "On"
-                    ? (parseInt(await Main.getData(gameName, "1", "slotStateSaved") % 3) + 1) || 1
-                    : parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
-                await delay(100);
-                await saveState(slotStateNumbers);
-                await delay(50);
-                await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
-                await delay(50);
-                //canvas.classList.add('glitch-effect');
-                //setTimeout(() => {
-                //    canvas.classList.remove('glitch-effect');
-                //}, 300);
-                await Main.ledSave("#20A5A6");
-                await delay(50);
-                await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
-                
-            } else if (clickState === 3) {
+         if (clickState === 2) {
                 volumeIndex = (volumeIndex + 1) % volumeLevels.length;
                 let newVolume = volumeLevels[volumeIndex];
                 Main.setVolume(newVolume);
@@ -249,12 +232,6 @@ let lastSaveTime = 0;
         clearTimeout(clickTimeout);
         clickTimeout = setTimeout(async () => {
             if (clickState === 2) {
-                const slotStateNumbers = await Main.getData(gameName, "1", "slotStateSaved") || 1;
-                loadState(slotStateNumbers);
-                Main.notiMessage(`[_] Loaded.`, 1000);
-                await delay(50);
-                await Main.ledSave("#20A5A6");
-            } else if (clickState === 3) {
                 let setApiAzure = localStorage.getItem("ApiAzure");
                 let ApiAzure = prompt("apiKey,endpoint", setApiAzure);
                 if (ApiAzure !== null && ApiAzure !== "") {
@@ -275,6 +252,45 @@ let lastSaveTime = 0;
                 await Main.setData(gameName, "1", "turboState", turboState)
             }
             clickTurbo = 0;
+        }, 300);
+    });
+        saveStateButton.addEventListener(eventType, async () => {
+        const now = Date.now();
+        if (now - lastSaveTime < 1000) return;
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                lastSaveTime = Date.now();
+                const autoStateCheck = await Main.getData(gameName, "1", "stateAuto") || await Main.setData(gameName, "1", "stateAuto", "On");
+                const slotStateNumbers = autoStateCheck === "On"
+                    ? (parseInt(await Main.getData(gameName, "1", "slotStateSaved") % 3) + 1) || 1
+                    : parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
+                await delay(100);
+                await saveState(slotStateNumbers);
+                await delay(50);
+                await Main.setData(gameName, "1", "slotStateSaved", slotStateNumbers);
+                await delay(50);
+                await Main.ledSave("#20A5A6");
+                await delay(50);
+                await Main.notiMessage(`[${autoStateCheck === "On" ? slotStateNumbers : "?"}] Saved.`, autoStateCheck === "On" ? 2000 : 1000);
+                
+            }
+            clickState = 0;
+        }, 300);
+    });
+        loadStateButton.addEventListener(eventType, async () => {
+        clickState++;
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(async () => {
+            if (clickState === 2) {
+                const slotStateNumbers = await Main.getData(gameName, "1", "slotStateSaved") || 1;
+                loadState(slotStateNumbers);
+                Main.notiMessage(`[_] Loaded.`, 1000);
+                await delay(50);
+                await Main.ledSave("#20A5A6");
+            }
+            clickState = 0;
         }, 300);
     });
     rewind.addEventListener("pointerdown", () => { Main.rewind(true); Main.notiMessage(`Rewind_..`, 20000);});

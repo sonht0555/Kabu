@@ -139,11 +139,7 @@ export async function loadGame(romName) {
             await Module.loadState(1);
         }
     } else {
-        if (Mode === VBA) {
-            loadGame(romName);
-        } else {
-            await Module.loadGame(`/data/games/${romName}`);
-        }
+        await Module.loadGame(`/data/games/${romName}`);
     }
     // show status ingame
         if (romName.endsWith(".gbc") || romName.endsWith(".gb")) {
