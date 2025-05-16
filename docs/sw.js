@@ -1,4 +1,4 @@
-let revision = 'V6.67';
+let revision = 'V6.66';
 var urlsToCache = [
     '/',
     './README.md',
@@ -31,7 +31,7 @@ var urlsToCache = [
 ];
 
 self.addEventListener('install', function (event) {
-    postMsg({msg:'Updating'});
+    postMsg({msg:'Updating...'});
     var urlsAddVersion = urlsToCache.map(function (url) {
         return url + '?ver=' + revision
     });
