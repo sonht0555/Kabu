@@ -1,4 +1,4 @@
-import mGBA_1 from "../core/3.1.58/mgba.js";
+import mGBA_1 from "../core/4.0.81/mgba.js";
 import mGBA_2 from "../core/4.0.8/mgba.js";
 import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
@@ -209,20 +209,24 @@ export async function uploadFile(filepath) {
 }
 export async function resumeGame() {
     await Module.resumeGame();
+    await Module.resumeAudio();
     Module.SDL2();
     notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
-    Module.pauseGame();
+    await Module.pauseGame();
+    await Module.pauseAudio();
     notiMessage("[_] Paused!", 2000);
 }
 export async function loadding() {
     await Module.pauseGame();
+    await Module.pauseAudio();
     loadingIcon.classList.remove("visible");
     await delay(1000);
     loadingIcon.classList.add("visible");
     await delay(200);
     await Module.resumeGame();
+    await Module.resumeAudio();
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)
