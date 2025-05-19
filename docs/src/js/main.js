@@ -209,24 +209,32 @@ export async function uploadFile(filepath) {
 }
 export async function resumeGame() {
     await Module.resumeGame();
-    await Module.resumeAudio();
+        if (Mode === "mGBA_1") {
+        await Module.resumeAudio();
+    }
     Module.SDL2();
     notiMessage("[_] Resumed!", 2000);
 }
 export async function pauseGame() {
     await Module.pauseGame();
-    await Module.pauseAudio();
+        if (Mode === "mGBA_1") {
+        await Module.pauseAudio();
+    }
     notiMessage("[_] Paused!", 2000);
 }
 export async function loadding() {
     await Module.pauseGame();
-    await Module.pauseAudio();
+    if (Mode === "mGBA_1") {
+        await Module.pauseAudio();
+    }
     loadingIcon.classList.remove("visible");
     await delay(1000);
     loadingIcon.classList.add("visible");
     await delay(200);
     await Module.resumeGame();
-    await Module.resumeAudio();
+    if (Mode === "mGBA_1") {
+        await Module.resumeAudio();
+    }
 }
 export async function buttonPress(key) {
     Module.buttonPress(key)
