@@ -35,7 +35,7 @@ var ENVIRONMENT_IS_WEB = typeof window == 'object';
 var ENVIRONMENT_IS_WORKER = typeof WorkerGlobalScope != 'undefined';
 // N.b. Electron.js environment is simultaneously a NODE-environment, but
 // also a web environment.
-var ENVIRONMENT_IS_NODE = typeof process == 'object' && typeof process.versions == 'object' && typeof process.versions.node == 'string' && process.type != 'renderer';
+var ENVIRONMENT_IS_NODE = typeof process == 'object' && process.versions?.node && process.type != 'renderer';
 var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 // Three configurations we can be running in:
@@ -74,7 +74,7 @@ Module.loadGame = (romPath, savePathOverride) => {
   return false;
 };
 // remove keypress-keydown-keyup in _emscripten_set_keydown_callback_on_thread
-Module.SDL2 = () => {Module["SDL2"].audioContext.resume();};
+Module.SDL2 = () => {var SDL2 = Module["SDL2"];if (SDL2.audioContext.state === 'suspended' || SDL2.audioContext.state === 'interrupted') {SDL2.audioContext.resume();}}
 Module.editFileName = (filepath,filename,newFilename) => FS.rename(filepath, filepath.replace(filename, newFilename));
 Module.deleteFile = (filepath) => FS.unlink(filepath);
 Module.fileSize = (filepath) => FS.stat(filepath).size;
@@ -314,16 +314,6 @@ Module.resumeGame = () => {
   resumeGame();
 };
 
-Module.pauseAudio = () => {
-  const pauseAudio = cwrap('pauseAudio', null, []);
-  pauseAudio();
-};
-
-Module.resumeAudio = () => {
-  const resumeAudio = cwrap('resumeAudio', null, []);
-  resumeAudio();
-};
-
 Module.getVolume = () => {
   const getVolume = cwrap('getVolume', 'number', []);
   return getVolume();
@@ -521,15 +511,6 @@ Module.setCoreSettings = (coreSettings) => {
 
   if (coreSettings.rewindEnable !== undefined)
     setIntegerCoreSetting('rewindEnable', coreSettings.rewindEnable);
-
-  if (coreSettings.baseFpsTarget !== undefined)
-    setIntegerCoreSetting('baseFpsTarget', coreSettings.baseFpsTarget);
-
-  if (coreSettings.timestepSync !== undefined)
-    setIntegerCoreSetting('timestepSync', coreSettings.timestepSync);
-
-  if (coreSettings.showFpsCounter !== undefined)
-    setIntegerCoreSetting('showFpsCounter', coreSettings.showFpsCounter);
 };
 // end include: /home/mgba/src/src/platform/wasm/pre.js
 
@@ -1592,6 +1573,7 @@ async function createWasm() {
       // so that undefined/NaN means Infinity)
       while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
   
+      // When using conditional TextDecoder, skip it for short strings as the overhead of the native call is not worth it.
       if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
         return UTF8Decoder.decode(heapOrArray.buffer instanceof ArrayBuffer ? heapOrArray.subarray(idx, endPtr) : heapOrArray.slice(idx, endPtr));
       }
@@ -4638,7 +4620,7 @@ async function createWasm() {
   
   try {
   
-      if (isNaN(length)) return 61;
+      if (isNaN(length)) return -61;
       FS.ftruncate(fd, length);
       return 0;
     } catch (e) {
@@ -5004,12 +4986,12 @@ async function createWasm() {
   
       path = SYSCALLS.getStr(path);
       path = SYSCALLS.calculateAt(dirfd, path);
-      if (flags === 0) {
+      if (!flags) {
         FS.unlink(path);
       } else if (flags === 512) {
         FS.rmdir(path);
       } else {
-        abort('Invalid flags passed to unlinkat');
+        return -28;
       }
       return 0;
     } catch (e) {
@@ -5338,7 +5320,6 @@ async function createWasm() {
   
   try {
   
-      if (isNaN(offset)) return 61;
       var stream = SYSCALLS.getStreamFromFD(fd);
       var res = FS.mmap(stream, len, offset, prot, flags);
       var ptr = res.ptr;
@@ -5366,7 +5347,7 @@ async function createWasm() {
   
   try {
   
-      if (isNaN(offset)) return 61;
+      if (isNaN(offset)) return -61;
       SYSCALLS.doMsync(addr, SYSCALLS.getStreamFromFD(fd), len, flags, offset);
       return 0;
     } catch (e) {
@@ -10742,7 +10723,12 @@ async function createWasm() {
   var dynCall = (sig, ptr, args = [], promising = false) => {
       var func = getWasmTableEntry(ptr);
       var rtn = func(...args);
-      return rtn;
+  
+      function convert(rtn) {
+        return rtn;
+      }
+  
+      return convert(rtn);
     };
 
 
@@ -11028,6 +11014,8 @@ async function createWasm() {
       setWasmTableEntry(index, null);
       freeTableIndexes.push(index);
     };
+
+  var createContext = Browser.createContext;
 PThread.init();;
 
   FS.createPreloadedFile = FS_createPreloadedFile;
@@ -11039,13 +11027,6 @@ PThread.init();;
       /** @suppress {checkTypes} */
       MEMFS.doesNotExistError.stack = '<generic error, no stack>';
       ;
-
-      // exports
-      Module['requestFullscreen'] = Browser.requestFullscreen;
-      Module['setCanvasSize'] = Browser.setCanvasSize;
-      Module['getUserMedia'] = Browser.getUserMedia;
-      Module['createContext'] = Browser.createContext;
-    ;
 
       Module['requestAnimationFrame'] = MainLoop.requestAnimationFrame;
       Module['pauseMainLoop'] = MainLoop.pause;
@@ -11090,6 +11071,7 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   Module['cwrap'] = cwrap;
   Module['addFunction'] = addFunction;
   Module['removeFunction'] = removeFunction;
+  Module['createContext'] = createContext;
   Module['FS'] = FS;
   // End runtime exports
   // Begin JS library exports
@@ -11188,36 +11170,36 @@ var proxiedFunctionTable = [
 ];
 
 var ASM_CONSTS = {
-  372880: () => { console.error("thread instantiation failed") },  
- 372929: ($0, $1) => { Module.canvas.width = $0; Module.canvas.height = $1; },  
- 372986: ($0, $1, $2, $3, $4, $5, $6) => { Module.version = { gitCommit : UTF8ToString($0), gitShort : UTF8ToString($1), gitBranch : UTF8ToString($2), gitRevision : $3, binaryName : UTF8ToString($4), projectName : UTF8ToString($5), projectVersion : UTF8ToString($6) }; },  
- 373218: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373316: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373414: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373512: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373610: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373708: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
- 373806: () => { FS.syncfs(function (err) { assert(!err); }) },  
- 373850: ($0) => { var str = UTF8ToString($0) + '\n\n' + 'Abort/Retry/Ignore/AlwaysIgnore? [ariA] :'; var reply = window.prompt(str, "i"); if (reply === null) { reply = "i"; } return allocate(intArrayFromString(reply), 'i8', ALLOC_NORMAL); },  
- 374075: () => { if (typeof(AudioContext) !== 'undefined') { return true; } else if (typeof(webkitAudioContext) !== 'undefined') { return true; } return false; },  
- 374222: () => { if ((typeof(navigator.mediaDevices) !== 'undefined') && (typeof(navigator.mediaDevices.getUserMedia) !== 'undefined')) { return true; } else if (typeof(navigator.webkitGetUserMedia) !== 'undefined') { return true; } return false; },  
- 374456: ($0) => { if(typeof(Module['SDL2']) === 'undefined') { Module['SDL2'] = {}; } var SDL2 = Module['SDL2']; if (!$0) { SDL2.audio = {}; } else { SDL2.capture = {}; } if (!SDL2.audioContext) { if (typeof(AudioContext) !== 'undefined') { SDL2.audioContext = new AudioContext(); } else if (typeof(webkitAudioContext) !== 'undefined') { SDL2.audioContext = new webkitAudioContext(); } if (SDL2.audioContext) { if ((typeof navigator.userActivation) === 'undefined') { autoResumeAudioContext(SDL2.audioContext); } } } return SDL2.audioContext === undefined ? -1 : 0; },  
- 375008: () => { var SDL2 = Module['SDL2']; return SDL2.audioContext.sampleRate; },  
- 375076: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; var have_microphone = function(stream) { if (SDL2.capture.silenceTimer !== undefined) { clearInterval(SDL2.capture.silenceTimer); SDL2.capture.silenceTimer = undefined; SDL2.capture.silenceBuffer = undefined } SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream); SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1); SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) { if ((SDL2 === undefined) || (SDL2.capture === undefined)) { return; } audioProcessingEvent.outputBuffer.getChannelData(0).fill(0.0); SDL2.capture.currentCaptureBuffer = audioProcessingEvent.inputBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.mediaStreamNode.connect(SDL2.capture.scriptProcessorNode); SDL2.capture.scriptProcessorNode.connect(SDL2.audioContext.destination); SDL2.capture.stream = stream; }; var no_microphone = function(error) { }; SDL2.capture.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.capture.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.silenceTimer = setInterval(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); if ((navigator.mediaDevices !== undefined) && (navigator.mediaDevices.getUserMedia !== undefined)) { navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(have_microphone).catch(no_microphone); } else if (navigator.webkitGetUserMedia !== undefined) { navigator.webkitGetUserMedia({ audio: true, video: false }, have_microphone, no_microphone); } },  
- 376769: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; SDL2.audio.scriptProcessorNode = SDL2.audioContext['createScriptProcessor']($1, 0, $0); SDL2.audio.scriptProcessorNode['onaudioprocess'] = function (e) { if ((SDL2 === undefined) || (SDL2.audio === undefined)) { return; } if (SDL2.audio.silenceTimer !== undefined) { clearInterval(SDL2.audio.silenceTimer); SDL2.audio.silenceTimer = undefined; SDL2.audio.silenceBuffer = undefined; } SDL2.audio.currentOutputBuffer = e['outputBuffer']; dynCall('vi', $2, [$3]); }; SDL2.audio.scriptProcessorNode['connect'](SDL2.audioContext['destination']); if (SDL2.audioContext.state === 'suspended') { SDL2.audio.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.audio.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { if ((typeof navigator.userActivation) !== 'undefined') { if (navigator.userActivation.hasBeenActive) { SDL2.audioContext.resume(); } } SDL2.audio.currentOutputBuffer = SDL2.audio.silenceBuffer; dynCall('vi', $2, [$3]); SDL2.audio.currentOutputBuffer = undefined; }; SDL2.audio.silenceTimer = setInterval(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); } },  
- 377944: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.capture.currentCaptureBuffer.getChannelData(c); if (channelData.length != $1) { throw 'Web Audio capture buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } if (numChannels == 1) { for (var j = 0; j < $1; ++j) { setValue($0 + (j * 4), channelData[j], 'float'); } } else { for (var j = 0; j < $1; ++j) { setValue($0 + (((j * numChannels) + c) * 4), channelData[j], 'float'); } } } },  
- 378549: ($0, $1) => { var SDL2 = Module['SDL2']; var buf = $0 >>> 2; var numChannels = SDL2.audio.currentOutputBuffer['numberOfChannels']; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.audio.currentOutputBuffer['getChannelData'](c); if (channelData.length != $1) { throw 'Web Audio output buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } for (var j = 0; j < $1; ++j) { channelData[j] = HEAPF32[buf + (j*numChannels + c)]; } } },  
- 379038: ($0) => { var SDL2 = Module['SDL2']; if ($0) { if (SDL2.capture.silenceTimer !== undefined) { clearInterval(SDL2.capture.silenceTimer); } if (SDL2.capture.stream !== undefined) { var tracks = SDL2.capture.stream.getAudioTracks(); for (var i = 0; i < tracks.length; i++) { SDL2.capture.stream.removeTrack(tracks[i]); } } if (SDL2.capture.scriptProcessorNode !== undefined) { SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {}; SDL2.capture.scriptProcessorNode.disconnect(); } if (SDL2.capture.mediaStreamNode !== undefined) { SDL2.capture.mediaStreamNode.disconnect(); } SDL2.capture = undefined; } else { if (SDL2.audio.scriptProcessorNode != undefined) { SDL2.audio.scriptProcessorNode.disconnect(); } if (SDL2.audio.silenceTimer !== undefined) { clearInterval(SDL2.audio.silenceTimer); } SDL2.audio = undefined; } if ((SDL2.audioContext !== undefined) && (SDL2.audio === undefined) && (SDL2.capture === undefined)) { SDL2.audioContext.close(); SDL2.audioContext = undefined; } },  
- 380044: ($0, $1, $2) => { var w = $0; var h = $1; var pixels = $2; if (!Module['SDL2']) Module['SDL2'] = {}; var SDL2 = Module['SDL2']; if (SDL2.ctxCanvas !== Module['canvas']) { SDL2.ctx = Module['createContext'](Module['canvas'], false, true); SDL2.ctxCanvas = Module['canvas']; } if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) { SDL2.image = SDL2.ctx.createImageData(w, h); SDL2.w = w; SDL2.h = h; SDL2.imageCtx = SDL2.ctx; } var data = SDL2.image.data; var src = pixels / 4; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = 0xff; src++; dst += 4; } } else { if (SDL2.data32Data !== data) { SDL2.data32 = new Int32Array(data.buffer); SDL2.data8 = new Uint8Array(data.buffer); SDL2.data32Data = data; } var data32 = SDL2.data32; num = data32.length; data32.set(HEAP32.subarray(src, src + num)); var data8 = SDL2.data8; var i = 3; var j = i + 4*num; if (num % 8 == 0) { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; } } else { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; } } } SDL2.ctx.putImageData(SDL2.image, 0, 0); },  
- 381512: ($0, $1, $2, $3, $4) => { var w = $0; var h = $1; var hot_x = $2; var hot_y = $3; var pixels = $4; var canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; var ctx = canvas.getContext("2d"); var image = ctx.createImageData(w, h); var data = image.data; var src = pixels / 4; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = (val >> 24) & 0xff; src++; dst += 4; } } else { var data32 = new Int32Array(data.buffer); num = data32.length; data32.set(HEAP32.subarray(src, src + num)); } ctx.putImageData(image, 0, 0); var url = hot_x === 0 && hot_y === 0 ? "url(" + canvas.toDataURL() + "), auto" : "url(" + canvas.toDataURL() + ") " + hot_x + " " + hot_y + ", auto"; var urlBuf = _malloc(url.length + 1); stringToUTF8(url, urlBuf, url.length + 1); return urlBuf; },  
- 382500: ($0) => { if (Module['canvas']) { Module['canvas'].style['cursor'] = UTF8ToString($0); } },  
- 382583: () => { if (Module['canvas']) { Module['canvas'].style['cursor'] = 'none'; } },  
- 382652: () => { return window.innerWidth; },  
- 382682: () => { return window.innerHeight; }
+  372832: () => { console.error("thread instantiation failed") },  
+ 372881: ($0, $1) => { Module.canvas.width = $0; Module.canvas.height = $1; },  
+ 372938: ($0, $1, $2, $3, $4, $5, $6) => { Module.version = { gitCommit : UTF8ToString($0), gitShort : UTF8ToString($1), gitBranch : UTF8ToString($2), gitRevision : $3, binaryName : UTF8ToString($4), projectName : UTF8ToString($5), projectVersion : UTF8ToString($6) }; },  
+ 373170: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373268: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373366: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373464: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373562: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373660: ($0, $1) => { const funcPtr = $0; const ctx = $1; const func = wasmTable.get(funcPtr); if (func) func(ctx); },  
+ 373758: () => { FS.syncfs(function (err) { assert(!err); }) },  
+ 373802: ($0) => { var str = UTF8ToString($0) + '\n\n' + 'Abort/Retry/Ignore/AlwaysIgnore? [ariA] :'; var reply = window.prompt(str, "i"); if (reply === null) { reply = "i"; } return allocate(intArrayFromString(reply), 'i8', ALLOC_NORMAL); },  
+ 374027: () => { if (typeof(AudioContext) !== 'undefined') { return true; } else if (typeof(webkitAudioContext) !== 'undefined') { return true; } return false; },  
+ 374174: () => { if ((typeof(navigator.mediaDevices) !== 'undefined') && (typeof(navigator.mediaDevices.getUserMedia) !== 'undefined')) { return true; } else if (typeof(navigator.webkitGetUserMedia) !== 'undefined') { return true; } return false; },  
+ 374408: ($0) => { if(typeof(Module['SDL2']) === 'undefined') { Module['SDL2'] = {}; } var SDL2 = Module['SDL2']; if (!$0) { SDL2.audio = {}; } else { SDL2.capture = {}; } if (!SDL2.audioContext) { if (typeof(AudioContext) !== 'undefined') { SDL2.audioContext = new AudioContext(); } else if (typeof(webkitAudioContext) !== 'undefined') { SDL2.audioContext = new webkitAudioContext(); } if (SDL2.audioContext) { if ((typeof navigator.userActivation) === 'undefined') { autoResumeAudioContext(SDL2.audioContext); } } } return SDL2.audioContext === undefined ? -1 : 0; },  
+ 374960: () => { var SDL2 = Module['SDL2']; return SDL2.audioContext.sampleRate; },  
+ 375028: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; var have_microphone = function(stream) { if (SDL2.capture.silenceTimer !== undefined) { clearInterval(SDL2.capture.silenceTimer); SDL2.capture.silenceTimer = undefined; SDL2.capture.silenceBuffer = undefined } SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream); SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1); SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) { if ((SDL2 === undefined) || (SDL2.capture === undefined)) { return; } audioProcessingEvent.outputBuffer.getChannelData(0).fill(0.0); SDL2.capture.currentCaptureBuffer = audioProcessingEvent.inputBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.mediaStreamNode.connect(SDL2.capture.scriptProcessorNode); SDL2.capture.scriptProcessorNode.connect(SDL2.audioContext.destination); SDL2.capture.stream = stream; }; var no_microphone = function(error) { }; SDL2.capture.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.capture.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.silenceTimer = setInterval(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); if ((navigator.mediaDevices !== undefined) && (navigator.mediaDevices.getUserMedia !== undefined)) { navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(have_microphone).catch(no_microphone); } else if (navigator.webkitGetUserMedia !== undefined) { navigator.webkitGetUserMedia({ audio: true, video: false }, have_microphone, no_microphone); } },  
+ 376721: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; SDL2.audio.scriptProcessorNode = SDL2.audioContext['createScriptProcessor']($1, 0, $0); SDL2.audio.scriptProcessorNode['onaudioprocess'] = function (e) { if ((SDL2 === undefined) || (SDL2.audio === undefined)) { return; } if (SDL2.audio.silenceTimer !== undefined) { clearInterval(SDL2.audio.silenceTimer); SDL2.audio.silenceTimer = undefined; SDL2.audio.silenceBuffer = undefined; } SDL2.audio.currentOutputBuffer = e['outputBuffer']; dynCall('vi', $2, [$3]); }; SDL2.audio.scriptProcessorNode['connect'](SDL2.audioContext['destination']); if (SDL2.audioContext.state === 'suspended') { SDL2.audio.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.audio.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { if ((typeof navigator.userActivation) !== 'undefined') { if (navigator.userActivation.hasBeenActive) { SDL2.audioContext.resume(); } } SDL2.audio.currentOutputBuffer = SDL2.audio.silenceBuffer; dynCall('vi', $2, [$3]); SDL2.audio.currentOutputBuffer = undefined; }; SDL2.audio.silenceTimer = setInterval(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); } },  
+ 377896: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.capture.currentCaptureBuffer.getChannelData(c); if (channelData.length != $1) { throw 'Web Audio capture buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } if (numChannels == 1) { for (var j = 0; j < $1; ++j) { setValue($0 + (j * 4), channelData[j], 'float'); } } else { for (var j = 0; j < $1; ++j) { setValue($0 + (((j * numChannels) + c) * 4), channelData[j], 'float'); } } } },  
+ 378501: ($0, $1) => { var SDL2 = Module['SDL2']; var buf = $0 >>> 2; var numChannels = SDL2.audio.currentOutputBuffer['numberOfChannels']; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.audio.currentOutputBuffer['getChannelData'](c); if (channelData.length != $1) { throw 'Web Audio output buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } for (var j = 0; j < $1; ++j) { channelData[j] = HEAPF32[buf + (j*numChannels + c)]; } } },  
+ 378990: ($0) => { var SDL2 = Module['SDL2']; if ($0) { if (SDL2.capture.silenceTimer !== undefined) { clearInterval(SDL2.capture.silenceTimer); } if (SDL2.capture.stream !== undefined) { var tracks = SDL2.capture.stream.getAudioTracks(); for (var i = 0; i < tracks.length; i++) { SDL2.capture.stream.removeTrack(tracks[i]); } } if (SDL2.capture.scriptProcessorNode !== undefined) { SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {}; SDL2.capture.scriptProcessorNode.disconnect(); } if (SDL2.capture.mediaStreamNode !== undefined) { SDL2.capture.mediaStreamNode.disconnect(); } SDL2.capture = undefined; } else { if (SDL2.audio.scriptProcessorNode != undefined) { SDL2.audio.scriptProcessorNode.disconnect(); } if (SDL2.audio.silenceTimer !== undefined) { clearInterval(SDL2.audio.silenceTimer); } SDL2.audio = undefined; } if ((SDL2.audioContext !== undefined) && (SDL2.audio === undefined) && (SDL2.capture === undefined)) { SDL2.audioContext.close(); SDL2.audioContext = undefined; } },  
+ 379996: ($0, $1, $2) => { var w = $0; var h = $1; var pixels = $2; if (!Module['SDL2']) Module['SDL2'] = {}; var SDL2 = Module['SDL2']; if (SDL2.ctxCanvas !== Module['canvas']) { SDL2.ctx = Module['createContext'](Module['canvas'], false, true); SDL2.ctxCanvas = Module['canvas']; } if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) { SDL2.image = SDL2.ctx.createImageData(w, h); SDL2.w = w; SDL2.h = h; SDL2.imageCtx = SDL2.ctx; } var data = SDL2.image.data; var src = pixels / 4; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = 0xff; src++; dst += 4; } } else { if (SDL2.data32Data !== data) { SDL2.data32 = new Int32Array(data.buffer); SDL2.data8 = new Uint8Array(data.buffer); SDL2.data32Data = data; } var data32 = SDL2.data32; num = data32.length; data32.set(HEAP32.subarray(src, src + num)); var data8 = SDL2.data8; var i = 3; var j = i + 4*num; if (num % 8 == 0) { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; } } else { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; } } } SDL2.ctx.putImageData(SDL2.image, 0, 0); },  
+ 381464: ($0, $1, $2, $3, $4) => { var w = $0; var h = $1; var hot_x = $2; var hot_y = $3; var pixels = $4; var canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; var ctx = canvas.getContext("2d"); var image = ctx.createImageData(w, h); var data = image.data; var src = pixels / 4; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = (val >> 24) & 0xff; src++; dst += 4; } } else { var data32 = new Int32Array(data.buffer); num = data32.length; data32.set(HEAP32.subarray(src, src + num)); } ctx.putImageData(image, 0, 0); var url = hot_x === 0 && hot_y === 0 ? "url(" + canvas.toDataURL() + "), auto" : "url(" + canvas.toDataURL() + ") " + hot_x + " " + hot_y + ", auto"; var urlBuf = _malloc(url.length + 1); stringToUTF8(url, urlBuf, url.length + 1); return urlBuf; },  
+ 382452: ($0) => { if (Module['canvas']) { Module['canvas'].style['cursor'] = UTF8ToString($0); } },  
+ 382535: () => { if (Module['canvas']) { Module['canvas'].style['cursor'] = 'none'; } },  
+ 382604: () => { return window.innerWidth; },  
+ 382634: () => { return window.innerHeight; }
 };
-var wasmImports;
-function assignWasmImports() {
-  wasmImports = {
+  var wasmImports;
+  function assignWasmImports() {
+    wasmImports = {
     /** @export */
     __assert_fail: ___assert_fail,
     /** @export */
@@ -11793,8 +11775,9 @@ function assignWasmImports() {
     /** @export */
     proc_exit: _proc_exit
   };
-}
-var wasmExports = await createWasm();
+  }
+  var wasmExports = await createWasm();
+// Imports from the Wasm binary.
 var ___wasm_call_ctors = () => (___wasm_call_ctors = wasmExports['__wasm_call_ctors'])();
 var _screenshot = Module['_screenshot'] = (a0) => (_screenshot = Module['_screenshot'] = wasmExports['screenshot'])(a0);
 var _buttonPress = Module['_buttonPress'] = (a0) => (_buttonPress = Module['_buttonPress'] = wasmExports['buttonPress'])(a0);
@@ -11813,8 +11796,6 @@ var _quitMgba = Module['_quitMgba'] = () => (_quitMgba = Module['_quitMgba'] = w
 var _quickReload = Module['_quickReload'] = () => (_quickReload = Module['_quickReload'] = wasmExports['quickReload'])();
 var _pauseGame = Module['_pauseGame'] = () => (_pauseGame = Module['_pauseGame'] = wasmExports['pauseGame'])();
 var _resumeGame = Module['_resumeGame'] = () => (_resumeGame = Module['_resumeGame'] = wasmExports['resumeGame'])();
-var _pauseAudio = Module['_pauseAudio'] = () => (_pauseAudio = Module['_pauseAudio'] = wasmExports['pauseAudio'])();
-var _resumeAudio = Module['_resumeAudio'] = () => (_resumeAudio = Module['_resumeAudio'] = wasmExports['resumeAudio'])();
 var _setEventEnable = Module['_setEventEnable'] = (a0) => (_setEventEnable = Module['_setEventEnable'] = wasmExports['setEventEnable'])(a0);
 var _bindKey = Module['_bindKey'] = (a0, a1) => (_bindKey = Module['_bindKey'] = wasmExports['bindKey'])(a0, a1);
 var _saveState = Module['_saveState'] = (a0) => (_saveState = Module['_saveState'] = wasmExports['saveState'])(a0);
@@ -11843,21 +11824,21 @@ var _emscripten_stack_set_limits = (a0, a1) => (_emscripten_stack_set_limits = w
 var __emscripten_stack_restore = (a0) => (__emscripten_stack_restore = wasmExports['_emscripten_stack_restore'])(a0);
 var __emscripten_stack_alloc = (a0) => (__emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc'])(a0);
 var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
-var _GBAInputInfo = Module['_GBAInputInfo'] = 184960;
-var _binaryName = Module['_binaryName'] = 260992;
-var _projectName = Module['_projectName'] = 260996;
-var _projectVersion = Module['_projectVersion'] = 261000;
-var _gitCommit = Module['_gitCommit'] = 260976;
-var _gitCommitShort = Module['_gitCommitShort'] = 260980;
-var _gitBranch = Module['_gitBranch'] = 260984;
-var _gitRevision = Module['_gitRevision'] = 260988;
-var _GBIORegisterNames = Module['_GBIORegisterNames'] = 123328;
-var _GBSavestateMagic = Module['_GBSavestateMagic'] = 138592;
-var _GBSavestateVersion = Module['_GBSavestateVersion'] = 138596;
-var _GBA_LUX_LEVELS = Module['_GBA_LUX_LEVELS'] = 168064;
-var _GBAVideoObjSizes = Module['_GBAVideoObjSizes'] = 212400;
-var _GBASavestateMagic = Module['_GBASavestateMagic'] = 212176;
-var _GBASavestateVersion = Module['_GBASavestateVersion'] = 212180;
+var _GBAInputInfo = Module['_GBAInputInfo'] = 184912;
+var _binaryName = Module['_binaryName'] = 260944;
+var _projectName = Module['_projectName'] = 260948;
+var _projectVersion = Module['_projectVersion'] = 260952;
+var _gitCommit = Module['_gitCommit'] = 260928;
+var _gitCommitShort = Module['_gitCommitShort'] = 260932;
+var _gitBranch = Module['_gitBranch'] = 260936;
+var _gitRevision = Module['_gitRevision'] = 260940;
+var _GBIORegisterNames = Module['_GBIORegisterNames'] = 123280;
+var _GBSavestateMagic = Module['_GBSavestateMagic'] = 138544;
+var _GBSavestateVersion = Module['_GBSavestateVersion'] = 138548;
+var _GBA_LUX_LEVELS = Module['_GBA_LUX_LEVELS'] = 168016;
+var _GBAVideoObjSizes = Module['_GBAVideoObjSizes'] = 212352;
+var _GBASavestateMagic = Module['_GBASavestateMagic'] = 212128;
+var _GBASavestateVersion = Module['_GBASavestateVersion'] = 212132;
 function invoke_iiiii(index,a1,a2,a3,a4) {
   var sp = stackSave();
   try {
