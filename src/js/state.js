@@ -11,11 +11,6 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     //const imageData = await Main.dowloadScreenShot(`/data/screenshots/${pngName}`) || noneImage;
     const timeData = await Main.getData(gameName, saveSlot, "saveTime");
     document.getElementById(dateState).textContent = timeData || "__";
-    if (parseInt(localSlot) === parseInt(saveSlot)) {
-        stateDiv.classList.add('stated');
-    } else {
-        stateDiv.classList.remove('stated');
-    }
 }
 export async function wrapContent () {
     let selectedIndex = parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
@@ -38,7 +33,6 @@ export async function wrapContent () {
                     updateSelectionState();
                     led(selectedIndex);
                     Main.setData(gameName, "1", "slotStateSaved", selectedIndex);
-
                 }
             });
         });
@@ -50,7 +44,6 @@ export async function wrapContent () {
                     updateSelectionState();
                     led(selectedIndex);
                     Main.setData(gameName, "1", "slotStateSaved", selectedIndex);
-
                 }
             });
         });
