@@ -36,6 +36,9 @@ export async function wrapContent () {
                 if (statePageButton.classList.contains("active") && selectedIndex > 1) {
                     selectedIndex--;
                     updateSelectionState();
+                    led(selectedIndex);
+                    Main.setData(gameName, "1", "slotStateSaved", selectedIndex);
+
                 }
             });
         });
@@ -45,6 +48,9 @@ export async function wrapContent () {
                 if (statePageButton.classList.contains("active") && selectedIndex < stateDivs.length) {
                     selectedIndex++;
                     updateSelectionState();
+                    led(selectedIndex);
+                    Main.setData(gameName, "1", "slotStateSaved", selectedIndex);
+
                 }
             });
         });
