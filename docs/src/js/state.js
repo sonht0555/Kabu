@@ -18,7 +18,7 @@ async function LoadstateInPage(saveSlot, divs, dateState, stateDivs) {
     }
 }
 export async function wrapContent () {
-    let selectedIndex = parseInt(await Main.getData(gameName, "1", "selectedIndex")) || 1;
+    let selectedIndex = parseInt(await Main.getData(gameName, "1", "slotStateSaved")) || 1;
     const updateSelectionState = async () => {
         stateDivs.forEach((stateDiv, index) => {
             if (index + 1 === selectedIndex) {
