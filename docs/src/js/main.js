@@ -4,7 +4,6 @@ import * as gamepPad from './gamepad.js';
 import {localStorageFile} from "./storage.js";
 import {dpUploadFile} from "./cloud.js";
 import {shaderData} from "./setting.js"
-import {wrapContent} from "./state.js"
 /*/ ----------------- Switch Ver ------------- */
 const versions = {
     "Stable": stable,  
@@ -81,7 +80,6 @@ async function statusShow() {
     await Module.SDL2();
     await delay(800);
     await led(parseInt(await getData(gameName, "1", "slotStateSaved")));
-    await wrapContent();
 }
 // Auto Save Every 1m
 async function saveStatePeriodically() {
